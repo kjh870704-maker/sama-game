@@ -79,6 +79,13 @@ export class Battlefield {
   private extra:Texture|undefined;
   private facing=new Map<string,number>();
   private troopTextures=new Map<string,Texture>();
+  /** 받는 중이거나 받은(실패 포함) 병종 시트. */
+  private sheetWanted=new Set<string>();
+  /** 병종 시트가 새로 들어와 장수 그림을 다시 그려야 한다. */
+  private artDirty=false;
+  private smooth:((c:HTMLCanvasElement,rim?:boolean)=>Texture)|undefined;
+  /** 병종 그림이 새로 준비되면 부른다(main이 화면을 다시 그린다). */
+  onArtReady:()=>void=()=>{};
   private ram:Texture|undefined;
   private naval:Texture|undefined;
   private convoys:Texture|undefined;
@@ -115,12 +122,12 @@ export class Battlefield {
     // Painted art is far larger than its cell on screen: mipmapped smooth reduction keeps
     // every stroke instead of dropping random pixels, and the dark rim keeps the dot look.
     const smooth=(canvas:HTMLCanvasElement,rim=true)=>new Texture({source:new CanvasSource({resource:rim?outlinedCanvas(canvas):canvas,autoGenerateMipmaps:true,scaleMode:'linear'})});
-    // Every sheet is requested at once so the worker pool cuts them in parallel.
-    const [troops,ram,naval,convoys,extra,atlas,scenery]=await Promise.all([loadBattleTextures().then(()=>Promise.all(troopSheets.map(sheet=>spriteAtlas(sheet.url,sheet.rows,4,!!(sheet as {union?:boolean}).union,(sheet as {alphaCutoff?:number}).alphaCutoff??8,!!(sheet as {strictGrid?:boolean}).strictGrid).catch(error=>{console.warn(sheet.id+' 병종 시트를 읽지 못해 기본 그림을 씁니다.',error);return undefined;})))),spriteAtlas('ram-v1.webp',2,2),navalAtlas(),imageCanvas('convoys-v1.webp'),spriteAtlas('units-extra-v1.webp',4),spriteAtlas('units-v3.webp',6),imageCanvas('scenery-v3.webp')]);
-    // 못 읽은 시트는 건너뛴다: 그 병종은 기본 병종 그림으로 그린다.
-    troopSheets.forEach((sheet,i)=>{const t=troops[i];if(t)this.troopTextures.set(sheet.id,smooth(t));});
-    // 병종 전용 채색 시트(있는 것만): 계열 그림 대신 쓴다.
-    await loadClassSheets();await Promise.all([...classSheets].map(async([c,url])=>{try{this.troopTextures.set('own:'+c,smooth(await spriteAtlas(url,3)));}catch{/* 못 읽으면 계열 그림 */}}));
+    // 고정 그림(기본 병종·충차·수군·수송대·성채)만 먼저 준비한다. 하나가 실패해도 빈 그림으로 대신해 전장은 열린다.
+    // 병종 원화 시트는 이 전투에 나온 병종 것만 뒤에서 받는다(wantSheets) — 휴대폰 캔버스 메모리 한도를 넘지 않게.
+    const blank=(cols:number,rows:number)=>{const c=document.createElement('canvas');c.width=cols*16;c.height=rows*16;return c;};
+    const safe=<T extends HTMLCanvasElement>(p:Promise<T>,cols:number,rows:number,what:string)=>p.catch(error=>{console.warn(what+' 그림을 읽지 못해 빈 그림으로 대신합니다.',error);return blank(cols,rows);});
+    const [ram,naval,convoys,extra,atlas,scenery]=await Promise.all([safe(spriteAtlas('ram-v1.webp',2,2),2,2,'충차'),safe(navalAtlas(),4,8,'수군'),safe(imageCanvas('convoys-v1.webp'),4,2,'수송대'),safe(spriteAtlas('units-extra-v1.webp',4),4,4,'추가 병종'),safe(spriteAtlas('units-v3.webp',6),4,6,'기본 병종'),safe(imageCanvas('scenery-v3.webp'),4,2,'성채'),loadBattleTextures().catch(()=>undefined),loadClassSheets().catch(()=>undefined)]);
+    this.smooth=smooth;
     this.ram=smooth(ram);this.naval=smooth(naval);this.convoys=smooth(convoys);this.extra=smooth(extra);this.atlas=smooth(atlas);this.scenery=smooth(scenery,false);
     privateHost.appendChild(this.app.canvas);
     this.minimap=document.createElement('canvas');this.minimap.className='tactical-minimap';this.minimap.width=192;this.minimap.height=144;this.minimap.setAttribute('aria-label','전체 전황 지도. 클릭하면 해당 위치로 이동합니다.');privateHost.appendChild(this.minimap);
@@ -282,8 +289,31 @@ export class Battlefield {
       const label=new Text({text,style:{fontFamily:'Malgun Gothic',fontSize:14,fontWeight:'700',fill:0xffe4a3,stroke:{color:0x14201b,width:4}}});label.anchor.set(.5,1);label.position.set((at.x+.5)*W,at.y*H-6);this.ground.addChild(label);
     }
   }
+  /** 이 전투의 병종에게 필요한 원화 시트 이름(전용 채색·완성 원화·반응·걷기). */
+  private sheetsFor(u:Unit):string[]{
+    if(structureKind(u.id)||u.id.startsWith('convoy_'))return [];
+    const c=u.unitClass,a=artClass(c),out:string[]=[];
+    if(classSheets.has(c))out.push('own:'+c);
+    const painted=paintedTroopArt[c];if(painted)out.push(painted.sheet);
+    const basic=basicReactionArt[a];if(basic)out.push(basic.sheet);
+    const art=troopArt[a];if(art)out.push(art.sheet,art.sheet+'-walk',art.sheet+'-reaction');
+    return out;
+  }
+  /** 필요한 병종 시트를 하나씩 받아 둔다(받는 동안은 기본 병종 그림으로 그린다). 실패한 시트는 기본 그림 그대로. */
+  private wantSheets(state:BattleState){
+    if(!this.smooth)return;const smooth=this.smooth;
+    for(const u of state.living())for(const id of this.sheetsFor(u)){
+      if(this.sheetWanted.has(id))continue;this.sheetWanted.add(id);
+      const own=id.startsWith('own:')?classSheets.get(id.slice(4) as Unit['unitClass']):undefined,def=troopSheets.find(x=>x.id===id) as {url:string;rows:number;union?:boolean;alphaCutoff?:number;strictGrid?:boolean}|undefined;
+      const cut=own?spriteAtlas(own,3):def?spriteAtlas(def.url,def.rows,4,!!def.union,def.alphaCutoff??8,!!def.strictGrid):undefined;if(!cut)continue;
+      void cut.then(c=>{this.troopTextures.set(id,smooth(c));this.artDirty=true;this.onArtReady();}).catch(error=>console.warn(id+' 병종 시트를 읽지 못해 기본 그림을 씁니다.',error));
+    }
+  }
   render(state:BattleState,selected:string,mode:string,showThreat:boolean,scouted=false){
     this.state=state;this.selected=selected;this.mode=mode;this.ranges.clear();
+    this.wantSheets(state);
+    // 새로 들어온 병종 원화로 바꿔 그린다(동작 중이 아닐 때 한 번에).
+    if(this.artDirty&&!this.busy){this.artDirty=false;for(const a of this.actors.values())a.piece.destroy({children:true});this.actors.clear();this.textures.clear();}
     clear(this.warnings);
     for(const t of state.telegraphs??[]){
       const left=Math.max(1,t.at-state.turn),g=new Graphics();

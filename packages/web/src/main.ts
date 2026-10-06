@@ -12,6 +12,7 @@ const KIND_LABEL:Record<Expedition['kind'],string>={training:'반복 수련',que
 import {campMarkup} from './camp.ts';
 import {officerFeatures,talentTree,strategyHint,martialPower,debatePower,STATUS_NAMES} from './officers.ts';
 import {deploymentPerks} from './officer-perks.ts';
+import {watchCssAtlases} from './css-atlas.ts';
 import {actionNames,duelActionNames,duelLine,temperNames,type DuelAction} from './duel.ts';
 import {spriteAtlas} from './sprite-atlas.ts';
 import {paintedTroopArt} from './painted-troops.ts';
@@ -290,7 +291,7 @@ function showExpeditionResult(){if(resultShown)return;resultShown=true;const run
 }
 function activate(){
   // 전장 그림이 아직이면 기다렸다가 시작한다(첫 화면을 빨리 띄우느라 그림은 뒤에서 준비한다).
-  if(!fieldReady){startRest();modal(waitPanel('전장 준비 중','전장 그림을 마저 받고 있습니다. 끝나면 바로 시작합니다.'),false);void fieldInit?.then(activate,()=>modal('<div class="briefing"><h2>전장 그래픽 오류</h2><p class="render-error">전장 그래픽을 초기화하지 못했습니다. 새로고침해 주세요.</p></div>',false));return;}
+  if(!fieldReady){startRest();modal(waitPanel('전장 준비 중','전장 그림을 마저 받고 있습니다. 끝나면 바로 시작합니다.'),false);void fieldInit?.then(activate,error=>{console.error(error);modal(`<div class="briefing"><h2>전장 그래픽 오류</h2><p class="render-error">전장 그래픽을 준비하지 못했습니다. 브라우저를 최신으로 올리거나, 다른 탭을 닫고 다시 시도해 주세요.</p><p class="muted">원인: ${String((error as Error)?.message??error).replace(/[<>&]/g,'').slice(0,160)}</p><div class="modal-actions"><button class="primary" id="field-retry">다시 시도</button></div></div>`,false);$('#field-retry').onclick=()=>location.reload();});return;}
   hasStarted=true;menuOpen=false;resultShown=false;duelPresented=false;mode='move';
   selected=session.state.living(session.state.currentSide).find(u=>!u.hasActed)?.id??'sima_yi';
   lastLog=session.state.log.length;field.load(session.state);const u=session.state.find(selected);if(u)field.focusUnit(u.pos);
@@ -655,20 +656,22 @@ const within=<T,>(p:Promise<T>,ms:number)=>Promise.race([p,new Promise<never>((_
 // 회선이 느려도 첫 이야기가 빨리 열리게 하려는 것이다. 전투를 먼저 고르면 전장 그림을 바로 받기 시작한다.
 let startRest:()=>void=()=>{};
 async function boot(){
+  // 병종 그림(CSS)은 화면에 나타날 때만 자른다(css-atlas.ts).
+  watchCssAtlases();
   const soft=<T,>(p:Promise<T>,what:string)=>within(p,180000).catch(error=>{console.warn(what+' 그림을 읽지 못해 대신 그림을 씁니다.',error);});
   const cssAtlas=async(name:string,url:string,rows:number,columns=4,union=false,alphaCutoff=8,strictGrid=false)=>{const atlas=await spriteAtlas(url,rows,columns,union,alphaCutoff,strictGrid);document.documentElement.style.setProperty('--'+name+'-atlas','url('+await atlasUrl(atlas)+')');};
   const storyJobs=[soft(cssAtlas('officer-story','officer-story-v1.webp',2),'officer-story'),soft(loadFigures(),'인물'),soft(loadIsoArt(),'조형물'),soft(loadPaintedScenes(),'이야기 배경')];
-  const total=storyJobs.length+6+troopSheets.length;let done=0;const tick=(j:Promise<unknown>)=>void j.then(()=>artProgress(++done,total));
+  const total=storyJobs.length+5;let done=0;const tick=(j:Promise<unknown>)=>void j.then(()=>artProgress(++done,total));
   storyJobs.forEach(tick);artProgress(0,total);
   storyArt=Promise.all(storyJobs).then(()=>{storyReady=true;});
   let rest:Promise<unknown>|undefined;
   startRest=()=>{if(rest)return;
+    field.onArtReady=()=>{if(fieldReady&&!menuOpen&&!field.busy)render();};
     fieldInit=field.init($('#map')).then(()=>{fieldReady=true;field.load(session.state);});
     const jobs:Promise<unknown>[]=[fieldInit.catch(()=>undefined),
       ...([['base','units-v3.webp',6],['extra','units-extra-v1.webp',4],['ram','ram-v1.webp',2,2]] as const).map(([name,url,rows,columns])=>soft(cssAtlas(name,url,rows,columns),name)),
-      ...troopSheets.map(s=>soft(cssAtlas(s.id,s.url,s.rows,4,!!(s as {union?:boolean}).union,(s as {alphaCutoff?:number}).alphaCutoff??8,!!(s as {strictGrid?:boolean}).strictGrid),s.id)),
       soft(navalAtlas().then(async c=>document.documentElement.style.setProperty('--naval-atlas','url('+await atlasUrl(c)+')')),'수군'),
-      soft(loadClassSheets().then(()=>Promise.all([...classSheets].map(async([c,url])=>{try{document.documentElement.style.setProperty('--own-'+c+'-atlas','url('+await atlasUrl(await spriteAtlas(url,3))+')');}catch{/* 계열 그림 */}}))),'병종')];
+      ];
     jobs.forEach(tick);rest=Promise.all(jobs);};
   void storyArt.then(()=>startRest());
   render();showMenu();
