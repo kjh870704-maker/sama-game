@@ -2,8 +2,9 @@
  * 공격 범위(사정 모양) — 근접 병종은 진화하면 팔방까지 넓어진다.
  *
  * - 진화 전(1단)은 모든 병종이 십자: 상하좌우 거리(맨해튼)가 사거리 안.
- * - 근접 병종은 진화하면 팔방(대각선으로 붙은 칸까지)이 된다. 그 이상은 넓히지 않는다.
- *   기병·중기병·산적·무도가는 2단부터, 보병·창병은 3단부터, 책사·술사는 4단에서.
+ * - 병종 특성에 맞는 모양을 진화할 때 한 번 얻는다(그 뒤 단계에서 더 넓어지지 않는다).
+ *   · 팔방(대각선으로 붙은 칸까지): 기병·중기병·산적·무도가 2단, 보병 3단, 책사·술사 4단.
+ *   · 창병: 팔방이 아니라 사방(십자) 그대로, 2단부터 상하좌우 일직선으로 두 칸까지 찌른다.
  * - 원거리 병종(궁·노·궁기병·투석·수군)은 모양을 넓히지 않는다. 사거리는 프로필(range) 그대로이며,
  *   궁·노는 진화해도 최대 3칸이다.
  *
@@ -11,9 +12,10 @@
  */
 import type { Coord, Unit, UnitClass } from "./types.ts";
 import { familyOf, tierOf } from "./classes.ts";
+import { profileOf } from "./units.ts";
 
 export type ReachShape = "cross" | "square";
-/** sq: 대각선까지 닿는 반경(0이면 없음), line: 상하좌우로 사거리보다 더 닿는 칸 수(지금은 쓰지 않는다). */
+/** sq: 대각선까지 닿는 반경(0이면 없음), line: 상하좌우 일직선으로 사거리보다 더 닿는 칸 수(창병). */
 export interface ReachSpec { sq: number; line: number }
 
 type Tiers = [ReachSpec, ReachSpec, ReachSpec, ReachSpec];
@@ -22,7 +24,7 @@ const CROSS = s(0), EIGHT = s(1);
 /** 계열별 1~4단 공격 범위. 표에 없는 계열은 3단부터 팔방(근접) 또는 십자 그대로. */
 const BY_FAMILY: Partial<Record<UnitClass, Tiers>> = {
   infantry: [CROSS, CROSS, EIGHT, EIGHT],
-  spearman: [CROSS, CROSS, EIGHT, EIGHT],
+  spearman: [CROSS, s(0, 1), s(0, 1), s(0, 1)],
   bandit: [CROSS, EIGHT, EIGHT, EIGHT],
   monk: [CROSS, EIGHT, EIGHT, EIGHT],
   cavalry: [CROSS, EIGHT, EIGHT, EIGHT],
@@ -54,10 +56,10 @@ export function reachShape(unitClass: UnitClass): ReachShape {
 
 export const REACH_NAMES: Record<ReachShape, string> = { cross: "십자", square: "팔방(대각선 포함)" };
 
-/** 공격 범위를 한 줄로: 「십자」, 「팔방」, 「십자 · 직선 +1」 등. */
+/** 공격 범위를 한 줄로: 「십자」, 「팔방」, 「십자 · 일직선 2칸」. */
 export function reachLabel(unitClass: UnitClass): string {
   const r = reachSpec(unitClass);
-  return (r.sq > 0 ? "팔방" : "십자") + (r.line ? ` · 직선 +${r.line}` : "");
+  return (r.sq > 0 ? "팔방" : "십자") + (r.line ? ` · 일직선 ${profileOf(unitClass).range[1] + r.line}칸` : "");
 }
 
 /** `from`에 선 `unit`의 평타가 `to`에 닿는가. */

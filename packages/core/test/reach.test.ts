@@ -10,17 +10,27 @@ describe("병종별 공격 범위 — 진화할수록 넓어진다", () => {
       expect(reachOffsets({ unitClass: c, range: [1, 1] })).toHaveLength(4);
     }
   });
-  it("기병·산적·무도가는 2단부터 팔방, 보병·창병은 3단부터 팔방", () => {
-    for (const c of ["lancer", "outlaw", "warriorMonk", "royalGuard", "halberdier"] as const) {
+  it("기병·산적·무도가는 2단부터 팔방, 보병은 3단부터 팔방", () => {
+    for (const c of ["lancer", "outlaw", "warriorMonk", "royalGuard"] as const) {
       expect(reachShape(c)).toBe("square");
       expect(inReach({ unitClass: c, range: [1, 1] }, o, { x: 1, y: 1 })).toBe(true);
       expect(reachOffsets({ unitClass: c, range: [1, 1] })).toHaveLength(8);
     }
     expect(reachShape("shieldGuard")).toBe("cross");
-    expect(reachShape("pikeman")).toBe("cross");
+  });
+  it("창병은 사방 그대로, 2단부터 일직선 두 칸까지 찌르고 그 뒤로는 넓어지지 않는다", () => {
+    expect(reachOffsets({ unitClass: "spearman", range: [1, 1] })).toHaveLength(4);
+    for (const c of ["pikeman", "halberdier", "divineSpear"] as const) {
+      expect(reachShape(c)).toBe("cross");
+      expect(inReach({ unitClass: c, range: [1, 1] }, o, { x: 0, y: 2 })).toBe(true);
+      expect(inReach({ unitClass: c, range: [1, 1] }, o, { x: 1, y: 1 })).toBe(false);
+      expect(inReach({ unitClass: c, range: [1, 1] }, o, { x: 0, y: 3 })).toBe(false);
+      expect(reachOffsets({ unitClass: c, range: [1, 1] })).toHaveLength(8);
+      expect(reachLabel(c)).toBe("십자 · 일직선 2칸");
+    }
   });
   it("근접은 팔방까지만: 4단도 두 칸 밖은 닿지 않는다", () => {
-    for (const c of ["divineSpear", "northRider", "ironInfantry", "wujiHeavyCav"] as const) {
+    for (const c of ["northRider", "ironInfantry", "wujiHeavyCav"] as const) {
       expect(reachOffsets({ unitClass: c, range: [1, 1] })).toHaveLength(8);
       expect(inReach({ unitClass: c, range: [1, 1] }, o, { x: 0, y: 2 })).toBe(false);
       expect(reachSpec(c).line).toBe(0);
