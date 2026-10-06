@@ -193,6 +193,8 @@ export interface Unit {
   ccRules?: boolean;
   /** 장수 다섯 능력(무력·지력·통솔·민첩·운). 조조전 규칙에서 능력치 성장과 상태 회복에 쓴다. */
   ability?: Ability;
+  /** 이름난 장수의 회심 보너스(%p). 무력·운이 높을수록 크다. 일반 병사는 없음. */
+  officerCrit?: number;
   hasActed: boolean;
   alive: boolean;
   /** 도구 사용 가능 여부. 편입 아군은 false. PRD §3.3 */

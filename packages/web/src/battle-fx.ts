@@ -32,6 +32,31 @@ export class BattleFx {
     if(this.reduced)return;const g=new Graphics();g.rect(0,0,this.app.screen.width,this.app.screen.height).fill(color);g.alpha=alpha;g.blendMode='add';this.overlay.addChild(g);const born=performance.now();
     const tick=()=>{if(g.destroyed){this.app.ticker.remove(tick);return;}const t=(performance.now()-born)/ms;g.alpha=alpha*(1-t);if(t>=1){this.app.ticker.remove(tick);g.destroy();}};this.app.ticker.add(tick);
   }
+  /** 회심 순간 화면 가장자리에서 표적으로 몰려드는 집중선(만화 효과선). sx·sy = 표적의 화면 좌표. */
+  speedLines(sx:number,sy:number,color=0xfff0c0,ms=420){
+    if(this.reduced)return Promise.resolve();
+    const g=new Graphics();g.blendMode='add';this.overlay.addChild(g);const W=this.app.screen.width,H=this.app.screen.height,R=Math.hypot(W,H);
+    const rays=Array.from({length:44},()=>({a:rnd()*TAU,w:1.5+rnd()*4,inner:.18+rnd()*.22}));const born=performance.now();
+    return new Promise<void>(res=>{const tick=()=>{if(g.destroyed){this.app.ticker.remove(tick);res();return;}const t=Math.min(1,(performance.now()-born)/ms),a=t<.15?t/.15:1-(t-.15)/.85;g.clear();
+      for(const r of rays){const i=R*(r.inner-.08*t),c=Math.cos(r.a),s2=Math.sin(r.a);g.poly([sx+c*R,sy+s2*R,sx+c*i-s2*r.w,sy+s2*i+c*r.w,sx+c*i+s2*r.w,sy+s2*i-c*r.w]).fill({color,alpha:.5*a});}
+      g.rect(0,0,W,H).stroke({color:0x000000,width:Math.min(W,H)*.08,alpha:.35*a});
+      if(t>=1){this.app.ticker.remove(tick);g.destroy();res();}};this.app.ticker.add(tick);});
+  }
+  /** 장수의 회심: 화면을 가로지르는 띠에 큰 글씨(「회심의 일격」)와 장수 이름이 스치고 지나간다. */
+  cutIn(title:string,name:string,color=0xffcf5a,ms=780){
+    if(this.reduced)return Promise.resolve();
+    const W=this.app.screen.width,H=this.app.screen.height,box=new Container(),band=new Graphics();this.overlay.addChild(box);
+    const big=Math.max(22,Math.min(44,W/20)),y=H*.16;
+    band.rect(-W,-big*.75,W*3,big*1.5).fill({color:0x120806,alpha:.72});band.rect(-W,-big*.75,W*3,2).fill(color);band.rect(-W,big*.75-2,W*3,2).fill(color);
+    const t1=new Text({text:title,style:{fontFamily:'Malgun Gothic',fontSize:big,fontWeight:'900',fill:color,stroke:{color:0x3a1206,width:6},letterSpacing:6}});t1.anchor.set(.5);
+    const t2=new Text({text:name,style:{fontFamily:'Malgun Gothic',fontSize:Math.round(big*.42),fontWeight:'800',fill:0xfff3d6,stroke:{color:0x200a04,width:4},letterSpacing:3}});t2.anchor.set(0,.5);t2.x=t1.width/2+18;t2.y=big*.12;
+    box.addChild(band,t1,t2);box.y=y;const born=performance.now();
+    return new Promise<void>(res=>{const tick=()=>{if(box.destroyed){this.app.ticker.remove(tick);res();return;}const t=Math.min(1,(performance.now()-born)/ms);
+      // 빠르게 미끄러져 들어와(0~15%) 잠깐 멎었다가(15~75%) 반대편으로 빠진다.
+      const x=t<.15?W*1.4-(W*.9)*(1-Math.pow(1-t/.15,3)):t<.75?W*.5-(t-.15)*W*.06:W*.5-W*.036-(t-.75)/.25*W*1.2;
+      box.x=x;box.alpha=t>.85?1-(t-.85)/.15:1;t1.scale.set(t<.15?1.25-.25*(t/.15):1);
+      if(t>=1){this.app.ticker.remove(tick);box.destroy({children:true});res();}};this.app.ticker.add(tick);});
+  }
   /** 대상 위에 금빛 역삼각(겨눔 표시). */
   targetMark(p:P,ms=520){return this.run(ms,(g,t)=>{const bob=Math.sin(t*TAU*2)*3,y=p.y-78+bob,s=1+Math.sin(Math.min(1,t*3)*Math.PI)*.25,a=t<.8?1:1-(t-.8)/.2;
     g.circle(p.x,y,22*s).fill({color:0xffc04a,alpha:.18*a});g.poly([p.x-13*s,y-9*s,p.x+13*s,y-9*s,p.x,y+12*s]).fill({color:0xff4a2a,alpha:a}).stroke({color:0xffe8a0,width:2.5,alpha:a});

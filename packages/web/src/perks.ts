@@ -74,3 +74,14 @@ export const PERK_TEXT:Record<string,{name:string;text:(n:number)=>string}>={
   mpThrift:{name:'책략 절약',text:n=>`책략 소모 MP -${n}%`},
 };
 export const perkText=(id:string,n:number)=>PERK_TEXT[id]?.text(n)??`${id} ${n}`;
+/** 병종 특성 한 줄 요약(진화 개화 설명용). 손으로 쓴 설명 대신 실제 수치에서 만든다. */
+const CLASS_TRAIT_TEXT:Record<string,(n:number)=>string>={
+  attackBoost:n=>`공격 +${n}%`,critical:n=>`회심 +${n}%`,penetrate:n=>`방어 ${n}% 무시`,lifesteal:n=>`피해의 ${n}% 회복`,
+  physicalDamageReduction:n=>`물리 피해 -${n}%`,strategyDamageReduction:n=>`책략 피해 -${n}%`,counterBoost:n=>`반격 +${n}%`,
+  veteran:n=>`빈사 시 피해 -${n}%`,lastStand:n=>`궁지 공격 최대 +${n}%`,strategyEvasion:n=>`책략 회피 +${n}%p`,healPower:n=>`회복량 +${n}%`,
+  strategyPower:n=>`책략 피해 +${n}%`,chargePower:n=>`돌격 피해 +${n}%`,physicalReflect:n=>`물리 피해 ${n}% 반사`,strategyReflect:n=>`책략 피해 ${n}% 반사`,
+  fireWeakness:n=>`화계에 약함(+${n}%)`,roughTerrainMove:()=>'험지를 평지처럼',guardian:()=>'옆 아군을 지킨다',unlimitedCounter:()=>'반격 횟수 제한 없음',
+};
+export function classTraitSummary(traits:Readonly<Record<string,number>>|undefined){
+  return Object.entries(traits??{}).map(([k,n])=>CLASS_TRAIT_TEXT[k]?.(n)??(PERK_TEXT[k]?PERK_TEXT[k]!.text(n):'')).filter(Boolean).join(' · ');
+}

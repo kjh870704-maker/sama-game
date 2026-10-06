@@ -120,9 +120,16 @@ function physicalRaw(attacker: Unit, defender: Unit, map: BattleMap, ctx: Damage
   const def = defender.stats.defense * (1 - ctx.defenseIgnore);
   return { base: Math.max(MIN_DAMAGE, atk - def), matchup, terrain: map.terrainAffinity(attacker.unitClass, attacker.pos), elevation, morale: moraleMultiplier(attacker.stats.morale), tactic };
 }
-/** 회심 확률(%): 조조전 규칙은 사기 비율에 특성 보정을 더한다. */
+/** 회심 확률(%): 조조전 규칙은 사기 비율에 특성 보정을 더한다. 이름난 장수는 무력·운에 따른 보너스가 더해진다(물리 공격만). */
 function criticalChanceOf(ctx: DamageContext): number {
-  return ctx.attacker.ccRules ? Math.min(100, ccRatioChance(ctx.attacker.stats.morale, ctx.defender.stats.morale) + ctx.criticalChance) : ctx.criticalChance;
+  const officer = ctx.kind === "physical" ? ctx.attacker.officerCrit ?? 0 : 0;
+  return ctx.attacker.ccRules ? Math.min(100, ccRatioChance(ctx.attacker.stats.morale, ctx.defender.stats.morale) + ctx.criticalChance + officer) : Math.min(100, ctx.criticalChance + officer);
+}
+/** 물리 공격의 회심 확률(%) — 공격 미리보기용. */
+export function criticalChance(attacker: Unit, defender: Unit): number {
+  const ctx = createDamageContext(attacker, defender, "physical");
+  applyTraitHooks(ctx);
+  return Math.round(criticalChanceOf(ctx));
 }
 /** 2회 공격 확률(%): 조조전 규칙에서만, 순발력 비율로. */
 export function doubleAttackChance(attacker: Unit, defender: Unit): number {

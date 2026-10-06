@@ -24,8 +24,14 @@ const KEYS=['maxHp','maxMp','attack','defense','intellect','spirit','agility'] a
  * 성문·망루·목책·호위 대상처럼 체력을 일부러 맞춘 부대는 keepHp로 체력·책략 최대치를 그대로 둔다
  * (공격·방어·순발은 새 규칙에 맞춰야 피해가 옛 규칙과 같은 무게로 들어간다).
  */
+/** 이름난 장수의 회심 보너스(%p): 무력·운이 높을수록 잘 터진다(5~20). 일반 병사는 0. */
+export function officerCritOf(u:Unit):number{
+  const r=romanceOf(u);if(!r)return 0;const a=abilityOf(u);
+  return Math.max(5,Math.min(20,Math.round(5+(a.war-60)/4+(a.luck-60)/8)));
+}
 export function applyCC(u:Unit,keepHp=false):void{
   u.ccRules=true;u.ability=abilityOf(u);
+  const oc=officerCritOf(u);if(oc>0)u.officerCrit=oc;
   const s=u.stats,base=statsFor(u.unitClass,u.level),cc=ccStatsFor(u.unitClass,u.level,u.ability,u.side,s.movement);
   const hp=u.hp/Math.max(1,s.maxHp),mp=s.maxMp>0?u.mp/s.maxMp:1;
   for(const k of KEYS)if(!keepHp||(k!=='maxHp'&&k!=='maxMp'))s[k]=Math.max(k==='maxMp'?0:1,Math.round(s[k]*cc[k]/Math.max(1,base[k])));

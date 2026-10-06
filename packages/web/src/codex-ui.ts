@@ -26,7 +26,7 @@ import {allStrategies,STATUS_NAMES,SHAPE_TEXT,familyAllows,schoolOf,SCHOOL_NAMES
 import {officerFeatures} from './officers.ts';
 import {loadMeta,saveMeta} from './meta.ts';
 import {perksFor,perkState,bestLevel,learnPerk,togglePerk,officerClass,perkAt,officerTier,PERK_TIERS} from './officer-perks.ts';
-import {perkText} from './perks.ts';
+import {perkText,classTraitSummary} from './perks.ts';
 import {skillParam} from './romance.ts';
 import {perkSlots,gateText} from './research.ts';
 import {CHU,HAN,isChuHan,legacyOf,legacyState,legacyText,unlockLegacy,chooseHeir} from './chuhan.ts';
@@ -149,7 +149,7 @@ function classesTab(pick:string){
     <p class="cx-tags"><span>이동 ${p.movement}</span><span>사거리 ${p.range[0]}~${p.range[1]} · ${reachLabel(c)}</span>${p.canUseStrategy?'<span>책략 사용</span>':''}</p>
     <div class="cx-ranges"><figure><figcaption>평타 범위 · ${reachLabel(c)}</figcaption>${rangeGrid(reachOffsets({unitClass:c,range:p.range}),'cast')}</figure></div>
     ${ccGrades(c)}
-    ${v?.bloom?`<p class="cx-unique"><b>개화 「${esc(v.bloom.name)}」</b> ${esc(v.bloom.description)}</p>`:''}
+    ${v?.bloom?`<p class="cx-unique"><b>개화 「${esc(v.bloom.name)}」</b> ${esc(classTraitSummary(v.traits)||v.bloom.description)}</p>`:''}
     ${classTactics(c).map(t=>`<p class="cx-unique"><b>전법 「${esc(t.name)}」</b> ${esc(t.description)}</p>`).join('')}
     ${line?`<div class="cx-line">${line.map(([k,lv],i)=>`${i?`<span class="evo-arrow">Lv.${lv} →</span>`:''}<button data-cx-class="${k}" class="evo-node ${k===c?'chosen':''}"><b>${'◆'.repeat(tierOf(k))}</b>${esc(classNames[k]??k)}</button>`).join('')}</div>`:''}
     ${spells.length?`<div class="cx-spells"><b>쓰는 책략 ${spells.length}</b><div>${spells.map(id=>{const s=allStrategies.find(x=>x.id===id);return s?`<button data-cx-spell="${s.id}" title="${esc(s.name)} · Lv.${s.level}"><img src="${strategyIcon(s.id)}" alt=""><small>${esc(s.name)}</small></button>`:'';}).join('')}</div></div>`:''}</div>`;

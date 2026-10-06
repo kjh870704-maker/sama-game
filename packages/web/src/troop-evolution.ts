@@ -7,6 +7,7 @@ import type {UnitClass} from '../../core/src/index.ts';
 import {VARIANTS,tierOf,familyOf,profileOf,classTactics,reachOffsets,reachLabel} from '../../core/src/index.ts';
 import {classNames,evolutionLines} from './troops.ts';
 import {classSprite,paintArmor} from './codex-ui.ts';
+import {classTraitSummary} from './perks.ts';
 
 const esc=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 export type EvoGroup='all'|'foot'|'spear'|'horse'|'ranged'|'mind'|'siege';
@@ -24,10 +25,10 @@ function reachMini(c:UnitClass){
 function card(c:UnitClass,lv:number,prev?:UnitClass){
   const p=profileOf(c),q=prev?profileOf(prev):undefined,v=VARIANTS[c],t=tierOf(c);
   const grew=!!prev&&(reachLabel(prev)!==reachLabel(c)||p.range[1]>q!.range[1]);
-  const tactic=v?.bloom??classTactics(c)[0];
+  const tactic=v?.bloom?{name:v.bloom.name,description:classTraitSummary(v.traits)||v.bloom.description}:classTactics(c)[0];
   return `<article class="evo-card t${t}"><div class="evo-top">${classSprite(c)}<div><small>${'◆'.repeat(t)} ${TIER_NAME[t]}${lv?` · Lv.${lv}`:''}</small><h4>${esc(classNames[c]??c)}</h4></div></div>
     <div class="evo-range">${reachMini(c)}<p><b class="${grew?'up':''}">${esc(reachLabel(c))}${grew?' ▲':''}</b><span>사거리 ${p.range[0]===p.range[1]?p.range[0]:p.range[0]+'~'+p.range[1]} · 이동 ${p.movement}</span></p></div>
-    ${tactic?`<p class="evo-skill" title="${esc(tactic.description)}">${v?.bloom?'개화':'전법'} 「${esc(tactic.name)}」</p>`:''}</article>`;
+    ${tactic?`<p class="evo-skill" title="${esc(tactic.description)}"><b>${v?.bloom?'개화':'전법'} 「${esc(tactic.name)}」</b>${v?.bloom&&tactic.description?`<span>${esc(tactic.description)}</span>`:''}</p>`:''}</article>`;
 }
 export function evolutionChart(group:EvoGroup='all'){
   const fams=EVO_GROUPS.find(g=>g[0]===group)![2];

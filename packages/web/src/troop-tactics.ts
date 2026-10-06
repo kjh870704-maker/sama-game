@@ -1,3 +1,4 @@
+import {classTraitSummary} from './perks.ts';
 import {matchupMultiplier,familyOf,tierOf,VARIANTS,getTrait,type Unit,type UnitClass} from '../../core/src/index.ts';
 import type {TrialLandscape} from './expedition-scenes.ts';
 import {expeditionLandscape} from './expedition-scenes.ts';
@@ -49,6 +50,6 @@ export function physicalMatchup(a:UnitClass,d:UnitClass){const m=matchupMultipli
 export function adviceFor(c:UnitClass):string{
   const own=troopAdvice[c];if(own)return own;
   const v=VARIANTS[c],tier=tierOf(c);
-  const skill=v?.bloom?`개화 「${v.bloom.name}」 ${v.bloom.description}. `:v?.traits?`고유 특성: ${Object.keys(v.traits).map(t=>getTrait(t).name).join(' · ')}. `:'';
+  const skill=v?.bloom?`개화 「${v.bloom.name}」 ${classTraitSummary(v.traits)||v.bloom.description}. `:v?.traits?`고유 특성: ${Object.keys(v.traits).map(t=>getTrait(t).name).join(' · ')}. `:'';
   return `${tier>1?`${tier}단계 진화 병종. `:''}${skill}${troopAdvice[familyOf(c)]??''}`;
 }

@@ -50,7 +50,7 @@ import { Session, chapters, campaignOrder, type Preparation } from './session.ts
 import { Battlefield, classNames, terrainNames, unitName } from './battlefield.ts';
 import { Soundscape } from './audio.ts';
 import {placeFor,bossNear} from './music.ts';
-import { CONTROLLABLE, ignoresRough, awardedSeals, estimatePhysical, estimateStrategy, previewAttack, doubleAttackChance, manhattan, inReach, reachLabel, tierOf, familyOf, classTactics, STRATEGY_TIER_NAMES } from '../../core/src/index.ts';
+import { CONTROLLABLE, ignoresRough, awardedSeals, estimatePhysical, estimateStrategy, previewAttack, doubleAttackChance, criticalChance, manhattan, inReach, reachLabel, tierOf, familyOf, classTactics, STRATEGY_TIER_NAMES } from '../../core/src/index.ts';
 import type { BattleState, Command, Coord, LogEntry, TerrainKind, Unit } from '../../core/src/index.ts';
 import {strategyIconUrl} from './strategy-icons.ts';
 
@@ -342,7 +342,7 @@ function hudHover(at:Coord|undefined){
   if(!left&&t){left={u:t};right=undefined;}
   if(u&&t&&right&&t.side==='enemy'){const d=manhattan(u.pos,t.pos),def=s.strategyFor(u,mode);
     if(def&&d<=def.range){const dmg=estimateStrategy(u,t,def,s.map);right.o={preview:dmg,note:`${def.name??mode} · 예상 피해 ${dmg}`};}
-    else if(mode==='attack'&&inReach(u,u.pos,t.pos)){const v=previewAttack(u,t,s.map,session.battle.wouldCounter(t,u));right.o={preview:v.hit>0?v.damage:0,note:`명중 ${v.hit}% · 피해 ${v.damage}${doubleAttackChance(u,t)>1?` · 연속 ${Math.round(doubleAttackChance(u,t))}%`:''}${v.lethal?' · 격파':''}`};if(v.counter)left={u,o:{preview:v.counter.damage,note:`반격 ${v.counter.damage} · 명중 ${v.counter.hit}%`}};}}
+    else if(mode==='attack'&&inReach(u,u.pos,t.pos)){const v=previewAttack(u,t,s.map,session.battle.wouldCounter(t,u));right.o={preview:v.hit>0?v.damage:0,note:`명중 ${v.hit}% · 피해 ${v.damage}${criticalChance(u,t)>=3?` · 회심 ${criticalChance(u,t)}%`:''}${doubleAttackChance(u,t)>1?` · 연속 ${Math.round(doubleAttackChance(u,t))}%`:''}${v.lethal?' · 격파':''}`};if(v.counter)left={u,o:{preview:v.counter.damage,note:`반격 ${v.counter.damage} · 명중 ${v.counter.hit}%`}};}}
   renderHud($('#unit-hud'),s,left,right);
 }
 /** 싸움이 일어나면: 친 쪽과 맞은 쪽 카드를 띄우고 체력 막대를 싸우기 전에서 뒤로 줄인다. */
