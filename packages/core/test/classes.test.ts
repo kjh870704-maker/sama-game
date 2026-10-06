@@ -32,7 +32,7 @@ describe("병종 계통과 진화", () => {
     const u = makeUnit({ id: "a", side: "player", unitClass: "archer", level: 16, pos: { x: 0, y: 0 } });
     u.hp = Math.round(u.stats.maxHp / 2);
     expect(evolveUnit(u, "sharpshooter")).toBe("archer");
-    expect(u.range).toEqual([2, 4]);
+    expect(u.range).toEqual([2, 3]);
     expect(u.traits).toContain("penetrate");
     expect(u.stats.attack).toBe(statsFor("sharpshooter", 16).attack);
     expect(Math.abs(u.hp / u.stats.maxHp - 0.5)).toBeLessThan(0.02);

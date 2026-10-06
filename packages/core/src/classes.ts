@@ -66,13 +66,13 @@ export const VARIANTS: Partial<Record<UnitClass, ClassVariant>> = {
   // 궁병 계통 — 사거리
   longbow: { family: "archer", tier: 2, profile: p(0.9, 0.53, 1.08, 0.85, 0.85, 0.96, 1.17, 5, [2, 3]), traits: { critical: 10 },
     bloom: { name: "정조준", description: "사거리 2~3 · 회심 10%" } },
-  sharpshooter: { family: "archer", tier: 3, profile: p(0.96, 0.56, 1.22, 0.9, 0.9, 1.02, 1.25, 5, [2, 4]), traits: { critical: 15, penetrate: 20 },
-    bloom: { name: "백보천양", description: "사거리 2~4 · 회심 15% · 적 방어 20% 무시" } },
+  sharpshooter: { family: "archer", tier: 3, profile: p(0.96, 0.56, 1.22, 0.9, 0.9, 1.02, 1.25, 5, [2, 3]), traits: { critical: 15, penetrate: 20 },
+    bloom: { name: "백보천양", description: "회심 15% · 적 방어 20% 무시" } },
   // 노병 계통 — 관통
   repeater: { family: "crossbow", tier: 2, profile: p(0.96, 0.53, 1.18, 0.9, 0.85, 0.96, 0.96, 4, [2, 3]), traits: { attackBoost: 4 },
     bloom: { name: "연발", description: "공격력 +4" } },
-  greatBow: { family: "crossbow", tier: 3, profile: p(1.02, 0.56, 1.32, 0.96, 0.9, 1.02, 1.02, 4, [2, 4]), traits: { attackBoost: 6, penetrate: 30 },
-    bloom: { name: "대황노", description: "사거리 2~4 · 공격력 +6 · 적 방어 30% 무시" } },
+  greatBow: { family: "crossbow", tier: 3, profile: p(1.02, 0.56, 1.32, 0.96, 0.9, 1.02, 1.02, 4, [2, 3]), traits: { attackBoost: 6, penetrate: 30 },
+    bloom: { name: "대황노", description: "공격 +6% · 적 방어 30% 무시" } },
   // 책사 계통 — 지력
   tactician: { family: "strategist", tier: 2, profile: p(0.8, 1.45, 0.64, 0.75, 1.38, 1.3, 1.06, 5, [1, 1], true), traits: { strategyPower: 8 },
     bloom: { name: "군략", description: "책략 피해 8% 증가" } },
