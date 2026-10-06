@@ -1,0 +1,269 @@
+{
+  "id": "S1-09",
+  "arc": "upper",
+  "order": 9,
+  "title": "쳇바퀴",
+  "subtitle": "한중 공방전 상",
+  "synopsis": "조운이 불태운 한수의 부교를 다시 놓고, 물러나는 조조를 야곡 출구까지 호위한다. 다리가 서기 전에는 강을 건널 수 없다.",
+  "mapId": "hanzhong-hanshui-bridge",
+  "deployment": {
+    "forced": [
+      "sima_yi",
+      "cao_zhen"
+    ],
+    "slots": 2,
+    "grantedUnits": [
+      {
+        "type": "engineer",
+        "count": 1,
+        "level": 7,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "infantry",
+        "count": 1,
+        "level": 7,
+        "traits": [
+          "guardian"
+        ],
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "crossbow",
+        "count": 1,
+        "level": 7,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "reach",
+      "unit": "cao_cao",
+      "target": "exit"
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_zhen"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_cao"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:2",
+      "extreme": "player_losses_lt:1",
+      "note": "편입 아군(공병·방패병·노병) 3기가 손실 카운트에 포함됩니다 (PRD R-5.5)"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:14",
+      "extreme": "turn_limit:12"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 6,
+      "recommendedLevel": 7
+    },
+    "extreme": {
+      "minEnemyLevel": 8,
+      "recommendedLevel": 9
+    }
+  },
+  "gimmicks": [
+    "M-05",
+    "M-08"
+  ],
+  "events": [
+    {
+      "id": "hanshui/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "cao_cao",
+              "name": "조조",
+              "template": "infantry",
+              "level": 7,
+              "at": {
+                "x": 0,
+                "y": 7
+              },
+              "behavior": "escortee",
+              "goalRegion": "exit"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "far_bank_bow",
+              "name": "강 건너 궁수대",
+              "template": "archer",
+              "level": 6,
+              "at": {
+                "x": 15,
+                "y": 6
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "far_bank_spear",
+              "name": "부교 수비 창병",
+              "template": "spearman",
+              "level": 6,
+              "at": {
+                "x": 15,
+                "y": 8
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "pass_guard",
+              "name": "야곡 차단대",
+              "template": "infantry",
+              "level": 6,
+              "at": {
+                "x": 20,
+                "y": 3
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "pass_bow",
+              "name": "야곡 노병",
+              "template": "crossbow",
+              "level": 6,
+              "at": {
+                "x": 19,
+                "y": 5
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "huang_zhong",
+              "name": "황충",
+              "template": "archer",
+              "level": 7,
+              "at": {
+                "x": 21,
+                "y": 2
+              },
+              "behavior": "hold",
+              "traits": [
+                "critical"
+              ]
+            },
+            {
+              "id": "west_raider",
+              "name": "서쪽 추격 기병",
+              "template": "cavalry",
+              "level": 6,
+              "at": {
+                "x": 3,
+                "y": 13
+              },
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "부교 재건"
+        }
+      ]
+    },
+    {
+      "id": "hanshui/bridge",
+      "trigger": {
+        "type": "region_held",
+        "region": "bridge_bank",
+        "by": "player",
+        "n": 2
+      },
+      "actions": [
+        {
+          "type": "terrain_change",
+          "region": "bridge_span",
+          "terrain": "bridge"
+        },
+        {
+          "type": "set_phase",
+          "phase": "조조 호위 · 야곡 출구로"
+        }
+      ]
+    },
+    {
+      "id": "hanshui/pursuit",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 3,
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "template": "cavalry",
+              "level": 6,
+              "count": 2,
+              "region": "camp",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hanshui/zhao-yun",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 6,
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "template": "spearman",
+              "level": 6,
+              "count": 2,
+              "region": "camp",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

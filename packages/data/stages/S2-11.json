@@ -1,0 +1,268 @@
+{
+  "id": "S2-11",
+  "arc": "middle",
+  "order": 22,
+  "title": "목문도의 화살",
+  "subtitle": "목둔 골짜기 전투",
+  "synopsis": "군량이 떨어진 제갈량이 물러난다. 장합이 선봉으로 쫓고 사마의의 본대가 뒤따른다. 선봉과 본대가 떨어지면 장합이 고립된다. 골짜기 어귀에서 본대가 합류하면 이야기가 이어지고, 그 뒤 사마의는 군을 돌려 동쪽으로 회군한다. 회군 중에는 남은 병력을 지키는 것이 평가된다.",
+  "mapId": "mumen-gorge",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "cavalry",
+        "count": 1,
+        "level": 14,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 14,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "archer",
+        "count": 1,
+        "level": 14,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "reach",
+      "unit": "sima_yi",
+      "target": "join",
+      "order": 1
+    },
+    {
+      "type": "dialogue_complete",
+      "target": "mumen_turn",
+      "order": 2
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "zhang_he"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:1",
+      "extreme": "player_losses_lt:1",
+      "note": "편입 기병·창병·궁병이 손실 카운트에 포함됩니다 (PRD R-5.5)"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:14",
+      "extreme": "turn_limit:15"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 12,
+      "recommendedLevel": 14
+    },
+    "extreme": {
+      "minEnemyLevel": 14,
+      "recommendedLevel": 16
+    }
+  },
+  "gimmicks": [
+    "M-05",
+    "M-16",
+    "M-21"
+  ],
+  "dialogues": [
+    {
+      "id": "mumen_turn",
+      "speaker": "sima_yi",
+      "text": "장합이 쓰러졌다. 골짜기 위 쇠뇌가 다시 시위를 당긴다. 여기서 더 들어가면 남은 병사도 잃는다.",
+      "options": [
+        {
+          "id": "withdraw",
+          "text": "군을 돌린다 · 동쪽 출구로 회군하며 남은 병력을 지킨다"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "mumen/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "zhang_he",
+              "name": "장합",
+              "template": "cavalry",
+              "level": 15,
+              "at": {
+                "x": 18,
+                "y": 7
+              },
+              "behavior": "race",
+              "goalRegion": "gorge_mouth"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "shu_rear",
+              "name": "촉 후위",
+              "template": "spearman",
+              "level": 13,
+              "count": 2,
+              "region": "rearguard",
+              "behavior": "advance"
+            },
+            {
+              "id": "shu_rear_bow",
+              "name": "촉 후위 궁수",
+              "template": "archer",
+              "level": 13,
+              "at": {
+                "x": 9,
+                "y": 6
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "선봉 유지"
+        }
+      ]
+    },
+    {
+      "id": "mumen/vanguard-halts",
+      "trigger": {
+        "type": "unit_reaches",
+        "unit": "zhang_he",
+        "region": "gorge_mouth"
+      },
+      "actions": [
+        {
+          "type": "set_phase",
+          "phase": "본대 합류"
+        }
+      ]
+    },
+    {
+      "id": "mumen/joined",
+      "phase": "본대 합류",
+      "trigger": {
+        "type": "unit_reaches",
+        "unit": "sima_yi",
+        "region": "join"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "cliff_xbow",
+              "name": "벼랑 쇠뇌수",
+              "template": "crossbow",
+              "level": 14,
+              "count": 4,
+              "region": "cliff_nests",
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "목문도"
+        }
+      ]
+    },
+    {
+      "id": "mumen/fall",
+      "phase": "목문도",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "dismiss_units",
+          "targets": [
+            "zhang_he"
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "회군"
+        },
+        {
+          "type": "change_victory",
+          "conditions": [
+            {
+              "type": "reach",
+              "unit": "sima_yi",
+              "target": "retreat_exit"
+            }
+          ]
+        },
+        {
+          "type": "play_dialogue",
+          "dialogueId": "mumen_turn"
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "pursuer",
+              "name": "촉 추격대",
+              "template": "cavalry",
+              "level": 13,
+              "count": 3,
+              "region": "pursuers",
+              "behavior": "advance"
+            },
+            {
+              "id": "east_block",
+              "name": "퇴로 매복",
+              "template": "spearman",
+              "level": 13,
+              "count": 2,
+              "region": "east_block",
+              "behavior": "hold"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

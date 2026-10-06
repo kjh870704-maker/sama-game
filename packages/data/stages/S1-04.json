@@ -1,0 +1,355 @@
+{
+  "id": "S1-04",
+  "arc": "upper",
+  "order": 4,
+  "title": "부름의 그림자",
+  "subtitle": "흉몽",
+  "synopsis": "진궁·여포·주유의 환영을 차례로 상대하고 전차를 지나 황제에게 접근한다.",
+  "initialPhase": "진궁과의 대결",
+  "mapId": "nightmare-court",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1
+  },
+  "victory": [
+    {
+      "type": "retreat",
+      "unit": "chen_gong",
+      "order": 1
+    },
+    {
+      "type": "retreat",
+      "unit": "lu_bu",
+      "order": 2
+    },
+    {
+      "type": "retreat",
+      "unit": "zhou_yu",
+      "order": 3
+    },
+    {
+      "type": "reach",
+      "unit": "sima_yi",
+      "target": "emperor_approach",
+      "order": 4
+    },
+    {
+      "type": "dialogue_complete",
+      "target": "dream_3",
+      "order": 5
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "no_player_losses",
+      "extreme": "no_player_losses"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:18",
+      "extreme": "turn_limit:15"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 16,
+      "recommendedLevel": 32
+    },
+    "extreme": {
+      "minEnemyLevel": 31,
+      "recommendedLevel": 47
+    }
+  },
+  "gimmicks": [
+    "M-04"
+  ],
+  "dialogues": [
+    {
+      "id": "dream_0",
+      "text": "어둠 속에서 진궁이 묻는다. “재주를 바칠 주군은 정했는가?” 아직 걷지 않은 길의 끝이 눈앞에 펼쳐진다. 진궁의 환영을 격파하라.",
+      "options": [
+        {
+          "id": "continue",
+          "text": "마음을 가다듬고 대결한다."
+        }
+      ]
+    },
+    {
+      "id": "dream_1",
+      "text": "창끝을 든 여포가 길을 막는다. “네 꾀가 이 창보다 빠른가?” 정면 공격은 강력한 반격을 부른다. 거리를 두고 책략으로 상대하라.",
+      "options": [
+        {
+          "id": "continue",
+          "text": "마음을 가다듬고 대결한다."
+        }
+      ]
+    },
+    {
+      "id": "dream_2",
+      "text": "불빛 너머 주유의 활시위가 울린다. “때를 기다린다 하여, 불길까지 멈출 수 있겠는가?” 사거리를 읽고 주유의 환영을 격파하라.",
+      "options": [
+        {
+          "id": "continue",
+          "text": "마음을 가다듬고 대결한다."
+        }
+      ]
+    },
+    {
+      "id": "dream_3",
+      "text": "세 환영이 흩어지고 어좌가 드러난다. 황제의 곁으로 다가가라. 전차를 모두 격파할 필요는 없다. 좁은 중앙 통로 또는 남쪽 우회로를 택할 수 있다.",
+      "options": [
+        {
+          "id": "continue",
+          "text": "전차의 사거리를 살피고 어좌로 향한다."
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "dream/open",
+      "phase": "진궁과의 대결",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "chen_gong",
+              "name": "진궁의 환영",
+              "template": "strategist",
+              "level": 16,
+              "at": {
+                "x": 7,
+                "y": 5
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "play_dialogue",
+          "dialogueId": "dream_0"
+        }
+      ]
+    },
+    {
+      "id": "dream/segment_0",
+      "phase": "진궁과의 대결",
+      "trigger": {
+        "type": "unit_retreats",
+        "unit": "chen_gong"
+      },
+      "actions": [
+        {
+          "type": "set_phase",
+          "phase": "여포와의 대결"
+        },
+        {
+          "type": "recover_units",
+          "targets": [
+            "sima_yi"
+          ]
+        },
+        {
+          "type": "move_unit",
+          "targets": [
+            "sima_yi"
+          ],
+          "at": {
+            "x": 2,
+            "y": 5
+          }
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "lu_bu",
+              "name": "여포의 환영",
+              "template": "heavyCav",
+              "level": 18,
+              "at": {
+                "x": 7,
+                "y": 5
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "play_dialogue",
+          "dialogueId": "dream_1"
+        }
+      ]
+    },
+    {
+      "id": "dream/segment_1",
+      "phase": "여포와의 대결",
+      "trigger": {
+        "type": "unit_retreats",
+        "unit": "lu_bu"
+      },
+      "actions": [
+        {
+          "type": "set_phase",
+          "phase": "주유와의 대결"
+        },
+        {
+          "type": "recover_units",
+          "targets": [
+            "sima_yi"
+          ]
+        },
+        {
+          "type": "move_unit",
+          "targets": [
+            "sima_yi"
+          ],
+          "at": {
+            "x": 2,
+            "y": 5
+          }
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "zhou_yu",
+              "name": "주유의 환영",
+              "template": "archer",
+              "level": 18,
+              "at": {
+                "x": 7,
+                "y": 5
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "play_dialogue",
+          "dialogueId": "dream_2"
+        }
+      ]
+    },
+    {
+      "id": "dream/segment_2",
+      "phase": "주유와의 대결",
+      "trigger": {
+        "type": "unit_retreats",
+        "unit": "zhou_yu"
+      },
+      "actions": [
+        {
+          "type": "set_phase",
+          "phase": "황제에게 접근"
+        },
+        {
+          "type": "recover_units",
+          "targets": [
+            "sima_yi"
+          ]
+        },
+        {
+          "type": "move_unit",
+          "targets": [
+            "sima_yi"
+          ],
+          "at": {
+            "x": 2,
+            "y": 5
+          }
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "dream_chariot_1",
+              "name": "어좌 수호 전차",
+              "template": "catapult",
+              "level": 16,
+              "at": {
+                "x": 9,
+                "y": 4
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "dream_chariot_2",
+              "name": "회랑 수호 전차",
+              "template": "catapult",
+              "level": 16,
+              "at": {
+                "x": 9,
+                "y": 7
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "dream_emperor",
+              "name": "꿈속의 황제",
+              "template": "civilian",
+              "level": 32,
+              "at": {
+                "x": 12,
+                "y": 2
+              },
+              "behavior": "passive"
+            }
+          ]
+        },
+        {
+          "type": "change_victory",
+          "conditions": [
+            {
+              "type": "reach",
+              "unit": "sima_yi",
+              "target": "emperor_approach",
+              "order": 1
+            },
+            {
+              "type": "dialogue_complete",
+              "target": "dream_3",
+              "order": 2
+            }
+          ]
+        },
+        {
+          "type": "play_dialogue",
+          "dialogueId": "dream_3"
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 4,
+    "tier": "A"
+  }
+}

@@ -1,0 +1,385 @@
+{
+  "id": "S1-02",
+  "arc": "upper",
+  "order": 2,
+  "title": "피난의 연속",
+  "subtitle": "낙양 탈출전",
+  "synopsis": "두 형제의 남문 탈출. 지참금 3,000전 중 통행료 1,000전을 남겨야 한다. 첫 매수는 1,000전, 다음 매수는 1,500전이다.",
+  "mapId": "luoyang-escape",
+  "deployment": {
+    "forced": [
+      "sima_yi",
+      "sima_lang"
+    ],
+    "selectable": [],
+    "slots": 2
+  },
+  "victory": [
+    {
+      "type": "reach",
+      "unit": "sima_yi",
+      "target": "south_gate",
+      "order": 1
+    },
+    {
+      "type": "reach",
+      "unit": "sima_lang",
+      "target": "south_gate",
+      "order": 2
+    },
+    {
+      "type": "dialogue_complete",
+      "target": "gate_payment",
+      "order": 3
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "sima_lang"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "no_player_losses",
+      "extreme": "no_player_losses"
+    },
+    {
+      "slot": 3,
+      "normal": "no_player_losses",
+      "extreme": "no_player_losses",
+      "note": "웹 시나리오 인장: 무발각 및 형제 HP 50% 이상을 별도 판정한다."
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 17,
+      "recommendedLevel": 40,
+      "targetClearRate": 0.85
+    },
+    "extreme": {
+      "minEnemyLevel": 57,
+      "recommendedLevel": 80,
+      "targetClearRate": 0.35
+    }
+  },
+  "gimmicks": [
+    "M-02",
+    "M-03"
+  ],
+  "dialogues": [
+    {
+      "id": "bribe",
+      "speaker": "patrol_north",
+      "text": "야밤에 어디를 가는 길인가?",
+      "options": [
+        {
+          "id": "pay",
+          "text": "노잣돈을 쥐여준다.",
+          "correct": true
+        },
+        {
+          "id": "fight",
+          "text": "베고 지나간다.",
+          "correct": false,
+          "next": "fight_confirm"
+        },
+        {
+          "id": "lie",
+          "text": "관의 일로 나왔다고 둘러댄다.",
+          "correct": false,
+          "next": "lie_failed"
+        }
+      ]
+    },
+    {
+      "id": "lie_failed",
+      "text": "순찰병의 눈초리가 날카로워진다. \"패를 보여라.\"",
+      "options": [
+        {
+          "id": "pay_late",
+          "text": "결국 노잣돈을 내민다.",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "id": "fight_confirm",
+      "text": "칼을 뽑으면 성문까지 조용히 갈 길은 사라진다.",
+      "options": [
+        {
+          "id": "commit",
+          "text": "그래도 벤다.",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "gate_payment",
+      "text": "남문 너머로 피난길이 이어진다. 문지기가 통행료 1,000전을 요구한다.",
+      "options": [
+        {
+          "id": "pay_gate",
+          "text": "통행료를 내고 형제와 함께 성을 떠난다."
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "S1-02/patrols",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "patrol_north",
+              "name": "순찰병",
+              "template": "infantry",
+              "level": 17,
+              "region": "north_post",
+              "behavior": "patrol",
+              "visionRange": 2,
+              "patrolRoute": [
+                {
+                  "x": 6,
+                  "y": 4
+                },
+                {
+                  "x": 10,
+                  "y": 4
+                },
+                {
+                  "x": 10,
+                  "y": 8
+                },
+                {
+                  "x": 2,
+                  "y": 8
+                },
+                {
+                  "x": 2,
+                  "y": 4
+                }
+              ]
+            },
+            {
+              "id": "patrol_west",
+              "name": "순찰병",
+              "template": "infantry",
+              "level": 17,
+              "region": "west_post",
+              "behavior": "patrol",
+              "visionRange": 2,
+              "patrolRoute": [
+                {
+                  "x": 2,
+                  "y": 5
+                },
+                {
+                  "x": 2,
+                  "y": 8
+                },
+                {
+                  "x": 6,
+                  "y": 8
+                },
+                {
+                  "x": 2,
+                  "y": 8
+                }
+              ]
+            },
+            {
+              "id": "patrol_east",
+              "name": "순찰병",
+              "template": "infantry",
+              "level": 17,
+              "region": "east_post",
+              "behavior": "patrol",
+              "visionRange": 2,
+              "patrolRoute": [
+                {
+                  "x": 11,
+                  "y": 6
+                },
+                {
+                  "x": 11,
+                  "y": 8
+                },
+                {
+                  "x": 9,
+                  "y": 8
+                },
+                {
+                  "x": 11,
+                  "y": 8
+                }
+              ]
+            },
+            {
+              "id": "patrol_gate",
+              "name": "문지기 순찰",
+              "template": "infantry",
+              "level": 17,
+              "region": "gate_watch",
+              "behavior": "patrol",
+              "visionRange": 2,
+              "patrolRoute": [
+                {
+                  "x": 5,
+                  "y": 9
+                },
+                {
+                  "x": 8,
+                  "y": 9
+                },
+                {
+                  "x": 5,
+                  "y": 9
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S1-02/spotted-north",
+      "trigger": {
+        "type": "unit_spotted",
+        "watcher": "patrol_north"
+      },
+      "actions": [
+        {
+          "type": "play_dialogue",
+          "dialogueId": "bribe"
+        }
+      ]
+    },
+    {
+      "id": "S1-02/spotted-west",
+      "trigger": {
+        "type": "unit_spotted",
+        "watcher": "patrol_west"
+      },
+      "actions": [
+        {
+          "type": "play_dialogue",
+          "dialogueId": "bribe"
+        }
+      ]
+    },
+    {
+      "id": "S1-02/spotted-east",
+      "trigger": {
+        "type": "unit_spotted",
+        "watcher": "patrol_east"
+      },
+      "actions": [
+        {
+          "type": "play_dialogue",
+          "dialogueId": "bribe"
+        }
+      ]
+    },
+    {
+      "id": "S1-02/spotted-gate",
+      "trigger": {
+        "type": "unit_spotted",
+        "watcher": "patrol_gate"
+      },
+      "actions": [
+        {
+          "type": "play_dialogue",
+          "dialogueId": "bribe"
+        }
+      ]
+    },
+    {
+      "id": "S1-02/bribe-paid",
+      "trigger": {
+        "type": "dialogue_choice",
+        "nodeId": "bribe",
+        "optionId": "pay"
+      },
+      "actions": [
+        {
+          "type": "apply_effect",
+          "side": "enemy",
+          "effect": "confusion",
+          "duration": 2
+        }
+      ]
+    },
+    {
+      "id": "S1-02/lie-cost",
+      "trigger": {
+        "type": "dialogue_choice",
+        "nodeId": "bribe",
+        "optionId": "lie"
+      },
+      "actions": [
+        {
+          "type": "apply_effect",
+          "targets": [
+            "sima_yi"
+          ],
+          "effect": "bleed",
+          "duration": 2,
+          "hpRatioDamage": 0.15
+        }
+      ]
+    },
+    {
+      "id": "S1-02/fight-committed",
+      "trigger": {
+        "type": "dialogue_choice",
+        "nodeId": "fight_confirm",
+        "optionId": "commit"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "template": "crossbow",
+              "level": 17,
+              "count": 2,
+              "region": "plaza",
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "change_victory",
+          "conditions": [
+            {
+              "type": "annihilate",
+              "side": "enemy"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 12,
+    "tier": "A"
+  }
+}

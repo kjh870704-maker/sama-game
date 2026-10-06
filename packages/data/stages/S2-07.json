@@ -1,0 +1,305 @@
+{
+  "id": "S2-07",
+  "arc": "middle",
+  "order": 18,
+  "title": "젖은 잔도",
+  "subtitle": "양평관 추격전",
+  "synopsis": "조진의 촉 정벌, 서른 날 이어진 비. 위연이 곽회의 진영을 치고 양평관으로 돌아가려 한다. 잔도로 질러갈지 계곡으로 돌지 먼저 정한다. 적 7부대를 격퇴하거나 위연을 꺾으면 승리. 위연이 관을 빠져나가면 남은 적으로 7부대를 채워야 한다.",
+  "mapId": "yangping-pass",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "cavalry",
+        "count": 1,
+        "level": 12,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "infantry",
+        "count": 1,
+        "level": 12,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "archer",
+        "count": 1,
+        "level": 12,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "enemy_retreat_count",
+      "n": 7
+    },
+    {
+      "type": "retreat",
+      "unit": "wei_yan"
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "clear",
+      "extreme": "clear",
+      "note": "웹 세션에서 곽회 생존을 별도 평가한다."
+    },
+    {
+      "slot": 3,
+      "normal": "clear",
+      "extreme": "clear",
+      "note": "웹 세션에서 위연 격퇴를 별도 평가한다."
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 10,
+      "recommendedLevel": 12
+    },
+    "extreme": {
+      "minEnemyLevel": 12,
+      "recommendedLevel": 14
+    }
+  },
+  "gimmicks": [
+    "M-03",
+    "M-18",
+    "M-21"
+  ],
+  "dialogues": [
+    {
+      "id": "route",
+      "speaker": "sima_yi",
+      "text": "위연은 곽회의 진영을 치고 양평관으로 돌아갈 것이다. 어느 길로 쫓겠는가?",
+      "options": [
+        {
+          "id": "plank",
+          "text": "잔도로 질러간다 · 여울의 후위를 피해 관 앞으로 / 비에 젖은 잔도에 짝수 턴마다 낙석 표식"
+        },
+        {
+          "id": "valley",
+          "text": "계곡으로 돈다 · 낙석은 없다 / 여울 숲에 복병, 위연이 2턴 먼저 관으로 빠진다"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "yangping/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "guo_huai",
+              "name": "곽회",
+              "template": "infantry",
+              "level": 12,
+              "at": {
+                "x": 7,
+                "y": 12
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "guo_spear",
+              "name": "곽회 창병",
+              "template": "spearman",
+              "level": 11,
+              "at": {
+                "x": 6,
+                "y": 11
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "wei_yan",
+              "name": "위연",
+              "template": "infantry",
+              "level": 13,
+              "at": {
+                "x": 9,
+                "y": 12
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "wei_guard",
+              "name": "위연 친위",
+              "template": "spearman",
+              "level": 12,
+              "count": 2,
+              "region": "guo_raid",
+              "behavior": "advance"
+            },
+            {
+              "id": "raid_bow",
+              "name": "습격 궁수",
+              "template": "archer",
+              "level": 11,
+              "at": {
+                "x": 9,
+                "y": 10
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "raid_foot",
+              "name": "습격 보병",
+              "template": "infantry",
+              "level": 11,
+              "at": {
+                "x": 5,
+                "y": 12
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "ford_spear",
+              "name": "여울 후위",
+              "template": "spearman",
+              "level": 11,
+              "at": {
+                "x": 13,
+                "y": 7
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "ford_xbow",
+              "name": "여울 노병",
+              "template": "crossbow",
+              "level": 11,
+              "at": {
+                "x": 13,
+                "y": 8
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "play_dialogue",
+          "dialogueId": "route"
+        }
+      ]
+    },
+    {
+      "id": "yangping/plank",
+      "trigger": {
+        "type": "dialogue_choice",
+        "nodeId": "route",
+        "optionId": "plank"
+      },
+      "actions": [
+        {
+          "type": "set_phase",
+          "phase": "잔도 · 낙석 주의"
+        }
+      ]
+    },
+    {
+      "id": "yangping/valley",
+      "trigger": {
+        "type": "dialogue_choice",
+        "nodeId": "route",
+        "optionId": "valley"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "ambush",
+              "name": "계곡 복병",
+              "template": "cavalry",
+              "level": 12,
+              "count": 2,
+              "region": "valley_ambush",
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "계곡 · 복병 주의"
+        }
+      ]
+    },
+    {
+      "id": "yangping/rockfall",
+      "phase": "잔도 · 낙석 주의",
+      "once": false,
+      "trigger": {
+        "type": "turn_start",
+        "side": "player",
+        "every": 2
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "region": "rockfall",
+          "magnitude": 30,
+          "duration": 1,
+          "label": "낙석"
+        }
+      ]
+    },
+    {
+      "id": "yangping/garrison",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "turn": 5
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "pass_guard",
+              "name": "양평관 수비병",
+              "template": "spearman",
+              "level": 11,
+              "count": 2,
+              "region": "pass_garrison",
+              "behavior": "hold"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

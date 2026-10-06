@@ -1,0 +1,333 @@
+{
+  "id": "S2-03",
+  "arc": "middle",
+  "order": 14,
+  "title": "얼어붙은 강",
+  "subtitle": "광릉 전투",
+  "synopsis": "강이 얼어 황제의 함대가 발이 묶였다. 오의 고수가 밤을 틈타 행영을 친다. 사마의 없이 조진의 편성만으로 고수를 물리치고, 강노 저격 예고를 피하며 조비를 북쪽 출구로 모신다.",
+  "mapId": "guangling-camp",
+  "deployment": {
+    "forced": [
+      "cao_zhen"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "fengshui",
+        "count": 1,
+        "level": 9,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "archer",
+        "count": 1,
+        "level": 9,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "cavalry",
+        "count": 1,
+        "level": 9,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "infantry",
+        "count": 1,
+        "level": 9,
+        "traits": [
+          "guardian"
+        ],
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "retreat",
+      "unit": "gao_shou",
+      "order": 1
+    },
+    {
+      "type": "reach",
+      "unit": "cao_pi",
+      "target": "exit",
+      "order": 2
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "cao_zhen"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_pi"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:2",
+      "extreme": "player_losses_lt:1",
+      "note": "편입 의술사·궁병·기병·방패병 4기가 손실 카운트에 포함됩니다 (PRD R-5.5). 엔딩 연출의 조비 이탈은 포함하지 않습니다."
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:12",
+      "extreme": "turn_limit:10"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 8,
+      "recommendedLevel": 9
+    },
+    "extreme": {
+      "minEnemyLevel": 10,
+      "recommendedLevel": 11
+    }
+  },
+  "gimmicks": [
+    "M-05",
+    "M-18"
+  ],
+  "events": [
+    {
+      "id": "guangling/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "cao_pi",
+              "name": "조비",
+              "template": "strategist",
+              "level": 9,
+              "at": {
+                "x": 10,
+                "y": 4
+              },
+              "behavior": "escortee",
+              "goalRegion": "exit"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "gao_shou",
+              "name": "고수",
+              "template": "bandit",
+              "level": 10,
+              "at": {
+                "x": 2,
+                "y": 6
+              },
+              "behavior": "advance",
+              "traits": [
+                "critical"
+              ],
+              "traitParams": {
+                "critical": 25
+              }
+            },
+            {
+              "id": "raider_w",
+              "name": "결사대",
+              "template": "bandit",
+              "level": 9,
+              "at": {
+                "x": 1,
+                "y": 7
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "raider_e",
+              "name": "결사대",
+              "template": "bandit",
+              "level": 9,
+              "at": {
+                "x": 19,
+                "y": 6
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "raider_e2",
+              "name": "결사대",
+              "template": "infantry",
+              "level": 9,
+              "at": {
+                "x": 20,
+                "y": 7
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "sun_shao",
+              "name": "손소",
+              "template": "crossbow",
+              "level": 10,
+              "at": {
+                "x": 10,
+                "y": 13
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "ice_bow",
+              "name": "얼음 위 강노병",
+              "template": "crossbow",
+              "level": 9,
+              "at": {
+                "x": 6,
+                "y": 12
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "야습 격퇴 · 고수를 물리쳐라"
+        }
+      ]
+    },
+    {
+      "id": "guangling/retreat",
+      "trigger": {
+        "type": "unit_retreats",
+        "unit": "gao_shou"
+      },
+      "actions": [
+        {
+          "type": "set_phase",
+          "phase": "황제 탈출 · 북쪽 출구"
+        }
+      ]
+    },
+    {
+      "id": "guangling/ice-crossing",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 3,
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "template": "bandit",
+              "level": 9,
+              "count": 2,
+              "region": "south_camp",
+              "behavior": "advance"
+            },
+            {
+              "template": "spearman",
+              "level": 9,
+              "count": 1,
+              "region": "south_camp",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "guangling/snipe-1",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 2,
+        "side": "player"
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "targets": [
+            "cao_pi"
+          ],
+          "duration": 1,
+          "magnitude": 30,
+          "label": "강노 저격"
+        }
+      ]
+    },
+    {
+      "id": "guangling/snipe-2",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 4,
+        "side": "player"
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "targets": [
+            "cao_zhen"
+          ],
+          "duration": 1,
+          "magnitude": 30,
+          "label": "강노 저격"
+        }
+      ]
+    },
+    {
+      "id": "guangling/snipe-3",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 6,
+        "side": "player"
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "targets": [
+            "cao_pi"
+          ],
+          "duration": 1,
+          "magnitude": 30,
+          "label": "강노 저격"
+        }
+      ]
+    },
+    {
+      "id": "guangling/snipe-4",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 8,
+        "side": "player"
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "targets": [
+            "cao_pi",
+            "cao_zhen"
+          ],
+          "duration": 1,
+          "magnitude": 30,
+          "label": "강노 저격"
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

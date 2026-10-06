@@ -1,0 +1,167 @@
+{
+  "id": "S1-01",
+  "arc": "upper",
+  "order": 1,
+  "title": "살아남는 자",
+  "subtitle": "사마가 수비전",
+  "synopsis": "황건의 불길이 하내에 닿았다. 어린 중달은 칼을 들 수 없다. 창고를 열고 피난민 곁으로 다가가, 스스로를 지킬 힘을 나눠 주어라.",
+  "mapId": "sima-estate",
+  "deployment": {
+    "forced": [
+      "sima_yi",
+      "sima_lang",
+      "sima_fang"
+    ],
+    "slots": 3
+  },
+  "victory": [
+    {
+      "type": "annihilate",
+      "side": "enemy",
+      "order": 1
+    },
+    {
+      "type": "capture",
+      "target": "warehouse",
+      "order": 2
+    },
+    {
+      "type": "capture",
+      "target": "militia",
+      "order": 3
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "sima_lang"
+    },
+    {
+      "type": "retreat",
+      "unit": "sima_fang"
+    },
+    {
+      "type": "retreat",
+      "unit": "refugee_a",
+      "order": 1
+    },
+    {
+      "type": "retreat",
+      "unit": "refugee_b",
+      "order": 2
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "no_player_losses",
+      "extreme": "no_player_losses"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:12",
+      "extreme": "turn_limit:10"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 5,
+      "recommendedLevel": 12
+    },
+    "extreme": {
+      "minEnemyLevel": 9,
+      "recommendedLevel": 12
+    }
+  },
+  "gimmicks": [
+    "M-01"
+  ],
+  "events": [
+    {
+      "id": "estate/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "player",
+          "units": [
+            {
+              "id": "refugee_a",
+              "name": "동문 피난민",
+              "template": "civilian",
+              "level": 12,
+              "at": {
+                "x": 10,
+                "y": 5
+              }
+            },
+            {
+              "id": "refugee_b",
+              "name": "북문 피난민",
+              "template": "civilian",
+              "level": 12,
+              "at": {
+                "x": 7,
+                "y": 3
+              }
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "raider_n",
+              "name": "북문 습격대",
+              "template": "infantry",
+              "level": 5,
+              "at": {
+                "x": 7,
+                "y": 1
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "raider_e",
+              "name": "동문 습격대",
+              "template": "spearman",
+              "level": 5,
+              "at": {
+                "x": 14,
+                "y": 6
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "raider_s",
+              "name": "후방 습격대",
+              "template": "archer",
+              "level": 5,
+              "at": {
+                "x": 11,
+                "y": 9
+              },
+              "behavior": "hold"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 8,
+    "tier": "A"
+  }
+}

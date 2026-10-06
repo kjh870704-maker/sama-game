@@ -1,0 +1,317 @@
+{
+  "id": "S2-09",
+  "arc": "middle",
+  "order": 20,
+  "title": "막힌 강, 열린 길",
+  "subtitle": "성고 전투",
+  "synopsis": "강물이 불어 대릉의 전선이 촉군과 강을 사이에 두고 묶였다. 강 건너 투석기가 매 턴 전선을 깎는다. 북쪽 산길로 돌아 성고 성채를 탈환하면 촉군의 보급이 끊긴다. 그 뒤 이엄의 사자와 마주한다. 대릉이 쓰러지면 실패.",
+  "mapId": "chenggu-river",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "cavalry",
+        "count": 1,
+        "level": 13,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "infantry",
+        "count": 1,
+        "level": 13,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "archer",
+        "count": 1,
+        "level": 13,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "capture",
+      "target": "citadel",
+      "by": "player",
+      "order": 1
+    },
+    {
+      "type": "dialogue_complete",
+      "target": "envoy",
+      "order": 2
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "dai_ling"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "clear",
+      "extreme": "clear",
+      "note": "웹 세션에서 대릉 전선 보존을 별도 평가한다."
+    },
+    {
+      "slot": 3,
+      "normal": "clear",
+      "extreme": "clear",
+      "note": "웹 세션에서 사자 대화의 선택을 별도 평가한다."
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 11,
+      "recommendedLevel": 13
+    },
+    "extreme": {
+      "minEnemyLevel": 13,
+      "recommendedLevel": 15
+    }
+  },
+  "gimmicks": [
+    "M-03",
+    "M-07"
+  ],
+  "dialogues": [
+    {
+      "id": "envoy",
+      "speaker": "이엄",
+      "text": "성고를 잃었으니 군량이 닿지 않는다. 이엄의 사자가 무릎을 꿇는다. 그가 품에 지닌 편지에는 승상에게 보내는 말이 적혀 있다.",
+      "options": [
+        {
+          "id": "letter",
+          "text": "편지를 읽는다 · 이엄은 군량이 끊긴 것을 숨기고 승상을 불러들이려 한다. 그 편지를 그대로 보내게 하라",
+          "correct": true
+        },
+        {
+          "id": "release",
+          "text": "사자를 돌려보낸다 · 싸움은 끝났다, 남은 일은 칼로 정한다",
+          "correct": false
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "chenggu/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "dai_ling",
+              "name": "대릉",
+              "template": "infantry",
+              "level": 13,
+              "at": {
+                "x": 7,
+                "y": 10
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "front_spear",
+              "name": "전선 창병",
+              "template": "spearman",
+              "level": 12,
+              "at": {
+                "x": 7,
+                "y": 9
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "front_shield",
+              "name": "전선 방패병",
+              "template": "infantry",
+              "level": 12,
+              "at": {
+                "x": 7,
+                "y": 11
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "shu_catapult",
+              "name": "촉 투석기",
+              "template": "catapult",
+              "level": 12,
+              "at": {
+                "x": 11,
+                "y": 10
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "shu_bank_bow",
+              "name": "강변 궁수",
+              "template": "archer",
+              "level": 12,
+              "count": 2,
+              "region": "shu_bank",
+              "behavior": "hold"
+            },
+            {
+              "id": "shu_bank_spear",
+              "name": "강변 창병",
+              "template": "spearman",
+              "level": 12,
+              "at": {
+                "x": 13,
+                "y": 10
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "citadel_captain",
+              "name": "성고 수비장",
+              "template": "spearman",
+              "level": 13,
+              "at": {
+                "x": 19,
+                "y": 3
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "citadel_bow",
+              "name": "성고 궁수",
+              "template": "archer",
+              "level": 12,
+              "at": {
+                "x": 20,
+                "y": 2
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "citadel_xbow",
+              "name": "성고 노병",
+              "template": "crossbow",
+              "level": 12,
+              "at": {
+                "x": 21,
+                "y": 3
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "성채 탈환"
+        }
+      ]
+    },
+    {
+      "id": "chenggu/ambush",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "turn": 3
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "road_ambush",
+              "name": "산길 복병",
+              "template": "infantry",
+              "level": 12,
+              "count": 2,
+              "region": "road_ambush",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chenggu/relief",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "turn": 7
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "shu_relief",
+              "name": "촉 보급대 호위",
+              "template": "cavalry",
+              "level": 12,
+              "count": 1,
+              "region": "shu_relief",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chenggu/taken",
+      "trigger": {
+        "type": "region_captured",
+        "region": "citadel",
+        "by": "player"
+      },
+      "actions": [
+        {
+          "type": "apply_effect",
+          "targets": [
+            "shu_catapult",
+            "shu_bank_bow_0",
+            "shu_bank_bow_1",
+            "shu_bank_spear"
+          ],
+          "effect": "confusion",
+          "duration": 2,
+          "hpRatioDamage": 0.2
+        },
+        {
+          "type": "set_phase",
+          "phase": "이엄의 사자"
+        },
+        {
+          "type": "play_dialogue",
+          "dialogueId": "envoy"
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

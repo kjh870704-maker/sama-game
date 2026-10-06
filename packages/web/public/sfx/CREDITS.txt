@@ -1,0 +1,13 @@
+Recorded sound effects in this folder are CC0 1.0 (public domain dedication).
+Sources:
+- Versilian Community Sample Library (VCSL) — Versilian Studios 외 기여자 — https://github.com/sgossner/VCSL
+- Kenney 사운드 팩 (Impact Sounds, RPG Audio, Interface Sounds) — Kenney (kenney.nl) — https://kenney.nl/assets
+- 80 CC0 RPG SFX / 80 CC0 creature SFX — rubberduck (OpenGameArt) — https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds
+- 75 CC0 breaking/falling/hit SFX — rubberduck (OpenGameArt) — https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds
+- 100 CC0 wood/metal SFX — rubberduck (OpenGameArt) — https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds
+- 40 CC0 water/splash/slime SFX — rubberduck (OpenGameArt) — https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds
+- 25 CC0 bang/firework SFX — rubberduck (OpenGameArt) — https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds
+- Micro Pack: Organic Wooshes, Kitchen Knives — Ben Burnes (Abstraction) — https://abstractionmusic.com
+- Warfork CC0 assets (players, weapons) — Team Forbidden (Warfork) — https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds
+
+Per-file origins: docs/tech/sound-credits.md

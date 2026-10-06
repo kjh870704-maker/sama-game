@@ -1,0 +1,283 @@
+{
+  "id": "S2-13",
+  "arc": "middle",
+  "order": 24,
+  "title": "하늘이 내린 비",
+  "subtitle": "호로곡 탈출전",
+  "synopsis": "제갈량의 유인에 걸려 사마의 부자가 호로곡 안에서 갈라졌다. 먼저 사마의와 사마사가 골짜기 가운데에서 합류해야 한다. 합류한 뒤 7턴을 버티면 비가 내려 서쪽 출구의 불타는 목책이 꺼지고, 그때 사마의가 출구로 빠져나가면 승리. 짝수 턴마다 화공 포격이 예고되며, 바위 그늘 칸은 포격을 막아 준다.",
+  "mapId": "hulu-valley",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 15,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "archer",
+        "count": 1,
+        "level": 15,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "reach",
+      "unit": "sima_yi",
+      "target": "rally",
+      "order": 1
+    },
+    {
+      "type": "reach",
+      "unit": "sima_shi",
+      "target": "rally",
+      "order": 1
+    },
+    {
+      "type": "reach",
+      "unit": "sima_zhao",
+      "target": "rally",
+      "order": 1
+    },
+    {
+      "type": "dialogue_complete",
+      "target": "hulu_rain",
+      "order": 2
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "sima_shi"
+    },
+    {
+      "type": "retreat",
+      "unit": "sima_zhao"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:1",
+      "extreme": "player_losses_lt:1",
+      "note": "편입 창병·궁병과 두 아들이 손실 카운트에 포함됩니다 (PRD R-5.5)"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:15",
+      "extreme": "turn_limit:16"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 14,
+      "recommendedLevel": 16
+    },
+    "extreme": {
+      "minEnemyLevel": 16,
+      "recommendedLevel": 18
+    }
+  },
+  "gimmicks": [
+    "M-18",
+    "M-16",
+    "M-19"
+  ],
+  "dialogues": [
+    {
+      "id": "hulu_rain",
+      "speaker": "sima_yi",
+      "text": "하늘이 열리듯 비가 쏟아진다. 불길이 꺼지고 서쪽 목책이 무너진다.",
+      "options": [
+        {
+          "id": "run",
+          "text": "서쪽 출구로 빠져나간다"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "hulu/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "ally",
+          "units": [
+            {
+              "id": "sima_shi",
+              "name": "사마사",
+              "template": "cavalry",
+              "level": 15,
+              "at": {
+                "x": 18,
+                "y": 4
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "sima_zhao",
+              "name": "사마소",
+              "template": "crossbow",
+              "level": 15,
+              "at": {
+                "x": 19,
+                "y": 5
+              },
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "inner_shu",
+              "name": "골짜기 촉군",
+              "template": "infantry",
+              "level": 14,
+              "count": 2,
+              "region": "inner_shu",
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "합류"
+        }
+      ]
+    },
+    {
+      "id": "hulu/bombard-split",
+      "phase": "합류",
+      "once": false,
+      "trigger": {
+        "type": "turn_start",
+        "side": "player",
+        "every": 2
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "targets": [
+            "sima_yi",
+            "sima_shi"
+          ],
+          "exceptRegion": "shelter",
+          "magnitude": 15,
+          "effect": "burn",
+          "duration": 1,
+          "label": "화공 포격"
+        }
+      ]
+    },
+    {
+      "id": "hulu/bombard-hold",
+      "phase": "버티기",
+      "once": false,
+      "trigger": {
+        "type": "turn_start",
+        "side": "player",
+        "every": 2
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "targets": [
+            "sima_yi",
+            "sima_shi"
+          ],
+          "exceptRegion": "shelter",
+          "magnitude": 15,
+          "effect": "burn",
+          "duration": 1,
+          "label": "화공 포격"
+        }
+      ]
+    },
+    {
+      "id": "hulu/wave-1",
+      "phase": "버티기",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "every": 3
+      },
+      "once": false,
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "template": "spearman",
+              "name": "촉 매복병",
+              "level": 14,
+              "count": 1,
+              "region": "east_mouth",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hulu/rain",
+      "phase": "버티기",
+      "trigger": {
+        "type": "survive_turns",
+        "region": "hulu",
+        "n": 7
+      },
+      "actions": [
+        {
+          "type": "terrain_change",
+          "region": "exit_gate",
+          "terrain": "road"
+        },
+        {
+          "type": "set_phase",
+          "phase": "퇴로 열림"
+        },
+        {
+          "type": "change_victory",
+          "conditions": [
+            {
+              "type": "reach",
+              "unit": "sima_yi",
+              "target": "exit"
+            }
+          ]
+        },
+        {
+          "type": "play_dialogue",
+          "dialogueId": "hulu_rain"
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 24,
+    "tier": "B"
+  }
+}

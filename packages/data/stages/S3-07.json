@@ -1,0 +1,230 @@
+{
+  "id": "S3-07",
+  "arc": "lower",
+  "order": 32,
+  "title": "마지막 출정",
+  "subtitle": "왕릉 진압전",
+  "synopsis": "251년, 태위 왕릉이 수춘에서 일어섰다. 일흔셋의 사마의가 배를 타고 영수를 내려간다. 수군이 수로 끝의 수문 앞(노란 칸)에 닿으면 수문이 열려 육상 부대가 성 안으로 들어갈 수 있다. 짝수 턴마다 강의 한쪽 물길에 포격이, 3턴마다 성 안마당에 낙뢰가 예고된다. 왕릉을 격퇴하면 승리.",
+  "mapId": "shouchun-waterway",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "navy",
+        "count": 2,
+        "level": 23,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 23,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "cavalry",
+        "count": 1,
+        "level": 23,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "reach",
+      "unit": "granted_navy_0",
+      "target": "landing",
+      "order": 1
+    },
+    {
+      "type": "retreat",
+      "unit": "wang_ling",
+      "order": 2
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:1",
+      "extreme": "player_losses_lt:1",
+      "note": "편입 수군·창병·기병이 손실 카운트에 포함됩니다 (PRD R-5.5)"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:12",
+      "extreme": "turn_limit:13"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 21,
+      "recommendedLevel": 23
+    },
+    "extreme": {
+      "minEnemyLevel": 23,
+      "recommendedLevel": 25
+    }
+  },
+  "gimmicks": [
+    "M-18",
+    "M-08"
+  ],
+  "events": [
+    {
+      "id": "shouchun/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "wang_ling",
+              "name": "왕릉",
+              "template": "infantry",
+              "level": 23,
+              "at": {
+                "x": 17,
+                "y": 8
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "blockade",
+              "name": "수춘 전선",
+              "template": "navy",
+              "level": 22,
+              "count": 3,
+              "region": "blockade",
+              "behavior": "hold"
+            },
+            {
+              "id": "inner_guard",
+              "name": "수춘 수비병",
+              "template": "spearman",
+              "level": 22,
+              "count": 4,
+              "region": "inner_guard",
+              "behavior": "hold"
+            },
+            {
+              "id": "wall_engine",
+              "name": "성벽 포차",
+              "template": "catapult",
+              "level": 22,
+              "count": 2,
+              "region": "wall_engines",
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "수상 접근"
+        }
+      ]
+    },
+    {
+      "id": "shouchun/shell-a",
+      "once": false,
+      "trigger": {
+        "type": "turn_start",
+        "side": "player",
+        "every": 4
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "region": "lane_a",
+          "magnitude": 25,
+          "duration": 1,
+          "label": "포격"
+        }
+      ]
+    },
+    {
+      "id": "shouchun/shell-b",
+      "once": false,
+      "trigger": {
+        "type": "turn_start",
+        "side": "player",
+        "every": 2
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "region": "lane_b",
+          "magnitude": 25,
+          "duration": 1,
+          "label": "포격"
+        }
+      ]
+    },
+    {
+      "id": "shouchun/gate",
+      "trigger": {
+        "type": "scripted"
+      },
+      "actions": [
+        {
+          "type": "terrain_change",
+          "region": "water_gate",
+          "terrain": "road"
+        },
+        {
+          "type": "change_victory",
+          "conditions": [
+            {
+              "type": "retreat",
+              "unit": "wang_ling"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "육상 진입"
+        }
+      ]
+    },
+    {
+      "id": "shouchun/storm",
+      "phase": "육상 진입",
+      "once": false,
+      "trigger": {
+        "type": "turn_start",
+        "side": "player",
+        "every": 3
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "region": "courtyard",
+          "magnitude": 30,
+          "effect": "shock",
+          "duration": 1,
+          "label": "낙뢰"
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

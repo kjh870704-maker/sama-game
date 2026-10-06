@@ -7,8 +7,8 @@
 import type { BattleState } from "./state.ts";
 import type { StageEvent, Trigger, Action } from "./stage.ts";
 import { makeUnit } from "./units.ts";
-import { adjacent, sameCoord, key } from "./grid.ts";
-import type { Side, UnitClass } from "./types.ts";
+import { adjacent, sameCoord, key, manhattan, passableFor, isHostile } from "./grid.ts";
+import type { Coord, Side, UnitClass } from "./types.ts";
 
 export interface EventPhase {
   kind: "battle_start" | "turn_start" | "turn_end" | "after_action";
@@ -17,8 +17,11 @@ export interface EventPhase {
 
 export function runEvents(state: BattleState, phase: EventPhase): void {
   const events = state.stage.events ?? [];
+  const segment = state.scenarioPhase;
   for (let i = 0; i < events.length; i++) {
     const ev = events[i]!;
+    if (state.scenarioPhase !== segment) break;
+    if (ev.phase !== undefined && ev.phase !== segment) continue;
     const id = ev.id ?? `${state.stage.id}#${i}`;
     const once = ev.once ?? true;
     if (once && state.firedEvents.has(id)) continue;
@@ -88,15 +91,90 @@ function matches(state: BattleState, trig: Trigger, phase: EventPhase): boolean 
       return start !== undefined && state.turn - start >= (trig.n ?? 0);
     }
 
-    case "dialogue_choice":
-      return state.choices.some(
+    // n을 주면 "n회 이상 선택" — 한정 자원(지참금 등)의 소진을 표현한다.
+    case "dialogue_choice": {
+      const hits = state.choices.filter(
         (c) => c.nodeId === trig.nodeId && (!trig.optionId || c.optionId === trig.optionId),
-      );
+      ).length;
+      return hits >= (trig.n ?? 1);
+    }
+
+    // M-09 ENCIRCLE_LOCK — 대상의 인접 4칸이 모두 막혀 있는가.
+    // 유닛뿐 아니라 통행 불가 지형과 맵 경계도 봉쇄로 인정한다.
+    case "unit_surrounded": {
+      if (!trig.unit) return false;
+      const u = state.find(trig.unit);
+      if (!u?.alive) return false;
+      return adjacent(u.pos).every((c) => {
+        if (!passableFor(state.map, u.unitClass, c)) return true;
+        const blocker = state.unitAt(c);
+        if (!blocker) return false;
+        return trig.by ? blocker.side === trig.by : isHostile(u.side, blocker.side);
+      });
+    }
+
+    // M-08 CONSTRUCT — 특정 진영이 영역을 N턴 연속 점유했는가
+    case "region_held": {
+      if (!trig.region) return false;
+      return state.heldTurns(trig.region, trig.by ?? "player") >= (trig.n ?? 1);
+    }
+
+    case "scripted":
+      return false;
+
+    // M-02 PATROL_STEALTH — 순찰 유닛의 시야에 적대 유닛이 들어왔는가
+    case "unit_spotted": {
+      const watchers = trig.watcher
+        ? [state.find(trig.watcher)].filter((u): u is NonNullable<typeof u> => u?.alive === true)
+        : state.living().filter((u) => u.behavior === "patrol");
+      return watchers.some((w) => {
+        if (state.hasStatus(w, 'confusion')) return false;
+        const vision = w.visionRange ?? 0;
+        if (vision <= 0) return false;
+        return state
+          .living()
+          .some((t) => isHostile(w.side, t.side) && manhattan(w.pos, t.pos) <= vision);
+      });
+    }
   }
+}
+
+/** 호스트 규칙이 조건을 판정하는 이벤트를 id로 한 번 발동한다. 이미 발동했으면 false. */
+export function fireScripted(state: BattleState, id: string): boolean {
+  const ev = (state.stage.events ?? []).find((e) => e.id === id);
+  if (!ev || state.firedEvents.has(id)) return false;
+  state.firedEvents.add(id);
+  state.push({ t: "event", id });
+  for (const action of ev.actions) applyAction(state, action);
+  return true;
 }
 
 export function applyAction(state: BattleState, action: Action): void {
   switch (action.type) {
+    case "set_phase":
+      if (action.phase) state.scenarioPhase = action.phase;
+      break;
+    case "recover_units":
+      for (const u of resolveTargets(state, action)) {
+        u.hp = u.stats.maxHp;
+        u.mp = u.stats.maxMp;
+        u.statuses = [];
+      }
+      break;
+    case "dismiss_units":
+      // Scripted departure is not a combat loss or a retreat trigger.
+      for (const u of resolveTargets(state, action)) state.units.delete(u.id);
+      break;
+    case "move_unit":
+      if (action.at && state.map.inBounds(action.at) && !state.unitAt(action.at)) {
+        const u = resolveTargets(state, action)[0];
+        if (u && passableFor(state.map, u.unitClass, action.at)) {
+          const from = u.pos;
+          u.pos = { ...action.at };
+          state.push({ t: 'move', unit: u.id, from, to: u.pos });
+        }
+      }
+      break;
     case "spawn_units": {
       const spawned: string[] = [];
       for (const spec of action.units ?? []) {
@@ -124,6 +202,9 @@ export function applyAction(state: BattleState, action: Action): void {
             traits: spec.traits ?? [],
             traitParams: spec.traitParams ?? {},
             behavior: (spec.behavior as never) ?? "advance",
+            ...(spec.goalRegion !== undefined ? { goalRegion: spec.goalRegion } : {}),
+            ...(spec.visionRange !== undefined ? { visionRange: spec.visionRange } : {}),
+            ...(spec.patrolRoute !== undefined ? { patrolRoute: spec.patrolRoute } : {}),
           });
           state.add(u);
           occupied.set(key(c), u);
@@ -138,8 +219,13 @@ export function applyAction(state: BattleState, action: Action): void {
     }
 
     case "apply_effect": {
-      if (!action.effect) break;
       for (const u of resolveTargets(state, action)) {
+        if (action.hpRatioDamage !== undefined) {
+          const dmg = Math.round(u.stats.maxHp * action.hpRatioDamage);
+          u.hp -= dmg;
+          if (u.hp <= 0) state.retreat(u);
+        }
+        if (!action.effect || !u.alive) continue;
         state.applyStatus(u, {
           kind: action.effect,
           turns: action.duration ?? 1,
@@ -200,18 +286,48 @@ export function applyAction(state: BattleState, action: Action): void {
       if (!action.region) break;
       for (const c of state.map.regionCoords(action.region)) {
         const tile = state.map.tileAt(c);
+        // M-08 CONSTRUCT / flooding: the ground itself changes (a bridge over water, water over a field).
+        if (action.terrain) tile.terrain = action.terrain;
         if (action.hazard) {
           tile.hazard = action.hazard;
           tile.hazardTurns = action.duration ?? 3;
         }
       }
+      if (action.terrain) state.push({ t: "terrain", region: action.region, terrain: action.terrain });
       break;
     }
 
-    case "telegraph_aoe":
     case "play_dialogue":
+      // M-03 — 대화를 활성화한다. 선택지 처리는 choose 명령이 담당한다.
+      state.activeDialogue = action.dialogueId ?? null;
+      if (state.activeDialogue) state.push({ t: "dialogue", node: state.activeDialogue });
+      break;
+
+    case "telegraph_aoe": {
+      // M-18: mark the cells now, strike them later. Targets are marked where they stand
+      // (and the four cells around them) so a unit that moves away escapes.
+      const cells: Coord[] = action.region ? [...state.map.regionCoords(action.region)] : [];
+      for (const id of action.targets ?? []) {
+        const u = state.find(id);
+        if (!u?.alive) continue;
+        for (const d of [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }]) {
+          const c = { x: u.pos.x + d.x, y: u.pos.y + d.y };
+          if (state.map.inBounds(c) && !cells.some((k) => k.x === c.x && k.y === c.y)) cells.push(c);
+        }
+      }
+      // 차폐: 바위 그늘 같은 칸은 표식에서 뺀다 — 그 칸으로 피하면 맞지 않는다.
+      if (action.exceptRegion) {
+        const cover = state.map.regionCoords(action.exceptRegion);
+        for (let i = cells.length - 1; i >= 0; i--) if (cover.some((c) => sameCoord(c, cells[i]!))) cells.splice(i, 1);
+      }
+      if (!cells.length) break;
+      const turns = Math.max(1, action.duration ?? 1);
+      const id = `${action.label ?? "aoe"}@${state.turn}:${cells[0]!.x},${cells[0]!.y}`;
+      state.telegraphs.push({ id, cells, at: state.turn + turns, ratio: action.magnitude ?? 30, ...(action.effect ? { effect: action.effect } : {}), ...(action.label ? { label: action.label } : {}) });
+      state.push({ t: "telegraph", id, cells, turns, ...(action.label ? { label: action.label } : {}), ...(action.magnitude === 0 ? { warning: true } : {}) });
+      break;
+    }
     case "start_duel":
-    case "move_unit":
       // 연출 계층에서 처리. 코어는 상태만 관리한다.
       break;
   }

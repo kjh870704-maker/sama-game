@@ -22,8 +22,11 @@ jobs:
       - name: 단위 테스트
         run: npm test
 
-      - name: 스테이지 데이터 검증
+      - name: 스테이지·외전 맵 데이터 검증
         run: npm run validate:stages
+
+      - name: 웹 빌드
+        run: npm run build
 
       # AI 클리어율 0%인 스테이지를 난이도 회귀로 간주해 차단한다 (PRD R6)
       - name: 밸런스 회귀 검출

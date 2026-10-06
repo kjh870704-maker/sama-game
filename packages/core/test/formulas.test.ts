@@ -77,3 +77,27 @@ describe("물리 피해", () => {
     expect(r1).toEqual(r2);
   });
 });
+
+import { previewAttack, accuracy, createDamageContext } from "../src/formulas.ts";
+describe("attack preview", () => {
+  it("matches the real accuracy and stays inside the rolled damage band", () => {
+    const map = flatMap(4, 1);
+    const a = makeUnit({ id: "a", side: "player", unitClass: "infantry", level: 20, pos: { x: 0, y: 0 } });
+    const d = makeUnit({ id: "d", side: "enemy", unitClass: "spearman", level: 20, pos: { x: 1, y: 0 } });
+    const v = previewAttack(a, d, map, true);
+    expect(v.hit).toBe(Math.round(accuracy(createDamageContext(a, d, "physical"), map)));
+    expect(v.counter).toBeDefined();
+    const rolls: number[] = [];
+    for (let s = 1; s < 200; s++) { const r = computePhysical(a, d, map, new Rng(s)); if (r.hit && !r.critical) rolls.push(r.damage); }
+    expect(v.damage).toBeGreaterThanOrEqual(Math.min(...rolls) - 1);
+    expect(v.damage).toBeLessThanOrEqual(Math.max(...rolls) + 1);
+    expect(previewAttack(a, d, map, false).counter).toBeUndefined();
+  });
+  it("drops the counter when the blow is lethal", () => {
+    const map = flatMap(4, 1);
+    const a = makeUnit({ id: "a", side: "player", unitClass: "infantry", level: 60, pos: { x: 0, y: 0 } });
+    const d = makeUnit({ id: "d", side: "enemy", unitClass: "civilian", level: 1, pos: { x: 1, y: 0 } });
+    const v = previewAttack(a, d, map, true);
+    expect(v.lethal).toBe(true); expect(v.counter).toBeUndefined();
+  });
+});

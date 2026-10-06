@@ -1,0 +1,202 @@
+{
+  "id": "S3-01",
+  "arc": "lower",
+  "order": 26,
+  "title": "깃발은 남쪽에",
+  "subtitle": "요수 전투",
+  "synopsis": "238년, 요동의 공손연을 치러 요수에 닿았다. 비연의 연군이 강 동쪽에 긴 전열을 쳤다. 양동 깃발대를 남쪽 여울에 세우면 연군 전열이 남쪽으로 몰려간다. 그 뒤 본대가 북쪽 여울을 건너면 연군의 진형이 무너진다. 순서를 거꾸로 하면 전열이 그대로 북쪽을 막는다. 비연을 격퇴하면 승리.",
+  "mapId": "liaoshui-fords",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "cavalry",
+        "count": 1,
+        "level": 17,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 17,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "archer",
+        "count": 1,
+        "level": 17,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "retreat",
+      "unit": "bi_yan"
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "clear",
+      "extreme": "clear",
+      "note": "웹 세션에서 양동으로 진형을 무너뜨렸는지 별도 평가한다."
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:11",
+      "extreme": "turn_limit:12"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 16,
+      "recommendedLevel": 18
+    },
+    "extreme": {
+      "minEnemyLevel": 18,
+      "recommendedLevel": 20
+    }
+  },
+  "gimmicks": [
+    "M-16",
+    "M-04"
+  ],
+  "events": [
+    {
+      "id": "liaoshui/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "ally",
+          "units": [
+            {
+              "id": "feint_banner",
+              "name": "양동 깃발대",
+              "template": "infantry",
+              "level": 16,
+              "count": 2,
+              "region": "feint_start",
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "bi_yan",
+              "name": "비연",
+              "template": "cavalry",
+              "level": 18,
+              "at": {
+                "x": 19,
+                "y": 7
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "yan_line",
+              "name": "연군 전열",
+              "template": "spearman",
+              "level": 17,
+              "count": 4,
+              "region": "yan_line",
+              "behavior": "hold"
+            },
+            {
+              "id": "yan_bow",
+              "name": "연군 궁수",
+              "template": "archer",
+              "level": 17,
+              "count": 2,
+              "region": "yan_bows",
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "양동 전개"
+        }
+      ]
+    },
+    {
+      "id": "liaoshui/feint",
+      "trigger": {
+        "type": "scripted"
+      },
+      "actions": [
+        {
+          "type": "set_phase",
+          "phase": "양동 성공 · 북쪽 여울로"
+        }
+      ]
+    },
+    {
+      "id": "liaoshui/collapse",
+      "trigger": {
+        "type": "scripted"
+      },
+      "actions": [
+        {
+          "type": "apply_effect",
+          "side": "enemy",
+          "effect": "confusion",
+          "duration": 2
+        },
+        {
+          "type": "set_phase",
+          "phase": "진형 붕괴 · 비연 격퇴"
+        }
+      ]
+    },
+    {
+      "id": "liaoshui/reserve",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "turn": 5
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "yan_reserve",
+              "name": "양평 원군",
+              "template": "cavalry",
+              "level": 17,
+              "count": 2,
+              "region": "yan_reserve",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

@@ -1,0 +1,277 @@
+{
+  "id": "S2-08",
+  "arc": "middle",
+  "order": 19,
+  "title": "능선과 골짜기",
+  "subtitle": "석정 전투",
+  "synopsis": "조휴가 육손의 유인에 걸려 석정에서 포위되었다. 사마의는 능선에 자리 잡고 책략으로 지원하고, 사마사·사마소가 협석 골짜기의 목책을 뚫고 조휴의 진영에 닿아야 한다. 조휴의 진영은 14턴을 버틴다.",
+  "mapId": "shiting-gorge",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "infantry",
+        "count": 1,
+        "level": 12,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 12,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "annihilate",
+      "side": "enemy"
+    },
+    {
+      "type": "reach",
+      "unit": "sima_shi",
+      "target": "camp",
+      "order": 1
+    },
+    {
+      "type": "reach",
+      "unit": "sima_zhao",
+      "target": "camp",
+      "order": 2
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "sima_shi"
+    },
+    {
+      "type": "retreat",
+      "unit": "sima_zhao"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_xiu"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:1",
+      "extreme": "player_losses_lt:1",
+      "note": "편입 보병·창병과 두 아들이 손실 카운트에 포함됩니다 (PRD R-5.5)"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:8",
+      "extreme": "turn_limit:9"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 10,
+      "recommendedLevel": 12
+    },
+    "extreme": {
+      "minEnemyLevel": 12,
+      "recommendedLevel": 14
+    }
+  },
+  "gimmicks": [
+    "M-05",
+    "M-08"
+  ],
+  "events": [
+    {
+      "id": "shiting/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "move_unit",
+          "targets": [
+            "sima_yi"
+          ],
+          "at": {
+            "x": 11,
+            "y": 4
+          }
+        },
+        {
+          "type": "spawn_units",
+          "side": "ally",
+          "units": [
+            {
+              "id": "sima_shi",
+              "name": "사마사",
+              "template": "cavalry",
+              "level": 12,
+              "at": {
+                "x": 4,
+                "y": 6
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "sima_zhao",
+              "name": "사마소",
+              "template": "crossbow",
+              "level": 12,
+              "at": {
+                "x": 4,
+                "y": 8
+              },
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "cao_xiu",
+              "name": "조휴",
+              "template": "infantry",
+              "level": 12,
+              "at": {
+                "x": 21,
+                "y": 7
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "camp_bow",
+              "name": "조휴 궁수",
+              "template": "archer",
+              "level": 11,
+              "at": {
+                "x": 21,
+                "y": 6
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "pass_guard",
+              "name": "협석 수비병",
+              "template": "spearman",
+              "level": 11,
+              "at": {
+                "x": 14,
+                "y": 7
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "slope_bow",
+              "name": "비탈 궁수",
+              "template": "archer",
+              "level": 11,
+              "count": 2,
+              "region": "slope",
+              "behavior": "hold"
+            },
+            {
+              "id": "lu_xun",
+              "name": "육손",
+              "template": "strategist",
+              "level": 13,
+              "at": {
+                "x": 20,
+                "y": 11
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "wu_foot",
+              "name": "오군 보병",
+              "template": "infantry",
+              "level": 11,
+              "count": 2,
+              "region": "wu_camp_front",
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "협석 돌파"
+        }
+      ]
+    },
+    {
+      "id": "shiting/south-wave",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "turn": 5
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "wu_wave",
+              "name": "오군 증원",
+              "template": "spearman",
+              "level": 11,
+              "count": 2,
+              "region": "wu_south",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shiting/ridge-raid",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "turn": 5
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "ridge_raider",
+              "name": "능선 습격대",
+              "template": "cavalry",
+              "level": 11,
+              "count": 1,
+              "region": "wu_north",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

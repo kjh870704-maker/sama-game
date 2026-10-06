@@ -140,7 +140,10 @@ describe("무르기", () => {
     const state = duelState(5);
     const battle = new Battle(state, { seed: 5, undoDepth: 2 });
     battle.start();
-    for (let i = 0; i < 5; i++) battle.execute({ kind: "wait", unit: "hero" });
+    for (let i = 0; i < 5; i++) {
+      expect(battle.execute({ kind: "wait", unit: "hero" }).ok).toBe(true);
+      for (let phase = 0; phase < 4; phase++) battle.execute({ kind: 'endPhase' });
+    }
     expect(battle.undo()).toBe(true);
     expect(battle.undo()).toBe(true);
     expect(battle.undo()).toBe(false);
@@ -159,5 +162,20 @@ describe("결정론", () => {
       return state.log;
     };
     expect(JSON.stringify(run())).toEqual(JSON.stringify(run()));
+  });
+});
+
+describe("편입 아군과 점령 목표", () => {
+  it("본대만 점령할 수 있는 칸에서 편입 아군은 비켜서고 본대가 담당한다", async () => {
+    const { decide } = await import("../src/ai.ts");
+    const state = new BattleState(minimalStage({ victory: [{ type: "capture", target: "objective", by: "player" }] }), flatMap(6, 6), 5);
+    const ally = makeUnit({ id: "ally_a", name: "편입", side: "ally", unitClass: "infantry", level: 5, pos: { x: 5, y: 5 } });
+    const hero = makeUnit({ id: "hero", name: "본대", side: "player", unitClass: "infantry", level: 5, pos: { x: 2, y: 2 } });
+    state.add(ally); state.add(hero);
+    const moveOff = decide(state, ally);
+    expect(moveOff[0]?.kind).toBe("move");
+    expect(moveOff.some((c) => c.kind === "capture")).toBe(false);
+    const heroPlan = decide(state, hero);
+    expect(heroPlan[0]?.kind).toBe("move");
   });
 });

@@ -1,0 +1,252 @@
+{
+  "id": "S3-06",
+  "arc": "lower",
+  "order": 31,
+  "title": "쉰 해의 칼",
+  "subtitle": "낙양 점령전",
+  "synopsis": "249년 정월, 조상이 황제를 모시고 고평릉으로 나간 틈. 사마의는 서쪽에서 조상 측 금군을 붙들고, 사마사·사마소는 동쪽에서 무기고로 숨어든다. 무기고가 조상 측에 있는 동안 적은 견고하고 2턴마다 증원이 온다. 두 아들이 무기고를 장악하면 적의 견고가 풀리고 증원이 멈추며, 두 아들은 성문 확보 임무로 떠난다(손실 아님). 그 뒤 사마의가 영녕궁에 들어서면 승리. 영녕궁 앞길은 불길로 막힐 수 있다 — 한 턴 전에 예고된다.",
+  "mapId": "luoyang-coup",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 21,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "archer",
+        "count": 1,
+        "level": 21,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "infantry",
+        "count": 1,
+        "level": 21,
+        "traits": [
+          "guardian"
+        ],
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "capture",
+      "target": "armory",
+      "by": "player",
+      "order": 1
+    },
+    {
+      "type": "reach",
+      "unit": "sima_yi",
+      "target": "yongning",
+      "order": 2
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "clear",
+      "extreme": "clear",
+      "note": "웹 세션에서 사마사·사마소가 임무 전환까지 살아남았는지 별도 평가한다(이탈은 손실 아님)."
+    },
+    {
+      "slot": 3,
+      "normal": "clear",
+      "extreme": "clear",
+      "note": "웹 세션에서 증원 2회 이내에 무기고를 장악했는지 별도 평가한다."
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 20,
+      "recommendedLevel": 22
+    },
+    "extreme": {
+      "minEnemyLevel": 22,
+      "recommendedLevel": 24
+    }
+  },
+  "gimmicks": [
+    "M-07",
+    "M-18",
+    "M-19"
+  ],
+  "events": [
+    {
+      "id": "coup/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "player",
+          "units": [
+            {
+              "id": "sima_shi",
+              "name": "사마사",
+              "template": "cavalry",
+              "level": 22,
+              "at": {
+                "x": 17,
+                "y": 15
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "sima_zhao",
+              "name": "사마소",
+              "template": "crossbow",
+              "level": 22,
+              "at": {
+                "x": 18,
+                "y": 15
+              },
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "armory_guard",
+              "name": "무기고 수비병",
+              "template": "spearman",
+              "level": 21,
+              "count": 2,
+              "region": "armory_guard",
+              "behavior": "hold"
+            },
+            {
+              "id": "palace_guard",
+              "name": "영녕궁 금군",
+              "template": "infantry",
+              "level": 21,
+              "count": 2,
+              "region": "palace_guard",
+              "behavior": "hold"
+            },
+            {
+              "id": "west_guard",
+              "name": "조상 측 금군",
+              "template": "infantry",
+              "level": 21,
+              "count": 2,
+              "region": "west_front",
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "두 전선"
+        }
+      ]
+    },
+    {
+      "id": "coup/reinforce",
+      "phase": "두 전선",
+      "once": false,
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "every": 2
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "template": "spearman",
+              "name": "금군 증원",
+              "level": 21,
+              "count": 1,
+              "region": "barracks",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "coup/armory",
+      "trigger": {
+        "type": "region_captured",
+        "region": "armory",
+        "by": "player"
+      },
+      "actions": [
+        {
+          "type": "remove_effect",
+          "side": "enemy",
+          "effect": "guard"
+        },
+        {
+          "type": "apply_effect",
+          "side": "player",
+          "effect": "rally",
+          "duration": 3
+        },
+        {
+          "type": "dismiss_units",
+          "targets": [
+            "sima_shi",
+            "sima_zhao"
+          ]
+        },
+        {
+          "type": "telegraph_aoe",
+          "region": "palace_road",
+          "magnitude": 0,
+          "duration": 1,
+          "label": "불길 예고"
+        },
+        {
+          "type": "set_phase",
+          "phase": "영녕궁 진입"
+        }
+      ]
+    },
+    {
+      "id": "coup/fire",
+      "phase": "영녕궁 진입",
+      "trigger": {
+        "type": "turn_start",
+        "side": "player"
+      },
+      "actions": [
+        {
+          "type": "terrain_change",
+          "region": "palace_road",
+          "hazard": "fire",
+          "duration": 3
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 24,
+    "tier": "B"
+  }
+}

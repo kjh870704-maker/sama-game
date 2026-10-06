@@ -1,0 +1,180 @@
+{
+  "id": "S3-03",
+  "arc": "lower",
+  "order": 28,
+  "title": "늙은 장수의 걸음",
+  "subtitle": "번성 구원전",
+  "synopsis": "241년, 오의 주연이 번성을 에워쌌다. 성 안 수비대가 쓰러지고 오군이 본채를 차지하면 실패. 곧장 북동쪽 들판을 가로지르면 빠르지만 오군 포차의 사정권이다. 서쪽 숲길은 멀지만 몸을 숨길 수 있다. 사마의의 곁 2칸 안의 아군은 매 턴 사기가 오른다. 주연을 격퇴하거나 포위군 7부대를 무너뜨리면 승리.",
+  "mapId": "fancheng-relief",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "cavalry",
+        "count": 1,
+        "level": 19,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 19,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "archer",
+        "count": 1,
+        "level": 19,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "retreat",
+      "unit": "zhu_ran"
+    },
+    {
+      "type": "enemy_retreat_count",
+      "n": 7
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "capture",
+      "target": "keep",
+      "by": "enemy"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:1",
+      "extreme": "player_losses_lt:1",
+      "note": "편입 기병·창병·궁병이 손실 카운트에 포함됩니다 (PRD R-5.5)"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:10",
+      "extreme": "turn_limit:11"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 17,
+      "recommendedLevel": 19
+    },
+    "extreme": {
+      "minEnemyLevel": 19,
+      "recommendedLevel": 21
+    }
+  },
+  "gimmicks": [
+    "M-05"
+  ],
+  "events": [
+    {
+      "id": "fancheng/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "fan_guard",
+              "name": "번성 수비대",
+              "template": "spearman",
+              "level": 18,
+              "count": 2,
+              "region": "keep",
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "zhu_ran",
+              "name": "주연",
+              "template": "infantry",
+              "level": 19,
+              "at": {
+                "x": 18,
+                "y": 6
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "ring",
+              "name": "오군 포위병",
+              "template": "spearman",
+              "level": 18,
+              "count": 4,
+              "region": "siege_ring",
+              "behavior": "advance"
+            },
+            {
+              "id": "wu_catapult",
+              "name": "오군 포차",
+              "template": "catapult",
+              "level": 18,
+              "count": 2,
+              "region": "catapults",
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "번성 구원"
+        }
+      ]
+    },
+    {
+      "id": "fancheng/wave",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "turn": 4
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "wu_boat",
+              "name": "오군 상륙병",
+              "template": "infantry",
+              "level": 18,
+              "count": 2,
+              "region": "landing",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

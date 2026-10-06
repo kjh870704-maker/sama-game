@@ -1,0 +1,62 @@
+{
+  "id": "jianye-court",
+  "name": "건업 궁정",
+  "legend": {
+    ".": "plain",
+    ",": "road",
+    "F": "fort",
+    "#": "wall"
+  },
+  "rows": [
+    "##############",
+    "#FFFFFFFFFFFF#",
+    "#FFFFF,,FFFFF#",
+    "#FF.FF,,FF.FF#",
+    "#FFFFF,,FFFFF#",
+    "#FF.FF,,FF.FF#",
+    "#FFFFF,,FFFFF#",
+    "#FFFFF,,FFFFF#",
+    "######,,######",
+    "......,,......"
+  ],
+  "regions": {
+    "player_start": [
+      {
+        "x": 6,
+        "y": 8
+      },
+      {
+        "x": 7,
+        "y": 8
+      },
+      {
+        "x": 6,
+        "y": 9
+      },
+      {
+        "x": 7,
+        "y": 9
+      }
+    ],
+    "throne": [
+      {
+        "x": 6,
+        "y": 1
+      },
+      {
+        "x": 7,
+        "y": 1
+      }
+    ],
+    "objective": [
+      {
+        "x": 6,
+        "y": 1
+      },
+      {
+        "x": 7,
+        "y": 1
+      }
+    ]
+  }
+}

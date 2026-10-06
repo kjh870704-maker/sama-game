@@ -1,0 +1,263 @@
+{
+  "id": "S3-05",
+  "arc": "lower",
+  "order": 30,
+  "title": "낙곡의 그림자",
+  "subtitle": "낙곡대전",
+  "synopsis": "244년, 대장군 조상이 공을 세우려 촉 정벌에 나섰다. 사마의는 따라가지 않았다. 사마소가 흥세 앞 요새를 차지하면 조상은 더 깊이 북서쪽으로 진격하려 한다(노란 칸이 그의 목표). 골짜기 양쪽에 촉의 복병이 있다는 단서가 나오면, 조상을 동남쪽 출구까지 호송해 돌아와야 한다. 조상이나 사마소가 쓰러지면 실패.",
+  "mapId": "luogu-valley",
+  "deployment": {
+    "forced": [],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "cavalry",
+        "count": 1,
+        "level": 20,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 20,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "archer",
+        "count": 1,
+        "level": 20,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "infantry",
+        "count": 1,
+        "level": 20,
+        "traits": [
+          "guardian"
+        ],
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "capture",
+      "target": "shu_fort",
+      "by": "player",
+      "order": 1
+    },
+    {
+      "type": "dialogue_complete",
+      "target": "luogu_turn",
+      "order": 2
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_zhao"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_shuang"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:1",
+      "extreme": "player_losses_lt:1",
+      "note": "사마소와 편입 부대가 손실 카운트에 포함됩니다 (PRD R-5.5)"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:14",
+      "extreme": "turn_limit:15"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 19,
+      "recommendedLevel": 21
+    },
+    "extreme": {
+      "minEnemyLevel": 21,
+      "recommendedLevel": 23
+    }
+  },
+  "gimmicks": [
+    "M-05",
+    "M-18",
+    "M-07"
+  ],
+  "dialogues": [
+    {
+      "id": "luogu_turn",
+      "speaker": "sima_zhao",
+      "text": "벼랑 위에서 촉의 깃발이 일어선다. 조상의 얼굴이 하얗게 질린다. 더 들어가면 모두 죽는다.",
+      "options": [
+        {
+          "id": "escort",
+          "text": "조상을 호송해 동남쪽 출구로 돌아간다"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "luogu/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "player",
+          "units": [
+            {
+              "id": "sima_zhao",
+              "name": "사마소",
+              "template": "crossbow",
+              "level": 21,
+              "at": {
+                "x": 18,
+                "y": 13
+              },
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "cao_shuang",
+              "name": "조상",
+              "template": "cavalry",
+              "level": 19,
+              "at": {
+                "x": 22,
+                "y": 12
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "shuang_guard",
+              "name": "조상 친위",
+              "template": "spearman",
+              "level": 19,
+              "at": {
+                "x": 23,
+                "y": 12
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "fort_guard",
+              "name": "흥세 요새병",
+              "template": "spearman",
+              "level": 20,
+              "count": 3,
+              "region": "fort_garrison",
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "요새 확보"
+        }
+      ]
+    },
+    {
+      "id": "luogu/taken",
+      "trigger": {
+        "type": "region_captured",
+        "region": "shu_fort",
+        "by": "player"
+      },
+      "actions": [
+        {
+          "type": "set_phase",
+          "phase": "조상의 진격"
+        }
+      ]
+    },
+    {
+      "id": "luogu/clue",
+      "trigger": {
+        "type": "scripted"
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "region": "ambush_nests",
+          "magnitude": 0,
+          "duration": 1,
+          "label": "벼랑 위 깃발"
+        },
+        {
+          "type": "set_phase",
+          "phase": "복병 단서"
+        }
+      ]
+    },
+    {
+      "id": "luogu/ambush",
+      "trigger": {
+        "type": "scripted"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "ambush",
+              "name": "촉 복병",
+              "template": "infantry",
+              "level": 20,
+              "count": 4,
+              "region": "ambush_nests",
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "change_victory",
+          "conditions": [
+            {
+              "type": "reach",
+              "unit": "cao_shuang",
+              "target": "exit"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "조상 호송"
+        },
+        {
+          "type": "play_dialogue",
+          "dialogueId": "luogu_turn"
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

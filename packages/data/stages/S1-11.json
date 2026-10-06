@@ -1,0 +1,251 @@
+{
+  "id": "S1-11",
+  "arc": "upper",
+  "order": 11,
+  "title": "혀에 걸린 사활",
+  "subtitle": "동오 설득전",
+  "synopsis": "관우가 번성을 물에 잠기게 했다. 사마의는 건업의 손권 조정에 들어가, 논거 하나로 강동을 움직여야 한다. 틀릴 때마다 신뢰가 깎인다.",
+  "mapId": "jianye-court",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1
+  },
+  "victory": [
+    {
+      "type": "dialogue_complete",
+      "target": "accord"
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "clear",
+      "extreme": "clear",
+      "note": "웹 세션에서 오답 없이 설득했는지 별도 평가한다."
+    },
+    {
+      "slot": 3,
+      "normal": "clear",
+      "extreme": "clear",
+      "note": "웹 세션에서 손권을 한 번에 설득했는지 별도 평가한다."
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 8,
+      "recommendedLevel": 9
+    },
+    "extreme": {
+      "minEnemyLevel": 10,
+      "recommendedLevel": 11
+    }
+  },
+  "gimmicks": [
+    "M-03"
+  ],
+  "dialogues": [
+    {
+      "id": "zhang_zhao",
+      "speaker": "zhang_zhao",
+      "text": "장소가 지팡이를 짚는다. “위의 사신이 무슨 낯으로 왔소? 조조는 적벽에서 강동을 삼키려 했던 자요.”",
+      "options": [
+        {
+          "id": "present",
+          "text": "적벽은 지난 일입니다. 지금 강동의 목을 겨누는 것은 형주에서 북상하는 관우입니다.",
+          "correct": true,
+          "next": "lu_meng"
+        },
+        {
+          "id": "arrogant",
+          "text": "위는 천하의 주인이니 강동은 따르기만 하면 됩니다.",
+          "correct": false,
+          "next": "zhang_zhao"
+        },
+        {
+          "id": "threat",
+          "text": "예물을 바치면 위의 군대가 강을 건너지 않을 것입니다.",
+          "correct": false,
+          "next": "zhang_zhao"
+        }
+      ]
+    },
+    {
+      "id": "lu_meng",
+      "speaker": "lu_meng",
+      "text": "여몽이 팔짱을 낀다. “관우를 친다 칩시다. 그러면 형주는 누구의 땅이 되오?”",
+      "options": [
+        {
+          "id": "cede",
+          "text": "강릉과 공안은 강동의 것으로 인정하겠습니다. 위는 번성만 지키면 됩니다.",
+          "correct": true,
+          "next": "zhuge_jin"
+        },
+        {
+          "id": "han",
+          "text": "형주는 본래 한의 땅이니 승상께 돌려주셔야 합니다.",
+          "correct": false,
+          "next": "lu_meng"
+        },
+        {
+          "id": "later",
+          "text": "땅 문제는 관우를 이긴 뒤에 따져도 늦지 않습니다.",
+          "correct": false,
+          "next": "lu_meng"
+        }
+      ]
+    },
+    {
+      "id": "zhuge_jin",
+      "speaker": "zhuge_jin",
+      "text": "제갈근이 조용히 묻는다. “유비와 맺은 동맹을 깨라는 말이오? 신의를 버린 나라는 오래가지 못하오.”",
+      "options": [
+        {
+          "id": "loan",
+          "text": "유비는 형주를 빌려 가서 익주를 얻은 뒤에도 돌려주지 않았습니다. 신의를 먼저 저버린 쪽은 촉입니다.",
+          "correct": true,
+          "next": "sun_quan"
+        },
+        {
+          "id": "profit",
+          "text": "동맹이란 본래 이익이 다하면 끝나는 것입니다.",
+          "correct": false,
+          "next": "zhuge_jin"
+        },
+        {
+          "id": "brother",
+          "text": "제갈량이 형님을 속이고 있는 것입니다.",
+          "correct": false,
+          "next": "zhuge_jin"
+        }
+      ]
+    },
+    {
+      "id": "sun_quan",
+      "speaker": "sun_quan",
+      "text": "손권이 몸을 일으킨다. “관우는 내 혼사 제의에 범의 딸을 개의 자식에게 줄 수 없다며 사신을 꾸짖었소. 그대는 내게 무엇을 줄 수 있소?”",
+      "options": [
+        {
+          "id": "pledge",
+          "text": "승상께서 장군을 형주목으로 천거하시도록 하겠습니다. 장군께서 관우의 등을 치시면, 번성의 위군이 그 앞을 막겠습니다.",
+          "correct": true,
+          "next": "accord"
+        },
+        {
+          "id": "warn",
+          "text": "관우를 치지 않으시면 위가 먼저 강동을 칠 것입니다.",
+          "correct": false,
+          "next": "sun_quan"
+        },
+        {
+          "id": "endure",
+          "text": "모욕을 참는 것이 군주의 덕입니다.",
+          "correct": false,
+          "next": "sun_quan"
+        }
+      ]
+    },
+    {
+      "id": "accord",
+      "speaker": "sun_quan",
+      "text": "손권이 붓을 든다. 뒤에서 여몽이 군사들에게 흰 상인의 옷을 입히라고 이른다.",
+      "options": [
+        {
+          "id": "seal",
+          "text": "맹약을 맺는다."
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "jianye/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "sun_quan",
+              "name": "손권",
+              "template": "strategist",
+              "level": 9,
+              "at": {
+                "x": 6,
+                "y": 1
+              },
+              "behavior": "passive"
+            },
+            {
+              "id": "zhang_zhao",
+              "name": "장소",
+              "template": "strategist",
+              "level": 8,
+              "at": {
+                "x": 3,
+                "y": 3
+              },
+              "behavior": "passive"
+            },
+            {
+              "id": "zhuge_jin",
+              "name": "제갈근",
+              "template": "strategist",
+              "level": 8,
+              "at": {
+                "x": 10,
+                "y": 3
+              },
+              "behavior": "passive"
+            },
+            {
+              "id": "lu_meng",
+              "name": "여몽",
+              "template": "cavalry",
+              "level": 9,
+              "at": {
+                "x": 3,
+                "y": 5
+              },
+              "behavior": "passive"
+            },
+            {
+              "id": "court_guard",
+              "name": "궁정 위사",
+              "template": "spearman",
+              "level": 8,
+              "at": {
+                "x": 10,
+                "y": 5
+              },
+              "behavior": "passive"
+            }
+          ]
+        },
+        {
+          "type": "play_dialogue",
+          "dialogueId": "zhang_zhao"
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 10,
+    "tier": "A"
+  }
+}
