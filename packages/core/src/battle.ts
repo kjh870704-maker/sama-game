@@ -12,7 +12,7 @@ import { DialogueScript } from "./dialogue.ts";
 import { runEvents } from "./events.ts";
 import { evaluateGroup } from "./conditions.ts";
 import { manhattan, key, sameCoord, adjacent, isHostile } from "./grid.ts";
-import { inReach, reachShape, REACH_NAMES } from "./reach.ts";
+import { inReach, reachLabel } from "./reach.ts";
 import { CONTROLLABLE } from "./types.ts";
 import type { Unit, Coord, StrategyDef } from "./types.ts";
 import { decide } from "./ai.ts";
@@ -127,7 +127,7 @@ export class Battle {
     if (a.hasActed) return fail("이미 행동함");
 
     const dist = manhattan(a.pos, d.pos);
-    if (!inReach(a, a.pos, d.pos)) return fail(`사거리 밖 (거리 ${dist}, 사거리 ${a.range[0]}~${a.range[1]} · ${REACH_NAMES[reachShape(a.unitClass)]})`);
+    if (!inReach(a, a.pos, d.pos)) return fail(`사거리 밖 (거리 ${dist}, 사거리 ${a.range[0]}~${a.range[1]} · ${reachLabel(a.unitClass)})`);
 
     this.strike(a, d, false);
 

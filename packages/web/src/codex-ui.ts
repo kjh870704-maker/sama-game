@@ -7,7 +7,7 @@
  * 책략: 아이콘 목록과 속성·소모 MP·습득 레벨·시전 범위·효과 범위 격자·설명.
  */
 import type {UnitClass,StrategyTier,TerrainKind} from '../../core/src/index.ts';
-import {VARIANTS,tierOf,familyOf,profileOf,classTactics,strategyArea,tieredStrategy,strategyTierLevel,STRATEGY_TIER_NAMES,gradeProfileOf,terrainEfficiency,efficiencyMark,reachShape,REACH_NAMES,reachOffsets} from '../../core/src/index.ts';
+import {VARIANTS,tierOf,familyOf,profileOf,classTactics,strategyArea,tieredStrategy,strategyTierLevel,STRATEGY_TIER_NAMES,gradeProfileOf,terrainEfficiency,efficiencyMark,reachLabel,reachOffsets} from '../../core/src/index.ts';
 import {strategyIconUrl} from './strategy-icons.ts';
 import {allRomanceNames,romanceByName,temperOf} from './romance.ts';
 import {temperNames} from './duel.ts';
@@ -146,8 +146,8 @@ function classesTab(pick:string){
   const grid=`<div class="cx-classes">${all.map(k=>`<button data-cx-class="${k}" class="cx-class tier-${tierOf(k)} ${k===c?'chosen':''}">${sprite(k)}<b>${esc(classNames[k]??k)}</b><small>${'◆'.repeat(tierOf(k))}</small></button>`).join('')}</div>`;
   const detail=`<div class="cx-detail"><div class="cx-head">${sprite(c)}<div><small>${'◆'.repeat(tierOf(c))} ${tierOf(c)===1?'기본':tierOf(c)===2?'정예':tierOf(c)===3?'최정예':tierOf(c)===4?'전설':'신화'} · ${esc(classNames[familyOf(c)]??familyOf(c))} 계열</small><h3>${esc(classNames[c]??c)}</h3><p>${esc(troopRoles[c]?.role??adviceFor(c))}</p></div></div>
     <div class="cx-stats">${PROFILE_ROWS.map(([k,label])=>{const n=p[k] as number;return `<div class="cx-stat"><span>${label}</span><i><i style="width:${Math.min(100,n/2.2*100)}%" class="${n>=1.3?'hi':n<0.7?'lo':''}"></i></i><b>${n.toFixed(2)}</b></div>`;}).join('')}</div>
-    <p class="cx-tags"><span>이동 ${p.movement}</span><span>사거리 ${p.range[0]}~${p.range[1]} · ${REACH_NAMES[reachShape(c)]}</span>${p.canUseStrategy?'<span>책략 사용</span>':''}</p>
-    <div class="cx-ranges"><figure><figcaption>평타 범위 · ${REACH_NAMES[reachShape(c)]}</figcaption>${rangeGrid(reachOffsets({unitClass:c,range:p.range}),'cast')}</figure></div>
+    <p class="cx-tags"><span>이동 ${p.movement}</span><span>사거리 ${p.range[0]}~${p.range[1]} · ${reachLabel(c)}</span>${p.canUseStrategy?'<span>책략 사용</span>':''}</p>
+    <div class="cx-ranges"><figure><figcaption>평타 범위 · ${reachLabel(c)}</figcaption>${rangeGrid(reachOffsets({unitClass:c,range:p.range}),'cast')}</figure></div>
     ${ccGrades(c)}
     ${v?.bloom?`<p class="cx-unique"><b>개화 「${esc(v.bloom.name)}」</b> ${esc(v.bloom.description)}</p>`:''}
     ${classTactics(c).map(t=>`<p class="cx-unique"><b>전법 「${esc(t.name)}」</b> ${esc(t.description)}</p>`).join('')}

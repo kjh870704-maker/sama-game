@@ -1,27 +1,41 @@
 import { describe, it, expect } from "vitest";
-import { inReach, reachShape, reachOffsets, reachMul, engageDistance } from "../src/index.ts";
+import { inReach, reachShape, reachOffsets, reachMul, engageDistance, reachLabel, reachSpec, tierOf } from "../src/index.ts";
 
-describe("병종별 공격 범위", () => {
-  it("기병·중기병·무도가·산적은 대각선으로 붙은 적도 친다", () => {
-    for (const c of ["cavalry", "heavyCav", "monk", "bandit", "tigerRider"] as const) {
-      expect(reachShape(c)).toBe("square");
-      expect(inReach({ unitClass: c, range: [1, 1] }, { x: 5, y: 5 }, { x: 6, y: 6 })).toBe(true);
-      expect(reachOffsets({ unitClass: c, range: [1, 1] })).toHaveLength(8);
-    }
-  });
-  it("보병·창병·책사는 예전처럼 십자 네 칸", () => {
-    for (const c of ["infantry", "spearman", "strategist"] as const) {
-      expect(inReach({ unitClass: c, range: [1, 1] }, { x: 5, y: 5 }, { x: 6, y: 6 })).toBe(false);
+const o = { x: 0, y: 0 };
+describe("병종별 공격 범위 — 진화할수록 넓어진다", () => {
+  it("진화 전(1단)은 모든 근접 병종이 십자 네 칸", () => {
+    for (const c of ["infantry", "spearman", "cavalry", "heavyCav", "monk", "bandit", "strategist"] as const) {
+      expect(tierOf(c)).toBe(1);
+      expect(reachShape(c)).toBe("cross");
       expect(reachOffsets({ unitClass: c, range: [1, 1] })).toHaveLength(4);
     }
   });
-  it("궁병의 사거리 2는 그대로(대각선 한 칸 건너 포함)", () => {
-    expect(reachOffsets({ unitClass: "archer", range: [2, 2] })).toHaveLength(8);
+  it("기병·산적·무도가는 2단부터 팔방, 보병은 3단부터 팔방", () => {
+    for (const c of ["lancer", "outlaw", "warriorMonk", "royalGuard"] as const) {
+      expect(reachShape(c)).toBe("square");
+      expect(inReach({ unitClass: c, range: [1, 1] }, o, { x: 1, y: 1 })).toBe(true);
+      expect(reachOffsets({ unitClass: c, range: [1, 1] })).toHaveLength(8);
+    }
+    expect(reachShape("shieldGuard")).toBe("cross");
   });
-  it("대각선 평타는 정면보다 약하고, 대각선 접촉은 붙은 것으로 친다", () => {
-    expect(reachMul({ pos: { x: 0, y: 0 }, range: [1, 1] }, { x: 1, y: 1 })).toBeLessThan(1);
-    expect(reachMul({ pos: { x: 0, y: 0 }, range: [1, 1] }, { x: 1, y: 0 })).toBe(1);
-    expect(engageDistance({ x: 0, y: 0 }, { x: 1, y: 1 })).toBe(1);
-    expect(engageDistance({ x: 0, y: 0 }, { x: 2, y: 0 })).toBe(2);
+  it("창병은 2단부터 직선 2칸 찌르기, 4단은 팔방까지", () => {
+    expect(inReach({ unitClass: "pikeman", range: [1, 1] }, o, { x: 0, y: 2 })).toBe(true);
+    expect(inReach({ unitClass: "pikeman", range: [1, 1] }, o, { x: 1, y: 1 })).toBe(false);
+    expect(reachOffsets({ unitClass: "divineSpear", range: [1, 1] })).toHaveLength(12);
+  });
+  it("궁병은 진화하면 직선으로 더 멀리 쏜다", () => {
+    expect(reachOffsets({ unitClass: "archer", range: [2, 2] })).toHaveLength(8);
+    expect(inReach({ unitClass: "longbow", range: [2, 3] }, o, { x: 4, y: 0 })).toBe(true);
+    expect(inReach({ unitClass: "longbow", range: [2, 3] }, o, { x: 3, y: 1 })).toBe(false);
+    expect(reachSpec("ytArcher").sq).toBe(2);
+    expect(reachLabel("archer")).toBe("십자");
+    expect(reachLabel("longbow")).toBe("십자 · 직선 +1");
+  });
+  it("넓어진 칸으로 친 평타는 정면보다 약하고, 대각선 접촉은 붙은 것으로 친다", () => {
+    expect(reachMul({ pos: o, range: [1, 1] }, { x: 1, y: 1 })).toBeLessThan(1);
+    expect(reachMul({ pos: o, range: [1, 1] }, { x: 1, y: 0 })).toBe(1);
+    expect(reachMul({ pos: o, range: [1, 1] }, { x: 2, y: 0 })).toBeLessThan(1);
+    expect(engageDistance(o, { x: 1, y: 1 })).toBe(1);
+    expect(engageDistance(o, { x: 2, y: 0 })).toBe(2);
   });
 });

@@ -10,7 +10,7 @@
 import {treasures,treasureInfo,gearNames,readCampaign,type GearSlot} from './progression.ts';
 import {treasurePowerText} from '../../core/src/treasure-traits.ts';
 import {TREASURE_SPECIALS} from './treasure-specials.ts';
-import {treasureIcon,relicIcon,formOf,formName,FORMS,GRADES,gradeName,RELIC_GRADE,type TreasureForm} from './treasure-art.ts';
+import {treasureIcon,relicIcon,formOf,FORMS,GRADES,RELIC_GRADE,type TreasureForm} from './treasure-art.ts';
 import {RELICS} from './roguelike.ts';
 import {loadRun} from './run-ui.ts';
 import {loadScenario} from './scenario.ts';
@@ -56,14 +56,14 @@ export function filterTreasures(f:CodexFilter,h=treasureHoldings()){
 
 function card(id:string,h:ReturnType<typeof treasureHoldings>){
   const t=treasures.find(x=>x.id===id)!,info=treasureInfo(id),own=h.owned.has(id),who=h.wearer.get(id),power=treasurePowerText(id),sp=TREASURE_SPECIALS[id];
-  return `<article class="tc-card g${info.grade} ${own?'owned':'missing'}">${treasureIcon(id)}<div class="tc-body"><h4>${esc(t.name)} <small>${gearNames[info.slot]} · ${formName(formOf(id))}</small></h4>
-    <p class="tc-grade g${info.grade}">${'★'.repeat(info.grade)} ${info.rarity}</p>
-    <p class="tc-effect">${esc(t.effect)}</p>${power?`<p class="tc-power">특성 · ${esc(power)}</p>`:''}${sp?`<p class="tc-special">✦ 특기 「${esc(sp.name)}」 ${esc(sp.text)}</p>`:''}
-    <p class="tc-where">${own?who?`장착 · ${esc(OFFICER_KO[who]??who)}`:'보관 중 · 정비에서 장착':`얻는 곳 · ${esc(treasureSource(t.stage))}`}</p></div></article>`;
+  const extra=[power?`특성 · ${esc(power)}`:'',sp?`✦ 「${esc(sp.name)}」 ${esc(sp.text)}`:''].filter(Boolean).join(' · ');
+  return `<article class="tc-card g${info.grade} ${own?'owned':'missing'}">${treasureIcon(id)}<div class="tc-body"><h4>${esc(t.name)} <small class="tc-star g${info.grade}">${'★'.repeat(info.grade)}</small></h4>
+    <p class="tc-effect">${esc(t.effect)}</p>${extra?`<p class="tc-power" title="${extra.replace(/<[^>]+>/g,'')}">${extra}</p>`:''}
+    <p class="tc-where">${own?who?`장착 · ${esc(OFFICER_KO[who]??who)}`:'보관 중':`얻는 곳 · ${esc(treasureSource(t.stage))}`}</p></div></article>`;
 }
 function relicCard(id:string,h:ReturnType<typeof treasureHoldings>){
   const r=RELICS.find(x=>x.id===id)!,have=h.relics.has(id),g=RELIC_GRADE[id]??1;
-  return `<article class="tc-card relic g${g} ${have?'owned':'missing'}">${relicIcon(id,r.name)}<div class="tc-body"><h4>${esc(r.name)} <small>회차 보물</small></h4><p class="tc-grade g${g}">${'★'.repeat(g)} ${gradeName(g)}</p><p class="tc-effect">${esc(r.effect)}</p><p class="tc-where">${have?'이번 회차에 지님 · 부대 전원 적용':'행군로 「보물고」에서 셋 중 하나를 고른다'}</p></div></article>`;
+  return `<article class="tc-card relic g${g} ${have?'owned':'missing'}">${relicIcon(id,r.name)}<div class="tc-body"><h4>${esc(r.name)} <small class="tc-star g${g}">${'★'.repeat(g)}</small></h4><p class="tc-effect">${esc(r.effect)}</p><p class="tc-where">${have?'이번 회차에 지님':'행군로 보물고에서 얻음'}</p></div></article>`;
 }
 const chip=(attr:string,value:string|number,label:string,on:boolean,count?:number)=>`<button data-${attr}="${value}" class="${on?'active':''}" aria-pressed="${on}">${label}${count===undefined?'':` <small>${count}</small>`}</button>`;
 /** 보물 도감 화면 본문 */
@@ -76,13 +76,13 @@ export function treasureCodex(f:CodexFilter|TreasureTab=defaultFilter()){
   const groups=GRADES.map(g=>({...g,items:list.filter(e=>e.grade===g.grade)})).filter(g=>g.items.length);
   return `<div class="tc-filters">
     <div class="tc-row" role="group" aria-label="종류"><b>종류</b>${TREASURE_KINDS.map(([id,name])=>chip('tc-kind',id,name,f.kind===id,count({kind:id,form:'all'}))).join('')}</div>
-    ${f.kind==='relic'?'':`<div class="tc-row" role="group" aria-label="형태"><b>형태</b>${chip('tc-form','all','전체',f.form==='all')}${forms.map(x=>chip('tc-form',x.id,x.name,f.form===x.id,count({form:x.id}))).join('')}</div>`}
+    ${f.kind==='relic'||f.kind==='all'?'':`<div class="tc-row" role="group" aria-label="형태"><b>형태</b>${chip('tc-form','all','전체',f.form==='all')}${forms.map(x=>chip('tc-form',x.id,x.name,f.form===x.id,count({form:x.id}))).join('')}</div>`}
     <div class="tc-row" role="group" aria-label="등급"><b>등급</b>${chip('tc-grade',0,'전체',!f.grade)}${GRADES.map(g=>chip('tc-grade',g.grade,`<span class="tc-star g${g.grade}">${'★'.repeat(g.grade)}</span> ${g.name}`,f.grade===g.grade,count({grade:g.grade}))).join('')}</div>
     <div class="tc-row" role="group" aria-label="보유"><b>보유</b>${chip('tc-own','all','전체',f.own==='all')}${chip('tc-own','owned','가진 것',f.own==='owned',count({own:'owned'}))}${chip('tc-own','missing','못 얻은 것',f.own==='missing',count({own:'missing'}))}
-      <span class="muted">장착 보물 ${s.owned}/${s.total} · 회차 보물 ${s.relics}/${s.relicTotal} · 모두 ${all.length}점</span></div>
+      <span class="muted">가진 것 ${s.owned+s.relics}/${all.length}</span></div>
   </div>
-  <p class="muted tc-help">장착 보물은 연의 전장·보물 외전·연무장 첫 승리에서 얻어 정비 화면에서 장수에게 끼운다(무기·방어구·보조구 한 칸씩). 회차 보물은 천명의 길·원정의 행군로 「보물고」에서 고르고, 그 회차 동안 부대 전원에 효과가 있다.</p>
-  ${groups.length?groups.map(g=>`<section class="tc-group g${g.grade}"><h3><span class="tc-star g${g.grade}">${'★'.repeat(g.grade)}</span> ${g.name} <small>${g.items.length}점 · 가진 것 ${g.items.filter(e=>e.have).length}</small></h3>
+  <p class="muted tc-help">장착 보물은 장수에게 끼우고, 회차 보물은 그 회차 동안 부대 전원에 효과가 있다.</p>
+  ${groups.length?groups.map(g=>`<section class="tc-group g${g.grade}"><h3><span class="tc-star g${g.grade}">${'★'.repeat(g.grade)}</span> ${g.name} <small>${g.items.filter(e=>e.have).length}/${g.items.length}</small></h3>
     <div class="tc-grid">${g.items.map(e=>e.relic?relicCard(e.id,h):card(e.id,h)).join('')}</div></section>`).join(''):'<p class="muted tc-empty">이 조건에 맞는 보물이 없다.</p>'}`;
 }
 /** 본영의 보물 패널: 가진 보물 몇 개를 그림으로, 없으면 어디서 얻는지. */

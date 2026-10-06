@@ -33,7 +33,6 @@ export interface RunHost {
   /** 연의 회상(이긴 연의 전장 다시 치르기) */
   showChronicle():void;
   showTroops():void;
-  showOfficers():void;
   showSlots():void;
   /** 시나리오 모드(본편: 연의 + 가상) */
   showScenario():void;
@@ -81,13 +80,13 @@ export function showHub(host:RunHost){
   ${runBoard(sc.state,meta)}
   ${treasurePanel()}
   <div class="hub-actions"><button id="hub-scenario" class="primary">${done?'천명의 길 이어하기':'천명의 길 시작'}${sc.state.run?` · 제${sc.state.run.no}회차`:''} · ${esc(sc.tag)} 「${esc(sc.title)}」</button>
-  <button id="hub-quests">반복 퀘스트</button>${host.resumeSaved?'<button id="hub-resume">전투 이어하기</button>':''}<button id="hub-codex">삼국지 인물열전</button><button id="hub-research">연구</button><button id="hub-custom">신장수 · 신세력</button><button id="hub-slots">저장 칸</button><button id="hub-troops">병종 진화표</button><button id="hub-officers">장수 · 연의 장수록</button><button id="hub-fate">갈림길 지도</button></div></div></div>`,false);
+  <button id="hub-quests">반복 퀘스트</button>${host.resumeSaved?'<button id="hub-resume">전투 이어하기</button>':''}<button id="hub-codex">삼국지 인물열전</button><button id="hub-research">연구</button><button id="hub-custom">신장수 · 신세력</button><button id="hub-slots">저장 칸</button><button id="hub-troops">병종 진화표</button><button id="hub-fate">갈림길 지도</button></div></div></div>`,false);
   const on=(id:string,f:()=>void)=>{const el=document.getElementById(id);if(el)el.onclick=f;};
   on('hub-scenario',host.showScenario);on('hub-quests',()=>showQuests(host));on('hub-custom',()=>showCustomEditor(host,()=>showHub(host)));
   const codex=()=>showCodex({modal:host.modal,toast:host.toast,back:()=>showHub(host),research:()=>research()}),research=()=>showResearch({modal:host.modal,toast:host.toast,back:()=>showHub(host),codex});
   on('hub-codex',codex);on('hub-research',research);
   on('hub-treasures',()=>showTreasures(host));document.querySelectorAll<HTMLButtonElement>('[data-treasure]').forEach(b=>b.onclick=()=>showTreasures(host,'owned'));on('hub-fate',()=>showFateMap(host,()=>showHub(host)));
-  on('hub-resume',()=>host.resumeSaved?.());on('hub-slots',host.showSlots);on('hub-troops',host.showTroops);on('hub-officers',host.showOfficers);
+  on('hub-resume',()=>host.resumeSaved?.());on('hub-slots',host.showSlots);on('hub-troops',host.showTroops);
 }
 
 /** 보물 도감: 가진 것·얻는 곳·효과·특기·장착한 장수. */
