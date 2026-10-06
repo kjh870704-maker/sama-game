@@ -1,0 +1,14 @@
+import {describe,it,expect} from 'vitest';
+import {makeUnit,tierOf,VARIANTS,healAmount,type UnitClass} from '../../core/src/index.ts';
+import {troopRoles,troopStrategies} from '../src/troops.ts';
+import {freshCampaign,deployment} from '../src/progression.ts';
+import {Session} from '../src/session.ts';
+
+function trial(kind:UnitClass,level=8){const d=deployment(freshCampaign(),true);d.mission={id:level===1?'T01':'T03',runId:'troop-'+kind,version:2,supportClasses:[kind,'infantry']};return new Session(7,'normal',215,'survival',4,d);}
+describe('specialized support troops',()=>{
+ it.each(Object.keys(troopRoles).filter(k=>tierOf(k as UnitClass)===1&&!VARIANTS[k as UnitClass]) as UnitClass[])('deploys %s and restores its class and commands',kind=>{const s=trial(kind),u=s.state.living('ally').find(u=>u.unitClass===kind)!;expect(u).toBeDefined();expect(u.strategies).toEqual(troopStrategies(kind,8));while(s.state.currentSide==='player'){const actor=s.state.living('player').find(u=>!u.hasActed);if(actor)s.act({kind:'wait',unit:actor.id});else s.tick();}expect(s.act({kind:'wait',unit:u.id}).ok).toBe(true);expect(Session.load(s.save()).state.snapshot()).toEqual(s.state.snapshot());});
+ it('separates curses, elemental magic and healing',()=>{expect(troopStrategies('shaman',20)).toContain('silence');expect(troopStrategies('shaman',20)).not.toContain('greatMend');expect(troopStrategies('taoist',20)).toContain('thunder');expect(troopStrategies('maiden',20)).toContain('fortify');expect(troopStrategies('maiden',20)).not.toContain('fire');});
+ it('allows a novice maiden to heal using its own MP and action',()=>{const s=trial('maiden',1),healer=s.state.living('ally').find(u=>u.unitClass==='maiden')!,hero=s.state.get('sima_yi');hero.hp-=30;while(s.state.currentSide==='player'){const actor=s.state.living('player').find(u=>!u.hasActed);if(actor)s.act({kind:'wait',unit:actor.id});else s.tick();}const mp=healer.mp;expect(s.act({kind:'strategy',unit:healer.id,strategy:'mend',at:hero.pos}).ok).toBe(true);expect(hero.hp).toBe(Math.min(hero.stats.maxHp,hero.stats.maxHp-30+healAmount(25,healer.stats.intellect,healer.traitParams.healPower??0)));expect(healer.mp).toBe(mp-6);expect(healer.hasActed).toBe(true);});
+ it('gives horse archers ranged mobility and bandits forest mobility',()=>{const archer=makeUnit({id:'a',unitClass:'horseArcher',level:8,side:'player',pos:{x:0,y:0}});expect(archer.range).toEqual([2,3]);expect(archer.stats.movement).toBe(6);const woods=new Session(7,'normal',215,'survival',4,{...deployment(freshCampaign(),true),mission:{id:'T02',runId:'woods',version:2}}).state.map;expect(woods.moveCost('bandit',{x:4,y:1})).toBe(1);expect(woods.moveCost('infantry',{x:4,y:1})).toBe(2);});
+ it('rejects corrupt support selections in saves',()=>{const raw=trial('maiden').save();raw.deployment!.mission!.supportClasses=['unknown' as UnitClass,'infantry'];expect(()=>Session.load(raw)).toThrow('잘못된 지원 병종');});
+});

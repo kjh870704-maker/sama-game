@@ -4,19 +4,30 @@
   "version": "0.1.0",
   "description": "사마의전 — 조조전 모델 기반 턴제 전술 SRPG",
   "type": "module",
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build": "npm run build -w @sama/core",
+    "dev": "npm run dev -w @sama/web",
+    "preview": "npm run preview -w @sama/web",
+    "build": "npm run build -w @sama/core && npm run build -w @sama/web",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc -b --force",
+    "typecheck": "tsc -b --force && tsc --noEmit -p packages/web/tsconfig.json",
     "validate:stages": "node --experimental-strip-types tools/validate-stages.ts",
     "sim": "node --experimental-strip-types tools/sim.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "agent-browser": "^0.27.0",
     "typescript": "^5.7.2",
-    "vitest": "^2.1.8"
+    "vite": "^6.4.3",
+    "vitest": "^4.1.11"
   },
-  "engines": { "node": ">=22" }
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "pixi.js": "^8.21.0"
+  }
 }

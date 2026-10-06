@@ -1,0 +1,204 @@
+{
+  "id": "S1-07",
+  "arc": "upper",
+  "order": 7,
+  "title": "진심을 칠하다",
+  "subtitle": "한중 정벌전 상",
+  "synopsis": "조비의 신임을 얻은 사마의가 조진과 한중의 전초 수비망을 걷어 낸다. 길 위의 기병과 숲속 보병을 함께 운용한다.",
+  "mapId": "hanzhong-approach",
+  "deployment": {
+    "forced": [
+      "sima_yi",
+      "cao_zhen"
+    ],
+    "slots": 2,
+    "grantedUnits": [
+      {
+        "type": "infantry",
+        "count": 1,
+        "level": 6,
+        "traits": [
+          "guardian"
+        ],
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "cavalry",
+        "count": 1,
+        "level": 6,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "crossbow",
+        "count": 1,
+        "level": 6,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "fengshui",
+        "count": 1,
+        "level": 6,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "annihilate",
+      "side": "enemy"
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_zhen"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "no_player_losses",
+      "extreme": "no_player_losses",
+      "note": "편입 아군 손실 포함"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:18",
+      "extreme": "turn_limit:16"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 5,
+      "recommendedLevel": 6
+    },
+    "extreme": {
+      "minEnemyLevel": 7,
+      "recommendedLevel": 8
+    }
+  },
+  "gimmicks": [],
+  "events": [
+    {
+      "id": "approach/start",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "vanguard_spear",
+              "name": "산길 창병",
+              "template": "spearman",
+              "at": {
+                "x": 9,
+                "y": 13
+              },
+              "level": 5,
+              "behavior": "hold"
+            },
+            {
+              "id": "vanguard_bow",
+              "name": "오두미도 제주",
+              "template": "taoist",
+              "at": {
+                "x": 11,
+                "y": 8
+              },
+              "level": 5,
+              "behavior": "hold"
+            },
+            {
+              "id": "road_guard",
+              "name": "도로 수비병",
+              "template": "infantry",
+              "at": {
+                "x": 14,
+                "y": 10
+              },
+              "level": 5,
+              "behavior": "hold"
+            },
+            {
+              "id": "hill_rider",
+              "name": "고지 기병",
+              "template": "cavalry",
+              "at": {
+                "x": 17,
+                "y": 7
+              },
+              "level": 5,
+              "behavior": "hold"
+            },
+            {
+              "id": "camp_spear",
+              "name": "전초 창병",
+              "template": "spearman",
+              "at": {
+                "x": 20,
+                "y": 6
+              },
+              "level": 6,
+              "behavior": "hold"
+            },
+            {
+              "id": "camp_crossbow",
+              "name": "전초 노병",
+              "template": "crossbow",
+              "at": {
+                "x": 23,
+                "y": 7
+              },
+              "level": 5,
+              "behavior": "hold"
+            },
+            {
+              "id": "yang_ang",
+              "name": "양앙",
+              "template": "infantry",
+              "at": {
+                "x": 22,
+                "y": 4
+              },
+              "level": 6,
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "산길 수비망 돌파"
+        }
+      ]
+    },
+    {
+      "id": "approach/final-defense",
+      "trigger": {
+        "type": "enemy_count_below",
+        "n": 4
+      },
+      "actions": [
+        {
+          "type": "set_phase",
+          "phase": "남은 수비대 격퇴"
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 13,
+    "tier": "A"
+  }
+}

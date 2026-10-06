@@ -1,0 +1,304 @@
+{
+  "id": "S1-06",
+  "arc": "upper",
+  "order": 6,
+  "title": "앞과 뒤를 보는 눈",
+  "subtitle": "동관 전투",
+  "synopsis": "관문에 집중한 시선을 노려 후방 기병이 움직인다. 돌파와 호위를 함께 완수해야 한다.",
+  "mapId": "tongguan-pass",
+  "deployment": {
+    "forced": [
+      "sima_yi",
+      "cao_zhen"
+    ],
+    "slots": 2,
+    "grantedUnits": [
+      {
+        "type": "infantry",
+        "count": 1,
+        "level": 6,
+        "traits": [
+          "guardian"
+        ],
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "catapult",
+        "count": 1,
+        "level": 6,
+        "traits": [
+          "noCounterAttack"
+        ],
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "fengshui",
+        "count": 1,
+        "level": 6,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "retreat",
+      "unit": "ma_chao",
+      "order": 1
+    },
+    {
+      "type": "capture",
+      "target": "breakthrough",
+      "by": "player",
+      "order": 2
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_zhen"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_cao"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "no_player_losses",
+      "extreme": "no_player_losses",
+      "note": "직접 조작하는 편입 아군과 허저의 손실을 포함한다."
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:22",
+      "extreme": "turn_limit:20"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 5,
+      "recommendedLevel": 6
+    },
+    "extreme": {
+      "minEnemyLevel": 7,
+      "recommendedLevel": 8
+    }
+  },
+  "gimmicks": [
+    "M-05"
+  ],
+  "dialogues": [
+    {
+      "id": "tongguan_plan",
+      "speaker": "sima_yi",
+      "text": "관문 너머에 마초가 버티고 있다. 정찰병이 서쪽 후미의 기병을 보았다. 3턴에 복병이 나타난다. 허저의 방패를 어디에 둘 것인가?",
+      "options": [
+        {
+          "id": "rear",
+          "text": "허저를 조조 곁에 둔다 · 후방 (4, 12)"
+        },
+        {
+          "id": "front",
+          "text": "허저를 선봉에 보낸다 · 전방 (10, 10) / 다른 부대로 조조 호위"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "tongguan/start",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "cao_cao",
+              "name": "조조",
+              "template": "infantry",
+              "at": {
+                "x": 4,
+                "y": 11
+              },
+              "behavior": "passive",
+              "level": 7
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "ma_chao",
+              "name": "마초",
+              "template": "heavyCav",
+              "at": {
+                "x": 24,
+                "y": 8
+              },
+              "behavior": "hold",
+              "level": 6
+            },
+            {
+              "id": "pass_bow",
+              "name": "관문 노병",
+              "template": "crossbow",
+              "at": {
+                "x": 23,
+                "y": 12
+              },
+              "behavior": "hold",
+              "level": 6
+            },
+            {
+              "id": "outer_guard",
+              "name": "외곽 창병",
+              "template": "spearman",
+              "at": {
+                "x": 17,
+                "y": 10
+              },
+              "behavior": "hold",
+              "level": 6
+            }
+          ]
+        },
+        {
+          "type": "play_dialogue",
+          "dialogueId": "tongguan_plan"
+        }
+      ]
+    },
+    {
+      "id": "tongguan/rear",
+      "trigger": {
+        "type": "dialogue_choice",
+        "nodeId": "tongguan_plan",
+        "optionId": "rear"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "ally",
+          "units": [
+            {
+              "id": "xu_chu",
+              "name": "허저",
+              "template": "infantry",
+              "at": {
+                "x": 4,
+                "y": 12
+              },
+              "behavior": "advance",
+              "level": 7,
+              "traits": [
+                "guardian",
+                "physicalDamageReduction"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tongguan/front",
+      "trigger": {
+        "type": "dialogue_choice",
+        "nodeId": "tongguan_plan",
+        "optionId": "front"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "ally",
+          "units": [
+            {
+              "id": "xu_chu",
+              "name": "허저",
+              "template": "infantry",
+              "at": {
+                "x": 10,
+                "y": 10
+              },
+              "behavior": "advance",
+              "level": 7,
+              "traits": [
+                "guardian",
+                "physicalDamageReduction"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tongguan/ambush",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 3,
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "rear_raider",
+              "name": "서량 궁기병",
+              "template": "horseArcher",
+              "level": 5,
+              "count": 2,
+              "region": "rear_ambush",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tongguan/command-collapse",
+      "trigger": {
+        "type": "unit_retreats",
+        "unit": "ma_chao"
+      },
+      "actions": [
+        {
+          "type": "dismiss_units",
+          "targets": [
+            "tower_21_6",
+            "tower_21_14"
+          ]
+        },
+        {
+          "type": "apply_effect",
+          "targets": [
+            "outer_guard",
+            "pass_bow"
+          ],
+          "effect": "confusion",
+          "duration": 2,
+          "magnitude": 1
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

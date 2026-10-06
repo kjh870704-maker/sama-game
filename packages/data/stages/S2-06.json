@@ -1,0 +1,244 @@
+{
+  "id": "S2-06",
+  "arc": "middle",
+  "order": 17,
+  "title": "물을 끊다",
+  "subtitle": "가정 전투",
+  "synopsis": "마속이 길목을 버리고 남산 위에 진을 쳤다. 북쪽 샘의 두 칸을 지켜 물길을 끊으면 산 위의 촉군이 무너진다. 무너진 적이 남쪽 출구로 빠져나가지 못하게 막는다. 서쪽 길로 급수대가 올라오면 샘을 되찾으려 한다.",
+  "mapId": "jieting-hill",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "cavalry",
+        "count": 1,
+        "level": 11,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 11,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "archer",
+        "count": 1,
+        "level": 11,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "annihilate",
+      "side": "enemy"
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "clear",
+      "extreme": "clear",
+      "note": "웹 세션에서 도주한 적 수를 별도 평가한다."
+    },
+    {
+      "slot": 3,
+      "normal": "clear",
+      "extreme": "clear",
+      "note": "웹 세션에서 물길을 끊은 턴을 별도 평가한다."
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 10,
+      "recommendedLevel": 11
+    },
+    "extreme": {
+      "minEnemyLevel": 12,
+      "recommendedLevel": 13
+    }
+  },
+  "gimmicks": [
+    "M-08",
+    "M-13"
+  ],
+  "events": [
+    {
+      "id": "jieting/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "zhang_he",
+              "name": "장합",
+              "template": "cavalry",
+              "level": 12,
+              "at": {
+                "x": 21,
+                "y": 10
+              },
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "ma_su",
+              "name": "마속",
+              "template": "strategist",
+              "level": 11,
+              "at": {
+                "x": 10,
+                "y": 7
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "hill_spear",
+              "name": "남산 창병",
+              "template": "spearman",
+              "level": 10,
+              "at": {
+                "x": 9,
+                "y": 6
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "hill_bow",
+              "name": "남산 궁수",
+              "template": "archer",
+              "level": 10,
+              "at": {
+                "x": 12,
+                "y": 6
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "hill_foot_a",
+              "name": "남산 보병",
+              "template": "infantry",
+              "level": 10,
+              "at": {
+                "x": 8,
+                "y": 8
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "hill_foot_b",
+              "name": "남산 보병",
+              "template": "infantry",
+              "level": 10,
+              "at": {
+                "x": 12,
+                "y": 8
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "hill_xbow",
+              "name": "남산 노병",
+              "template": "crossbow",
+              "level": 10,
+              "at": {
+                "x": 10,
+                "y": 9
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "spring_guard",
+              "name": "샘 수비병",
+              "template": "spearman",
+              "level": 10,
+              "at": {
+                "x": 13,
+                "y": 2
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "wang_ping",
+              "name": "왕평",
+              "template": "infantry",
+              "level": 11,
+              "at": {
+                "x": 4,
+                "y": 4
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "수원 차단"
+        }
+      ]
+    },
+    {
+      "id": "jieting/water-train",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "turn": 4
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "water_train",
+              "name": "급수대",
+              "template": "infantry",
+              "level": 10,
+              "count": 2,
+              "region": "west_road",
+              "behavior": "race",
+              "goalRegion": "spring"
+            },
+            {
+              "id": "water_escort",
+              "name": "급수 호위",
+              "template": "cavalry",
+              "level": 11,
+              "count": 2,
+              "region": "west_road",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

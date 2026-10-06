@@ -1,0 +1,73 @@
+# 효과음 녹음 출처 (CC0)
+
+게임의 녹음 효과음은 모두 **CC0 1.0 퍼블릭 도메인 기증** 음원이다. 출처 표기 의무는 없지만 감사의 뜻으로 남긴다.
+수집 경로: [lavenderdotpet/CC0-Public-Domain-Sounds](https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds)(각 팩의 License/README 동봉), [sgossner/VCSL](https://github.com/sgossner/VCSL)(CC0 LICENSE).
+
+모든 파일은 모노로 변환하고 앞뒤 무음을 잘라 정규화한 뒤 64kbps MP3로 압축했다(2026-10-03, 9.2MB → 1.4MB; 재생 때 인코더 앞 무음은 잘라 냄)(`packages/web/public/sfx`). 말발굽·말 울음·환호는 비슷한 CC0 녹음을 찾지 못해 합성음을 쓴다.
+
+## 팩
+
+| 팩 | 만든 이 | 라이선스 |
+|---|---|---|
+| [Versilian Community Sample Library (VCSL)](https://github.com/sgossner/VCSL) | Versilian Studios 외 기여자 | CC0 1.0 |
+| [Kenney 사운드 팩 (Impact Sounds, RPG Audio, Interface Sounds)](https://kenney.nl/assets) | Kenney (kenney.nl) | CC0 1.0 |
+| [80 CC0 RPG SFX / 80 CC0 creature SFX](https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds) | rubberduck (OpenGameArt) | CC0 1.0 |
+| [75 CC0 breaking/falling/hit SFX](https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds) | rubberduck (OpenGameArt) | CC0 1.0 |
+| [100 CC0 wood/metal SFX](https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds) | rubberduck (OpenGameArt) | CC0 1.0 |
+| [40 CC0 water/splash/slime SFX](https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds) | rubberduck (OpenGameArt) | CC0 1.0 |
+| [25 CC0 bang/firework SFX](https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds) | rubberduck (OpenGameArt) | CC0 1.0 |
+| [Micro Pack: Organic Wooshes, Kitchen Knives](https://abstractionmusic.com) | Ben Burnes (Abstraction) | CC0 1.0 |
+| [Warfork CC0 assets (players, weapons)](https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds) | Team Forbidden (Warfork) | CC0 1.0 |
+
+## 게임 소리 → 원본 파일
+
+| 묶음 | 원본 |
+|---|---|
+| `swing` (6) | Micro Pack - Organic Wooshes/Classic Swish 1.wav<br>Micro Pack - Organic Wooshes/Classic Swish 2.wav<br>Micro Pack - Organic Wooshes/Swish 1.wav<br>Micro Pack - Organic Wooshes/Swish 2.wav<br>Micro Pack - Organic Wooshes/Swish 3.wav<br>Micro Pack - Organic Wooshes/Swish 5.wav |
+| `slash` (6) | Micro Pack - Organic Wooshes/Slash.wav<br>kenney_rpgaudio/Audio/knifeSlice.ogg<br>kenney_rpgaudio/Audio/knifeSlice2.ogg<br>warfork-cc0/sounds/weapons/blade_strike1.ogg<br>warfork-cc0/sounds/weapons/blade_strike2.ogg<br>warfork-cc0/sounds/weapons/blade_strike3.ogg |
+| `blade` (6) | 80-CC0-RPG-SFX/blade_01.ogg<br>80-CC0-RPG-SFX/blade_02.ogg<br>80-CC0-RPG-SFX/blade_03.ogg<br>80-CC0-RPG-SFX/metal_01.ogg<br>80-CC0-RPG-SFX/metal_02.ogg<br>80-CC0-RPG-SFX/metal_03.ogg |
+| `anvil` (3) | VCSL/Idiophones/Struck Idiophones/Anvil/Anvil_Hit1_v2_rr1_Mid.wav<br>VCSL/Idiophones/Struck Idiophones/Anvil/Anvil_Hit2_v2_rr1_Mid.wav<br>VCSL/Idiophones/Struck Idiophones/Anvil/Anvil_Hit3_v2_rr1_Mid.wav |
+| `metal-hit` (5) | kenney_impactsounds/Audio/impactMetal_heavy_000.ogg<br>kenney_impactsounds/Audio/impactMetal_heavy_001.ogg<br>kenney_impactsounds/Audio/impactMetal_medium_000.ogg<br>kenney_impactsounds/Audio/impactMetal_medium_001.ogg<br>kenney_impactsounds/Audio/impactMetal_medium_002.ogg |
+| `plate-hit` (5) | kenney_impactsounds/Audio/impactPlate_heavy_000.ogg<br>kenney_impactsounds/Audio/impactPlate_heavy_001.ogg<br>kenney_impactsounds/Audio/impactPlate_medium_000.ogg<br>kenney_impactsounds/Audio/impactPlate_medium_001.ogg<br>kenney_impactsounds/Audio/impactPlate_medium_002.ogg |
+| `punch` (4) | kenney_impactsounds/Audio/impactPunch_heavy_000.ogg<br>kenney_impactsounds/Audio/impactPunch_heavy_001.ogg<br>kenney_impactsounds/Audio/impactPunch_heavy_002.ogg<br>kenney_impactsounds/Audio/impactPunch_heavy_003.ogg |
+| `flesh` (3) | warfork-cc0/sounds/weapons/blade_hitflsh1.ogg<br>warfork-cc0/sounds/weapons/blade_hitflsh2.ogg<br>warfork-cc0/sounds/weapons/blade_hitflsh3.ogg |
+| `evade` (4) | Micro Pack - Organic Wooshes/Gentle Swish.wav<br>Micro Pack - Organic Wooshes/Twirl Smol 1.wav<br>Micro Pack - Organic Wooshes/Twirl Smol 2.wav<br>Micro Pack - Organic Wooshes/Twirl Smol 3.wav |
+| `shield` (5) | kenney_impactsounds/Audio/impactMetal_light_000.ogg<br>kenney_impactsounds/Audio/impactMetal_light_001.ogg<br>kenney_impactsounds/Audio/impactPlank_medium_000.ogg<br>kenney_impactsounds/Audio/impactPlank_medium_001.ogg<br>kenney_impactsounds/Audio/impactPlank_medium_002.ogg |
+| `draw` (5) | Micro Pack - Kitchen Knives/Big Knife - Unsheath 1.wav<br>Micro Pack - Kitchen Knives/Big Knife - Unsheath 2.wav<br>kenney_rpgaudio/Audio/drawKnife1.ogg<br>kenney_rpgaudio/Audio/drawKnife2.ogg<br>kenney_rpgaudio/Audio/drawKnife3.ogg |
+| `arrow-fly` (4) | Micro Pack - Organic Wooshes/Whistle 1.wav<br>Micro Pack - Organic Wooshes/Whistle 2.wav<br>Micro Pack - Organic Wooshes/Whistle 3.wav<br>Micro Pack - Organic Wooshes/Whistle 4.wav |
+| `arrow-thunk` (4) | Micro Pack - Organic Wooshes/Thunk 1.wav<br>Micro Pack - Organic Wooshes/Thunk 2.wav<br>kenney_impactsounds/Audio/impactPlank_medium_003.ogg<br>kenney_impactsounds/Audio/impactPlank_medium_004.ogg |
+| `latch` (3) | kenney_rpgaudio/Audio/beltHandle1.ogg<br>kenney_rpgaudio/Audio/metalClick.ogg<br>kenney_rpgaudio/Audio/metalLatch.ogg |
+| `wood-crack` (4) | 100-CC0-wood-metal-SFX/wood_cracking_01.ogg<br>100-CC0-wood-metal-SFX/wood_cracking_02.ogg<br>100-CC0-wood-metal-SFX/wood_cracking_03.ogg<br>100-CC0-wood-metal-SFX/wood_cracking_04.ogg |
+| `creak` (3) | kenney_rpgaudio/Audio/creak1.ogg<br>kenney_rpgaudio/Audio/creak2.ogg<br>kenney_rpgaudio/Audio/creak3.ogg |
+| `rock-break` (5) | 75-cc0-breaking-falling-hit-sfx/bfh1_rock_breaking_01.ogg<br>75-cc0-breaking-falling-hit-sfx/bfh1_rock_breaking_02.ogg<br>75-cc0-breaking-falling-hit-sfx/bfh1_rock_breaking_03.ogg<br>75-cc0-breaking-falling-hit-sfx/bfh1_rock_falling_01.ogg<br>75-cc0-breaking-falling-hit-sfx/bfh1_rock_falling_02.ogg |
+| `stones` (4) | 80-CC0-RPG-SFX/stones_01.ogg<br>80-CC0-RPG-SFX/stones_02.ogg<br>80-CC0-RPG-SFX/stones_03.ogg<br>80-CC0-RPG-SFX/stones_04.ogg |
+| `wood-break` (5) | 100-CC0-wood-metal-SFX/wood_breaking_01.ogg<br>100-CC0-wood-metal-SFX/wood_breaking_02.ogg<br>100-CC0-wood-metal-SFX/wood_slam_01.ogg<br>75-cc0-breaking-falling-hit-sfx/bfh1_wood_breaking_01.ogg<br>75-cc0-breaking-falling-hit-sfx/bfh1_wood_breaking_02.ogg |
+| `ratchet` (2) | VCSL/Idiophones/Struck Idiophones/Ratchet/Ratchet1_Slow_rr1_Mid.wav<br>VCSL/Idiophones/Struck Idiophones/Ratchet/Ratchet2_Slow_rr1_Mid.wav |
+| `footstep` (6) | kenney_impactsounds/Audio/footstep_concrete_000.ogg<br>kenney_impactsounds/Audio/footstep_concrete_001.ogg<br>kenney_impactsounds/Audio/footstep_grass_000.ogg<br>kenney_impactsounds/Audio/footstep_grass_001.ogg<br>kenney_impactsounds/Audio/footstep_grass_002.ogg<br>kenney_impactsounds/Audio/footstep_grass_003.ogg |
+| `chain` (3) | 80-CC0-RPG-SFX/chain_01.ogg<br>80-CC0-RPG-SFX/chain_02.ogg<br>80-CC0-RPG-SFX/chain_03.ogg |
+| `cloth` (4) | kenney_rpgaudio/Audio/cloth1.ogg<br>kenney_rpgaudio/Audio/cloth2.ogg<br>kenney_rpgaudio/Audio/cloth3.ogg<br>kenney_rpgaudio/Audio/cloth4.ogg |
+| `splash` (6) | 40-cc0-water-splash-slime-sfx/splash_01.ogg<br>40-cc0-water-splash-slime-sfx/splash_02.ogg<br>40-cc0-water-splash-slime-sfx/splash_03.ogg<br>40-cc0-water-splash-slime-sfx/splash_04.ogg<br>40-cc0-water-splash-slime-sfx/splash_05.ogg<br>40-cc0-water-splash-slime-sfx/splash_06.ogg |
+| `water-loop` (2) | 40-cc0-water-splash-slime-sfx/loop_water_01.ogg<br>40-cc0-water-splash-slime-sfx/loop_water_02.ogg |
+| `ocean` (1) | VCSL/Membranophones/Other Membranophones/Ocean Drum/OceanDrum_Sus_1_Mid.wav |
+| `fire` (5) | 80-CC0-RPG-SFX/spell_fire_01.ogg<br>80-CC0-RPG-SFX/spell_fire_02.ogg<br>80-CC0-RPG-SFX/spell_fire_03.ogg<br>80-CC0-RPG-SFX/spell_fire_04.ogg<br>80-CC0-RPG-SFX/spell_fire_05.ogg |
+| `spell` (2) | 80-CC0-RPG-SFX/spell_01.ogg<br>80-CC0-RPG-SFX/spell_02.ogg |
+| `boom` (4) | 25-CC0-bang-sfx/cannon_01.ogg<br>25-CC0-bang-sfx/cannon_02.ogg<br>25-CC0-bang-sfx/cannon_03.ogg<br>warfork-cc0/sounds/weapons/gren_strong_explosion1.ogg |
+| `zap` (1) | warfork-cc0/sounds/weapons/electrobolt_hit.ogg |
+| `hammer` (5) | 100-CC0-wood-metal-SFX/hammer_01.ogg<br>100-CC0-wood-metal-SFX/hammer_02.ogg<br>100-CC0-wood-metal-SFX/hammer_03.ogg<br>100-CC0-wood-metal-SFX/wood_hammer_01.ogg<br>100-CC0-wood-metal-SFX/wood_hammer_02.ogg |
+| `pain` (4) | warfork-cc0/sounds/players/male/pain100.ogg<br>warfork-cc0/sounds/players/male/pain25.ogg<br>warfork-cc0/sounds/players/male/pain50.ogg<br>warfork-cc0/sounds/players/male/pain75.ogg |
+| `death` (4) | 80-CC0-creature-SFX/scream_01.ogg<br>80-CC0-creature-SFX/scream_02.ogg<br>warfork-cc0/sounds/players/male/death.ogg<br>warfork-cc0/sounds/players/male/falldeath.ogg |
+| `grunt` (5) | 80-CC0-creature-SFX/grunt_01.ogg<br>80-CC0-creature-SFX/grunt_02.ogg<br>80-CC0-creature-SFX/grunt_03.ogg<br>80-CC0-creature-SFX/grunt_04.ogg<br>80-CC0-creature-SFX/grunt_05.ogg |
+| `book` (3) | kenney_rpgaudio/Audio/bookFlip1.ogg<br>kenney_rpgaudio/Audio/bookFlip2.ogg<br>kenney_rpgaudio/Audio/bookFlip3.ogg |
+| `click` (3) | kenney_interfacesounds/Audio/click_001.ogg<br>kenney_interfacesounds/Audio/click_002.ogg<br>kenney_interfacesounds/Audio/click_003.ogg |
+| `open` (2) | kenney_interfacesounds/Audio/open_001.ogg<br>kenney_interfacesounds/Audio/open_002.ogg |
+| `gong` (3) | VCSL/Idiophones/Struck Idiophones/Gong 1/gong_f.wav<br>VCSL/Idiophones/Struck Idiophones/Gong 1/gong_mf.wav<br>VCSL/Idiophones/Struck Idiophones/Gong 2/hit_full1.mp3 |
+| `gong-light` (2) | VCSL/Idiophones/Struck Idiophones/Gong 2/hit_light1.mp3<br>VCSL/Idiophones/Struck Idiophones/Gong 2/hit_light2.mp3 |
+| `bass-drum` (3) | VCSL/Membranophones/Struck Membranophones/Bass Drum 1/BDrumNew_hit_v5_rr1_Sum.wav<br>VCSL/Membranophones/Struck Membranophones/Bass Drum 1/BDrumNew_hit_v7_rr1_Sum.wav<br>VCSL/Membranophones/Struck Membranophones/Bass Drum 1/BDrumNew_hit_v7_rr2_Sum.wav |
+| `frame-drum` (3) | VCSL/Membranophones/Struck Membranophones/Frame Drum/HDrumL_Hit_v3_rr1_Sum.wav<br>VCSL/Membranophones/Struck Membranophones/Frame Drum/HDrumL_Hit_v3_rr2_Sum.wav<br>VCSL/Membranophones/Struck Membranophones/Frame Drum/HDrumS_Hit_v3_rr1_Sum.wav |
+| `woodblock` (3) | VCSL/Idiophones/Struck Idiophones/Woodblock/wood_click_f_rr1.wav<br>VCSL/Idiophones/Struck Idiophones/Woodblock/wood_click_f_rr2.wav<br>VCSL/Idiophones/Struck Idiophones/Woodblock/wood_click_mp.wav |
+| `cymbal` (2) | VCSL/Idiophones/Struck Idiophones/Clash Cymbals 1/cymbal_crash1_mf1.wav<br>VCSL/Idiophones/Struck Idiophones/Clash Cymbals 1/cymbal_crash1_short1.wav |
+| `chime` (5) | VCSL/Idiophones/Struck Idiophones/Hand Chimes/sus_A4_r01_main.wav<br>VCSL/Idiophones/Struck Idiophones/Hand Chimes/sus_C5_r01_main.wav<br>VCSL/Idiophones/Struck Idiophones/Hand Chimes/sus_C6_r01_main.wav<br>VCSL/Idiophones/Struck Idiophones/Hand Chimes/sus_D5_r01_main.wav<br>VCSL/Idiophones/Struck Idiophones/Hand Chimes/sus_E5_r01_main.wav |
+| `bell-tree` (2) | VCSL/Idiophones/Struck Idiophones/Bell Tree/Stroke/BellTree_Stroke_1_Mid.wav<br>VCSL/Idiophones/Struck Idiophones/Bell Tree/Stroke/BellTree_Stroke_3_Mid.wav |
+| `handbell` (3) | VCSL/Idiophones/Struck Idiophones/Hand Bells, Nepalese/HB_1.wav<br>VCSL/Idiophones/Struck Idiophones/Hand Bells, Nepalese/HB_2.wav<br>VCSL/Idiophones/Struck Idiophones/Hand Bells, Nepalese/HB_3.wav |
+| `horn` (2) | VCSL/Aerophones/Lip Aerophones/Didgeridoo/Didgeridoo1_Sus2_Main.wav<br>VCSL/Aerophones/Lip Aerophones/Didgeridoo/Didgeridoo1_Sus3_Main.wav |
+| `zheng` (16) | VCSL/Chordophones/Zithers/Dan Tranh/Normal/B1_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/B3_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/B4_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/C#2_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/C#3_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/C#4_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/D#2_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/D#3_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/D#4_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/F#2_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/F#3_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/F#4_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/G#2_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/G#3_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/G#4_mf_1.wav<br>VCSL/Chordophones/Zithers/Dan Tranh/Normal/b2_mf_1.wav |

@@ -1,0 +1,264 @@
+{
+  "id": "S2-05",
+  "arc": "middle",
+  "order": 16,
+  "title": "여드레 천이백 리",
+  "subtitle": "맹달 차단전",
+  "synopsis": "신성의 맹달이 촉과 손잡고 반기를 들려 한다. 표를 올려 허락을 기다리면 늦는다. 강행군으로 성 아래에 닿아 성문을 부수고, 14턴 안에 맹달을 꺾는다. 행군의 속도는 피로와 적 원군 사이의 선택이다.",
+  "mapId": "xincheng-fort",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 10,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "crossbow",
+        "count": 1,
+        "level": 10,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "retreat",
+      "unit": "meng_da"
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "sima_shi"
+    },
+    {
+      "type": "retreat",
+      "unit": "sima_zhao"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:1",
+      "extreme": "player_losses_lt:1",
+      "note": "편입 창병·노병과 두 아들이 손실 카운트에 포함됩니다 (PRD R-5.5)"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:10",
+      "extreme": "turn_limit:9"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 9,
+      "recommendedLevel": 10
+    },
+    "extreme": {
+      "minEnemyLevel": 11,
+      "recommendedLevel": 12
+    }
+  },
+  "gimmicks": [
+    "M-03",
+    "M-04"
+  ],
+  "dialogues": [
+    {
+      "id": "march",
+      "speaker": "sima_yi",
+      "text": "신성까지 천이백 리. 여드레에 닿으면 맹달은 원군을 부를 틈이 없다. 다만 병사들은 지친 채로 성 아래에 선다. 어떻게 가겠는가?",
+      "options": [
+        {
+          "id": "forced",
+          "text": "강행군 · 여드레에 닿는다 / 모든 부대 체력 20% 감소, 적 원군 없음"
+        },
+        {
+          "id": "steady",
+          "text": "정상 행군 · 온전히 닿는다 / 서쪽 촉군·남쪽 오군 원군이 다가온다"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "xincheng/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "ally",
+          "units": [
+            {
+              "id": "sima_shi",
+              "name": "사마사",
+              "template": "cavalry",
+              "level": 10,
+              "at": {
+                "x": 3,
+                "y": 6
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "sima_zhao",
+              "name": "사마소",
+              "template": "crossbow",
+              "level": 10,
+              "at": {
+                "x": 3,
+                "y": 7
+              },
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "meng_da",
+              "name": "맹달",
+              "template": "infantry",
+              "level": 11,
+              "at": {
+                "x": 17,
+                "y": 7
+              },
+              "behavior": "hold",
+              "traits": [
+                "unlimitedCounter"
+              ]
+            },
+            {
+              "id": "keep_bow",
+              "name": "신성 궁수",
+              "template": "archer",
+              "level": 10,
+              "at": {
+                "x": 15,
+                "y": 5
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "keep_spear",
+              "name": "신성 창병",
+              "template": "spearman",
+              "level": 10,
+              "at": {
+                "x": 15,
+                "y": 9
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "outer_guard",
+              "name": "성 밖 수비대",
+              "template": "infantry",
+              "level": 9,
+              "at": {
+                "x": 9,
+                "y": 7
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "play_dialogue",
+          "dialogueId": "march"
+        }
+      ]
+    },
+    {
+      "id": "xincheng/forced",
+      "trigger": {
+        "type": "dialogue_choice",
+        "nodeId": "march",
+        "optionId": "forced"
+      },
+      "actions": [
+        {
+          "type": "apply_effect",
+          "side": "player",
+          "hpRatioDamage": 0.2
+        },
+        {
+          "type": "apply_effect",
+          "side": "ally",
+          "hpRatioDamage": 0.2
+        },
+        {
+          "type": "set_phase",
+          "phase": "강행군 도착 · 성문 돌파"
+        }
+      ]
+    },
+    {
+      "id": "xincheng/steady",
+      "trigger": {
+        "type": "dialogue_choice",
+        "nodeId": "march",
+        "optionId": "steady"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "shu_relief",
+              "name": "촉 원군",
+              "template": "cavalry",
+              "level": 10,
+              "region": "shu_relief",
+              "behavior": "advance"
+            },
+            {
+              "template": "spearman",
+              "level": 10,
+              "count": 1,
+              "region": "shu_relief",
+              "behavior": "advance"
+            },
+            {
+              "id": "wu_relief",
+              "name": "오 원군",
+              "template": "archer",
+              "level": 10,
+              "region": "wu_relief",
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "정상 행군 · 원군 접근 중"
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

@@ -1,0 +1,228 @@
+{
+  "id": "S3-04",
+  "arc": "lower",
+  "order": 29,
+  "title": "하루를 지키는 자",
+  "subtitle": "환성 점령전",
+  "synopsis": "243년, 제갈각이 지키는 환성을 친다. 강을 건너려면 공병이 가교 터에 2턴 동안 서서 다리를 놓아야 한다. 방패 호위병은 상하좌우로 붙은 아군이 받을 피해를 대신 받는다(대각선은 지키지 못함). 건너편 노병의 관통 사격은 호위를 무시한다. 공병을 잃으면 실패. 다리를 건너 제갈각을 격퇴하면 승리.",
+  "mapId": "huancheng-river",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "cavalry",
+        "count": 1,
+        "level": 20,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "archer",
+        "count": 1,
+        "level": 20,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "reach",
+      "unit": "engineer",
+      "target": "bridge_site",
+      "order": 1
+    },
+    {
+      "type": "retreat",
+      "unit": "zhuge_ke",
+      "order": 2
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:1",
+      "extreme": "player_losses_lt:1",
+      "note": "공병·방패 호위병·편입 기병·궁병이 손실 카운트에 포함됩니다 (PRD R-5.5)"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:11",
+      "extreme": "turn_limit:12"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 18,
+      "recommendedLevel": 20
+    },
+    "extreme": {
+      "minEnemyLevel": 20,
+      "recommendedLevel": 22
+    }
+  },
+  "gimmicks": [
+    "M-08",
+    "M-20"
+  ],
+  "events": [
+    {
+      "id": "huancheng/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "ally",
+          "units": [
+            {
+              "id": "engineer",
+              "name": "공병",
+              "template": "engineer",
+              "level": 19,
+              "at": {
+                "x": 11,
+                "y": 12
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "shield",
+              "name": "방패 호위병",
+              "template": "infantry",
+              "level": 19,
+              "count": 2,
+              "region": "shields",
+              "behavior": "advance",
+              "traits": [
+                "guardian"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "zhuge_ke",
+              "name": "제갈각",
+              "template": "strategist",
+              "level": 20,
+              "at": {
+                "x": 18,
+                "y": 2
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "far_xbow",
+              "name": "건너편 노병",
+              "template": "crossbow",
+              "level": 19,
+              "count": 3,
+              "region": "far_bank",
+              "behavior": "hold",
+              "traits": [
+                "penetrate"
+              ],
+              "traitParams": {
+                "penetrate": 30
+              }
+            },
+            {
+              "id": "keep_guard",
+              "name": "환성 수비병",
+              "template": "spearman",
+              "level": 19,
+              "count": 2,
+              "region": "keep_guard",
+              "behavior": "hold"
+            },
+            {
+              "id": "north_guard",
+              "name": "오군 보병",
+              "template": "infantry",
+              "level": 19,
+              "count": 2,
+              "region": "north_guard",
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "가교 건설"
+        }
+      ]
+    },
+    {
+      "id": "huancheng/bridge",
+      "trigger": {
+        "type": "scripted"
+      },
+      "actions": [
+        {
+          "type": "terrain_change",
+          "region": "span",
+          "terrain": "bridge"
+        },
+        {
+          "type": "change_victory",
+          "conditions": [
+            {
+              "type": "retreat",
+              "unit": "zhuge_ke"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "교량 돌파"
+        }
+      ]
+    },
+    {
+      "id": "huancheng/boats",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "turn": 3
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "wu_boat",
+              "name": "오군 기습선",
+              "template": "navy",
+              "level": 19,
+              "count": 1,
+              "region": "boat_lane",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

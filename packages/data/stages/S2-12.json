@@ -1,0 +1,262 @@
+{
+  "id": "S2-12",
+  "arc": "middle",
+  "order": 23,
+  "title": "세 여울",
+  "subtitle": "위수 수비전",
+  "synopsis": "234년, 제갈량이 다섯 번째로 나와 위수 남쪽에 진을 쳤다. 위수에는 건널 수 있는 여울이 셋이다. 가운데 여울로 먼저 오는 적을 막고, 측면 여울로 오는 증원은 2턴 전에 노란 칸으로 예고된다. 예비대를 제때 옮겨 적 7부대를 격퇴한다. 촉군이 북안 진영을 점령하면 실패.",
+  "mapId": "weishui-banks",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 14,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "archer",
+        "count": 1,
+        "level": 14,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "cavalry",
+        "count": 1,
+        "level": 14,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "enemy_retreat_count",
+      "n": 7
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "capture",
+      "target": "north_camp",
+      "by": "enemy"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:1",
+      "extreme": "player_losses_lt:1",
+      "note": "편입 창병·궁병·기병이 손실 카운트에 포함됩니다 (PRD R-5.5)"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:10",
+      "extreme": "turn_limit:11"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 13,
+      "recommendedLevel": 15
+    },
+    "extreme": {
+      "minEnemyLevel": 15,
+      "recommendedLevel": 17
+    }
+  },
+  "gimmicks": [
+    "M-18",
+    "M-07"
+  ],
+  "events": [
+    {
+      "id": "weishui/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "guo_huai",
+              "name": "곽회",
+              "template": "spearman",
+              "level": 15,
+              "at": {
+                "x": 4,
+                "y": 5
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "meng_yan",
+              "name": "맹염",
+              "template": "cavalry",
+              "level": 15,
+              "at": {
+                "x": 12,
+                "y": 12
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "center_foot",
+              "name": "촉 도하 보병",
+              "template": "infantry",
+              "level": 14,
+              "count": 2,
+              "region": "center_south",
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "가운데 여울"
+        }
+      ]
+    },
+    {
+      "id": "weishui/west-warning",
+      "trigger": {
+        "type": "turn_start",
+        "side": "player",
+        "turn": 3
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "region": "west_ford",
+          "magnitude": 0,
+          "duration": 2,
+          "label": "서쪽 여울 증원"
+        },
+        {
+          "type": "set_phase",
+          "phase": "서쪽 여울 예고"
+        }
+      ]
+    },
+    {
+      "id": "weishui/center-wave",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "turn": 4
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "center_bow",
+              "name": "촉 궁수",
+              "template": "archer",
+              "level": 14,
+              "count": 2,
+              "region": "center_wave",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "weishui/west-wave",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "turn": 5
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "west_wave",
+              "name": "서쪽 도하대",
+              "template": "spearman",
+              "level": 14,
+              "count": 2,
+              "region": "west_spawn",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "weishui/east-warning",
+      "trigger": {
+        "type": "turn_start",
+        "side": "player",
+        "turn": 6
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "region": "east_ford",
+          "magnitude": 0,
+          "duration": 2,
+          "label": "동쪽 여울 증원"
+        },
+        {
+          "type": "set_phase",
+          "phase": "동쪽 여울 예고"
+        }
+      ]
+    },
+    {
+      "id": "weishui/east-wave",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "turn": 8
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "east_wave",
+              "name": "동쪽 도하대",
+              "template": "cavalry",
+              "level": 14,
+              "count": 2,
+              "region": "east_spawn",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

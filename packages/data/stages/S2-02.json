@@ -1,0 +1,275 @@
+{
+  "id": "S2-02",
+  "arc": "middle",
+  "order": 13,
+  "title": "하늘의 칼",
+  "subtitle": "동구 전투",
+  "synopsis": "조비의 동정. 동구의 함대가 폭풍에 흩어졌다. 번개가 떨어질 칸을 미리 읽고, 오군 상륙대가 퇴로를 막기 전에 조비를 북서쪽 출구로 철수시킨다.",
+  "mapId": "dongkou-river",
+  "deployment": {
+    "forced": [
+      "sima_yi",
+      "cao_zhen"
+    ],
+    "slots": 2,
+    "grantedUnits": [
+      {
+        "type": "navy",
+        "count": 2,
+        "level": 9,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 9,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "reach",
+      "unit": "cao_pi",
+      "target": "exit"
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_zhen"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_pi"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:1",
+      "extreme": "player_losses_lt:1",
+      "note": "편입 함선 2척과 창병이 손실 카운트에 포함됩니다 (PRD R-5.5)"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:11",
+      "extreme": "turn_limit:10"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 8,
+      "recommendedLevel": 9
+    },
+    "extreme": {
+      "minEnemyLevel": 10,
+      "recommendedLevel": 11
+    }
+  },
+  "gimmicks": [
+    "M-05",
+    "M-18"
+  ],
+  "events": [
+    {
+      "id": "dongkou/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "cao_pi",
+              "name": "조비",
+              "template": "strategist",
+              "level": 9,
+              "at": {
+                "x": 21,
+                "y": 3
+              },
+              "behavior": "escortee",
+              "goalRegion": "exit"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "lu_fan",
+              "name": "여범",
+              "template": "navy",
+              "level": 9,
+              "at": {
+                "x": 9,
+                "y": 9
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "wu_ship_a",
+              "name": "오군 전선",
+              "template": "navy",
+              "level": 8,
+              "at": {
+                "x": 5,
+                "y": 8
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "wu_ship_b",
+              "name": "오군 전선",
+              "template": "navy",
+              "level": 8,
+              "at": {
+                "x": 12,
+                "y": 10
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "south_bow",
+              "name": "남안 궁수",
+              "template": "archer",
+              "level": 8,
+              "at": {
+                "x": 12,
+                "y": 12
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "폭풍 속 철수"
+        }
+      ]
+    },
+    {
+      "id": "dongkou/landing",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 3,
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "template": "infantry",
+              "level": 8,
+              "count": 2,
+              "region": "exit_block",
+              "behavior": "hold"
+            },
+            {
+              "template": "spearman",
+              "level": 8,
+              "count": 1,
+              "region": "exit_block",
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "상륙대 돌파 · 북서쪽 출구"
+        }
+      ]
+    },
+    {
+      "id": "dongkou/bolt-1",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 1,
+        "side": "player"
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "region": "storm_a",
+          "duration": 1,
+          "magnitude": 35,
+          "effect": "shock",
+          "label": "낙뢰"
+        }
+      ]
+    },
+    {
+      "id": "dongkou/bolt-2",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 3,
+        "side": "player"
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "region": "storm_b",
+          "duration": 1,
+          "magnitude": 35,
+          "effect": "shock",
+          "label": "낙뢰"
+        }
+      ]
+    },
+    {
+      "id": "dongkou/bolt-3",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 5,
+        "side": "player"
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "region": "storm_c",
+          "duration": 1,
+          "magnitude": 35,
+          "effect": "shock",
+          "label": "낙뢰"
+        }
+      ]
+    },
+    {
+      "id": "dongkou/bolt-4",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 7,
+        "side": "player"
+      },
+      "actions": [
+        {
+          "type": "telegraph_aoe",
+          "region": "storm_d",
+          "duration": 1,
+          "magnitude": 35,
+          "effect": "shock",
+          "label": "낙뢰"
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

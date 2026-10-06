@@ -1,0 +1,77 @@
+{
+  "id": "hanzhong-approach",
+  "name": "한중 · 녹음의 산길과 전초 진지",
+  "legend": {
+    ".": "plain",
+    ",": "road",
+    "^": "mountain",
+    "f": "forest",
+    "h": "hill",
+    "F": "fort",
+    "X": "cliff"
+  },
+  "rows": [
+    "XXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "X^^^^^^^.^^^^^...........X",
+    "X^^^^^^^.^^^^^..fff......X",
+    "X^^^^^^^.^^^^^..fff.FFFF.X",
+    "X^^^^^^^.^^^^^.,,,,,FFFF,X",
+    "X^^^^^^fffffffff,,,,FFFF,X",
+    "X^^^^^^ffffff..,,hh.FFFF.X",
+    "X...fffffffff..,,hh.FFFF.X",
+    "X...fffffffff..,,hh......X",
+    "X...fffff,,,,,,,,........X",
+    "X...fff,,,,,,,,,,^^^.....X",
+    "X...fff,,.......^^^^..^^^X",
+    "X......,,h^^^^^.^^^^ff^^^X",
+    "X......,,h^^^^^.^^^^ff^^^X",
+    "X......,,h^^^^^.^^^^ff^^^X",
+    "X,,,,,,,,.^^^^^.^^^^ff^^^X",
+    "X,,,,,,,,.^^^^^.^^^^ff^^^X",
+    "X.........^^^^^.^^^^..^^^X",
+    "X.........^^^^^.^^^^..^^^X",
+    "XXXXXXXXXXXXXXXXXXXXXXXXXX"
+  ],
+  "regions": {
+    "player_start": {
+      "x": 2,
+      "y": 14,
+      "w": 3,
+      "h": 2
+    },
+    "front_line": {
+      "x": 7,
+      "y": 9,
+      "w": 5,
+      "h": 5
+    },
+    "forest_route": {
+      "x": 7,
+      "y": 5,
+      "w": 9,
+      "h": 1
+    },
+    "enemy_camp": {
+      "x": 20,
+      "y": 3,
+      "w": 4,
+      "h": 5
+    },
+    "main_route": [
+      {
+        "x": 9,
+        "y": 10
+      }
+    ],
+    "camp": [
+      {
+        "x": 20,
+        "y": 2
+      },
+      {
+        "x": 23,
+        "y": 2
+      }
+    ]
+  }
+}

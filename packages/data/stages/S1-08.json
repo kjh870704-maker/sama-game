@@ -3,38 +3,110 @@
   "arc": "upper",
   "order": 8,
   "title": "은밀한 시선",
-  "subtitle": "한중 정벌전 下",
+  "subtitle": "한중 정벌전 하",
   "synopsis": "참모로서의 유용성을 증명해야 하는 첫 전투. 우군이 경쟁자로 등장한다.",
   "mapId": "hanzhong-central-fort",
-
   "deployment": {
-    "forced": ["sima_yi", "cao_zhen"],
+    "forced": [
+      "sima_yi",
+      "cao_zhen"
+    ],
     "selectable": [],
     "slots": 2,
     "grantedUnits": [
-      { "type": "catapult",   "count": 2, "level": 38, "traits": ["critical", "noCounterAttack"], "countsTowardAllyLoss": true },
-      { "type": "spearman",   "count": 2, "level": 38, "traits": ["penetrate", "physicalDamageReduction"], "countsTowardAllyLoss": true },
-      { "type": "strategist", "count": 2, "level": 38, "traits": ["alwaysHit"], "countsTowardAllyLoss": true },
-      { "type": "infantry",   "count": 2, "level": 38, "traits": ["guardian"], "countsTowardAllyLoss": true }
+      {
+        "type": "catapult",
+        "count": 2,
+        "level": 38,
+        "traits": [
+          "critical",
+          "noCounterAttack"
+        ],
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "spearman",
+        "count": 2,
+        "level": 38,
+        "traits": [
+          "penetrate",
+          "physicalDamageReduction"
+        ],
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "strategist",
+        "count": 2,
+        "level": 38,
+        "traits": [
+          "alwaysHit"
+        ],
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "infantry",
+        "count": 2,
+        "level": 38,
+        "traits": [
+          "guardian"
+        ],
+        "countsTowardAllyLoss": true
+      }
     ],
     "allyAi": [
-      { "type": "heavyCav", "count": 3, "level": 36, "behavior": "race" },
-      { "type": "infantry", "count": 4, "level": 34, "behavior": "advance" }
+      {
+        "type": "heavyCav",
+        "count": 3,
+        "level": 36,
+        "behavior": "race"
+      },
+      {
+        "type": "infantry",
+        "count": 4,
+        "level": 34,
+        "behavior": "advance"
+      }
     ]
   },
-
   "victory": [
-    { "type": "capture", "target": "central_fort", "by": "player" }
+    {
+      "type": "retreat",
+      "unit": "zhang_lu",
+      "order": 1
+    },
+    {
+      "type": "capture",
+      "target": "central_fort",
+      "by": "player",
+      "order": 2
+    }
   ],
   "defeat": [
-    { "type": "retreat", "unit": "sima_yi" },
-    { "type": "retreat", "unit": "cao_zhen" },
-    { "type": "capture", "target": "central_fort", "by": "allyAi" }
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_zhen"
+    },
+    {
+      "type": "capture",
+      "target": "central_fort",
+      "by": "allyAi"
+    }
   ],
-
   "seals": [
-    { "slot": 1, "normal": "clear", "extreme": "clear" },
-    { "slot": 2, "normal": "turn_limit:20", "extreme": "turn_limit:18" },
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "turn_limit:24",
+      "extreme": "turn_limit:22"
+    },
     {
       "slot": 3,
       "normal": "player_losses_lt:3",
@@ -42,57 +114,112 @@
       "note": "지원받는 편입 아군 8기가 이 카운트에 포함됩니다 (PRD R-5.5)"
     }
   ],
-
   "difficulty": {
-    "normal":  { "minEnemyLevel": 23, "recommendedLevel": 40, "targetClearRate": 0.85 },
-    "extreme": { "minEnemyLevel": 63, "recommendedLevel": 80, "targetClearRate": 0.30 }
+    "normal": {
+      "minEnemyLevel": 23,
+      "recommendedLevel": 40,
+      "targetClearRate": 0.85
+    },
+    "extreme": {
+      "minEnemyLevel": 63,
+      "recommendedLevel": 80,
+      "targetClearRate": 0.3
+    }
   },
-
-  "gimmicks": ["M-07"],
-
+  "gimmicks": [
+    "M-07"
+  ],
   "events": [
     {
       "id": "S1-08/opening",
-      "trigger": { "type": "battle_start" },
+      "trigger": {
+        "type": "battle_start"
+      },
       "actions": [
         {
           "type": "spawn_units",
           "side": "enemy",
           "units": [
-            { "id": "zhang_lu", "name": "성채 수비대장", "template": "infantry", "level": 23,
-              "region": "central_fort", "behavior": "hold",
-              "traits": ["unlimitedCounter", "reCounter", "counterBoost"],
-              "traitParams": { "counterBoost": 30 } },
-            { "id": "gate_guard_w", "name": "서문 수비대", "template": "spearman", "level": 23,
-              "region": "west_gate", "behavior": "hold" },
-            { "id": "gate_guard_e", "name": "동문 수비대", "template": "spearman", "level": 23,
-              "region": "east_gate", "behavior": "hold" }
+            {
+              "id": "zhang_lu",
+              "name": "성채 수비대장",
+              "template": "infantry",
+              "level": 23,
+              "region": "central_fort",
+              "behavior": "hold",
+              "traits": [
+                "unlimitedCounter",
+                "reCounter",
+                "counterBoost"
+              ],
+              "traitParams": {
+                "counterBoost": 30
+              }
+            },
+            {
+              "id": "gate_guard_w",
+              "name": "서문 수비대",
+              "template": "spearman",
+              "level": 23,
+              "region": "west_gate",
+              "behavior": "hold"
+            },
+            {
+              "id": "gate_guard_e",
+              "name": "동문 수비대",
+              "template": "spearman",
+              "level": 23,
+              "region": "east_gate",
+              "behavior": "hold"
+            }
           ]
         }
       ]
     },
     {
       "id": "S1-08/aggro-shift",
-      "trigger": { "type": "unit_reaches", "unit": "sima_yi", "region": "central_fort" },
+      "trigger": {
+        "type": "unit_reaches",
+        "unit": "sima_yi",
+        "region": "central_fort"
+      },
       "actions": [
-        { "type": "apply_effect", "side": "enemy", "effect": "rally", "duration": 3, "magnitude": 1 }
+        {
+          "type": "apply_effect",
+          "side": "enemy",
+          "effect": "rally",
+          "duration": 3,
+          "magnitude": 1
+        }
       ]
     },
     {
       "id": "S1-08/reinforcement",
-      "trigger": { "type": "turn_start", "every": 4, "side": "enemy" },
+      "trigger": {
+        "type": "turn_start",
+        "every": 6,
+        "side": "enemy"
+      },
       "once": false,
       "actions": [
         {
           "type": "spawn_units",
           "side": "enemy",
           "units": [
-            { "template": "cavalry", "level": 23, "count": 2, "region": "north_gate", "behavior": "advance" }
+            {
+              "template": "cavalry",
+              "level": 23,
+              "count": 2,
+              "region": "north_gate",
+              "behavior": "advance"
+            }
           ]
         }
       ]
     }
   ],
-
-  "perf": { "maxSimultaneousUnits": 38, "tier": "B" }
+  "perf": {
+    "maxSimultaneousUnits": 38,
+    "tier": "B"
+  }
 }

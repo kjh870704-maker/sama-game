@@ -1,0 +1,189 @@
+{
+  "id": "S2-10",
+  "arc": "middle",
+  "order": 21,
+  "title": "불타는 보리밭",
+  "subtitle": "상규 전투",
+  "synopsis": "제갈량의 군이 상규의 보리를 베어 간다. 고상이 보리를 싣고 서쪽 골짜기로 빠져나가기 전에 격퇴하라. 촉군은 보리밭에 불을 놓았다. 불길을 뚫을지, 북쪽 길로 돌지, 함정이 묻힌 남쪽 골짜기를 살핀 뒤 질러갈지 정한다. 고상이 서쪽 출구에 닿으면 실패.",
+  "mapId": "shanggui-fields",
+  "deployment": {
+    "forced": [
+      "sima_yi"
+    ],
+    "slots": 1,
+    "grantedUnits": [
+      {
+        "type": "cavalry",
+        "count": 2,
+        "level": 13,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "infantry",
+        "count": 1,
+        "level": 13,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "retreat",
+      "unit": "gao_xiang"
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:1",
+      "extreme": "player_losses_lt:1",
+      "note": "편입 기병·보병이 손실 카운트에 포함됩니다 (PRD R-5.5)"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:6",
+      "extreme": "turn_limit:7"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 11,
+      "recommendedLevel": 13
+    },
+    "extreme": {
+      "minEnemyLevel": 13,
+      "recommendedLevel": 15
+    }
+  },
+  "gimmicks": [
+    "M-19",
+    "M-21",
+    "M-02"
+  ],
+  "events": [
+    {
+      "id": "shanggui/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "gao_xiang",
+              "name": "고상",
+              "template": "infantry",
+              "level": 12,
+              "at": {
+                "x": 11,
+                "y": 7
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "reaper",
+              "name": "보리 베는 병사",
+              "template": "spearman",
+              "level": 12,
+              "count": 2,
+              "region": "reapers",
+              "behavior": "hold"
+            },
+            {
+              "id": "rear_bow",
+              "name": "후위 궁수",
+              "template": "archer",
+              "level": 12,
+              "count": 2,
+              "region": "rearguard",
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "terrain_change",
+          "region": "wheat_east",
+          "hazard": "fire",
+          "duration": 4
+        },
+        {
+          "type": "terrain_change",
+          "region": "ravine_traps",
+          "hazard": "trap",
+          "duration": 99
+        },
+        {
+          "type": "set_phase",
+          "phase": "불길 · 고상 추격"
+        }
+      ]
+    },
+    {
+      "id": "shanggui/second-fire",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "turn": 3
+      },
+      "actions": [
+        {
+          "type": "terrain_change",
+          "region": "wheat_west",
+          "hazard": "fire",
+          "duration": 3
+        }
+      ]
+    },
+    {
+      "id": "shanggui/ambush",
+      "trigger": {
+        "type": "turn_start",
+        "side": "enemy",
+        "turn": 4
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "ravine_ambush",
+              "name": "골짜기 복병",
+              "template": "infantry",
+              "level": 12,
+              "count": 2,
+              "region": "ravine_ambush",
+              "behavior": "advance"
+            },
+            {
+              "id": "north_ambush",
+              "name": "북쪽 길 복병",
+              "template": "cavalry",
+              "level": 12,
+              "count": 1,
+              "region": "north_ambush",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

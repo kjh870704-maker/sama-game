@@ -1,0 +1,278 @@
+{
+  "id": "S1-10",
+  "arc": "upper",
+  "order": 10,
+  "title": "범람",
+  "subtitle": "한중 공방전 하",
+  "synopsis": "조운이 한수 진영을 뒤흔든다. 불어나는 강물이 들판을 삼키기 전에 조운의 사방을 막아 묶고, 조조를 북쪽 출구로 탈출시킨다.",
+  "mapId": "hanzhong-hanshui-flood",
+  "deployment": {
+    "forced": [
+      "sima_yi",
+      "cao_zhen"
+    ],
+    "slots": 2,
+    "grantedUnits": [
+      {
+        "type": "infantry",
+        "count": 1,
+        "level": 8,
+        "traits": [
+          "guardian"
+        ],
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 8,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "cavalry",
+        "count": 1,
+        "level": 8,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "reach",
+      "unit": "cao_cao",
+      "target": "exit"
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_zhen"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_cao"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "clear",
+      "extreme": "clear",
+      "note": "웹 세션에서 조운 봉쇄(사방 차단) 성공 여부를 별도 평가한다."
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:14",
+      "extreme": "turn_limit:12"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 7,
+      "recommendedLevel": 8
+    },
+    "extreme": {
+      "minEnemyLevel": 9,
+      "recommendedLevel": 10
+    }
+  },
+  "gimmicks": [
+    "M-05",
+    "M-09"
+  ],
+  "events": [
+    {
+      "id": "flood/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "cao_cao",
+              "name": "조조",
+              "template": "infantry",
+              "level": 8,
+              "at": {
+                "x": 0,
+                "y": 9
+              },
+              "behavior": "escortee",
+              "goalRegion": "exit"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "zhao_yun",
+              "name": "조운",
+              "template": "heavyCav",
+              "level": 8,
+              "at": {
+                "x": 21,
+                "y": 12
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "zhao_rider_a",
+              "name": "백마 기병",
+              "template": "cavalry",
+              "level": 7,
+              "at": {
+                "x": 22,
+                "y": 11
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "zhao_rider_b",
+              "name": "백마 기병",
+              "template": "cavalry",
+              "level": 7,
+              "at": {
+                "x": 22,
+                "y": 13
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "ridge_bow",
+              "name": "고개 궁수",
+              "template": "archer",
+              "level": 7,
+              "at": {
+                "x": 13,
+                "y": 3
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "pass_spear",
+              "name": "출구 창병",
+              "template": "spearman",
+              "level": 7,
+              "at": {
+                "x": 14,
+                "y": 2
+              },
+              "behavior": "hold"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "조운 봉쇄"
+        }
+      ]
+    },
+    {
+      "id": "flood/lock",
+      "trigger": {
+        "type": "unit_surrounded",
+        "unit": "zhao_yun"
+      },
+      "actions": [
+        {
+          "type": "apply_effect",
+          "targets": [
+            "zhao_yun"
+          ],
+          "effect": "immobile",
+          "duration": 99
+        },
+        {
+          "type": "set_phase",
+          "phase": "조운 봉쇄 완료 · 조조 탈출"
+        }
+      ]
+    },
+    {
+      "id": "flood/rise-1",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 3,
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "terrain_change",
+          "region": "flood_1",
+          "terrain": "ford"
+        }
+      ]
+    },
+    {
+      "id": "flood/rise-2",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 5,
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "terrain_change",
+          "region": "flood_2",
+          "terrain": "ford"
+        }
+      ]
+    },
+    {
+      "id": "flood/rise-3",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 7,
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "terrain_change",
+          "region": "flood_3",
+          "terrain": "ford"
+        }
+      ]
+    },
+    {
+      "id": "flood/stragglers",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 4,
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "template": "infantry",
+              "level": 7,
+              "count": 2,
+              "region": "camp",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

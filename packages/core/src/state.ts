@@ -1,13 +1,14 @@
-import type { Unit, Side, Coord, BattleOutcome, Status, StatusKind } from "./types.ts";
+import type { Unit, Side, Coord, BattleOutcome, Status, StatusKind, StrategyDef, TerrainKind } from "./types.ts";
 import { BattleMap, key, isHostile } from "./grid.ts";
 import { Rng, type RngSnapshot } from "./rng.ts";
+import { evolveStrategy } from "./strategy-tiers.ts";
 import type { StageDef, VictoryCondition, Difficulty } from "./stage.ts";
 
 export type LogEntry =
   | { t: "turnStart"; turn: number; side: Side }
   | { t: "move"; unit: string; from: Coord; to: Coord }
-  | { t: "attack"; attacker: string; defender: string; damage: number; hit: boolean; critical: boolean }
-  | { t: "counter"; attacker: string; defender: string; damage: number; hit: boolean }
+  | { t: "attack"; attacker: string; defender: string; damage: number; hit: boolean; critical: boolean; tactic?: string; double?: boolean }
+  | { t: "counter"; attacker: string; defender: string; damage: number; hit: boolean; tactic?: string; double?: boolean }
   | { t: "strategy"; caster: string; strategy: string; targets: string[]; damage: number[] }
   | { t: "retreat"; unit: string; side: Side }
   | { t: "status"; unit: string; kind: StatusKind; turns: number }
@@ -15,6 +16,13 @@ export type LogEntry =
   | { t: "convert"; unit: string; to: string }
   | { t: "objectiveChanged"; victory: VictoryCondition[] }
   | { t: "event"; id: string }
+  | { t: "dialogue"; node: string }
+  | { t: "choice"; node: string; option: string; correct?: boolean }
+  | { t: "guard"; protector: string; protected: string }
+  | { t: "spotted"; watcher: string; target: string }
+  | { t: "terrain"; region: string; terrain: TerrainKind }
+  | { t: "telegraph"; id: string; cells: Coord[]; turns: number; label?: string; warning?: boolean }
+  | { t: "strike"; id: string; cells: Coord[]; hits: Array<{ unit: string; damage: number }> }
   | { t: "outcome"; outcome: BattleOutcome };
 
 /** 턴 순서. 우군 AI는 적 페이즈 뒤에 별도로 움직인다. */
@@ -35,9 +43,22 @@ export class BattleState {
    * 한쪽만 고치는 실수가 반드시 난다.
    */
   readonly enemyLevelShift: number;
+  /** 사용 가능한 책략 정의. Battle 생성 시 주입된다. */
+  strategies: Map<string, StrategyDef> = new Map();
+  /** 시전자 레벨로 진화한 책략 정의 */
+  strategyFor(unit: { level: number; traitParams?: Record<string, number> }, id: string): StrategyDef | undefined {
+    const d = this.strategies.get(id);
+    if (!d) return undefined;
+    // 연구: 책략 숙달(진화 레벨을 앞당김) · 책략 절약(소모 MP %)
+    const p = unit.traitParams ?? {};
+    const e = evolveStrategy(d, unit.level + (p.strategyMastery ?? 0));
+    const thrift = Math.min(50, p.mpThrift ?? 0);
+    return thrift > 0 ? { ...e, mpCost: Math.max(1, Math.round(e.mpCost * (1 - thrift / 100))) } : e;
+  }
 
   units: Map<string, Unit> = new Map();
   turn = 1;
+  scenarioPhase: string;
   phaseIndex = 0;
   outcome: BattleOutcome = "ongoing";
   log: LogEntry[] = [];
@@ -48,6 +69,8 @@ export class BattleState {
 
   /** 이미 발동한 1회성 이벤트 ID */
   firedEvents: Set<string> = new Set();
+  /** M-18 TELEGRAPHED_AOE: warned cells that strike when the turn reaches `at`. */
+  telegraphs: Telegraph[] = [];
   /** 진영별 퇴각 누계 */
   losses: Record<Side, number> = { player: 0, ally: 0, allyAi: 0, enemy: 0 };
   /** 점령 상태: 영역명 → 점령 진영 */
@@ -56,9 +79,17 @@ export class BattleState {
   survivalClocks: Map<string, number> = new Map();
   /** 대화/선택지 진행 기록 */
   choices: Array<{ nodeId: string; optionId: string }> = [];
+  /** 현재 표시 중인 대화 노드. null이면 대화 중이 아니다. */
+  activeDialogue: string | null = null;
+  /**
+   * 영역별 연속 점유 기록 (M-08 CONSTRUCT).
+   * 점유 진영이 바뀌거나 비면 초기화된다.
+   */
+  regionHolds: Map<string, { side: Side; since: number }> = new Map();
 
   constructor(stage: StageDef, map: BattleMap, seed: number, difficulty: Difficulty = "normal") {
     this.stage = stage;
+    this.scenarioPhase = stage.initialPhase ?? '';
     this.map = map;
     this.rng = new Rng(seed);
     this.difficulty = difficulty;
@@ -153,6 +184,7 @@ export class BattleState {
     return {
       units: structuredClone([...this.units.values()]),
       turn: this.turn,
+      scenarioPhase: this.scenarioPhase,
       phaseIndex: this.phaseIndex,
       outcome: this.outcome,
       logLength: this.log.length,
@@ -164,12 +196,16 @@ export class BattleState {
       captured: [...this.captured.entries()],
       survivalClocks: [...this.survivalClocks.entries()],
       choices: structuredClone(this.choices),
+      activeDialogue: this.activeDialogue,
+      regionHolds: [...this.regionHolds.entries()],
+      telegraphs: structuredClone(this.telegraphs),
     };
   }
 
   restore(snap: BattleSnapshot): void {
     this.units = new Map(snap.units.map((u) => [u.id, structuredClone(u)]));
     this.turn = snap.turn;
+    this.scenarioPhase = snap.scenarioPhase;
     this.phaseIndex = snap.phaseIndex;
     this.outcome = snap.outcome;
     this.log.length = snap.logLength;
@@ -181,10 +217,42 @@ export class BattleState {
     this.captured = new Map(snap.captured);
     this.survivalClocks = new Map(snap.survivalClocks);
     this.choices = structuredClone(snap.choices);
+    this.activeDialogue = snap.activeDialogue;
+    this.regionHolds = new Map(snap.regionHolds.map(([k, v]) => [k, { ...v }]));
+    this.telegraphs = structuredClone(snap.telegraphs ?? []);
+  }
+
+  /**
+   * 각 영역의 연속 점유 상태를 갱신한다. 턴이 넘어갈 때 1회 호출.
+   * 영역 위에 한 진영만 있고 적대 진영이 없으면 그 진영이 점유한 것으로 본다.
+   */
+  updateRegionHolds(): void {
+    for (const [name, coords] of this.map.regions) {
+      const sides = new Set<Side>();
+      for (const c of coords) {
+        const u = this.unitAt(c);
+        if (u) sides.add(u.side);
+      }
+      const holder = resolveHolder(sides);
+      const prev = this.regionHolds.get(name);
+      if (holder === null) {
+        this.regionHolds.delete(name);
+      } else if (!prev || prev.side !== holder) {
+        this.regionHolds.set(name, { side: holder, since: this.turn });
+      }
+    }
+  }
+
+  /** 특정 진영이 해당 영역을 몇 턴째 연속 점유 중인가. 미점유면 0. */
+  heldTurns(region: string, side: Side): number {
+    const hold = this.regionHolds.get(region);
+    if (!hold || hold.side !== side) return 0;
+    return this.turn - hold.since + 1;
   }
 }
 
 export interface BattleSnapshot {
+  scenarioPhase: string;
   units: Unit[];
   turn: number;
   phaseIndex: number;
@@ -198,4 +266,33 @@ export interface BattleSnapshot {
   captured: Array<[string, Side]>;
   survivalClocks: Array<[string, number]>;
   choices: Array<{ nodeId: string; optionId: string }>;
+  activeDialogue: string | null;
+  regionHolds: Array<[string, { side: Side; since: number }]>;
+  telegraphs?: Telegraph[];
+}
+
+export interface Telegraph {
+  id: string;
+  cells: Coord[];
+  /** Turn on which the blow lands (at least one turn after the warning). */
+  at: number;
+  /** Damage as a percentage of max HP. Never retreats a unit (HP floor 1), like hazards. */
+  ratio: number;
+  effect?: StatusKind;
+  label?: string;
+}
+
+/** 영역 위 유닛들의 진영 집합에서 점유 진영을 판정한다. */
+function resolveHolder(sides: Set<Side>): Side | null {
+  if (sides.size === 0) return null;
+  const hasEnemy = sides.has("enemy");
+  const friendly = [...sides].filter((s) => s !== "enemy");
+  // 적과 아군이 뒤섞여 있으면 어느 쪽도 점유한 것이 아니다 (교전 중)
+  if (hasEnemy && friendly.length > 0) return null;
+  if (hasEnemy) return "enemy";
+  // 아군 진영끼리는 player > ally > allyAi 순으로 대표를 정한다
+  for (const s of ["player", "ally", "allyAi"] as const) {
+    if (sides.has(s)) return s;
+  }
+  return null;
 }

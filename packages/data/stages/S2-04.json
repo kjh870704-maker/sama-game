@@ -1,0 +1,280 @@
+{
+  "id": "S2-04",
+  "arc": "middle",
+  "order": 15,
+  "title": "세 갈래 물결",
+  "subtitle": "양양 전투",
+  "synopsis": "조비가 세상을 떠난 해, 손권이 양양을 노린다. 강변 상륙, 동쪽 큰길, 남쪽 숲길에서 차례로 밀려오는 오군을 8턴 동안 막아 양양 성문을 지킨다. 책략이 통하지 않는 적과 창이 통하지 않는 적이 섞여 온다.",
+  "mapId": "xiangyang-walls",
+  "deployment": {
+    "forced": [
+      "sima_yi",
+      "cao_zhen"
+    ],
+    "slots": 2,
+    "grantedUnits": [
+      {
+        "type": "archer",
+        "count": 1,
+        "level": 10,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "catapult",
+        "count": 1,
+        "level": 10,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "cavalry",
+        "count": 1,
+        "level": 10,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 10,
+        "traits": [
+          "guardian"
+        ],
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "survive_turns",
+      "target": "xiangyang",
+      "n": 8
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_zhen"
+    },
+    {
+      "type": "capture",
+      "target": "xiangyang",
+      "by": "enemy"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:1",
+      "extreme": "player_losses_lt:1",
+      "note": "편입 궁병·포차·기병·창병 4기가 손실 카운트에 포함됩니다 (PRD R-5.5)"
+    },
+    {
+      "slot": 3,
+      "normal": "enemy_retreat_count:9",
+      "extreme": "enemy_retreat_count:10"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 9,
+      "recommendedLevel": 10
+    },
+    "extreme": {
+      "minEnemyLevel": 11,
+      "recommendedLevel": 12
+    }
+  },
+  "gimmicks": [
+    "M-11"
+  ],
+  "events": [
+    {
+      "id": "xiangyang/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "gate_captain",
+              "name": "양양 수문장",
+              "template": "spearman",
+              "level": 11,
+              "at": {
+                "x": 4,
+                "y": 6
+              },
+              "behavior": "hold",
+              "traits": [
+                "guardian"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "landing_a",
+              "name": "상륙 수군",
+              "template": "infantry",
+              "level": 9,
+              "at": {
+                "x": 15,
+                "y": 3
+              },
+              "behavior": "advance",
+              "traits": [
+                "strategyDamageReduction"
+              ],
+              "traitParams": {
+                "strategyDamageReduction": 50
+              }
+            },
+            {
+              "id": "landing_b",
+              "name": "상륙 궁수",
+              "template": "archer",
+              "level": 9,
+              "at": {
+                "x": 16,
+                "y": 3
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "landing_c",
+              "name": "상륙 창병",
+              "template": "spearman",
+              "level": 9,
+              "at": {
+                "x": 16,
+                "y": 2
+              },
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "첫 물결 · 강변 상륙"
+        }
+      ]
+    },
+    {
+      "id": "xiangyang/east",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 3,
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "zhang_ba",
+              "name": "장패",
+              "template": "cavalry",
+              "level": 10,
+              "region": "east_road",
+              "behavior": "advance",
+              "traits": [
+                "physicalDamageReduction"
+              ],
+              "traitParams": {
+                "physicalDamageReduction": 40
+              }
+            },
+            {
+              "template": "cavalry",
+              "level": 9,
+              "count": 2,
+              "region": "east_road",
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "둘째 물결 · 동쪽 큰길 기병"
+        }
+      ]
+    },
+    {
+      "id": "xiangyang/south",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 5,
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "template": "bandit",
+              "level": 9,
+              "count": 2,
+              "region": "south_forest",
+              "behavior": "advance"
+            },
+            {
+              "template": "crossbow",
+              "level": 9,
+              "count": 1,
+              "region": "south_forest",
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "셋째 물결 · 남쪽 숲길"
+        }
+      ]
+    },
+    {
+      "id": "xiangyang/zhuge",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 6,
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "zhuge_jin",
+              "name": "제갈근",
+              "template": "strategist",
+              "level": 10,
+              "region": "zhuge_camp",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 24,
+    "tier": "B"
+  }
+}

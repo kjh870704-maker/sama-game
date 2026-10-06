@@ -1,0 +1,230 @@
+{
+  "id": "S2-01",
+  "arc": "middle",
+  "order": 12,
+  "title": "되돌아오는 화살",
+  "subtitle": "무위 반란 진압전",
+  "synopsis": "조비가 위를 세운 해, 양주에서 반란이 일어났다. 무위 성채를 지키며 두 갈래로 오는 반란군을 막는다. 반란군 무당은 책략을 그대로 되돌린다.",
+  "mapId": "wuwei-citadel",
+  "deployment": {
+    "forced": [
+      "sima_yi",
+      "cao_zhen"
+    ],
+    "slots": 2,
+    "grantedUnits": [
+      {
+        "type": "spearman",
+        "count": 1,
+        "level": 9,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "archer",
+        "count": 1,
+        "level": 9,
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "infantry",
+        "count": 1,
+        "level": 9,
+        "traits": [
+          "guardian"
+        ],
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "annihilate",
+      "side": "enemy"
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_zhen"
+    },
+    {
+      "type": "capture",
+      "target": "citadel",
+      "by": "enemy"
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "player_losses_lt:1",
+      "extreme": "player_losses_lt:1",
+      "note": "편입 수비대(창병·궁병·방패병) 3기가 손실 카운트에 포함됩니다 (PRD R-5.5)"
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:12",
+      "extreme": "turn_limit:10"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 8,
+      "recommendedLevel": 9
+    },
+    "extreme": {
+      "minEnemyLevel": 10,
+      "recommendedLevel": 11
+    }
+  },
+  "gimmicks": [
+    "M-07"
+  ],
+  "events": [
+    {
+      "id": "wuwei/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "citadel_warden",
+              "name": "성채 수비장",
+              "template": "spearman",
+              "level": 10,
+              "at": {
+                "x": 5,
+                "y": 7
+              },
+              "behavior": "hold",
+              "traits": [
+                "guardian"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "rebel_shaman",
+              "name": "반란군 무당",
+              "template": "shaman",
+              "level": 9,
+              "at": {
+                "x": 16,
+                "y": 2
+              },
+              "behavior": "advance",
+              "traits": [
+                "strategyReflect"
+              ],
+              "traitParams": {
+                "strategyReflect": 60
+              }
+            },
+            {
+              "id": "north_spear",
+              "name": "북쪽 반란 창병",
+              "template": "spearman",
+              "level": 8,
+              "at": {
+                "x": 15,
+                "y": 1
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "north_rider",
+              "name": "북쪽 반란 기병",
+              "template": "cavalry",
+              "level": 8,
+              "at": {
+                "x": 14,
+                "y": 0
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "east_chief",
+              "name": "반란군 두령",
+              "template": "bandit",
+              "level": 9,
+              "at": {
+                "x": 21,
+                "y": 11
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "east_bow",
+              "name": "동쪽 반란 궁수",
+              "template": "archer",
+              "level": 8,
+              "at": {
+                "x": 20,
+                "y": 10
+              },
+              "behavior": "advance"
+            },
+            {
+              "id": "east_foot",
+              "name": "동쪽 반란 보병",
+              "template": "infantry",
+              "level": 8,
+              "at": {
+                "x": 20,
+                "y": 12
+              },
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "set_phase",
+          "phase": "성채 사수 · 두 갈래 반란군"
+        }
+      ]
+    },
+    {
+      "id": "wuwei/second-wave",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 4,
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "template": "bandit",
+              "level": 8,
+              "count": 1,
+              "region": "east_rebels",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 20,
+    "tier": "A"
+  }
+}

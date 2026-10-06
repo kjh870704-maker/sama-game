@@ -47,6 +47,14 @@ export function simulate(opts: SimOptions): SimResult {
 
     let guard = 0;
     while (state.outcome === "ongoing") {
+      // 대화가 열려 있으면 먼저 응답한다. 방치하면 대화로 분기하는 스테이지의
+      // 난이도를 전혀 측정하지 못한다. 최적 플레이 근사치로 정답을 고른다.
+      if (state.activeDialogue) {
+        const node = battle.dialogue.node(state.activeDialogue);
+        const pick = node.options.find((o) => o.correct === true) ?? node.options[0]!;
+        battle.execute({ kind: "choose", nodeId: node.id, optionId: pick.id });
+        continue;
+      }
       if (CONTROLLABLE.has(state.currentSide)) {
         const next = state.living(state.currentSide).find((u) => !u.hasActed);
         if (!next) {

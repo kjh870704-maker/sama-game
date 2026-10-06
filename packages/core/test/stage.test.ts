@@ -50,6 +50,22 @@ describe("스테이지 검증", () => {
     expect(validateStage(bad).some((e) => e.includes("적 레벨이 일반 이하"))).toBe(true);
   });
 
+  it("승리 조건의 turn_limit을 거부한다 — 1턴차에 즉시 충족되어 전투가 바로 끝난다", () => {
+    const bad = minimalStage({ victory: [{ type: "turn_limit", n: 20 }] });
+    expect(validateStage(bad).some((e) => e.includes("turn_limit"))).toBe(true);
+  });
+
+  it("패배 조건의 turn_limit도 거부한다", () => {
+    const bad = minimalStage({ defeat: [{ type: "turn_limit", n: 20 }] });
+    expect(validateStage(bad).some((e) => e.includes("turn_limit"))).toBe(true);
+  });
+
+  it("인장에서의 turn_limit은 정상이다", () => {
+    const okStage = minimalStage();
+    expect(okStage.seals[1]?.normal).toBe("turn_limit:10");
+    expect(validateStage(okStage)).toEqual([]);
+  });
+
   it("실제 S1-08 데이터는 검증을 통과한다", () => {
     const stage = JSON.parse(readFileSync(join(DATA, "stages/S1-08.json"), "utf8")) as StageDef;
     expect(validateStage(stage)).toEqual([]);
@@ -62,11 +78,11 @@ describe("맵 로더", () => {
       readFileSync(join(DATA, "maps/hanzhong-central-fort.json"), "utf8"),
     ) as MapFile;
     const map = loadMap(file);
-    expect(map.width).toBe(22);
-    expect(map.height).toBe(13);
-    expect(map.regionCoords("central_fort")).toHaveLength(4);
-    expect(map.tileAt({ x: 10, y: 6 }).terrain).toBe("fort");
-    expect(map.heightAt({ x: 0, y: 0 })).toBe(3);
+    expect(map.width).toBe(48);
+    expect(map.height).toBe(36);
+    expect(map.regionCoords("central_fort")).toHaveLength(9);
+    expect(map.tileAt({ x: 37, y: 9 }).terrain).toBe("fort");
+    expect(map.tileAt({ x: 0, y: 0 }).terrain).toBe("cliff");
   });
 
   it("범례에 없는 문자를 거부한다", () => {

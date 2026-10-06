@@ -1,0 +1,250 @@
+{
+  "id": "S1-05",
+  "arc": "upper",
+  "order": 5,
+  "title": "남겨 둘 사람들",
+  "subtitle": "장강 퇴각전",
+  "synopsis": "강변에서 군량과 부상병을 싣고 철수한다. 수송대가 살아 돌아와야 다음 전투가 있다.",
+  "mapId": "yangtze-retreat",
+  "deployment": {
+    "forced": [
+      "sima_yi",
+      "cao_zhen"
+    ],
+    "slots": 2,
+    "grantedUnits": [
+      {
+        "type": "infantry",
+        "count": 1,
+        "level": 5,
+        "traits": [
+          "guardian"
+        ],
+        "countsTowardAllyLoss": true
+      },
+      {
+        "type": "crossbow",
+        "count": 1,
+        "level": 5,
+        "countsTowardAllyLoss": true
+      }
+    ]
+  },
+  "victory": [
+    {
+      "type": "reach",
+      "unit": "convoy_a",
+      "target": "escort_goal"
+    },
+    {
+      "type": "reach",
+      "unit": "convoy_b",
+      "target": "escort_goal"
+    }
+  ],
+  "defeat": [
+    {
+      "type": "retreat",
+      "unit": "sima_yi"
+    },
+    {
+      "type": "retreat",
+      "unit": "cao_zhen"
+    },
+    {
+      "type": "retreat",
+      "unit": "convoy_a",
+      "order": 1
+    },
+    {
+      "type": "retreat",
+      "unit": "convoy_b",
+      "order": 2
+    }
+  ],
+  "seals": [
+    {
+      "slot": 1,
+      "normal": "clear",
+      "extreme": "clear"
+    },
+    {
+      "slot": 2,
+      "normal": "unit_survives:convoy",
+      "extreme": "unit_survives:convoy",
+      "note": "웹 세션에서 수송대 두 부대 생존을 별도 평가한다. 편입 아군은 다른 손실 조건에 포함된다."
+    },
+    {
+      "slot": 3,
+      "normal": "turn_limit:10",
+      "extreme": "turn_limit:9"
+    }
+  ],
+  "difficulty": {
+    "normal": {
+      "minEnemyLevel": 4,
+      "recommendedLevel": 5
+    },
+    "extreme": {
+      "minEnemyLevel": 6,
+      "recommendedLevel": 7
+    }
+  },
+  "gimmicks": [
+    "M-05"
+  ],
+  "dialogues": [
+    {
+      "id": "retreat_route",
+      "speaker": "sima_yi",
+      "text": "북쪽 교량길은 짧지만 적 사격대가 기다린다. 남쪽 강변길은 한 차례 더 걸리는 대신 전방 수비병을 우회한다. 어느 길로 수송대를 보낼 것인가?",
+      "options": [
+        {
+          "id": "bridge",
+          "text": "교량길 돌파 · 동쪽 출구 / 전방 사격대 제압"
+        },
+        {
+          "id": "shore",
+          "text": "남쪽 강변 우회 · 남동쪽 출구 / 추격대 주의"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "yangtze/opening",
+      "trigger": {
+        "type": "battle_start"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "allyAi",
+          "units": [
+            {
+              "id": "convoy_a",
+              "name": "군량 수송대",
+              "template": "engineer",
+              "level": 5,
+              "at": {
+                "x": 2,
+                "y": 9
+              },
+              "behavior": "escortee",
+              "goalRegion": "escort_goal"
+            },
+            {
+              "id": "convoy_b",
+              "name": "부상병 수송대",
+              "template": "engineer",
+              "level": 5,
+              "at": {
+                "x": 2,
+                "y": 10
+              },
+              "behavior": "escortee",
+              "goalRegion": "escort_goal"
+            }
+          ]
+        },
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "shore_bow",
+              "name": "강변 사격대",
+              "template": "crossbow",
+              "level": 4,
+              "at": {
+                "x": 16,
+                "y": 8
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "bridge_guard",
+              "name": "교량 차단대",
+              "template": "spearman",
+              "level": 4,
+              "at": {
+                "x": 18,
+                "y": 10
+              },
+              "behavior": "hold"
+            },
+            {
+              "id": "river_raider",
+              "name": "상륙 수군",
+              "template": "navy",
+              "level": 4,
+              "at": {
+                "x": 9,
+                "y": 3
+              },
+              "behavior": "advance"
+            }
+          ]
+        },
+        {
+          "type": "play_dialogue",
+          "dialogueId": "retreat_route"
+        }
+      ]
+    },
+    {
+      "id": "yangtze/shore",
+      "trigger": {
+        "type": "dialogue_choice",
+        "nodeId": "retreat_route",
+        "optionId": "shore"
+      },
+      "actions": [
+        {
+          "type": "change_victory",
+          "conditions": [
+            {
+              "type": "reach",
+              "unit": "convoy_a",
+              "target": "south_exit"
+            },
+            {
+              "type": "reach",
+              "unit": "convoy_b",
+              "target": "south_exit"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yangtze/pursuit",
+      "trigger": {
+        "type": "turn_start",
+        "turn": 3,
+        "side": "enemy"
+      },
+      "actions": [
+        {
+          "type": "spawn_units",
+          "side": "enemy",
+          "units": [
+            {
+              "id": "rear_pursuer",
+              "name": "후방 추격대",
+              "template": "cavalry",
+              "level": 4,
+              "count": 2,
+              "region": "pursuers",
+              "behavior": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "perf": {
+    "maxSimultaneousUnits": 11,
+    "tier": "A"
+  }
+}

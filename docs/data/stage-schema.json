@@ -4,38 +4,103 @@
   "title": "사마의전 스테이지 정의 스키마",
   "description": "PRD-사마의전.md §7 데이터 모델의 정식 스키마. 스테이지는 코드가 아닌 이 데이터로만 조립한다.",
   "type": "object",
-  "required": ["id", "arc", "order", "title", "deployment", "victory", "defeat", "seals", "difficulty", "perf"],
+  "required": [
+    "id",
+    "arc",
+    "order",
+    "title",
+    "deployment",
+    "victory",
+    "defeat",
+    "seals",
+    "difficulty",
+    "perf"
+  ],
   "additionalProperties": false,
   "properties": {
-    "id": { "type": "string", "pattern": "^S[123]-[0-9]{2}$" },
-    "arc": { "enum": ["upper", "middle", "lower"] },
-    "order": { "type": "integer", "minimum": 1 },
-    "title": { "type": "string" },
-    "subtitle": { "type": "string" },
-    "synopsis": { "type": "string" },
-    "mapId": { "type": "string" },
-
+    "id": {
+      "type": "string",
+      "pattern": "^S[123]-[0-9]{2}$"
+    },
+    "arc": {
+      "enum": [
+        "upper",
+        "middle",
+        "lower"
+      ]
+    },
+    "order": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "title": {
+      "type": "string"
+    },
+    "subtitle": {
+      "type": "string"
+    },
+    "synopsis": {
+      "type": "string"
+    },
+    "mapId": {
+      "type": "string"
+    },
     "deployment": {
       "type": "object",
-      "required": ["forced", "slots"],
+      "required": [
+        "forced",
+        "slots"
+      ],
       "additionalProperties": false,
       "properties": {
-        "forced": { "type": "array", "items": { "type": "string" } },
-        "selectable": { "type": "array", "items": { "type": "string" } },
-        "slots": { "type": "integer", "minimum": 1, "maximum": 8 },
+        "forced": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "selectable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "slots": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
         "grantedUnits": {
           "description": "편입 아군 — 플레이어 조작 가능, 도구 사용 불가, 아군 생존 카운트 포함",
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["type", "count"],
+            "required": [
+              "type",
+              "count"
+            ],
             "additionalProperties": false,
             "properties": {
-              "type": { "type": "string" },
-              "count": { "type": "integer", "minimum": 1 },
-              "level": { "type": "integer" },
-              "traits": { "type": "array", "items": { "type": "string" } },
-              "countsTowardAllyLoss": { "type": "boolean", "default": true }
+              "type": {
+                "type": "string"
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "level": {
+                "type": "integer"
+              },
+              "traits": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "countsTowardAllyLoss": {
+                "type": "boolean",
+                "default": true
+              }
             }
           }
         },
@@ -44,42 +109,84 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["type", "count"],
+            "required": [
+              "type",
+              "count"
+            ],
             "properties": {
-              "type": { "type": "string" },
-              "count": { "type": "integer" },
-              "level": { "type": "integer" },
-              "traits": { "type": "array", "items": { "type": "string" } },
-              "behavior": { "enum": ["advance", "hold", "escort", "race", "passive"] }
+              "type": {
+                "type": "string"
+              },
+              "count": {
+                "type": "integer"
+              },
+              "level": {
+                "type": "integer"
+              },
+              "traits": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "behavior": {
+                "enum": [
+                  "advance",
+                  "hold",
+                  "escort",
+                  "race",
+                  "passive"
+                ]
+              },
+              "goalRegion": {
+                "type": "string"
+              }
             }
           }
         }
       }
     },
-
     "victory": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/condition" }
+      "items": {
+        "$ref": "#/$defs/condition"
+      }
     },
     "defeat": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/condition" }
+      "items": {
+        "$ref": "#/$defs/condition"
+      }
     },
-
     "seals": {
       "type": "array",
       "minItems": 3,
       "maxItems": 3,
       "items": {
         "type": "object",
-        "required": ["slot", "normal", "extreme"],
+        "required": [
+          "slot",
+          "normal",
+          "extreme"
+        ],
         "additionalProperties": false,
         "properties": {
-          "slot": { "type": "integer", "enum": [1, 2, 3] },
-          "normal": { "type": "string" },
-          "extreme": { "type": "string" },
+          "slot": {
+            "type": "integer",
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          },
+          "normal": {
+            "type": "string"
+          },
+          "extreme": {
+            "type": "string"
+          },
           "note": {
             "type": "string",
             "description": "PRD R-5.5: 편입 아군/우군이 카운트에 포함되면 반드시 명시"
@@ -87,131 +194,388 @@
         }
       }
     },
-
     "difficulty": {
       "type": "object",
-      "required": ["normal", "extreme"],
+      "required": [
+        "normal",
+        "extreme"
+      ],
       "additionalProperties": false,
       "properties": {
-        "normal": { "$ref": "#/$defs/difficultyTier" },
-        "extreme": { "$ref": "#/$defs/difficultyTier" }
+        "normal": {
+          "$ref": "#/$defs/difficultyTier"
+        },
+        "extreme": {
+          "$ref": "#/$defs/difficultyTier"
+        }
       }
     },
-
     "gimmicks": {
       "description": "PRD §6 기믹 모듈 ID 목록",
       "type": "array",
-      "items": { "type": "string", "pattern": "^M-[0-9]{2}$" }
+      "items": {
+        "type": "string",
+        "pattern": "^M-[0-9]{2}$"
+      }
     },
-
     "events": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["trigger", "actions"],
+        "required": [
+          "trigger",
+          "actions"
+        ],
         "additionalProperties": false,
         "properties": {
-          "id": { "type": "string" },
-          "trigger": { "$ref": "#/$defs/trigger" },
-          "actions": { "type": "array", "items": { "$ref": "#/$defs/action" } },
-          "once": { "type": "boolean", "default": true }
+          "id": {
+            "type": "string"
+          },
+          "trigger": {
+            "$ref": "#/$defs/trigger"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/action"
+            }
+          },
+          "once": {
+            "type": "boolean",
+            "default": true
+          },
+          "phase": {
+            "type": "string"
+          }
         }
       }
     },
-
     "perf": {
       "type": "object",
-      "required": ["maxSimultaneousUnits", "tier"],
+      "required": [
+        "maxSimultaneousUnits",
+        "tier"
+      ],
       "additionalProperties": false,
       "properties": {
-        "maxSimultaneousUnits": { "type": "integer", "maximum": 80 },
+        "maxSimultaneousUnits": {
+          "type": "integer",
+          "maximum": 80
+        },
         "tier": {
-          "enum": ["A", "B", "C"],
+          "enum": [
+            "A",
+            "B",
+            "C"
+          ],
           "description": "A:<=20/60fps, B:<=40/60fps, C:<=80/30fps(실기 검증 필수)"
         }
       }
+    },
+    "dialogues": {
+      "description": "대화·선택지 정의 (M-03 DIALOGUE_GATE)",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "text",
+          "options"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "speaker": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "text"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "next": {
+                  "type": "string",
+                  "description": "다음 노드. 생략 시 대화 종료"
+                },
+                "correct": {
+                  "type": "boolean",
+                  "description": "정답 여부. 인장 판정과 오답 페널티에 사용"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "initialPhase": {
+      "type": "string"
     }
   },
-
   "$defs": {
     "difficultyTier": {
       "type": "object",
-      "required": ["minEnemyLevel", "recommendedLevel"],
+      "required": [
+        "minEnemyLevel",
+        "recommendedLevel"
+      ],
       "additionalProperties": false,
       "properties": {
-        "minEnemyLevel": { "type": "integer" },
-        "recommendedLevel": { "type": "integer" },
-        "enemyTraitSet": { "type": "string" },
-        "targetClearRate": { "type": "number", "minimum": 0, "maximum": 1 }
+        "minEnemyLevel": {
+          "type": "integer"
+        },
+        "recommendedLevel": {
+          "type": "integer"
+        },
+        "enemyTraitSet": {
+          "type": "string"
+        },
+        "targetClearRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
       }
     },
-
     "condition": {
       "type": "object",
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "properties": {
         "type": {
           "enum": [
-            "annihilate", "reach", "capture", "retreat", "survive_turns",
-            "enemy_retreat_count", "ally_loss_limit", "dialogue_complete",
-            "turn_limit", "escort_survive"
+            "annihilate",
+            "reach",
+            "capture",
+            "retreat",
+            "survive_turns",
+            "enemy_retreat_count",
+            "ally_loss_limit",
+            "dialogue_complete",
+            "turn_limit",
+            "escort_survive"
           ]
         },
-        "unit": { "type": "string" },
-        "target": { "type": "string" },
-        "by": { "enum": ["player", "ally_ai", "enemy"] },
-        "n": { "type": "integer" },
-        "order": { "type": "integer", "description": "순차 조건일 때의 단계" }
+        "unit": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "by": {
+          "enum": [
+            "player",
+            "ally_ai",
+            "enemy"
+          ]
+        },
+        "n": {
+          "type": "integer"
+        },
+        "order": {
+          "type": "integer",
+          "description": "순차 조건일 때의 단계"
+        }
       }
     },
-
     "trigger": {
       "type": "object",
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "properties": {
         "type": {
           "enum": [
-            "battle_start", "turn_start", "turn_end", "unit_reaches",
-            "unit_retreats", "enemy_count_below", "region_captured",
-            "dialogue_choice", "units_adjacent", "survive_turns", "hp_below"
+            "battle_start",
+            "turn_start",
+            "turn_end",
+            "unit_reaches",
+            "unit_retreats",
+            "enemy_count_below",
+            "region_captured",
+            "dialogue_choice",
+            "units_adjacent",
+            "survive_turns",
+            "hp_below",
+            "unit_surrounded",
+            "region_held",
+            "unit_spotted"
           ]
         },
-        "turn": { "type": "integer" },
-        "every": { "type": "integer" },
-        "unit": { "type": "string" },
-        "unitA": { "type": "string" },
-        "unitB": { "type": "string" },
-        "region": { "type": "string" },
-        "coord": { "type": "array", "items": { "type": "integer" }, "minItems": 2, "maxItems": 2 },
-        "n": { "type": "integer" },
-        "by": { "enum": ["player", "ally_ai", "enemy"] },
-        "nodeId": { "type": "string" },
-        "optionId": { "type": "string" },
-        "ratio": { "type": "number" }
+        "turn": {
+          "type": "integer"
+        },
+        "every": {
+          "type": "integer"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "unitA": {
+          "type": "string"
+        },
+        "unitB": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "coord": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "n": {
+          "type": "integer"
+        },
+        "by": {
+          "enum": [
+            "player",
+            "ally_ai",
+            "enemy"
+          ]
+        },
+        "nodeId": {
+          "type": "string"
+        },
+        "optionId": {
+          "type": "string"
+        },
+        "ratio": {
+          "type": "number"
+        },
+        "watcher": {
+          "type": "string",
+          "description": "unit_spotted: 발각한 순찰 유닛"
+        }
       }
     },
-
     "action": {
       "type": "object",
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "properties": {
         "type": {
           "enum": [
-            "spawn_units", "apply_effect", "remove_effect",
-            "change_victory", "change_defeat", "move_unit", "convert_unit",
-            "terrain_change", "play_dialogue", "start_duel",
-            "grant_control", "revoke_control", "telegraph_aoe"
+            "spawn_units",
+            "apply_effect",
+            "remove_effect",
+            "change_victory",
+            "change_defeat",
+            "move_unit",
+            "convert_unit",
+            "terrain_change",
+            "play_dialogue",
+            "start_duel",
+            "grant_control",
+            "revoke_control",
+            "telegraph_aoe",
+            "set_phase",
+            "recover_units",
+            "dismiss_units"
           ]
         },
-        "units": { "type": "array", "items": { "type": "object" } },
-        "side": { "enum": ["player", "ally_ai", "enemy"] },
-        "targets": { "type": "array", "items": { "type": "string" } },
-        "effect": { "type": "string" },
-        "duration": { "type": "integer" },
-        "region": { "type": "string" },
-        "terrain": { "type": "string" },
-        "conditions": { "type": "array", "items": { "$ref": "#/$defs/condition" } },
-        "dialogueId": { "type": "string" }
+        "units": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "side": {
+          "enum": [
+            "player",
+            "ally",
+            "allyAi",
+            "enemy"
+          ]
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "effect": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "integer"
+        },
+        "region": {
+          "type": "string"
+        },
+        "terrain": {
+          "type": "string"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/condition"
+          }
+        },
+        "dialogueId": {
+          "type": "string"
+        },
+        "hpRatioDamage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "최대 HP 비율만큼 즉시 피해 (M-03 오답 페널티)"
+        },
+        "magnitude": {
+          "type": "number"
+        },
+        "toClass": {
+          "type": "string"
+        },
+        "hazard": {
+          "enum": [
+            "fire",
+            "trap",
+            "lightning",
+            "none"
+          ]
+        },
+        "phase": {
+          "type": "string"
+        },
+        "at": {
+          "type": "object",
+          "required": [
+            "x",
+            "y"
+          ],
+          "properties": {
+            "x": {
+              "type": "integer"
+            },
+            "y": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": false
+        }
       }
     }
   }
