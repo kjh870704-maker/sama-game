@@ -123,7 +123,34 @@ export const treasurePowers:Array<{id:string;name:string;rules:Rule[]}>=([
  ['fordHorse','도하',[['evade',10,'moving']]],
  ['hundredPaceBow','백보천양',[['accuracy',15,'ranged'],['critical',8,'physical']]],
  ['peerlessSword','천하제일',[['power',15],['critical',10,'physical']]],
- ['overlordArmor','패왕의 기개',[['reduction',18,'physical'],['counter',2]]]
+ ['overlordArmor','패왕의 기개',[['reduction',18,'physical'],['counter',2]]],
+ // 삼국지14 명품(보물 사냥 꾸러미)
+ ['simaFa','사마의 군례',[['reduction',8,'stationary'],['accuracy',5,'physical']]],
+ ['weiLiaozi','울료의 군령',[['reduction',6,'melee']]],
+ ['shiji','흥망의 기록',[['power',6,'strategy'],['mp',1]]],
+ ['hanfeizi','법술세',[['accuracy',8,'strategy']]],
+ ['guanzi','창고가 차면',[['hp',3]]],
+ ['shangjunshu','변법의 엄정',[['power',8,'healthy']]],
+ ['yanziChunqiu','이도살삼사',[['mp',1],['accuracy',4,'strategy']]],
+ ['yinfu','음부의 비책',[['accuracy',6,'strategy'],['evade',5,'strategy']]],
+ ['siminYueling','달마다의 살림',[['hp',2]]],
+ ['yantielun','염철의 비축',[['reduction',6,'physical']]],
+ ['laozi','유능제강',[['power',10,'strategy'],['mp',1]]],
+ ['zhuangzi','소요유',[['evade',8,'strategy']]],
+ ['lunyu','인의 마음',[['reduction',8,'strategy'],['mp',1]]],
+ ['shijing','출정의 노래',[['mp',2]]],
+ ['shujing','성왕의 말씀',[['accuracy',6,'strategy']]],
+ ['yijing','변화의 이치',[['evade',5],['mp',1]]],
+ ['liji','군례',[['reduction',5]]],
+ ['taipingYaoshu','풍우의 술',[['power',12,'strategy'],['mp',2]]],
+ ['shanhaijing','기이한 것을 앎',[['reduction',12,'strategy'],['evade',6,'strategy']]],
+ ['xishuMap','촉의 지세',[['rough',1],['accuracy',8]]],
+ ['guoxiaMa','과하의 걸음',[['rough',1]]],
+ ['liangzhouMa','서량의 질주',[['power',10,'moving']]],
+ ['baihu','백곡의 날개',[['evade',8,'moving']]],
+ ['fourWheelCart','사륜 지휘',[['reduction',6,'stationary'],['mp',1]]],
+ ['zhansheSword','참사의 위광',[['power',12,'healthy'],['critical',6,'physical']]],
+ ['baipiDao','백 번 담금질',[['critical',8,'melee']]]
 ] as Array<[string,string,Rule[]]>).map(([id,name,rules])=>({id,name,rules}));
 const conditionText:Record<Condition,string>={always:'',physical:'물리 공격 시 ',strategy:'책략 공격 시 ',melee:'인접 교전 시 ',ranged:'거리 2칸 이상 교전 시 ',wounded:'자신의 HP 50% 이하 시 ',healthy:'자신의 HP 80% 이상 시 ',mounted:'기병 계열 상대 시 ',armored:'보병·창병·중기병·충차 상대 시 ',caster:'책략 병종 상대 시 ',stationary:'이번 차례 이동 전 ',moving:'이번 차례 이동 후 '};
 function matches(c:Condition,ctx:DamageContext,self:Unit){switch(c){

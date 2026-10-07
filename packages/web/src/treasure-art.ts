@@ -19,7 +19,7 @@ export const FORMS:Array<{id:TreasureForm;name:string;slot:GearSlot}>=[
 ];
 const FORM_OF:Record<string,TreasureForm>={
   yitian:'sword',qinggang:'sword',doubleSwords:'sword',moonSword:'sword',jadeSword:'sword',
-  bronzeSword:'sword',snakeBlade:'sword',peerlessSword:'sword',
+  bronzeSword:'sword',snakeBlade:'sword',peerlessSword:'sword',zhansheSword:'sword',baipiDao:'blade',
   sevenstar:'blade',ringBlade:'blade',cavalrySaber:'blade',greenDragon:'blade',ancientBlade:'blade',phoenixSpear:'blade',threePointBlade:'blade',zhanmaDao:'blade',
   serpentSpear:'spear',sharpSpearhead:'spear',tuskSpear:'spear',ironSpear:'spear',dragonSpear:'spear',tigerSpear:'spear',hookSpear:'spear',
   halberd:'polearm',gatekeeperHalberd:'polearm',crescentBlade:'polearm',twinHalberds:'polearm',ironAxe:'polearm',
@@ -27,6 +27,9 @@ const FORM_OF:Record<string,TreasureForm>={
   flyingBlade:'hidden',ironRod:'hidden',armorPiercer:'hidden',poisonDarts:'hidden',steelWhip:'hidden',goldHammer:'hidden',meteorHammer:'hidden',
   craneRobe:'robe',strawCape:'robe',fireproofRobe:'robe',shuBrocade:'robe',cloudRobe:'robe',strategistRobe:'robe',bearCloak:'robe',
   rattanShield:'shield',hideShield:'shield',wolfHelm:'shield',riverShield:'shield',rattanHelm:'shield',phoenixHelm:'shield',tigerShield:'shield',lionHelm:'shield',
+  guoxiaMa:'mount',liangzhouMa:'mount',baihu:'mount',fourWheelCart:'mount',
+  simaFa:'book',weiLiaozi:'book',shiji:'book',hanfeizi:'book',guanzi:'book',shangjunshu:'book',yanziChunqiu:'book',yinfu:'book',siminYueling:'book',yantielun:'book',
+  laozi:'book',zhuangzi:'book',lunyu:'book',shijing:'book',shujing:'book',yijing:'book',liji:'book',taipingYaoshu:'book',shanhaijing:'book',xishuMap:'book',
   dilu:'mount',ponyBridle:'mount',nomadSteed:'mount',fordHorse:'mount',redHare:'mount',swiftSaddle:'mount',shadowHorse:'mount',yellowHorse:'mount',
   dunjia:'book',bambooSlips:'book',taiping:'book',mengde:'book',sunzi:'book',sixTeachings:'book',threeStrategies:'book',qingshu:'book',formationScroll:'book',springAutumn:'book',
   seal:'seal',beaconToken:'seal',initiateBadge:'seal',courtSeal:'seal',militarySeal:'seal',tigerTally:'seal',tortoiseToken:'seal',
@@ -76,9 +79,20 @@ const sheetIcon=(key:string)=>{
 };
 const pendingIcon=(glyph:string,grade:number,label:string)=>`<i class="treasure-icon pending g${grade}" title="${esc(label)} · 그림 준비 중">${esc(glyph)}</i>`;
 
+/**
+ * 삼국지14 명품으로 더한 보물: 전용 그림이 나오기 전까지 같은 형태의 기존 그림을 빌려 쓴다.
+ * (서책은 서책, 말은 말, 칼은 칼 — 등급 테두리는 보물 자신의 것.)
+ */
+export const BORROWED_ART:Record<string,string>={
+  simaFa:'sunzi',weiLiaozi:'threeStrategies',shiji:'springAutumn',hanfeizi:'bambooSlips',guanzi:'sixTeachings',shangjunshu:'mengde',yanziChunqiu:'springAutumn',
+  yinfu:'dunjia',siminYueling:'bambooSlips',yantielun:'threeStrategies',laozi:'taiping',zhuangzi:'dunjia',lunyu:'bambooSlips',shijing:'sixTeachings',shujing:'sunzi',
+  yijing:'formationScroll',liji:'mengde',taipingYaoshu:'taiping',shanhaijing:'qingshu',xishuMap:'formationScroll',
+  guoxiaMa:'nomadSteed',liangzhouMa:'yellowHorse',baihu:'fordHorse',fourWheelCart:'swiftSaddle',zhansheSword:'jadeSword',baipiDao:'ringBlade',
+};
 /** 장착 보물의 그림. */
-export function treasureIcon(id:string){
+export function treasureIcon(id:string):string{
   if(TREASURE_ART.has(id))return sheetIcon(id);
+  const borrowed=BORROWED_ART[id];if(borrowed)return treasureIcon(borrowed);
   const info=treasureInfo(id);if(info.icon>=0)return atlasIcon(info.icon);
   return pendingIcon(formName(formOf(id)).slice(0,1),info.grade,formName(formOf(id)));
 }

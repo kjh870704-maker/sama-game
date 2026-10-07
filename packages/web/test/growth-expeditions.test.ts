@@ -17,7 +17,7 @@ function play(s:Session){for(let i=0;i<900&&s.state.outcome==='ongoing';i++){
  for(const cmd of decide(st,u)){if(cmd.kind==='move'&&key(cmd.to)===key(u.pos))continue;const r=s.act(cmd);expect(r.ok,r.error).toBe(true);if(st.outcome!=='ongoing')break;}if(!u.hasActed&&st.outcome==='ongoing')s.act({kind:'wait',unit:u.id});
 }}
 describe('treasure stories and repeatable growth',()=>{
- it('has 116 unique usable treasures, 11 four-item stories and two per training ground',()=>{expect(treasures).toHaveLength(116);expect(new Set(treasures.map(t=>t.id)).size).toBe(116);for(const m of expeditions.filter(m=>m.kind==='training'))expect(treasures.filter(t=>t.quest===m.id)).toHaveLength(2);expect(treasures.some(t=>/모사품|모조품|재현품/.test(t.name+t.description))).toBe(false);for(const m of expeditions.filter(m=>m.kind==='quest'))expect(treasures.filter(t=>t.quest===m.id)).toHaveLength(4);});
+ it('has 142 unique usable treasures, 11 four-item stories and two per training ground',()=>{expect(treasures).toHaveLength(142);expect(new Set(treasures.map(t=>t.id)).size).toBe(142);for(const m of expeditions.filter(m=>m.kind==='training'))expect(treasures.filter(t=>t.quest===m.id)).toHaveLength(2);expect(treasures.some(t=>/모사품|모조품|재현품/.test(t.name+t.description))).toBe(false);for(const m of expeditions.filter(m=>m.kind==='quest'))expect(treasures.filter(t=>t.quest===m.id)).toHaveLength(4);});
  it('gates quests by story progress, not an unfulfillable payment',()=>{const c=freshCampaign();expect(canExpedition(c,'T01')).toBe(true);expect(canExpedition(c,'Q01')).toBe(false);expect(expeditionReward(c,'Q01','locked',true).xp).toBe(0);award(c,'S1-01','normal',[],[1]);expect(canExpedition(c,'Q01')).toBe(true);});
  it('grants training XP for new wins but never for defeat, reload or undo of a claimed run',()=>{const c=freshCampaign(),xp=c.xp.sima_yi!;expect(expeditionReward(c,'T01','one',false).xp).toBe(0);expect(expeditionReward(c,'T01','one',true).xp).toBe(52);expect(expeditionReward(c,'T01','one',true).xp).toBe(0);expect(expeditionReward(c,'T01','two',true).xp).toBe(52);expect(c.xp.sima_yi).toBe(xp+104);expect(c.trainingWins).toBe(2);expect(c.rewards).toEqual([]);});
  it('unlocks all quest treasures once and never re-awards quest XP',()=>{const c=campaign();for(const m of expeditions.filter(m=>m.kind==='quest')){expect(expeditionReward(c,m.id,'run-'+m.id,true).items).toHaveLength(4);expect(expeditionReward(c,m.id,'again-'+m.id,true).xp).toBe(0);}expect(c.treasures).toHaveLength(60);expect(c.quests).toHaveLength(11);});
@@ -50,10 +50,10 @@ describe('반복 퀘스트(보물 사냥)와 도전 퀘스트(10단계)',()=>{
  });
  it('gives one new treasure from the bounty pool per win until the pool is empty, then XP only',()=>{
   const c=campaign(),pool=treasures.filter(t=>t.quest==='R01').map(t=>t.id),got:string[]=[];
-  expect(pool).toHaveLength(6);
-  for(let i=0;i<6;i++){const r=expeditionReward(c,'R01','b'+i,true);expect(r.items).toHaveLength(1);got.push(r.items[0]!);}
-  expect(new Set(got)).toEqual(new Set(pool));const after=expeditionReward(c,'R01','b6',true);expect(after.items).toEqual([]);expect(after.xp).toBeGreaterThan(0);expect(c.bountyWins).toBe(7);
-  expect(expeditionReward(c,'R01','b6',true).xp).toBe(0);
+  expect(pool).toHaveLength(11);
+  for(let i=0;i<11;i++){const r=expeditionReward(c,'R01','b'+i,true);expect(r.items).toHaveLength(1);got.push(r.items[0]!);}
+  expect(new Set(got)).toEqual(new Set(pool));const after=expeditionReward(c,'R01','b11',true);expect(after.items).toEqual([]);expect(after.xp).toBeGreaterThan(0);expect(c.bountyWins).toBe(12);
+  expect(expeditionReward(c,'R01','b11',true).xp).toBe(0);
  });
  it('raises enemy count, waves and strength with every challenge step, with gatekeepers at 5 and 10',()=>{
   const enemies=(step:number)=>{const {stage}=expeditionBattle('C'+String(step).padStart(2,'0'),215,4);return stage.events!.flatMap(e=>e.actions).filter(a=>a.type==='spawn_units'&&a.side==='enemy').reduce((n,a)=>n+a.units!.filter(u=>u.id!=='challenge_boss').length,0);};

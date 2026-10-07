@@ -32,6 +32,9 @@ export const TREASURE_SPECIALS:Record<string,TreasureSpecial>={
   ironArmor:{name:'철갑',text:'반격 위력 +10%',traits:[['counterBoost',10]]},
   bow:{name:'명궁',text:'두 칸 이상 물리 공격 +10%',traits:[['rangedPower',10]]},
   brightArmor:{name:'명광개',text:'받는 모든 피해 -6%',traits:[['defenseBoost',6]]},
+  taipingYaoshu:{name:'남화의 비술',text:'책략 「낙뢰·속박」을 쓸 수 있다 · 최대 MP +15 · 책략 피해 +5%',strategies:['thunder','bind'],mp:15,traits:[['strategyPower',5]]},
+  xishuMap:{name:'촉의 길',text:'적 명중 -6%p',traits:[['evasionBoost',6]]},
+  zhansheSword:{name:'한 고조의 검',text:'회심 +8% · 입힌 피해의 5%만큼 체력 회복',traits:[['critical',8],['lifesteal',5]]},
   blackArmor:{name:'현철갑',text:'체력이 낮을수록 공격력 상승(최대 15%)',traits:[['lastStand',15]]},
 };
 export const specialOf=(id:string)=>TREASURE_SPECIALS[id];

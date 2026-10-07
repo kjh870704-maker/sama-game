@@ -15,7 +15,7 @@ export const treasures:Treasure[]=[
   {id:'silverarmor',name:'백은갑',stage:'S1-07',glyph:'백',effect:'방어 +4 · 최대 체력 +8',description:'연의 속 장수들의 갑주 묘사에서 착안한 창작 보상. 사마의의 실제 소유 이력을 뜻하지 않습니다.',bonus:{defense:4,maxHp:8}},
   {id:'yitian',name:'의천검',stage:'S1-06',glyph:'의',effect:'공격 +5 · 최대 체력 +8',description:'조조의 위엄을 상징하는 명검. 동관의 위기를 넘긴 공로로 인연을 맺습니다.',bonus:{attack:5,maxHp:8}},
   {id:'dunjia',name:'둔갑천서',stage:'S1-05',glyph:'둔',effect:'민첩 +4 · 최대 체력 +8',description:'기문과 도술의 이치를 전하는 서책. 장강에서 지켜 낸 수송대의 물자 속에서 발견합니다.',bonus:{agility:4,maxHp:8}},
-  {id:'taiping',name:'태평청령서',stage:'S1-01',glyph:'태',effect:'최대 체력 +12',description:'백성을 구제하는 가르침을 담은 도술서. 사마가를 지킨 이들에게 전해집니다.',bonus:{maxHp:12}},
+  {id:'taiping',name:'태평청령도',stage:'S1-01',glyph:'태',effect:'최대 체력 +12',description:'백성을 구제하는 가르침을 담은 도술서. 사마가를 지킨 이들에게 전해집니다.',bonus:{maxHp:12}},
   {id:'sevenstar',name:'칠성보도',stage:'S1-02',glyph:'칠',effect:'공격 +4',description:'동탁 암살에 쓰려 했던 일곱 별의 보도. 낙양 탈출의 증표로 얻습니다.',bonus:{attack:4}},
   {id:'dilu',name:'적로',stage:'S1-03',glyph:'적',effect:'이동 +1',description:'유비와 적로의 탈출 일화에서 착안한 게임 창작 장구입니다.',bonus:{movement:1}},
   {id:'mengde',name:'맹덕신서',stage:'S1-04',glyph:'맹',effect:'최대 MP +10 · 지력 +3',description:'조조의 병법과 용병술을 담은 병서. 흉몽을 이겨 낸 깨달음으로 그 뜻을 읽습니다.',bonus:{maxMp:10,intellect:3}},
@@ -23,12 +23,12 @@ export const treasures:Treasure[]=[
 ];
 const extraItems=[
  ['greenDragon','청룡언월도','S1-06','청','공격 +8',{attack:8},'관우의 청룡언월도'],
- ['serpentSpear','장팔사모','S1-03','장','공격 +5 · 민첩 +2',{attack:5,agility:2},'장비의 장팔사모'],
+ ['serpentSpear','사모','S1-03','사','공격 +5 · 민첩 +2',{attack:5,agility:2},'장비의 장팔사모'],
  ['halberd','방천화극','S1-04','방','공격 +7',{attack:7},'여포의 방천화극'],
  ['bow','보조궁','S1-02','보','공격 +3 · 민첩 +3',{attack:3,agility:3},'연의 장수들의 활'],
  ['redHare','적토마','S1-08','적','이동 +1 · 민첩 +5',{movement:1,agility:5},'관우와 적토마'],
  ['fan','백우선','S1-05','백','지력 +5 · 최대 MP +5',{intellect:5,maxMp:5},'제갈량의 깃털 부채'],
- ['seal','전국옥새','S1-07','전','정신 +5 · 최대 체력 +10',{spirit:5,maxHp:10},'전국옥새를 둘러싼 연의의 다툼'],
+ ['seal','옥새','S1-07','옥','정신 +5 · 최대 체력 +10',{spirit:5,maxHp:10},'전국옥새를 둘러싼 연의의 다툼'],
  ['ironArmor','환쇄개','S1-01','환','방어 +2',{defense:2},'조식의 상소에 이름이 오른 쇠고리 갑옷'],
 ] as const;
 for(const [id,name,stage,glyph,effect,bonus,motif] of extraItems)treasures.push({id,name,stage,glyph,effect,bonus,description:motif+'에 얽힌 보물. 전장에서 쌓은 공로로 그 인연을 이어받습니다.'});
