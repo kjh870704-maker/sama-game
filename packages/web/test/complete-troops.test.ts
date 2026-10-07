@@ -30,8 +30,7 @@ describe('새 화풍 전체 병종 원화',()=>{
     expect(completeTroopArt.civilian).toEqual({sheet:'four-stage-civilian',row:0,rows:4});
     for(const id of ['fengshui','heavy-cavalry','lord','valiant-cavalry','rattan','yellow-turban'])
       expect(completeTroopSheets.find(x=>x.id===`four-stage-${id}`)?.url).toBe(`troops-four-stage-${id}-v2.png`);
-    expect(completeTroopSheets.find(x=>x.id==='four-stage-monk')?.url).toBe('troops-four-stage-monk-v1.webp');
-    for(const id of ['maiden','mounted-strategist','pirate'])
+    for(const id of ['monk','maiden','mounted-strategist','pirate'])
       expect(completeTroopSheets.find(x=>x.id===`four-stage-${id}`)?.url).toBe(`troops-four-stage-${id}-v3.png`);
   });
 

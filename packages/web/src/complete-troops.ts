@@ -63,9 +63,9 @@ const V2_SHEETS=new Set([
   'four-stage-fengshui','four-stage-heavy-cavalry','four-stage-lord',
   'four-stage-valiant-cavalry','four-stage-rattan','four-stage-yellow-turban',
 ]);
-// 화풍 재통일: 무도가는 원래 픽셀 시트로 복원하고, 나머지는 같은 화풍으로 교정한 v3를 쓴다.
+// 화풍 재통일: 보병·등갑병의 픽셀 비율과 명암으로 교정한 v3를 쓴다.
 const SHEET_FILES:Readonly<Record<string,string>>={
-  'four-stage-monk':'troops-four-stage-monk-v1.webp',
+  'four-stage-monk':'troops-four-stage-monk-v3.png',
   'four-stage-maiden':'troops-four-stage-maiden-v3.png',
   'four-stage-mounted-strategist':'troops-four-stage-mounted-strategist-v3.png',
   'four-stage-pirate':'troops-four-stage-pirate-v3.png',
