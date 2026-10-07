@@ -18,7 +18,7 @@ describe('새 화풍 전체 병종 원화',()=>{
     expect(completeTroopSheets).toHaveLength(39);
     for(const sheet of completeTroopSheets){
       expect(sheet.rows).toBe(4);
-      expect(sheet.url).toMatch(/^troops-four-stage-[a-z-]+-v[12]\.(?:webp|png)$/);
+      expect(sheet.url).toMatch(/^troops-four-stage-[a-z-]+-v[123]\.(?:webp|png)$/);
       const loaded=paintedTroopSheets.find(x=>x.id===sheet.id);
       expect(loaded?.frames).toBe(POSE);
       expect(loaded).toHaveProperty('union',true);
@@ -28,8 +28,11 @@ describe('새 화풍 전체 병종 원화',()=>{
     expect(Object.values(fourStageCorrectionRows).flat()).toContain('divineStrategist');
     expect(Object.values(fourStageCorrectionRows).flat()).toContain('sonOfHeaven');
     expect(completeTroopArt.civilian).toEqual({sheet:'four-stage-civilian',row:0,rows:4});
-    for(const id of ['fengshui','heavy-cavalry','lord','valiant-cavalry','rattan','maiden','monk','yellow-turban','mounted-strategist','pirate'])
+    for(const id of ['fengshui','heavy-cavalry','lord','valiant-cavalry','rattan','yellow-turban'])
       expect(completeTroopSheets.find(x=>x.id===`four-stage-${id}`)?.url).toBe(`troops-four-stage-${id}-v2.png`);
+    expect(completeTroopSheets.find(x=>x.id==='four-stage-monk')?.url).toBe('troops-four-stage-monk-v1.webp');
+    for(const id of ['maiden','mounted-strategist','pirate'])
+      expect(completeTroopSheets.find(x=>x.id===`four-stage-${id}`)?.url).toBe(`troops-four-stage-${id}-v3.png`);
   });
 
   it('지정 계통은 진화 내내 같은 무기군을 유지하고 신규 계통은 네 단계가 모두 다르다',()=>{

@@ -52,6 +52,12 @@ const mask=(x:number,y:number,s=1)=>`<g transform="translate(${x} ${y}) scale(${
 const talisman=(x:number,y:number,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect x="-8" y="-16" width="16" height="32" fill="#f0dc58" ${O}/><path d="M-4 -10 H4 M0 -12 V12 M-4 -2 C0 2 4 -2 4 4 M-4 8 H4" stroke="#b8241a" stroke-width="2" fill="none"/></g>`;
 const hourglass=(x:number,y:number,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M-10 -14 H10 L2 0 L10 14 H-10 L-2 0Z" fill="#bfe6ff" ${O}/><path d="M-6 10 H6 L0 2Z" fill="#d8a838"/></g>`;
 const ring=(x:number,y:number,s=1,c='#d8e0e8')=>`<g transform="translate(${x} ${y}) scale(${s})">${Array.from({length:8},(_,i)=>spear(Math.cos(i*Math.PI/4)*14,Math.sin(i*Math.PI/4)*14,.5,i*45-90)).join('')}</g>`;
+const bow=(x:number,y:number,s=1,r=0)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})"><path d="M-12 -18 C8 -10 8 10 -12 18 M-12 -18 L-12 18" fill="none" stroke="#140c06" stroke-width="5"/><path d="M-12 -18 C8 -10 8 10 -12 18" fill="none" stroke="#d89a48" stroke-width="2.6"/><path d="M-12 -18 V18 M-18 0 H16 M10 -4 L16 0 L10 4" fill="none" stroke="#eef4ff" stroke-width="1.8"/></g>`;
+const burst=(x:number,y:number,s=1,c='#fff0a0')=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 -18 L4 -6 L15 -12 L9 -2 L20 0 L9 3 L15 13 L4 7 L0 19 L-4 7 L-15 13 L-9 3 L-20 0 L-9 -2 L-15 -12 L-4 -6Z" fill="${c}" ${O}/></g>`;
+const scroll=(x:number,y:number,s=1,c='#ead7a4')=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M-12 -15 H12 V15 H-12Z" fill="${c}" ${O}/><path d="M-12 -15 C-18 -15 -18 -8 -12 -8 H12 C18 -8 18 -15 12 -15 M-12 15 C-18 15 -18 8 -12 8 H12 C18 8 18 15 12 15" fill="#f3e7bd" ${O}/><path d="M-6 -3 H7 M-6 2 H5" stroke="#8a4a2a" stroke-width="1.6"/></g>`;
+const rice=(x:number,y:number,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M-14 -2 H14 L10 14 H-10Z" fill="#8a4a28" ${O}/><path d="M-11 -2 C-10 -12 10 -12 11 -2Z" fill="#f4e4b0" ${O}/>${[-7,-2,3,8].map(a=>`<ellipse cx="${a}" cy="-4" rx="2" ry="4" fill="#fff4ca"/>`).join('')}</g>`;
+const wheel=(x:number,y:number,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle r="15" fill="#65401f" ${O}/><circle r="10" fill="#b57a35" ${O}/>${Array.from({length:8},(_,i)=>`<path d="M0 0 L${Math.cos(i*Math.PI/4)*13} ${Math.sin(i*Math.PI/4)*13}" stroke="#3a2412" stroke-width="2"/>`).join('')}<circle r="3" fill="#d8b070" ${O}/></g>`;
+const trap=(x:number,y:number,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M-18 12 L-12 -2 L-6 12 L0 -2 L6 12 L12 -2 L18 12Z" fill="#b8c0c8" ${O}/><path d="M-18 12 H18" stroke="#704020" stroke-width="4"/></g>`;
 
 /** 책략 id → 그림 */
 const MOTIF:Record<string,()=>string>={
@@ -87,6 +93,32 @@ const MOTIF:Record<string,()=>string>={
   inspire:()=>drum(32,36,1),warCry:()=>fist(30,36,1.1)+`<path d="M44 22 L52 16 M46 30 H56 M44 38 L52 44" stroke="#fff0a0" stroke-width="2.6" stroke-linecap="round"/>`,
   grandDrum:()=>drum(32,38,1.15)+flag(50,24,.5),valor:()=>sword(32,34,1.25)+flame(32,46,.45),
   burnBoats:()=>boat(32,38,1,true),backWater:()=>`<path d="M6 44 H58 V54 H6Z" fill="#2a6ab8" ${O}/>`+flag(22,28,.8,'#c0342a')+flag(42,28,.8,'#c0342a')+sword(32,32,.7),
+  // 고유 책략 — 같은 속성이라도 실루엣만 보고 구분할 수 있도록 별도 도안을 쓴다.
+  bowangFire:()=>mountain(24,42,.8)+flame(42,36,.85),fireShips:()=>boat(32,39,1.05,true)+flag(44,20,.45),burnCamp:()=>gate(32,40,.85)+flame(20,38,.65)+flame(44,38,.65),
+  eastWind:()=>swirl(27,34,.8)+flag(46,30,.65,'#e8e0c8'),riverDam:()=>gate(32,31,.8)+wave(32,48,.8),sevenArmies:()=>wave(32,39,1.05)+flag(18,22,.45,'#4774a8')+flag(46,22,.45,'#4774a8'),
+  spark:()=>burst(32,34,.9)+bolt(32,34,.55),thunderStorm:()=>cloud(32,18,1.1,'#32245f','#9d8be0')+bolt(22,42,.7)+bolt(42,42,.7)+drops(32,42,.55,'#c9b9ff'),
+  earthPulse:()=>crack(32,40,1)+`<circle cx="32" cy="28" r="11" fill="none" stroke="#ead58e" stroke-width="3"/>`,feintAttack:()=>flag(20,34,.8,'#7a5a34')+spear(43,35,.85,55),
+  rockAmbush:()=>mountain(22,42,.75)+rock(43,24,.65)+spear(46,43,.55,-30),sandstorm:()=>tornado(32,33,1.05,'#e7d49a')+rock(17,44,.4)+rock(48,45,.35),lockedGates:()=>gate(32,37,1)+chain(32,48,.7,'#d4b472'),
+  hex:()=>talisman(25,34,.85)+skull(43,38,.65),edict:()=>scroll(28,34,.9)+flag(47,32,.55,'#c89a30'),counterSpy:()=>scroll(21,35,.65,'#d6c095')+scroll(43,35,.65,'#c9aacd')+spiral(32,20,.4),
+  imperialAura:()=>burst(32,32,.9,'#ffe58a')+scroll(32,36,.65),beautyTrap:()=>lotus(28,34,.8,'#ffb8dc')+trap(45,43,.55),lureTiger:()=>boot(24,37,.8)+flag(45,30,.65,'#d58828'),
+  nightmare:()=>cloud(32,22,1,'#3d2858','#8f6aae')+skull(32,42,.8),selfInjury:()=>sword(28,34,.9,25)+`<path d="M43 29 C51 38 47 46 42 46 C36 46 34 38 43 29Z" fill="#d4382f" ${O}/>` ,
+  charmDance:()=>note(20,30,.65,'#ffc0de')+lotus(38,39,.85,'#f3a7ce'),borrowKnife:()=>sword(23,34,.85,-35)+sword(41,34,.85,35)+chain(32,48,.45),stoneMaze:()=>ring(32,34,.8)+rock(18,23,.45)+rock(46,23,.45)+rock(32,48,.45),
+  swordDance:()=>sword(22,35,.85,-35)+sword(42,35,.85,35)+note(32,20,.45),banner:()=>flag(23,33,.85,'#c0342a')+shield(43,39,.65),decree:()=>scroll(25,34,.85)+drum(45,39,.55),
+  spareArms:()=>sword(18,37,.7,-25)+spear(32,34,.75)+shield(47,39,.6),ironBody:()=>fist(25,36,.9)+shield(43,35,.7,'#746b61'),strawBoats:()=>boat(31,42,.85)+bow(43,25,.55,-25),
+  rewind:()=>hourglass(32,34,.95)+swirl(32,34,.65,'#d8f4ff'),woodenOx:()=>wheel(23,41,.65)+rice(42,34,.75),celestialDance:()=>lotus(32,40,.85,'#f6c8ff')+note(20,23,.55)+sparks(43,22,.6,'#fff4c0'),
+  peachOath:()=>sword(20,38,.65,-25)+sword(32,31,.7)+sword(44,38,.65,25)+`<circle cx="32" cy="45" r="5" fill="#ef7898" ${O}/>` ,
+  rations:()=>rice(32,36,1.05)+leaf(47,23,.45,35),qigong:()=>fist(32,38,.85)+swirl(32,25,.55,'#eaffcc'),spiritBell:()=>`<path d="M20 42 H44 L39 34 V24 C39 14 25 14 25 24 V34Z" fill="#d8b34c" ${O}/><circle cx="32" cy="44" r="3" fill="#f5e7aa"/>`+sparks(32,20,.45,'#dcffd2'),
+  royalGrace:()=>cross(25,38,.75,'#fff4b0')+scroll(43,31,.65,'#f2d889'),relief:()=>rice(23,38,.8)+cross(43,32,.7,'#eaffd8'),supplyLine:()=>rice(22,37,.7)+wheel(44,39,.55)+boot(34,22,.45),
+  blessing:()=>lotus(32,38,.8,'#fff0a8')+cross(32,20,.55,'#ffffff'),amnesty:()=>scroll(26,34,.8,'#f3e7bd')+chain(45,36,.55,'#d9e2ec')+`<path d="M43 23 L51 15" stroke="#fff" stroke-width="3"/>`,
+  shieldBash:()=>shield(26,36,.9)+fist(45,34,.7),pierce:()=>spear(32,34,1.15,70)+burst(48,33,.4),breakthrough:()=>brokenWall(40,36,.75)+spear(21,34,.85,70),trample:()=>boot(32,32,1.15)+crack(32,48,.7),
+  aimedShot:()=>bow(31,34,1)+`<circle cx="49" cy="34" r="6" fill="none" stroke="#ffdf8a" stroke-width="2"/><circle cx="49" cy="34" r="2" fill="#c0342a"/>`,volley:()=>bow(21,35,.75)+bow(42,35,.75)+`<path d="M14 18 H50" stroke="#eef4ff" stroke-width="2"/>`,
+  skirmish:()=>bow(35,32,.8,-15)+boot(18,43,.55),stoneRain:()=>rock(18,24,.55)+rock(32,20,.65)+rock(46,26,.5)+burst(32,46,.4,'#d6c080'),assassinate:()=>sword(32,34,1.1,45)+eye(20,20,.45,'#d85a68'),
+  rattanRush:()=>shield(25,37,.8,'#8a6b32','#d8c478')+boot(45,39,.6),tuskCharge:()=>`<path d="M14 42 C22 15 32 17 36 34 C40 16 51 17 52 42" fill="#efe4c8" ${O}/>`+burst(32,44,.45),plunder:()=>rice(23,39,.7)+sword(43,33,.85,45),
+  westernCharge:()=>spear(36,33,1,65)+flag(18,32,.65,'#b13a2a'),gateCrash:()=>gate(40,37,.8)+fist(18,37,.8),deckVolley:()=>boat(30,43,.75)+bow(42,25,.65,-20),flashCut:()=>sword(32,34,1.2,45)+`<path d="M10 45 L54 17" stroke="#fff6b0" stroke-width="3"/>`,
+  mountainRaid:()=>mountain(31,40,.9)+sword(43,27,.6,45),lanceRush:()=>spear(32,34,1.1,65)+boot(18,45,.5),scytheWheels:()=>wheel(22,38,.7)+wheel(43,38,.7)+sword(32,22,.55,90),towerShot:()=>gate(23,41,.65)+bow(44,27,.65,-15),
+  beastRoar:()=>`<path d="M16 30 L25 20 L32 27 L39 20 L48 30 L44 46 H20Z" fill="#b26a32" ${O}/><path d="M24 34 H28 M36 34 H40 M27 42 Q32 46 37 42" stroke="#fff0c0" stroke-width="2" fill="none"/>`+burst(50,25,.35),
+  ironCharge:()=>shield(25,37,.8,'#66717c','#dfe7ef')+spear(44,32,.75,55),halberdSweep:()=>spear(32,34,1.15,70)+swirl(32,35,.65,'#f0e2d0'),snare:()=>trap(32,37,1)+boot(32,22,.5),thunderShot:()=>bow(23,35,.75)+bolt(45,33,.75),
+  chainFist:()=>fist(22,36,.8)+fist(42,34,.8)+chain(32,48,.5,'#d8b070'),royalStrike:()=>sword(32,35,1.15)+burst(32,20,.5,'#ffe48a'),commandStrike:()=>sword(40,36,.95,35)+flag(20,31,.7,'#c0342a'),yellowSlash:()=>sword(32,35,1.15,50)+`<path d="M13 43 Q32 13 53 28" fill="none" stroke="#ffd84a" stroke-width="4"/>`,boardingSlash:()=>boat(26,45,.65)+sword(43,29,.85,40),
 };
 const fallback=(s:LearnedStrategy)=>{const k=paletteKey(s);return k==='fire'?flame(32,34):k==='wind'?swirl(32,32):k==='water'?wave(32,36):k==='thunder'?bolt(32,34):k==='earth'?rock(32,34,1.2):k==='curse'?spiral(32,32):k==='heal'?cross(32,34):drum(32,36);};
 

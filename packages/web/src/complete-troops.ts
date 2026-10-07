@@ -61,12 +61,18 @@ export const lineageWeapons = {
 // 서로 닮았던 계통은 무기·투구·갑옷 윤곽을 갈라 다시 그린 v2 시트를 쓴다.
 const V2_SHEETS=new Set([
   'four-stage-fengshui','four-stage-heavy-cavalry','four-stage-lord',
-  'four-stage-valiant-cavalry','four-stage-rattan','four-stage-maiden','four-stage-monk',
-  'four-stage-yellow-turban','four-stage-mounted-strategist','four-stage-pirate',
+  'four-stage-valiant-cavalry','four-stage-rattan','four-stage-yellow-turban',
 ]);
+// 화풍 재통일: 무도가는 원래 픽셀 시트로 복원하고, 나머지는 같은 화풍으로 교정한 v3를 쓴다.
+const SHEET_FILES:Readonly<Record<string,string>>={
+  'four-stage-monk':'troops-four-stage-monk-v1.webp',
+  'four-stage-maiden':'troops-four-stage-maiden-v3.png',
+  'four-stage-mounted-strategist':'troops-four-stage-mounted-strategist-v3.png',
+  'four-stage-pirate':'troops-four-stage-pirate-v3.png',
+};
 const sheet = (id:string)=>({
   id,
-  url:`troops-${id}-${V2_SHEETS.has(id)?'v2.png':'v1.webp'}`,
+  url:SHEET_FILES[id]??`troops-${id}-${V2_SHEETS.has(id)?'v2.png':'v1.webp'}`,
   rows:4,
   // 투명 배경의 미세한 가장자리는 살리되 이웃 칸의 실루엣은 합치지 않는다.
   alphaCutoff:240,

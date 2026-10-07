@@ -18,9 +18,14 @@ describe('대결과 책략 이미지',()=>{
     expect(duelAdvantage('guard','attack')).toBe(1);expect(duelAdvantage('feint','guard')).toBe(1);expect(duelAdvantage('special','rally')).toBe(1);
   });
 
-  it('모든 책략에 즉시 표시 가능한 SVG 이미지가 있다',()=>{
+  it('모든 책략에 즉시 표시 가능한 서로 다른 SVG 이미지가 있다',()=>{
+    const visuals=new Set<string>();
     for(const strategy of allStrategies){
       expect(strategyIconUrl(strategy.id),strategy.id).toMatch(/^data:image\/svg\+xml/);
+      const normalized=decodeURIComponent(strategyIconUrl(strategy.id)).replaceAll(`g${strategy.id}1`,'gSTRATEGY');
+      expect(visuals.has(normalized),`${strategy.id}가 다른 책략과 같은 그림을 사용한다`).toBe(false);
+      visuals.add(normalized);
     }
+    expect(visuals.size).toBe(allStrategies.length);
   });
 });

@@ -520,6 +520,7 @@ body.nightmare .map-vignette {box-shadow:inset 0 0 85px #11162baa}
 .cx-perk-glyph{font-size:calc(16px*var(--fs,1));text-align:center;color:var(--cx-hi)}.cx-perk small{color:#a7a48e}
 .cx-perk button{font-size:calc(13px*var(--fs,1));padding:5px 10px;white-space:nowrap}
 .cx-classes{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:6px}
+.cx-class-sections{display:grid;gap:16px}.cx-class-sections section>h4{margin:0 0 8px;color:var(--cx-hi);font-size:calc(14px*var(--fs,1));letter-spacing:1px}.cx-class-sections section>h4 small{color:#9fa897;font-weight:400;letter-spacing:0}.cx-npc-section{padding-top:14px;border-top:1px solid #66583d}.cx-npc-section>p{margin:-3px 0 9px;color:#9fa897;font-size:calc(12.5px*var(--fs,1));line-height:1.5}.cx-class.npc{border-color:#526b58;background:linear-gradient(145deg,#17231d,#101716)}.cx-class.npc small{color:#83c997;letter-spacing:.5px;font-weight:700}
 .cx-class{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 3px;background:#14191a;border-color:#4a4c42}
 .cx-class b{font-size:calc(13px*var(--fs,1));font-weight:500}.cx-class small{font-size:calc(12px*var(--fs,1));color:#c5ae7a;letter-spacing:1px}
 .cx-class.chosen{border-color:var(--gold);background:#b69e6524}.cx-class.tier-3 b{color:#ffd98a}.cx-class.tier-2 b{color:#cfe0ff}

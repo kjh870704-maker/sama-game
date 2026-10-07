@@ -93,10 +93,15 @@ function legacyBlock(meta:ReturnType<typeof loadMeta>,name:string){
 // ─────────────────────────────────────────────── 병종
 
 /** 모든 병종: 모병 가능 계통부터, 진화 단계 순. */
+export const NPC_CODEX_CLASSES=[
+  'crownPrince','royalPrince','emperor','heavenEmperor','civilian',
+] as const satisfies readonly UnitClass[];
+const NPC_CODEX_SET=new Set<UnitClass>(NPC_CODEX_CLASSES);
 export function codexClasses():UnitClass[]{
   const lines=evolutionLines().map(l=>l.map(([c])=>c)),seen=new Set<UnitClass>(),out:UnitClass[]=[];
   const firsts=[...recruitPool,...lines.map(l=>l[0]!)];for(const f of firsts){const line=lines.find(l=>l[0]===f)??[f];for(const c of line)if(!seen.has(c)){seen.add(c);out.push(c);}}
   for(const c of ['ram','catapult','engineer','navy'] as UnitClass[])if(!seen.has(c)){seen.add(c);out.push(c);}
+  for(const c of NPC_CODEX_CLASSES)if(!seen.has(c)){seen.add(c);out.push(c);}
   return out;
 }
 export function classSprite(c:UnitClass){return sprite(c);}
@@ -144,8 +149,10 @@ const PROFILE_ROWS:Array<[keyof ReturnType<typeof profileOf>,string]>=[['hp','�
 function classesTab(pick:string){
   const all=codexClasses(),c=(all.includes(pick as UnitClass)?pick:all[0]!) as UnitClass,p=profileOf(c),v=VARIANTS[c],line=evolutionLines().find(l=>l.some(([x])=>x===c));
   const spells=classSpellBook(c);
-  const grid=`<div class="cx-classes">${all.map(k=>`<button data-cx-class="${k}" class="cx-class tier-${tierOf(k)} ${k===c?'chosen':''}">${sprite(k)}<b>${esc(classNames[k]??k)}</b><small>${'◆'.repeat(tierOf(k))}</small></button>`).join('')}</div>`;
-  const detail=`<div class="cx-detail"><div class="cx-head">${sprite(c)}<div><small>${'◆'.repeat(tierOf(c))} ${tierOf(c)===1?'기본':tierOf(c)===2?'정예':tierOf(c)===3?'최정예':tierOf(c)===4?'전설':'신화'} · ${esc(classNames[familyOf(c)]??familyOf(c))} 계열</small><h3>${esc(classNames[c]??c)}</h3><p>${esc(troopRoles[c]?.role??adviceFor(c))}</p></div></div>
+  const card=(k:UnitClass,npc=false)=>`<button data-cx-class="${k}" class="cx-class tier-${tierOf(k)} ${npc?'npc':''} ${k===c?'chosen':''}">${sprite(k)}<b>${esc(classNames[k]??k)}</b><small>${npc?'NPC':'◆'.repeat(tierOf(k))}</small></button>`;
+  const field=all.filter(k=>!NPC_CODEX_SET.has(k)),npcs=NPC_CODEX_CLASSES.filter(k=>all.includes(k));
+  const grid=`<div class="cx-class-sections"><section><h4>계통 병종 <small>${field.length}</small></h4><div class="cx-classes">${field.map(k=>card(k)).join('')}</div></section><section class="cx-npc-section" data-cx-class-group="npc"><h4>NPC <small>황실·민간 ${npcs.length}</small></h4><p>이벤트와 전장에서 AI가 맡는 황실 인물과 민간인의 실제 모습입니다.</p><div class="cx-classes">${npcs.map(k=>card(k,true)).join('')}</div></section></div>`;
+  const detail=`<div class="cx-detail"><div class="cx-head">${sprite(c)}<div><small>${NPC_CODEX_SET.has(c)?'NPC · 이벤트/지원 전용 병종':`${'◆'.repeat(tierOf(c))} ${tierOf(c)===1?'기본':tierOf(c)===2?'정예':tierOf(c)===3?'최정예':tierOf(c)===4?'전설':'신화'} · ${esc(classNames[familyOf(c)]??familyOf(c))} 계열`}</small><h3>${esc(classNames[c]??c)}</h3><p>${esc(troopRoles[c]?.role??adviceFor(c))}</p></div></div>
     <div class="cx-stats">${PROFILE_ROWS.map(([k,label])=>{const n=p[k] as number;return `<div class="cx-stat"><span>${label}</span><i><i style="width:${Math.min(100,n/2.2*100)}%" class="${n>=1.3?'hi':n<0.7?'lo':''}"></i></i><b>${n.toFixed(2)}</b></div>`;}).join('')}</div>
     <p class="cx-tags"><span>이동 ${p.movement}</span><span>사거리 ${p.range[0]}~${p.range[1]} · ${reachLabel(c)}</span>${p.canUseStrategy?'<span>책략 사용</span>':''}</p>
     <div class="cx-ranges"><figure><figcaption>평타 범위 · ${reachLabel(c)}</figcaption>${rangeGrid(reachOffsets({unitClass:c,range:p.range}),'cast')}</figure></div>

@@ -11,7 +11,7 @@ import {BIOS} from '../src/officer-bios.ts';
 import {CHUHAN,CHUHAN_FACES,unlockLegacy,chooseHeir,heirGrants} from '../src/chuhan.ts';
 import {PORTRAIT_PARTS} from '../src/portrait.ts';
 import {RELICS} from '../src/roguelike.ts';
-import {codexNames,codexClasses,biography,STRATEGY_TEXT,castCells,sideOf} from '../src/codex-ui.ts';
+import {codexNames,codexClasses,NPC_CODEX_CLASSES,biography,STRATEGY_TEXT,castCells,sideOf} from '../src/codex-ui.ts';
 import {freshScenario,scenarioPath,choose,scenarioParty,floorFor} from '../src/scenario.ts';
 import type {RunBattleRef} from '../src/roguelike.ts';
 import {Session} from '../src/session.ts';
@@ -119,9 +119,11 @@ describe('병종과 책략',()=>{
   a.statuses=[];d.statuses.push({kind:'breach',turns:2,magnitude:1});expect(estimatePhysical(a,d,st.map)).toBeGreaterThan(base);
   const mv=effectiveMovement(a);a.statuses.push({kind:'slow',turns:2,magnitude:1});expect(effectiveMovement(a)).toBe(Math.max(0,mv-2));
  });
- it('lists every strategy with a description and every class in the codex',()=>{
+ it('lists every strategy with a description and shows royal and support NPCs in the class codex',()=>{
   for(const s of allStrategies)expect(STRATEGY_TEXT[s.id],s.id).toBeTruthy();
   expect(codexClasses().length).toBeGreaterThan(80);
+  expect(codexClasses()).toEqual(expect.arrayContaining(['crownPrince','royalPrince','emperor','heavenEmperor','civilian','transport','ram','navy']));
+  expect(NPC_CODEX_CLASSES).toEqual(['crownPrince','royalPrince','emperor','heavenEmperor','civilian']);
  });
 });
 
