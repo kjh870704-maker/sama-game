@@ -1458,15 +1458,15 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 .duel-stage.portraits .duel-fighter.enemy .duel-mini{top:auto;bottom:calc(100% + 4px)}
 
 /* 일기토·설전 타격감: 능력치가 곧 피해 — 베기·불꽃·먹물·충격파·화면 흔들림 */
-.duel-stage.portraits .duel-view.shake{animation:duel-shake .38s ease-out .18s}
-.duel-stage.portraits .duel-view.shake-big{animation:duel-shake-big .6s ease-out .18s}
+.duel-stage .duel-view.shake{animation:duel-shake .38s ease-out .18s}
+.duel-stage .duel-view.shake-big{animation:duel-shake-big .6s ease-out .18s}
 @keyframes duel-shake{20%{transform:translate(-6px,3px)}40%{transform:translate(6px,-3px)}60%{transform:translate(-3px,2px)}80%{transform:translate(2px,-1px)}}
 @keyframes duel-shake-big{10%{transform:translate(-14px,6px) scale(1.02)}25%{transform:translate(12px,-8px) scale(1.02)}40%{transform:translate(-9px,5px)}60%{transform:translate(6px,-3px)}80%{transform:translate(-3px,1px)}}
 .duel-flash{position:absolute;inset:0;z-index:6;pointer-events:none;animation:duel-flash .55s ease-out .18s both}
 .duel-flash.duel{background:radial-gradient(circle at 50% 55%,#fff 0,#ffe7a0 30%,rgba(255,120,40,.4) 60%,transparent 80%)}
 .duel-flash.debate{background:radial-gradient(circle at 50% 55%,rgba(20,14,8,.85) 0,rgba(40,24,10,.55) 45%,transparent 75%)}
 @keyframes duel-flash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
-.duel-stage.portraits .duel-fighter .fx{position:absolute;pointer-events:none;z-index:4}
+.duel-stage .duel-fighter .fx{position:absolute;pointer-events:none;z-index:4}
 /* 일기토: 칼빛이 대각선으로 지나가고 불꽃이 튄다 */
 .duel-stage .fx-slash{left:-15%;right:-15%;top:46%;height:9px;border-radius:50%;background:linear-gradient(90deg,transparent,#fff 35%,#ffe6a8 55%,#ff5a1e 80%,transparent);box-shadow:0 0 14px #ffd27a,0 0 30px #ff6a1e;transform:rotate(-32deg) scaleX(0);animation:fx-slash .42s cubic-bezier(.2,.8,.3,1) .16s both}
 .duel-stage .fx-slash.big{height:15px;box-shadow:0 0 22px #fff3c0,0 0 50px #ff6a1e}
@@ -1491,13 +1491,13 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 .duel-stage .fx-aura.duel{box-shadow:0 0 0 3px #ffb347,0 0 40px 10px rgba(255,120,30,.7)}
 .duel-stage .fx-aura.debate{box-shadow:0 0 0 3px #b9d7ff,0 0 40px 10px rgba(120,170,255,.6)}
 @keyframes fx-aura{0%{opacity:0;transform:scale(.9)}40%{opacity:1}100%{opacity:0;transform:scale(1.08)}}
-.duel-stage.portraits .duel-fighter .damage-number{animation-delay:.2s;display:flex;flex-direction:column;align-items:center;line-height:1;z-index:6}
+.duel-stage .duel-fighter .damage-number{animation-delay:.2s;display:flex;flex-direction:column;align-items:center;line-height:1;z-index:6}
 .duel-stage .damage-number small{font:700 13px/1.2 system-ui,sans-serif;color:#ffe9b8;text-shadow:0 1px 2px #000;margin-top:3px}
-.duel-stage.portraits .duel-fighter .damage-number.crit{font-size:58px;color:#ffe25a;text-shadow:0 0 10px #ff5a00,0 3px 0 #7a1000}
+.duel-stage .duel-fighter .damage-number.crit{font-size:58px;color:#ffe25a;text-shadow:0 0 10px #ff5a00,0 3px 0 #7a1000}
 .duel-stage.debate .damage-number{color:#f4ecd8;text-shadow:0 0 8px #1a1009,0 2px 0 #3a2410}
-.duel-stage.portraits.debate .duel-fighter .damage-number.crit{color:#fff;text-shadow:0 0 12px #5a8ac9,0 3px 0 #1a1009}
+.duel-stage.debate .duel-fighter .damage-number.crit{color:#fff;text-shadow:0 0 12px #5a8ac9,0 3px 0 #1a1009}
 .duel-stage .damage-number.guarded{opacity:.85;font-size:28px}
-@media (max-height:500px){.duel-stage .fx-word{font-size:20px}.duel-stage .fx-word.big{font-size:30px}.duel-stage.portraits .duel-fighter .damage-number{font-size:28px}.duel-stage.portraits .duel-fighter .damage-number.crit{font-size:38px}}
+@media (max-height:500px){.duel-stage .fx-word{font-size:20px}.duel-stage .fx-word.big{font-size:30px}.duel-stage .duel-fighter .damage-number{font-size:28px}.duel-stage .duel-fighter .damage-number.crit{font-size:38px}}
 @media (prefers-reduced-motion:reduce){.duel-stage .fx,.duel-stage .fx-word,.duel-stage .fx-guard,.duel-flash,.duel-stage .duel-view{animation:none!important}.duel-stage .fx,.duel-flash{display:none}}
 
 /* ── 일기토·설전 v4: 전신 모델 1:1 · 오행 상성 5수 ── */
@@ -1524,3 +1524,10 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 @keyframes fx-feint{0%{transform:scale(.25) rotate(-45deg);opacity:0}45%{opacity:1}100%{transform:scale(1.15) rotate(18deg);opacity:0}}
 @media(max-width:760px){.duel-stage.live-models .duel-acts{gap:3px}.duel-stage.live-models .duel-act{display:flex!important;flex-direction:column;padding:4px 2px}.duel-stage.live-models .duel-act .duel-ico{width:32px;height:32px}.duel-stage.live-models .duel-act small{display:none}.duel-stage.live-models .duel-talk{width:47%;}.duel-clash{top:48%;padding:5px 9px}.duel-clash b{font-size:15px}}
 @media (orientation:landscape) and (max-height:520px){.duel-stage.live-models .duel-acts{grid-template-columns:repeat(5,minmax(0,1fr))!important}.duel-stage.live-models .duel-model,.duel-stage.live-models .duel-model .battle-model{width:clamp(100px,40vh,200px)!important;height:clamp(100px,40vh,200px)!important}.duel-stage.live-models .duel-ground{bottom:4%;gap:20%}.duel-stage.live-models .duel-talk{width:43%!important}.duel-stage.live-models .duel-mini{bottom:calc(100% - 6px)!important}}
+
+/* 전신 모델(live-models)에도 타격 연출: 연출 조각은 칸 밖으로 띄우고, 맞으면 모델이 번쩍이며 흔들린다 */
+.duel-stage.live-models .duel-fighter{position:relative}
+.duel-stage.live-models .duel-fighter .damage-number{top:30%;font-size:40px}
+.duel-stage.live-models .duel-fighter.hit .duel-model{animation:card-hit .5s ease-out .2s both}
+.duel-stage.live-models .duel-fighter.motion-special .duel-model{filter:drop-shadow(0 0 18px #ffd060) drop-shadow(0 14px 6px rgba(0,0,0,.45))}
+@media (max-height:500px){.duel-stage.live-models .duel-fighter .damage-number{font-size:28px}}
