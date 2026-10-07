@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {allUnitClasses,EVOLUTION,SINGLE_STAGE_CLASSES} from '../../core/src/index.ts';
+import {allUnitClasses,EVOLUTION,SINGLE_STAGE_CLASSES,VARIANTS} from '../../core/src/index.ts';
 import {completeTroopArt,completeTroopSheets,fourStageCorrectionRows,lineageWeapons} from '../src/complete-troops.ts';
 import {paintedTroopArt,paintedTroopSheets,POSE} from '../src/painted-troops.ts';
 import {classSprite} from '../src/codex-ui.ts';
@@ -28,7 +28,7 @@ describe('새 화풍 전체 병종 원화',()=>{
     expect(Object.values(fourStageCorrectionRows).flat()).toContain('divineStrategist');
     expect(Object.values(fourStageCorrectionRows).flat()).toContain('sonOfHeaven');
     expect(completeTroopArt.civilian).toEqual({sheet:'four-stage-civilian',row:0,rows:4});
-    for(const id of ['fengshui','heavy-cavalry','lord','valiant-cavalry','rattan','yellow-turban'])
+    for(const id of ['fengshui','heavy-cavalry','lord','valiant-cavalry','rattan','yellow-turban','commander','mountain-cavalry'])
       expect(completeTroopSheets.find(x=>x.id===`four-stage-${id}`)?.url).toBe(`troops-four-stage-${id}-v2.png`);
     for(const id of ['monk','maiden','mounted-strategist','pirate'])
       expect(completeTroopSheets.find(x=>x.id===`four-stage-${id}`)?.url).toBe(`troops-four-stage-${id}-v3.png`);
@@ -38,7 +38,10 @@ describe('새 화풍 전체 병종 원화',()=>{
     expect(lineageWeapons).toMatchObject({
       'four-stage-heavy-cavalry':'spear','four-stage-lord':'sword','four-stage-rattan':'trident',
       'four-stage-valiant-cavalry':'curved-saber','four-stage-maiden':'talisman',
+      'four-stage-commander':'sword','four-stage-mountain-cavalry':'short-spear-and-buckler','four-stage-horse-archer':'bow',
     });
+    expect(VARIANTS.fanSage?.bloom?.name).toBe('천궁');
+    expect(VARIANTS.fanSage?.bloom?.name).not.toBe('백우선');
     for(const id of ['four-stage-yellow-turban','four-stage-mounted-strategist','four-stage-pirate'] as const){
       expect(new Set(fourStageCorrectionRows[id]).size).toBe(4);
     }

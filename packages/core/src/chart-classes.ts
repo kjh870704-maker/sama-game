@@ -122,7 +122,7 @@ const LINES: Line[] = [
   ] },
   { family: "strategist", base: BASE.wheelSage, stages: [
     { id: "wheelSage", level: 1 },
-    { id: "fanSage", level: 20, traits: { strategyPower: 10, strategyDamageReduction: 10 }, bloom: ["백우선", "책략 피해 +10% · 받는 책략 피해 10% 감소"] },
+    { id: "fanSage", level: 20, traits: { strategyPower: 10, strategyDamageReduction: 10 }, bloom: ["천궁", "기마궁술을 완성해 책략 피해 +10% · 받는 책략 피해 10% 감소"] },
   ] },
 ];
 

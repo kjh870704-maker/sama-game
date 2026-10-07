@@ -56,12 +56,16 @@ export const lineageWeapons = {
   'four-stage-yellow-turban':'curved-saber',
   'four-stage-mounted-strategist':'feather-fan',
   'four-stage-pirate':'cutlass',
+  'four-stage-commander':'sword',
+  'four-stage-mountain-cavalry':'short-spear-and-buckler',
+  'four-stage-horse-archer':'bow',
 } as const;
 
 // 서로 닮았던 계통은 무기·투구·갑옷 윤곽을 갈라 다시 그린 v2 시트를 쓴다.
 const V2_SHEETS=new Set([
   'four-stage-fengshui','four-stage-heavy-cavalry','four-stage-lord',
   'four-stage-valiant-cavalry','four-stage-rattan','four-stage-yellow-turban',
+  'four-stage-commander','four-stage-mountain-cavalry',
 ]);
 // 화풍 재통일: 보병·등갑병의 픽셀 비율과 명암으로 교정한 v3를 쓴다.
 const SHEET_FILES:Readonly<Record<string,string>>={

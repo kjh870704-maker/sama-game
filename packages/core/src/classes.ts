@@ -307,6 +307,12 @@ for (const line of FOUR_STAGE_LINES) {
     }
   });
 }
+// fanSage는 저장 호환용 내부 이름일 뿐, 최종 계통은 백우선 책사가 아니라 기마궁병의 전설 단계다.
+// 재배치 과정에서 붙는 일반 개화명을 활 계통의 고유 개화로 확정한다.
+if (VARIANTS.fanSage) VARIANTS.fanSage.bloom = {
+  name: "천궁",
+  description: "말 위에서 같은 활을 끝까지 다듬어 백발백중의 경지에 오른다",
+};
 
 /** 이동·상성·그림의 기준이 되는 병종. 기존 병종은 자기 자신. */
 export function familyOf(unitClass: UnitClass): UnitClass {
