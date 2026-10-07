@@ -10,7 +10,7 @@ import {pickExtras} from './sortie.ts';
 import {applyRomance,temperOf} from './romance.ts';
 import {applyCC} from './cc-apply.ts';
 import {expeditionBattle,expeditions,missionEnemyScale} from './expeditions.ts';
-import {newDuel,duelRound,duelResponse,type DuelState,type DuelAction} from './duel.ts';
+import {newDuel,duelRound,duelResponse,historicPair,DUEL_LOSS_DEBUFF,type DuelState,type DuelAction} from './duel.ts';
 import {availableStrategies,allStrategies,applyOfficerFeatures,martialPower,debatePower} from './officers.ts';
 import approachStage from '../../data/stages/S1-07.json';
 import approachMap from '../../data/maps/hanzhong-approach.json';
@@ -264,7 +264,10 @@ export class Session {
   }
   act(cmd:Command){
     const s=this.state;
-    if(this.activeDuel&&!(cmd.kind==='item'&&cmd.item.startsWith('duel-round:')))return {ok:false,error:'먼저 5합 대결을 마쳐 주세요.'};
+    if(this.activeDuel){
+      if(!(cmd.kind==='item'&&cmd.item.startsWith('duel-round:')))return {ok:false,error:'먼저 5합 대결을 마쳐 주세요.'};
+      const result=this.execute(cmd);if(result.ok){this.checkpoints.push(this.journal.length);this.journal.push(structuredClone(cmd));}return result;
+    }
     if(s.activeDialogue && cmd.kind!=='choose') return {ok:false,error:'먼저 대화의 선택지를 골라 주세요.'};
     if(cmd.kind!=='choose' && !CONTROLLABLE.has(s.currentSide)) return {ok:false,error:'상대의 행동을 기다려 주세요.'};
     if('unit' in cmd){
@@ -308,6 +311,21 @@ export class Session {
       }
     }
     if(cmd.kind==='item'){
+      if(this.revision>=4&&cmd.item.startsWith('duel-round:')){
+        // 5합 대결: 자동 조우(적 차례·이미 행동한 장수)일 수도 있어 행동 여부와 상관없이 받는다.
+        const u=s.find(cmd.unit),duel=this.activeDuel;if(!u?.alive||!duel||duel.player.id!==u.id||!duelRound(duel,cmd.item.slice(11) as DuelAction))return {ok:false,error:this.activeDuel?.kind==='debate'?'논거 2 이상이어야 논파를 사용할 수 있습니다.':'기합 2 이상이어야 필살기를 쓸 수 있습니다.'};
+        if(duel.result){
+          const enemy=s.get(duel.enemy.id),playerLoss=duel.result==='lose'?.45:duel.result==='draw'?.25:.15,enemyLoss=duel.result==='win'?.45:duel.result==='draw'?.25:.15;
+          u.hp=Math.max(1,u.hp-Math.ceil(u.stats.maxHp*playerLoss));enemy.hp=Math.max(1,enemy.hp-Math.ceil(enemy.stats.maxHp*enemyLoss));
+          // 진 쪽에 술법 디버프: 일기토는 쇠약·둔화(기가 꺾이고 발이 무거워진다), 설전은 혼란·책략 봉인(말문이 막힌다).
+          if(duel.result!=='draw'){const loser=duel.result==='win'?enemy:u;for(const kind of DUEL_LOSS_DEBUFF[duel.kind])s.applyStatus(loser,{kind,turns:2,magnitude:1});}
+          this.challenged.add(duel.kind+':'+u.id+':'+enemy.id);this.lastDuel=structuredClone(duel);this.activeDuel=null;
+          // 직접 청한 대결은 한 번의 행동이다. 자동 조우는 행동을 쓰지 않는다.
+          if(!duel.auto)this.battle.execute({kind:'wait',unit:u.id});
+          this.advanceScenario();
+        }
+        return {ok:true};
+      }
       const u=this.state.find(cmd.unit);
       if(!u?.alive||u.side!==this.state.currentSide||u.hasActed||this.state.activeDialogue||this.state.hasStatus(u,'confusion'))return {ok:false,error:'지금 사용할 수 없습니다.'};
       if(this.revision>=4&&(cmd.item==='duel'||cmd.item==='debate')){
@@ -325,18 +343,6 @@ export class Session {
         }
         this.lastRefusal=null;this.lastAccept={kind,line:answer.line,historic:answer.reason==='historic'};
         this.activeDuel=newDuel(kind,{id:u.id,name:u.name,stat:stat(u)},{id:enemy.id,name:enemy.name,stat:stat(enemy)});this.lastDuel=null;return {ok:true};
-      }
-      if(this.revision>=4&&cmd.item.startsWith('duel-round:')){
-        const duel=this.activeDuel;if(!duel||duel.player.id!==u.id||!duelRound(duel,cmd.item.slice(11) as DuelAction))return {ok:false,error:this.activeDuel?.kind==='debate'?'논거 2 이상이어야 논파를 사용할 수 있습니다.':'기합 2 이상이어야 필살기를 쓸 수 있습니다.'};
-        if(duel.result){
-          const enemy=s.get(duel.enemy.id),playerLoss=duel.result==='lose'?.45:duel.result==='draw'?.25:.15,enemyLoss=duel.result==='win'?.45:duel.result==='draw'?.25:.15;
-          u.hp=Math.max(1,u.hp-Math.ceil(u.stats.maxHp*playerLoss));enemy.hp=Math.max(1,enemy.hp-Math.ceil(enemy.stats.maxHp*enemyLoss));
-          if(duel.result!=='draw')s.applyStatus(duel.result==='win'?enemy:u,{kind:'confusion',turns:2,magnitude:1});
-          this.challenged.add(duel.kind+':'+u.id+':'+enemy.id);this.lastDuel=structuredClone(duel);this.activeDuel=null;
-          // Resolve as one battlefield action; the five choices remain separate replay entries.
-          this.battle.execute({kind:'wait',unit:u.id});this.advanceScenario();
-        }
-        return {ok:true};
       }
       if(cmd.item==='heal'&&this.deployment&&familyOf(u.unitClass)==='fengshui'){
         const target=s.find(cmd.target??'');
@@ -429,8 +435,27 @@ export class Session {
       this.xpGains.set(entry,{...gain,...(up?{level:to}:{}),...(learned.length?{learned}:{})});
     }
   }
+  /**
+   * 연의의 맞수가 8방으로 붙으면 저절로 일기토·설전이 벌어진다(한 짝에 한 번). 내 차례든 적 차례든 일어나며 행동을 쓰지 않는다.
+   * 결정적이라 저장 기록을 다시 재생해도 같은 때에 같은 대결이 열린다.
+   */
+  private autoEncounter(){
+    const s=this.state;if(this.revision<4||this.activeDuel||s.outcome!=='ongoing'||s.activeDialogue)return;
+    const plain=(x:Unit)=>x.name.replace(/의?\s*환영$/,''),fighter=(x:Unit)=>!['civilian','ram','catapult'].includes(x.unitClass)&&!/^(gate|tower)_/.test(x.id);
+    for(const u of s.living()){if(!CONTROLLABLE.has(u.side)||!fighter(u))continue;
+      for(const e of s.living('enemy')){if(!fighter(e)||Math.max(Math.abs(u.pos.x-e.pos.x),Math.abs(u.pos.y-e.pos.y))>1)continue;
+        const h=historicPair(plain(u),plain(e));if(!h||this.challenged.has(h.kind+':'+u.id+':'+e.id))continue;
+        this.challenged.add(h.kind+':'+u.id+':'+e.id);
+        const stat=(x:Unit)=>h.kind==='duel'?martialPower(x):debatePower(x);
+        this.lastRefusal=null;this.lastAccept={kind:h.kind,line:h.kind==='duel'?`${plain(e)}! ${h.note} — 오늘 결판을 내자!`:`${plain(e)}, ${h.note} — 그대의 말을 들어 보리다.`,historic:true};
+        this.activeDuel={...newDuel(h.kind,{id:u.id,name:u.name,stat:stat(u)},{id:e.id,name:e.name,stat:stat(e)}),auto:true};this.lastDuel=null;
+        s.push({t:'event',id:`encounter:${h.kind}:${u.id}:${e.id}`});
+        return;
+      }}
+  }
   private advanceScenario(){
     const s=this.state,old=this.phase;
+    this.autoEncounter();
     this.applyBattleXp();
     this.applyRomanceToNew(s);
     if(this.deployment?.mission?.balance===1)for(const enemy of s.living('enemy'))if(!this.balancedEnemies.has(enemy.id)){

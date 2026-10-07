@@ -1428,3 +1428,31 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
   .treasure-screen.briefing,.research-screen.briefing,.codex-screen.briefing,.quest-screen.briefing,.save-screen.briefing,.fate-map-screen.briefing,.custom-screen.briefing{padding-top:42px}
   .save-screen .modal-actions{position:static;border:0;padding:0;margin:0;background:none}
 }
+/* 일기토·설전: 두 장수의 초상 그림을 크게 맞세운다(작은 도트 병사 대신). */
+.duel-stage.portraits .duel-ground{bottom:20%!important;gap:14%!important;align-items:flex-end}
+.duel-stage.portraits .duel-fighter{width:auto!important;height:auto!important}
+.duel-stage.portraits .duel-model.duel-card{position:relative;width:clamp(110px,min(30vh,19vw),250px)!important;height:auto!important;aspect-ratio:3/4;border:2px solid #c9a35a;border-radius:6px;overflow:hidden;background:#1a1410;box-shadow:0 10px 24px rgba(0,0,0,.6),inset 0 0 0 3px rgba(0,0,0,.45);filter:none}
+.duel-stage.portraits .duel-model.duel-card{width:clamp(110px,min(30dvh,19vw),250px)!important}
+.duel-stage.portraits .duel-fighter.enemy .duel-card{border-color:#c0503a}
+.duel-stage.portraits .duel-fighter.player .duel-card{border-color:#5a8ac9}
+.duel-stage.portraits .duel-card .talk-bust{position:absolute;inset:0;width:100%!important;height:100%!important;margin:0!important;background-size:cover;background-position:50% 18%}
+.duel-stage.portraits .duel-card .talk-bust.sprite,.duel-stage.portraits .duel-card .talk-bust.painted{display:flex;align-items:flex-end;justify-content:center}
+.duel-stage.portraits .duel-card.face-left .talk-bust{transform:scaleX(-1)}
+.duel-stage.portraits .duel-card .battle-model{transform:none}
+.duel-card-name{position:absolute;left:0;right:0;bottom:0;padding:14px 6px 4px;text-align:center;font:700 calc(14px*var(--fs,1)) LocalSerif,'Batang',serif;letter-spacing:2px;color:#fff3d8;background:linear-gradient(transparent,rgba(0,0,0,.85));text-shadow:0 1px 2px #000}
+.duel-stage.portraits .duel-talk-face{display:none}
+.duel-stage.portraits .duel-fighter .duel-mini{position:absolute;left:50%;top:calc(100% + 4px);bottom:auto;transform:translateX(-50%);white-space:nowrap;z-index:3}
+.duel-stage.portraits .duel-fighter .damage-number{top:35%;font-size:40px}
+.duel-stage.portraits .duel-fighter.player.motion-attack .duel-card,.duel-stage.portraits .duel-fighter.player.motion-special .duel-card{animation:card-lunge-r .45s ease-out}
+.duel-stage.portraits .duel-fighter.enemy.motion-attack .duel-card,.duel-stage.portraits .duel-fighter.enemy.motion-special .duel-card{animation:card-lunge-l .45s ease-out}
+.duel-stage.portraits .duel-fighter.hit .duel-card{animation:card-hit .5s ease-out .2s both}
+.duel-stage.portraits .duel-fighter.motion-special .duel-card{box-shadow:0 0 28px #ffd060,0 10px 24px rgba(0,0,0,.6)}
+.duel-stage.portraits.debate .duel-card{border-color:#9fc2b0}
+@keyframes card-lunge-r{40%{transform:translateX(18%) rotate(2deg)}100%{transform:none}}
+@keyframes card-lunge-l{40%{transform:translateX(-18%) rotate(-2deg)}100%{transform:none}}
+@keyframes card-hit{0%{filter:brightness(2.2) saturate(.3)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px);filter:none}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.duel-stage.portraits .duel-card{animation:none!important}}
+@media (max-height:520px) and (orientation:landscape){.duel-stage.portraits .duel-model.duel-card{width:clamp(90px,30vh,170px)!important;width:clamp(90px,30dvh,170px)!important}}
+.vs-model .duel-card{width:clamp(110px,22vw,220px);aspect-ratio:3/4;position:relative;border:2px solid #c9a35a;border-radius:6px;overflow:hidden}
+.vs-model .duel-card .talk-bust{position:absolute;inset:0;width:100%;height:100%;background-size:cover;background-position:50% 18%}
+.duel-stage.portraits .duel-fighter.enemy .duel-mini{top:auto;bottom:calc(100% + 4px)}

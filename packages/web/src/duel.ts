@@ -2,7 +2,9 @@ export type DuelAction='attack'|'guard'|'rally'|'special';
 export type DuelKind='duel'|'debate';
 export interface DuelFighter {id:string;name:string;stat:number;hp:number;maxHp:number;energy:number}
 export interface DuelRound {round:number;action:DuelAction;enemyAction:DuelAction;dealt:number;taken:number}
-export interface DuelState {kind:DuelKind;round:number;player:DuelFighter;enemy:DuelFighter;history:DuelRound[];result?:'win'|'lose'|'draw'}
+export interface DuelState {kind:DuelKind;round:number;player:DuelFighter;enemy:DuelFighter;history:DuelRound[];result?:'win'|'lose'|'draw';/** 연의의 맞수가 붙어 저절로 열린 대결 */auto?:boolean}
+/** 대결에서 진 쪽에 거는 술법 디버프(2턴). */
+export const DUEL_LOSS_DEBUFF:Record<DuelKind,readonly ('weaken'|'slow'|'confusion'|'seal')[]>={duel:['weaken','slow'],debate:['confusion','seal']};
 export const actionNames={attack:'공격',guard:'방어',rally:'기합',special:'필살기'};
 export const debateNames={attack:'논박',guard:'반론',rally:'숙고',special:'논파'};
 export function duelActionNames(kind:DuelKind){return kind==='debate'?debateNames:actionNames;}
@@ -59,7 +61,28 @@ export const HISTORIC_DUELS:Array<{a:string;b:string;kind:DuelKind;note:string}>
   {a:'사마의',b:'조상',kind:'debate',note:'고평릉의 변'},
   {a:'사마의',b:'왕릉',kind:'debate',note:'수춘의 문답'},
   {a:'제갈량',b:'왕랑',kind:'debate',note:'기산의 설전'},
+  {a:'조운',b:'문추',kind:'duel',note:'반하에서 맞붙은 상산의 젊은 장수'},
+  {a:'관우',b:'문추',kind:'duel',note:'연진에서 문추를 베다'},
+  {a:'황충',b:'장합',kind:'duel',note:'정군산 아래서'},
+  {a:'관평',b:'서황',kind:'duel',note:'번성 구원전'},
+  {a:'위연',b:'장합',kind:'duel',note:'기산의 접전'},
+  {a:'강유',b:'곽회',kind:'duel',note:'강유의 화살이 곽회를 노리다'},
+  {a:'서황',b:'맹달',kind:'duel',note:'신성 성벽 아래'},
+  {a:'마초',b:'조조',kind:'duel',note:'동관에서 수염을 자르고 달아나다'},
+  {a:'허저',b:'조운',kind:'duel',note:'장판의 혼전'},
+  {a:'장료',b:'태사자',kind:'duel',note:'합비의 맞수'},
+  {a:'하후돈',b:'관우',kind:'duel',note:'오관의 길목'},
+  {a:'마대',b:'위연',kind:'duel',note:'남정의 함성'},
+  {a:'사마의',b:'공손연',kind:'debate',note:'양평성의 항복 사절'},
+  {a:'사마의',b:'맹달',kind:'debate',note:'신성으로 보낸 편지'},
+  {a:'사마의',b:'하안',kind:'debate',note:'조상 일파의 문답'},
+  {a:'제갈량',b:'장소',kind:'debate',note:'강동 선비들과의 설전'},
+  {a:'제갈량',b:'주유',kind:'debate',note:'적벽 전야의 지략 겨루기'},
+  {a:'진궁',b:'조조',kind:'debate',note:'백문루의 마지막 꾸짖음'},
+  {a:'양수',b:'조조',kind:'debate',note:'계륵'},
 ];
+/** 연의의 맞수 짝(일기토·설전 어느 쪽이든). 붙으면 자동으로 대결이 열린다. */
+export function historicPair(a:string,b:string){return HISTORIC_DUELS.find(h=>(h.a===a&&h.b===b)||(h.a===b&&h.b===a));}
 export function historicDuel(kind:DuelKind,a:string,b:string){return HISTORIC_DUELS.find(h=>h.kind===kind&&((h.a===a&&h.b===b)||(h.a===b&&h.b===a)));}
 
 /**

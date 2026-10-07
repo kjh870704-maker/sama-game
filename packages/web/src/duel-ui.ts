@@ -39,6 +39,8 @@ export function duelBackdrop(kind:'duel'|'debate',seed:string,indoor=false){
   return storyBackdrop(pool[h%pool.length]!);
 }
 const face=(name:string)=>bustFace(name)??`<div class="talk-bust sprite">${officerPortrait(name)}</div>`;
+/** 겨루기 화면에 크게 세우는 장수 초상(그린 초상이 있으면 그 그림, 없으면 인물 그림). */
+export function duelCard(name:string,side:'player'|'enemy'){return `<div class="duel-model duel-card ${side==='enemy'?'face-left':'face-right'}">${face(name)}<span class="duel-card-name">${esc(displayName(name))}</span></div>`;}
 
 /** 1) 대결 선포 화면. */
 export function duelSplash(d:DuelState,acceptLine?:string,historic=false){
@@ -68,13 +70,13 @@ export function duelArena(d:DuelState,o:{models:{player:string;enemy:string};bac
     return `<div class="duel-round ${cls}${i===d.round&&!d.result?' now':''}"><span class="duel-round-no">${n}</span><div class="duel-round-tile">${h?icon(d.kind,h.action):''}</div>${h?`<small>${h.dealt}:${h.taken}</small>`:''}</div>${i<4?'<i class="duel-arrow">➜</i>':''}`;}).join('');
   const actions=(Object.keys(labels) as DuelAction[]).map(a=>{const off=a==='special'&&d.player.energy<2;
     return `<button type="button" class="duel-act${off?' off':''}" data-duel-action="${a}" ${off||d.result?'disabled':''}>${icon(d.kind,a)}<b>${labels[a]}</b><small>${HELP[d.kind][a]}</small></button>`;}).join('');
-  const result=d.result?`<div class="duel-result ${d.result}"><span>${d.result==='win'?'승리':d.result==='lose'?'패배':'무승부'}</span><p>${d.result==='win'?'승리':d.result==='lose'?'패배':'무승부'} · 전투 체력: 승자 15% · 패자 45% · 무승부 양쪽 25% 피해(최소 1). 패자는 2턴 혼란.</p><button id="duel-return" class="primary">전장으로 돌아가기</button></div>`:'';
-  return `<div class="duel-stage ${d.kind}">
+  const result=d.result?`<div class="duel-result ${d.result}"><span>${d.result==='win'?'승리':d.result==='lose'?'패배':'무승부'}</span><p>${d.result==='win'?'승리':d.result==='lose'?'패배':'무승부'} · 전투 체력: 승자 15% · 패자 45% · 무승부 양쪽 25% 피해(최소 1). 패자는 2턴 ${d.kind==='duel'?'쇠약·둔화':'혼란·책략 봉인'}.</p><button id="duel-return" class="primary">전장으로 돌아가기</button></div>`:'';
+  return `<div class="duel-stage portraits ${d.kind}">
     <div class="duel-view" style="${o.backdrop}">
       <div class="duel-sun"></div>
       <div class="duel-ground">
-        <div class="duel-fighter player motion-${last?.action??'idle'}">${hp(d.player,'left')}${o.models.player}${last?.taken?`<b class="damage-number">−${last.taken}</b>`:''}</div>
-        <div class="duel-fighter enemy motion-${last?.enemyAction??'idle'}">${hp(d.enemy,'right')}${o.models.enemy}${last?.dealt?`<b class="damage-number">−${last.dealt}</b>`:''}</div>
+        <div class="duel-fighter player motion-${last?.action??'idle'}${last?.taken?' hit':''}">${hp(d.player,'left')}${o.models.player}${last?.taken?`<b class="damage-number">−${last.taken}</b>`:''}</div>
+        <div class="duel-fighter enemy motion-${last?.enemyAction??'idle'}${last?.dealt?' hit':''}">${hp(d.enemy,'right')}${o.models.enemy}${last?.dealt?`<b class="damage-number">−${last.dealt}</b>`:''}</div>
       </div>
       ${inkLine(d.player.name,pLine,'top')}${inkLine(d.enemy.name,eLine,'bottom')}
       ${result}
@@ -97,9 +99,9 @@ export function playContest(kind:DuelKind,me:{name:string;stat:number},foe:{name
   const el=document.createElement('div');el.className='contest-overlay';
   // 열린 dialog(최상위 층) 안에 붙여야 그 위로 보인다.
   (document.querySelector('dialog[open]')??document.body).appendChild(el);
-  const models={player:`<div class="duel-model face-right">${face(me.name)}</div>`,enemy:`<div class="duel-model face-left">${face(foe.name)}</div>`};
+  const models={player:duelCard(me.name,'player'),enemy:duelCard(foe.name,'enemy')};
   return new Promise(resolve=>{
-    const arena=()=>{el.innerHTML=`<div class="contest-box">${duelArena(d,{models,backdrop:duelBackdrop(kind,o.seed??foe.name,o.indoor),...(o.acceptLine?{openingLine:o.acceptLine}:{})}).replace('전장으로 돌아가기',esc(o.done??'이야기로 돌아가기')).replace('전투 체력: 승자 15% · 패자 45% · 무승부 양쪽 25% 피해(최소 1). 패자는 2턴 혼란.',kind==='duel'?'이기면 이번 전투 아군 사기 상승 · 적의 기세가 꺾인다.':'이기면 이번 전투 아군 사기 상승 · 사마의 책략 MP +15.')}</div>`;
+    const arena=()=>{el.innerHTML=`<div class="contest-box">${duelArena(d,{models,backdrop:duelBackdrop(kind,o.seed??foe.name,o.indoor),...(o.acceptLine?{openingLine:o.acceptLine}:{})}).replace('전장으로 돌아가기',esc(o.done??'이야기로 돌아가기')).replace(/전투 체력: 승자 15% · 패자 45% · 무승부 양쪽 25% 피해\(최소 1\)\. 패자는 2턴 [^<]*/,kind==='duel'?'이기면 이번 전투 아군 사기 상승 · 적의 기세가 꺾인다.':'이기면 이번 전투 아군 사기 상승 · 사마의 책략 MP +15.')}</div>`;
       el.querySelectorAll<HTMLButtonElement>('[data-duel-action]').forEach(b=>b.onclick=()=>{if(duelRound(d,b.dataset.duelAction as DuelAction))arena();});
       el.querySelector<HTMLButtonElement>('#duel-return')?.addEventListener('click',()=>{el.remove();resolve(d.result??'draw');});};
     el.innerHTML=`<div class="contest-box">${duelSplash(d,o.acceptLine)}</div>`;

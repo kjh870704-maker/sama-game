@@ -35,7 +35,7 @@ import {loadPortraitImages,portraitImage} from './portrait-images.ts';
 import {cardFace} from './faces.ts';
 import {renderHud,type CardOpts} from './unit-hud.ts';
 import {inkChoice} from './ink-choice.ts';
-import {duelSplash,duelArena,duelBackdrop} from './duel-ui.ts';
+import {duelSplash,duelArena,duelBackdrop,duelCard} from './duel-ui.ts';
 // 플레이어가 만든 신장수를 장수록에 올린다(전투 능력·성격·무대 그림).
 registerCustoms(loadMetaForCustoms().customOfficers??[]);
 // 직접 넣은 초상 그림(저장소 public/portraits와 이 브라우저에 올린 것)을 먼저 읽어 둔다.
@@ -516,7 +516,9 @@ let duelSplashSeen:object|undefined;
 function showDuel(){
   const d=session.activeDuel??session.lastDuel;if(!d)return;clearTimeout(aiTimer);
   const a=session.state.get(d.player.id),b=session.state.get(d.enemy.id);
-  const models={player:`<div class="duel-model face-right">${portraitFor(a,false)}</div>`,enemy:`<div class="duel-model face-left">${portraitFor(b,false)}</div>`};
+  // 겨루기는 두 장수의 초상 그림을 크게 맞세운다(초상이 없는 장수는 인물 그림).
+  const nameOf=(u:Unit)=>romanceOf(u)?.name??(u.id==='sima_yi'?'사마의':u.name.replace(/의?\s*환영$/,''));
+  const models={player:duelCard(nameOf(a),'player'),enemy:duelCard(nameOf(b),'enemy')};
   if(d.round===0&&!d.history.length&&duelSplashSeen!==d){
     modal(duelSplash(d,session.lastAccept?.line,!!session.lastAccept?.historic),false);
     document.querySelectorAll<HTMLElement>('[data-vs-model]').forEach(el=>el.innerHTML=el.dataset.vsModel==='enemy'?models.enemy:models.player);

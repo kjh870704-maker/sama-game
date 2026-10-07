@@ -47,7 +47,7 @@ describe('equipment, traits, spells and castle siege',()=>{
   expect(temperOf('여포')).toBe('reckless');expect(temperOf('사마의')).toBe('wise');expect(temperOf('보병')).toBeUndefined();
  });
  it('spends the challenger\'s action on a refusal: the challenger is rallied and the coward loses morale',()=>{
-  const s=new Session(7,'normal',215,'survival',4),u=s.state.get('sima_yi'),enemy=s.state.living('enemy')[0]!;enemy.pos={x:u.pos.x+1,y:u.pos.y};(enemy as {name:string}).name='조상';
+  const s=new Session(7,'normal',215,'survival',4),u=s.state.get('sima_yi'),enemy=s.state.living('enemy')[0]!;enemy.pos={x:u.pos.x+1,y:u.pos.y};(enemy as {name:string}).name='조희'; // 연의의 맞수(조상 등)는 붙으면 저절로 설전이 열리므로 짝이 아닌 소심한 장수로 시험한다
   const morale=enemy.stats.morale;
   expect(s.act({kind:'item',unit:u.id,item:'duel',target:enemy.id}).ok).toBe(true);
   expect(s.activeDuel).toBeNull();expect(s.lastRefusal?.target).toBe(enemy.id);expect(u.hasActed).toBe(true);
