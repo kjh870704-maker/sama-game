@@ -45,7 +45,7 @@ const WEI_POOL:UnitClass[]=['infantry','spearman','cavalry','crossbow','archer',
 export const ROUTES:Route[]=[
   // ── 분기 ⓪ 조조의 출사 요청
   {id:'refuse',act:1,history:true,choice:'병을 핑계로 거절한다',detail:'풍비(마비)를 칭하고 일곱 해를 버틴다. 정사대로 늦게 조조의 막하에 들어가 관중에서 마초를 막는다. 연의 전장이 이어진다.',name:'정사 · 기다리는 자',
-    region:{name:'관중 평원',arc:'상편',terrain:0,boss:{name:'마초',unitClass:'cavalry'},pool:['infantry','spearman','cavalry','archer','crossbow','slinger','horseArcher']},tales:[]},
+    region:{name:'관중 평원',arc:'상편',terrain:0,boss:{name:'마초',unitClass:'cavalry'},pool:['infantry','spearman','cavalry','archer','crossbow','pirate','horseArcher']},tales:[]},
   {id:'serve',act:1,history:false,choice:'즉시 출사한다',detail:'부름에 곧장 응해 조조의 참모가 된다. 원소가 죽은 뒤 갈라진 하북을 평정하는 싸움에 앞장선다.',name:'가상 · 조조의 젊은 참모',
     region:{name:'하북 평원',arc:'상편',terrain:0,boss:{name:'원상',unitClass:'cavalry'},pool:['infantry','spearman','cavalry','archer','crossbow','heavyCav']},
     tales:[

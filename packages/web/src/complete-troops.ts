@@ -1,7 +1,7 @@
 import type {UnitClass} from '../../core/src/index.ts';
 
 /**
- * 실제 진화표와 같은 36개 계보. 각 시트는 4행(기본·숙련·정예·전설) x
+ * 실제 진화표와 같은 계보. 각 시트는 4행(기본·숙련·정예·전설) x
  * 4열(대기·준비·공격/책략·피격/방어)이며 모두 같은 픽셀 화풍과 투명 배경을 쓴다.
  */
 export const fourStageCorrectionRows = {
@@ -14,12 +14,14 @@ export const fourStageCorrectionRows = {
   'four-stage-strategist':['strategist','tactician','mastermind','divineStrategist'],
   'four-stage-fengshui':['fengshui','sage','immortal','palanquin'],
   'four-stage-horse-archer':['horseArcher','nomad','whiteHorse','fanSage'],
-  'four-stage-slinger':['slinger','hurler','boulderCorps','meteorSlinger'],
   'four-stage-assassin':['assassin','phantom','wraith','flyingBlade'],
   'four-stage-rattan':['rattan','rattanElite','wuguoRattan','northFoot'],
   'four-stage-elephant':['elephant','warElephant','elephantKing','baguaChariot'],
   'four-stage-shaman':['shaman','warlock','demonKing','wheelSage'],
-  'four-stage-maiden':['maiden','priestess','celestial','yellowTurban'],
+  'four-stage-maiden':['maiden','priestess','celestial','heavenPriestess'],
+  'four-stage-yellow-turban':['yellowTurban','yellowTurbanVeteran','yellowTurbanCaptain','yellowTurbanMarshal'],
+  'four-stage-mounted-strategist':['mountedStrategist','mountedTactician','mountedMastermind','mountedSage'],
+  'four-stage-pirate':['pirate','pirateRaider','pirateCaptain','pirateAdmiral'],
   'four-stage-taoist':['taoist','stormSage','thunderGod','heavenTaoist'],
   'four-stage-monk':['monk','warriorMonk','arhat','fistSaint'],
   'four-stage-bandit':['bandit','outlaw','greenwoodKing','chieftain'],
@@ -43,17 +45,35 @@ export const fourStageCorrectionRows = {
   'four-stage-catapult':['catapult','thunderCart','greatTrebuchet','divineCatapult'],
 } as const satisfies Readonly<Record<string,readonly [UnitClass,UnitClass,UnitClass,UnitClass]>>;
 
+/** 그림 제작/검수 기준: 한 계통의 네 단계는 이 무기군을 끝까지 유지한다. */
+export const lineageWeapons = {
+  'four-stage-heavy-cavalry':'spear',
+  'four-stage-lord':'sword',
+  'four-stage-rattan':'trident',
+  'four-stage-valiant-cavalry':'curved-saber',
+  'four-stage-maiden':'talisman',
+  'four-stage-monk':'unarmed',
+  'four-stage-yellow-turban':'curved-saber',
+  'four-stage-mounted-strategist':'feather-fan',
+  'four-stage-pirate':'cutlass',
+} as const;
+
+// 서로 닮았던 계통은 무기·투구·갑옷 윤곽을 갈라 다시 그린 v2 시트를 쓴다.
+const V2_SHEETS=new Set([
+  'four-stage-fengshui','four-stage-heavy-cavalry','four-stage-lord',
+  'four-stage-valiant-cavalry','four-stage-rattan','four-stage-maiden','four-stage-monk',
+  'four-stage-yellow-turban','four-stage-mounted-strategist','four-stage-pirate',
+]);
 const sheet = (id:string)=>({
   id,
-  // 풍수사는 책사의 관복·깃털부채와 겹치지 않는 나침반·팔괘 지팡이 전용 시트다.
-  url:id==='four-stage-fengshui'?'troops-four-stage-fengshui-v2.png':`troops-${id}-v1.webp`,
+  url:`troops-${id}-${V2_SHEETS.has(id)?'v2.png':'v1.webp'}`,
   rows:4,
   // 투명 배경의 미세한 가장자리는 살리되 이웃 칸의 실루엣은 합치지 않는다.
   alphaCutoff:240,
   strictGrid:true,
 });
 
-/** 36개 진화 계보와 진화하지 않는 민간인 전용 시트. */
+/** 진화 계보와 진화하지 않는 민간인 전용 시트. */
 export const completeTroopSheets = [
   ...Object.keys(fourStageCorrectionRows).map(sheet),
   sheet('four-stage-civilian'),
@@ -66,7 +86,7 @@ const evolvedTroopArt=Object.fromEntries(
   ])),
 ) as Partial<Record<UnitClass,CompleteTroopCell>>;
 
-/** 게임의 145개 병종 모두 새 4행 규격만 사용한다. */
+/** 게임의 모든 병종은 새 4행 규격만 사용한다. */
 export const completeTroopArt={
   ...evolvedTroopArt,
   civilian:{sheet:'four-stage-civilian',row:0,rows:4},

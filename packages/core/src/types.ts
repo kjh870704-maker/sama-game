@@ -77,7 +77,12 @@ export type UnitClass =
   // 명부대(이름난 부대) 계통
   | "xiliang" | "feixiong"
   // 병종 차트로 늘린 계통·4단계·모병 특수 병과 (chart-classes.ts)
-  | "admiral" | "assaultChariot" | "baggageTrain" | "baguaChariot" | "bashuRepeater" | "beauty" | "chieftain" | "commander" | "crownPrince" | "dancer" | "divineChariot" | "divineJinglan" | "divineOx" | "divineSpear" | "divineStrategist" | "dragonCav" | "dragonRam" | "emperor" | "fanSage" | "fistSaint" | "flyingBlade" | "gaemaCaptain" | "gaemaWarrior" | "grandCommander" | "halberdCav" | "heavenCav" | "heavenCommander" | "heavenDancer" | "heavenEmperor" | "heavenTaoist" | "heavyChariot" | "heavyHalberdCav" | "heavyJinglan" | "hegemon" | "ironInfantry" | "jinglan" | "knightErrant" | "lightChariot" | "lord" | "marshal" | "mountainCav" | "nanmanBeast" | "nanmanFoot" | "nanmanRider" | "northFoot" | "northRider" | "palanquin" | "pegasusCav" | "raidCav" | "royalPrince" | "scoutCav" | "siegeTower" | "sonOfHeaven" | "songstress" | "sovereign" | "stormCav" | "swordArtist" | "swordMaster" | "swordSaint" | "swordsman" | "transport" | "valiantCav" | "wheelSage" | "whiteTigerCav" | "woodenOx" | "wujiHeavyCav" | "yellowTurban" | "ytArcher" | "ytBrawler" | "ytSpear";
+  | "admiral" | "assaultChariot" | "baggageTrain" | "baguaChariot" | "bashuRepeater" | "beauty" | "chieftain" | "commander" | "crownPrince" | "dancer" | "divineChariot" | "divineJinglan" | "divineOx" | "divineSpear" | "divineStrategist" | "dragonCav" | "dragonRam" | "emperor" | "fanSage" | "fistSaint" | "flyingBlade" | "gaemaCaptain" | "gaemaWarrior" | "grandCommander" | "halberdCav" | "heavenCav" | "heavenCommander" | "heavenDancer" | "heavenEmperor" | "heavenTaoist" | "heavyChariot" | "heavyHalberdCav" | "heavyJinglan" | "hegemon" | "ironInfantry" | "jinglan" | "knightErrant" | "lightChariot" | "lord" | "marshal" | "mountainCav" | "nanmanBeast" | "nanmanFoot" | "nanmanRider" | "northFoot" | "northRider" | "palanquin" | "pegasusCav" | "raidCav" | "royalPrince" | "scoutCav" | "siegeTower" | "sonOfHeaven" | "songstress" | "sovereign" | "stormCav" | "swordArtist" | "swordMaster" | "swordSaint" | "swordsman" | "transport" | "valiantCav" | "wheelSage" | "whiteTigerCav" | "woodenOx" | "wujiHeavyCav" | "yellowTurban" | "ytArcher" | "ytBrawler" | "ytSpear"
+  // 구분이 뚜렷한 신규 4단계 계통
+  | "heavenPriestess"
+  | "yellowTurbanVeteran" | "yellowTurbanCaptain" | "yellowTurbanMarshal"
+  | "mountedStrategist" | "mountedTactician" | "mountedMastermind" | "mountedSage"
+  | "pirate" | "pirateRaider" | "pirateCaptain" | "pirateAdmiral";
 
 // ─────────────────────────────────────────────────────────── 진영
 

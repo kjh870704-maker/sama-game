@@ -78,7 +78,7 @@ export const RELICS:Relic[]=[
 /** 세 편: 상편(관중) · 중편(기산) · 하편(요동). 편마다 지형·적 구성·우두머리가 다르다. */
 export interface Region {name:string;arc:string;terrain:0|1|2;boss:{name:string;unitClass:UnitClass};pool:UnitClass[]}
 export const REGIONS:Region[]=[
-  {name:'관중 평원',arc:'상편',terrain:0,boss:{name:'마초',unitClass:'cavalry' as UnitClass},pool:['infantry','spearman','cavalry','archer','crossbow','slinger','horseArcher'] as UnitClass[]},
+  {name:'관중 평원',arc:'상편',terrain:0,boss:{name:'마초',unitClass:'cavalry' as UnitClass},pool:['infantry','spearman','cavalry','archer','crossbow','pirate','horseArcher'] as UnitClass[]},
   {name:'기산 산악',arc:'중편',terrain:1,boss:{name:'제갈량',unitClass:'strategist' as UnitClass},pool:['infantry','spearman','bandit','assassin','archer','crossbow','taoist','strategist','heavyCav'] as UnitClass[]},
   {name:'요동 요수',arc:'하편',terrain:2,boss:{name:'공손연',unitClass:'infantry' as UnitClass},pool:['infantry','spearman','cavalry','horseArcher','crossbow','archer','heavyCav','bandit','rattan'] as UnitClass[]},
 ];
@@ -135,7 +135,7 @@ export function nextStory(run:Run):string|undefined{
 }
 
 /** 영입 가능한 기본 병종 */
-export const RECRUITS:UnitClass[]=['infantry','spearman','cavalry','archer','crossbow','fengshui','horseArcher','slinger','assassin','rattan','elephant','monk','taoist','bandit','heavyCav'];
+export const RECRUITS:UnitClass[]=['infantry','spearman','cavalry','archer','crossbow','fengshui','horseArcher','pirate','yellowTurban','mountedStrategist','assassin','rattan','elephant','monk','taoist','bandit','heavyCav'];
 
 /** 이름 있는 장수: 연의 장수록(romance.ts)의 능력을 이름으로 받는다. */
 export interface OfficerSpec {name:string;unitClass:UnitClass}
@@ -149,7 +149,7 @@ export const NETWORK_OFFICER:OfficerSpec={name:'사마사',unitClass:'heavyCav'}
 export const OFFICER_RECRUITS:OfficerSpec[]=[
   {name:'사마사',unitClass:'heavyCav'},{name:'사마소',unitClass:'crossbow'},{name:'등애',unitClass:'infantry'},{name:'진태',unitClass:'spearman'},
   {name:'종회',unitClass:'fengshui'},{name:'손례',unitClass:'cavalry'},{name:'왕기',unitClass:'archer'},{name:'조휴',unitClass:'horseArcher'},
-  {name:'왕릉',unitClass:'infantry'},{name:'문흠',unitClass:'bandit'},{name:'가규',unitClass:'slinger'},{name:'호준',unitClass:'monk'},
+  {name:'왕릉',unitClass:'infantry'},{name:'문흠',unitClass:'bandit'},{name:'가규',unitClass:'mountedStrategist'},{name:'호준',unitClass:'monk'},
   // 명부대를 이끄는 장수들
   {name:'학소',unitClass:'crossbow'},{name:'만총',unitClass:'infantry'},{name:'서황',unitClass:'swordsman'},{name:'우금',unitClass:'spearman'},
   {name:'가후',unitClass:'wheelSage'},{name:'양준',unitClass:'fengshui'},{name:'견초',unitClass:'xiliang'},{name:'전주',unitClass:'bandit'},

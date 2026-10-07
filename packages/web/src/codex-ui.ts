@@ -195,6 +195,7 @@ export const STRATEGY_TEXT:Record<string,string>={
   scytheWheels:'바퀴에 단 날로 십자 다섯 칸을 베고 출혈을 남긴다(전차).',towerShot:'망루 위에서 멀리 있는 적을 쏜다(정란).',beastRoar:'맹수의 포효로 주변 적을 겁먹게 한다(남만).',
   ironCharge:'철갑 기병의 돌격으로 적의 갑주를 깨뜨린다(개마무사).',halberdSweep:'극을 크게 돌려 십자 다섯 칸을 벤다(극기병).',snare:'올무 함정으로 적을 묶는다(공병).',
   thunderShot:'불붙은 벽력탄을 쏘아 주변을 불태운다(포차).',chainFist:'끊임없이 이어지는 주먹(무도가).',royalStrike:'군주의 칼이 직접 적을 벤다(군주).',commandStrike:'지휘하며 베어 적의 갑주를 깨뜨린다(도독).',
+  yellowSlash:'황건의 곡도로 베어 적의 기세를 꺾는다(황건병).',boardingSlash:'배에 뛰어올라 곡도로 베고 출혈을 남긴다(해적).',
   bowangFire:'박망파 — 좁은 길로 끌어들인 적을 둘레째 불사른다.',riverDam:'백하의 둑을 터 한 줄의 적을 쓸어 가고 걸음을 늦춘다.',fireShips:'적벽의 화선 — 불붙은 배를 한 줄로 몰아 들이받는다.',
   counterSpy:'반간계 — 적의 첩자를 역으로 써 적 책사의 책략을 봉인한다.',beautyTrap:'미인계 — 적장의 마음을 흔들어 혼란에 빠뜨린다.',lureTiger:'조호이산 — 범을 산에서 끌어내듯 적을 꾀어내 걸음을 늦춘다.',
   burnCamp:'이릉의 연영 화공 — 길게 늘어선 진영을 둘레째 태운다.',rockAmbush:'매복한 병사가 돌을 굴려 한 줄의 적을 치고 포박한다.',selfInjury:'고육계 — 거짓 투항으로 적의 경계를 풀어 받는 피해를 늘린다.',

@@ -40,18 +40,21 @@ export const LINEAGE_SPELLS:Partial<Record<Lineage,readonly string[]>>={
   'four-stage-transport':['rations','spareArms','supplyLine','woodenOx','focus'],
   // 무도가: 기공
   'four-stage-monk':['qigong','ironBody'],
+  // 기마책사: 이동하면서 기를 모으는 부채 책략
+  'four-stage-mounted-strategist':['focus'],
 };
 
 /** 물리 계통의 특수기(계통마다 하나). 군주·도독·무도가처럼 칼도 쓰는 책략 병종도 하나씩 갖는다. */
 export const LINEAGE_SKILL:Partial<Record<Lineage,string>>={
   'four-stage-infantry':'shieldBash','four-stage-spearman':'pierce','four-stage-cavalry':'breakthrough','four-stage-heavy-cavalry':'trample',
-  'four-stage-archer':'aimedShot','four-stage-crossbow':'volley','four-stage-horse-archer':'skirmish','four-stage-slinger':'stoneRain',
+  'four-stage-archer':'aimedShot','four-stage-crossbow':'volley','four-stage-horse-archer':'skirmish',
   'four-stage-assassin':'assassinate','four-stage-rattan':'rattanRush','four-stage-elephant':'tuskCharge','four-stage-bandit':'plunder',
   'four-stage-xiliang':'westernCharge','four-stage-ram':'gateCrash','four-stage-navy':'deckVolley','four-stage-swordsman':'flashCut',
   'four-stage-mountain-cavalry':'mountainRaid','four-stage-valiant-cavalry':'lanceRush','four-stage-chariot':'scytheWheels',
   'four-stage-siege-tower':'towerShot','four-stage-nanman':'beastRoar','four-stage-gaema':'ironCharge','four-stage-halberd-cavalry':'halberdSweep',
   'four-stage-engineer':'snare','four-stage-catapult':'thunderShot','four-stage-monk':'chainFist','four-stage-lord':'royalStrike',
   'four-stage-commander':'commandStrike',
+  'four-stage-yellow-turban':'yellowSlash','four-stage-pirate':'boardingSlash',
 };
 
 const levelOf=new Map(allStrategies.map(s=>[s.id,s.level]));

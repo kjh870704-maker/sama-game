@@ -40,7 +40,8 @@ function curve(level: number, a: number, b: number, c: number): number {
 /** 병종 능력치 계수. 확장 병종은 classes.ts의 계수를 쓴다. */
 /** 모든 병종 id(기본 병종 + 확장 병종). */
 export function allUnitClasses(): UnitClass[] {
-  return [...Object.keys(PROFILES), ...Object.keys(VARIANTS)] as UnitClass[];
+  const retired = new Set(["slinger", "hurler", "boulderCorps", "meteorSlinger"]);
+  return [...Object.keys(PROFILES), ...Object.keys(VARIANTS)].filter((id) => !retired.has(id)) as UnitClass[];
 }
 
 export function profileOf(unitClass: UnitClass): ClassProfile {

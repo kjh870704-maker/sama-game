@@ -12,11 +12,11 @@ describe("병종 계통과 진화", () => {
     expect(evolvedClass("infantry", 7)).toBe("infantry");
     expect(evolvedClass("infantry", 8)).toBe("shieldGuard");
     expect(evolvedClass("infantry", 20)).toBe("royalGuard");
-    expect(evolvedClass("navy", 29)).toBe("louchuan");
-    expect(evolvedClass("navy", 30)).toBe("admiral");
+    expect(evolvedClass("navy", 29)).toBe("navy");
+    expect(evolvedClass("navy", 30)).toBe("navy");
     expect(evolvedClass("swordsman", 40)).toBe("swordSaint");
     expect(tierOf("swordSaint")).toBe(4);
-    expect(evolvedClass("navy", 12)).toBe("mengchong");
+    expect(evolvedClass("navy", 12)).toBe("navy");
     expect(nextEvolution("archer")).toEqual({ to: "longbow", level: 8 });
     expect(nextEvolution("royalGuard")).toEqual({ to: "ironInfantry", level: 30 });
     expect(nextEvolution("ironInfantry")).toBeUndefined();
@@ -66,8 +66,9 @@ describe('진화 개화와 능력치 성장', () => {
     expect(bad).toEqual([]);
   });
   it('blooms a named skill at every evolved tier, and the third tier keeps the second tier skills', () => {
+    const evolvedTargets = new Set(Object.values(EVOLUTION).map(([id]) => id));
     for (const [id, v] of Object.entries(VARIANTS)) {
-      if (v!.tier < 2) continue;
+      if (!evolvedTargets.has(id as UnitClass)) continue;
       expect(v!.bloom?.name, id).toBeTruthy();
       expect(Object.keys(v!.traits ?? {}).length, id).toBeGreaterThan(0);
       for (const t of Object.keys(v!.traits ?? {})) expect(() => getTrait(t), `${id}:${t}`).not.toThrow();

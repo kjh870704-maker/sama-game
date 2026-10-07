@@ -18,7 +18,7 @@ export const STAT_KEYS=['war','int','lead','pol','cha'] as const;
 export const STAT_NAMES:Record<typeof STAT_KEYS[number],string>={war:'무력',int:'지력',lead:'통솔',pol:'정치',cha:'매력'};
 export const STAT_MIN=20,STAT_MAX=95,STAT_BUDGET=350,CUSTOM_LIMIT=8;
 /** 신장수가 고를 수 있는 병종(기본 병종). */
-export const CUSTOM_CLASSES:UnitClass[]=['infantry','spearman','cavalry','archer','crossbow','strategist','heavyCav','horseArcher','fengshui','slinger','bandit','monk','taoist','assassin','xiliang','swordsman','wheelSage','valiantCav'] as UnitClass[];
+export const CUSTOM_CLASSES:UnitClass[]=['infantry','spearman','cavalry','archer','crossbow','strategist','heavyCav','horseArcher','fengshui','pirate','yellowTurban','mountedStrategist','bandit','monk','taoist','assassin','xiliang','swordsman','wheelSage','valiantCav'] as UnitClass[];
 export const TEMPERS:Temper[]=['reckless','brave','proud','calm','cautious','wise','timid'];
 export const FACTION_COLORS=['#1f3f8a','#8a1f1a','#2a6a3a','#6a2a7a','#b8862a','#2a2a2a'];
 

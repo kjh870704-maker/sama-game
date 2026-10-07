@@ -101,6 +101,7 @@ const skills:LearnedStrategy[]=([
  ['ironCharge','철갑 돌격','single',1,0,4,140,'breach'],['halberdSweep','회전 극','cross',1,1,5,85,undefined],['snare','올무 함정','single',2,0,4,75,'immobile'],
  ['thunderShot','벽력탄','spread',4,1,5,90,'burn'],['chainFist','연환권','single',1,0,4,130,undefined],['royalStrike','왕의 일격','single',1,0,5,135,undefined],
  ['commandStrike','지휘 일섬','single',1,0,5,125,'breach'],
+ ['yellowSlash','황천 곡도','single',1,0,4,125,'weaken'],['boardingSlash','도선 참격','single',1,0,4,130,'bleed'],
 ] as const).map(([id,name,shape,range,radius,mpCost,power,status])=>({id,name,level:1,element:'physical' as const,physical:true,shape,range,radius,mpCost,power,targetSides:['enemy' as const],...(status?{inflicts:[status]}:{})} as LearnedStrategy));
 export const SKILL_IDS=new Set(skills.map(s=>s.id));
 export const allStrategies:LearnedStrategy[]=[...learnedStrategies,...more,...wider,...legends,...stratagems,...signature,...skills].map(capArea).sort((a,b)=>a.level-b.level);

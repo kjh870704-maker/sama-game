@@ -183,6 +183,30 @@ export const EVOLUTION: Partial<Record<UnitClass, readonly [UnitClass, number]>>
   Object.assign(EVOLUTION, chart.evolution);
 }
 
+// 신규 계통은 같은 무기군과 같은 나이대의 정체성을 유지하고 장비만 발전한다.
+Object.assign(VARIANTS, {
+  // 폐기/단일화된 계통의 기존 저장 ID는 그림과 저장 호환을 위해 등록만 유지한다.
+  meteorSlinger: { family: "archer", tier: 4, profile: p(1.08, 0.5, 1.3, 1.0, 0.72, 1.0, 1.26, 5, [1, 3]) },
+  heavenXiliang: { family: "cavalry", tier: 4, profile: p(1.42, 0.5, 1.58, 1.18, 0.66, 0.96, 1.4, 7, [1, 1]) },
+  divineGaema: { family: "heavyCav", tier: 4, profile: p(1.55, 0.5, 1.5, 1.55, 0.68, 0.96, 1.08, 6, [1, 1]) },
+  sapper: { family: "engineer", tier: 2, profile: p(0.9, 0.34, 0.62, 0.9, 0.78, 0.98, 0.86, 5, [1, 1]) },
+  masterBuilder: { family: "engineer", tier: 3, profile: p(1.0, 0.38, 0.72, 1.0, 0.88, 1.08, 0.92, 5, [1, 1]) },
+  divineEngineer: { family: "engineer", tier: 4, profile: p(1.1, 0.42, 0.82, 1.1, 0.98, 1.18, 0.98, 5, [1, 1]) },
+  heavenPriestess: { family: "maiden", tier: 4, profile: p(1.05, 1.95, 0.74, 0.98, 1.3, 2.0, 1.18, 5, [1, 1], true), traits: { healPower: 40, strategyDamageReduction: 25, strategyEvasion: 12 }, bloom: { name: "천부의 가호", description: "부적술로 회복과 책략 방호를 완성한다" } },
+  yellowTurban: { family: "infantry", tier: 1, profile: p(1.0, 0.4, 1.0, 0.9, 0.55, 0.8, 1.0, 5, [1, 1]) },
+  yellowTurbanVeteran: { family: "infantry", tier: 2, profile: p(1.1, 0.43, 1.12, 1.0, 0.58, 0.86, 1.06, 5, [1, 1]), traits: { lastStand: 10 }, bloom: { name: "황건의 결의", description: "궁지에서 더욱 끈질기게 싸운다" } },
+  yellowTurbanCaptain: { family: "infantry", tier: 3, profile: p(1.22, 0.46, 1.26, 1.12, 0.62, 0.92, 1.12, 5, [1, 1]), traits: { lastStand: 18, critical: 10 }, bloom: { name: "황천의 곡도", description: "곡도 회심과 배수진을 익힌다" } },
+  yellowTurbanMarshal: { family: "infantry", tier: 4, profile: p(1.36, 0.5, 1.42, 1.25, 0.68, 1.0, 1.18, 5, [1, 1]), traits: { lastStand: 25, critical: 15 }, bloom: { name: "천공의 기치", description: "황건의 곡도술과 결의를 완성한다" } },
+  mountedStrategist: { family: "strategist", tier: 1, profile: p(0.82, 1.25, 0.65, 0.74, 1.22, 1.12, 1.15, 7, [1, 1], true) },
+  mountedTactician: { family: "strategist", tier: 2, profile: p(0.88, 1.42, 0.7, 0.8, 1.36, 1.24, 1.22, 7, [1, 1], true), traits: { strategyPower: 8 }, bloom: { name: "기동 군략", description: "말 위에서 책략 위력을 높인다" } },
+  mountedMastermind: { family: "strategist", tier: 3, profile: p(0.95, 1.6, 0.76, 0.87, 1.5, 1.36, 1.3, 7, [1, 1], true), traits: { strategyPower: 12, strategyEvasion: 10 }, bloom: { name: "주마간산", description: "이동 중에도 빈틈없이 책략을 잇는다" } },
+  mountedSage: { family: "strategist", tier: 4, profile: p(1.02, 1.8, 0.82, 0.95, 1.66, 1.5, 1.38, 7, [1, 1], true), traits: { strategyPower: 18, strategyEvasion: 15 }, bloom: { name: "신산기략", description: "기마 책략과 부채술을 완성한다" } },
+  pirate: { family: "navy", tier: 1, profile: p(1.0, 0.4, 1.08, 0.86, 0.58, 0.8, 1.18, 6, [1, 1]) },
+  pirateRaider: { family: "navy", tier: 2, profile: p(1.1, 0.43, 1.22, 0.95, 0.62, 0.86, 1.26, 6, [1, 1]), traits: { critical: 10 }, bloom: { name: "선상 습격", description: "곡도 회심 공격을 익힌다" } },
+  pirateCaptain: { family: "navy", tier: 3, profile: p(1.22, 0.46, 1.36, 1.05, 0.68, 0.92, 1.34, 6, [1, 1]), traits: { critical: 15, lifesteal: 8 }, bloom: { name: "약탈의 곡도", description: "회심과 흡혈로 난전을 지배한다" } },
+  pirateAdmiral: { family: "navy", tier: 4, profile: p(1.36, 0.5, 1.52, 1.17, 0.74, 1.0, 1.42, 6, [1, 1]), traits: { critical: 20, lifesteal: 12 }, bloom: { name: "해왕의 칼날", description: "해적의 곡도술을 완성한다" } },
+} satisfies Partial<Record<UnitClass, ClassVariant>>);
+
 /**
  * 도감과 실제 진화에 쓰는 최종 계통표. 저장 호환성을 위해 기존 병종 id는 지우지 않고
  * 짧게 끝나던 계통의 상위 단계로 재배치한다. 검객계는 검술가 단계를 빼 네 단계로 줄였다.
@@ -197,14 +221,16 @@ export const FOUR_STAGE_LINES: readonly (readonly [UnitClass, UnitClass, UnitCla
   ["strategist", "tactician", "mastermind", "divineStrategist"],
   ["fengshui", "sage", "immortal", "palanquin"],
   ["horseArcher", "nomad", "whiteHorse", "fanSage"],
-  ["slinger", "hurler", "boulderCorps", "meteorSlinger"],
   ["assassin", "phantom", "wraith", "flyingBlade"],
   ["rattan", "rattanElite", "wuguoRattan", "northFoot"],
   ["elephant", "warElephant", "elephantKing", "baguaChariot"],
   ["shaman", "warlock", "demonKing", "wheelSage"],
-  ["maiden", "priestess", "celestial", "yellowTurban"],
+  ["maiden", "priestess", "celestial", "heavenPriestess"],
   ["taoist", "stormSage", "thunderGod", "heavenTaoist"],
   ["monk", "warriorMonk", "arhat", "fistSaint"],
+  ["yellowTurban", "yellowTurbanVeteran", "yellowTurbanCaptain", "yellowTurbanMarshal"],
+  ["mountedStrategist", "mountedTactician", "mountedMastermind", "mountedSage"],
+  ["pirate", "pirateRaider", "pirateCaptain", "pirateAdmiral"],
   ["bandit", "outlaw", "greenwoodKing", "chieftain"],
   ["xiliang", "feixiong", "liangzhouIron", "heavenXiliang"],
   ["ram", "ironRam", "cloudRam", "dragonRam"],
@@ -240,11 +266,17 @@ const improve = (b: ClassProfile, m = 1.1): ClassProfile => p(
   b.spirit * m, b.agility * m, b.movement, b.range, b.canUseStrategy,
 );
 
-// chart-classes의 임시 계통을 버리고, 위 36개 계통만 실제 진화표로 노출한다.
+// chart-classes의 임시 계통을 버리고, 위 최종 계통표만 실제 진화표로 노출한다.
 const originalEvolution = { ...EVOLUTION };
 for (const key of Object.keys(EVOLUTION) as UnitClass[]) delete EVOLUTION[key];
+/** 이 병종들은 완성형 단일 병종이며 레벨업으로 외형/병종이 바뀌지 않는다. */
+export const SINGLE_STAGE_CLASSES: ReadonlySet<UnitClass> = new Set([
+  "crownPrince", "civilian", "xiliang", "ram", "navy", "siegeTower", "transport", "gaemaWarrior", "engineer",
+]);
 for (const line of FOUR_STAGE_LINES) {
   const root = line[0];
+  // 투석병은 플레이 계통에서 폐기하고, 지정된 완성형 병종은 진화 연결을 만들지 않는다.
+  if (SINGLE_STAGE_CLASSES.has(root)) continue;
   const family = VARIANTS[root]?.family ?? root;
   const fallbackLevels = [8, 16, 30] as const;
   const candidateLevels = line.slice(0, 3).map((id, i) => originalEvolution[id]?.[1] ?? fallbackLevels[i]!);
@@ -309,6 +341,7 @@ export function nextEvolution(unitClass: UnitClass): { to: UnitClass; level: num
  * 공병·포차의 2·3단계(축성병·공성 장인·벽력거·천균거)는 병종 차트 계통과 겹쳐 지웠다.
  */
 export const RETIRED_CLASSES: Readonly<Record<string, UnitClass>> = {
+  slinger: "archer", hurler: "longbow", boulderCorps: "sharpshooter", meteorSlinger: "ytArcher",
   physician: "fengshui", divineDoctor: "sage", medicineSaint: "immortal",
   javelin: "spearman", eliteJavelin: "pikeman", flyingSpear: "halberdier",
   axeman: "swordsman", greatBlade: "knightErrant", xianzhen: "swordArtist",

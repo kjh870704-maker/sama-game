@@ -35,23 +35,25 @@ describe('새 병종과 진화 계통',()=>{
  });
  it('places every new class on an evolution line with ascending levels',()=>{
   const lines=evolutionLines();
-  for(const [c] of NEW_CLASSES)expect(lines.some(l=>l.some(([x])=>x===c)),c).toBe(true);
+  const activeTargets=new Set(Object.values(EVOLUTION).map(([c])=>c));
+  for(const [c] of NEW_CLASSES)if(activeTargets.has(c))expect(lines.some(l=>l.some(([x])=>x===c)),c).toBe(true);
   for(const line of lines){
    for(let i=1;i<line.length;i++){expect(line[i]![1],line.map(x=>x[0]).join('→')).toBeGreaterThan(line[i-1]![1]);expect(tierOf(line[i]![0])).toBeGreaterThan(tierOf(line[i-1]![0]));}
   }
-  expect(evolvedClass('xiliang',11)).toBe('xiliang');expect(evolvedClass('xiliang',12)).toBe('feixiong');expect(evolvedClass('xiliang',20)).toBe('liangzhouIron');
+  expect(evolvedClass('xiliang',11)).toBe('xiliang');expect(evolvedClass('xiliang',12)).toBe('xiliang');expect(evolvedClass('xiliang',20)).toBe('xiliang');
   expect(evolvedClass('heavyCav',20)).toBe('ironPagoda');expect(evolvedClass('elephant',21)).toBe('warElephant');expect(evolvedClass('elephant',22)).toBe('elephantKing');
  });
  it('evolves every lineage through exactly four tiers, siege and navy included',()=>{
   for(const line of evolutionLines()){const tiers=line.map(([c])=>tierOf(c));expect(tiers,line.map(x=>x[0]).join('→')).toEqual([1,2,3,4]);}
-  for(const c of ['ram','navy'] as const)expect(evolvedClass(c,30)).not.toBe(c);
-  expect(evolvedClass('engineer',30)).toBe('divineEngineer');expect(evolvedClass('catapult',30)).toBe('divineCatapult');
+  for(const c of ['ram','navy','engineer','xiliang','siegeTower','transport','gaemaWarrior','crownPrince'] as const)expect(evolvedClass(c,30)).toBe(c);
+  expect(evolvedClass('catapult',30)).toBe('divineCatapult');
   for(const line of evolutionLines())for(const [c] of line)expect(classNames[c],c).toMatch(/[가-힣]/);
  });
  it('makes each new tier 3 stronger than its tier 2 and keeps the tier 2 skills',()=>{
   for(const [c,,tier] of NEW_CLASSES){
    if(tier!==3)continue;
-   const from=(Object.keys(EVOLUTION) as UnitClass[]).find(k=>EVOLUTION[k]![0]===c)!;
+   const from=(Object.keys(EVOLUTION) as UnitClass[]).find(k=>EVOLUTION[k]![0]===c);
+   if(!from)continue;
    expect(tierOf(from),c).toBe(2);
    const a=profileOf(from),b=profileOf(c);
    for(const k of STATS)expect(b[k],`${c} ${k}`).toBeGreaterThan(a[k]);
@@ -64,7 +66,7 @@ describe('새 병종과 진화 계통',()=>{
  });
  it('removes the overlapping lines and reads their old saves as the nearest surviving class',()=>{
   for(const c of ['physician','javelin','axeman','mountaineer','qingzhou','jishi','shieldBow','drummer','riderSage','jiangdong','langzhong']){expect((VARIANTS as Record<string,unknown>)[c],c).toBeUndefined();expect(RECRUITS as string[]).not.toContain(c);expect(VARIANTS[currentClass(c)]??(['fengshui','spearman','bandit','infantry','crossbow'].includes(currentClass(c))||undefined),c).toBeTruthy();}
-  expect(evolvedClass('engineer',40)).toBe('divineEngineer');expect(evolvedClass('catapult',40)).toBe('divineCatapult');
+  expect(evolvedClass('engineer',40)).toBe('engineer');expect(evolvedClass('catapult',40)).toBe('divineCatapult');
   expect(classFamily('arhat')).toBe(classFamily('monk'));
  });
 });

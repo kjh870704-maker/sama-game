@@ -7,7 +7,6 @@
  */
 import type {DuelAction,DuelState} from './duel.ts';
 import {duelActionNames,duelLine,newDuel,duelRound,type DuelKind} from './duel.ts';
-import {storyBackdrop} from './story.ts';
 import {bustFace,displayName} from './faces.ts';
 import {officerPortrait} from './officer-art.ts';
 
@@ -35,8 +34,9 @@ const HELP:Record<'duel'|'debate',Record<DuelAction,string>>={
 };
 /** 대결 장소(옆에서 본 배경): 일기토는 들·산길·진영, 설전은 대청·서재·군막. */
 export function duelBackdrop(kind:'duel'|'debate',seed:string,indoor=false){
-  const pool=kind==='debate'||indoor?[5,12,14,9]:[3,11,15,6,16,17,4];let h=0;for(const ch of seed)h=(h*31+ch.charCodeAt(0))>>>0;
-  return storyBackdrop(pool[h%pool.length]!);
+  void seed;
+  const scene=kind==='debate'||indoor?'debate-arena-v1.png':'duel-arena-v1.png';
+  return `background-image:url(${scene});background-position:center;background-size:cover`;
 }
 const face=(name:string)=>bustFace(name)??`<div class="talk-bust sprite">${officerPortrait(name)}</div>`;
 /** 겨루기 화면에 크게 세우는 장수 초상(그린 초상이 있으면 그 그림, 없으면 인물 그림). */

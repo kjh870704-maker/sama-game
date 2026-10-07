@@ -10,6 +10,8 @@ export const troopRoles:Partial<Record<UnitClass,{name:string;role:string;base:U
  maiden:{name:'무녀',role:'정화·방호·고무로 부대를 지키는 지원 병종',base:'fengshui',tint:0xffc4de,spells:['mend','purify','fortify','inspire','greatMend','focus','ironWall','sanctuary']},
  taoist:{name:'도사',role:'바람·수계·낙뢰를 다루는 원소 책략 병종',base:'strategist',tint:0xaee9ff,spells:['fire','gust','windDragon','flood','waterSurge','thunder','whirlwind','tempest','thunderbolt','gale','mire','tidalLine','thunderCross','quake']},
  monk:{name:'무도가',role:'험지 기동과 근접 공격, 자기 회복을 겸하는 병종',base:'infantry',tint:0xffd398,spells:['mend','march','fortify']},
+ mountedStrategist:{name:'기마책사',role:'이동 7 · 부채로 책략을 펼치는 기동 책사',base:'strategist',tint:0xcbd7ff,spells:['fire','gust','ambush','feint']},
+ pirate:{name:'해적',role:'이동 6 · 곡도로 파고드는 수상 근접 병종',base:'navy',tint:0x72c8c7,spells:[]},
  horseArcher:{name:'궁기병',role:'이동 6 · 사거리 2~3, 기동 사격에 특화',base:'cavalry',tint:0xc7e6ae,spells:[]},
  bandit:{name:'산적',role:'숲·산지에서 강하지만 평지 방어가 약한 병종',base:'infantry',tint:0xd8b58e,spells:[]},
  // 확장 병종과 진화 단계: 그림은 계열의 것을 쓰고 색조·등급 표식으로 구분한다.
@@ -52,6 +54,17 @@ export const troopRoles:Partial<Record<UnitClass,{name:string;role:string;base:U
  arhat:{name:'나한승',role:'무도가 3단계 · 금강 같은 몸으로 책략에도 버틴다',base:'monk',tint:0xffd27a,spells:['mend','march','fortify']},
  demonKing:{name:'요왕',role:'주술사 3단계 · 저주를 되돌리는 요술의 왕',base:'shaman',tint:0x9a62ff,spells:['fire','embers','bind','poison','silence','confuse','feint','demoralize','weakenCurse','terror','plague','rumor','chaos']},
  celestial:{name:'선녀',role:'무녀 3단계 · 하늘의 가호로 부대를 지키는 최고의 지원 병종',base:'maiden',tint:0xffe6f2,spells:['mend','purify','fortify','inspire','greatMend','focus','ironWall','sanctuary']},
+ heavenPriestess:{name:'천신녀',role:'무녀 4단계 · 부적술과 가호를 완성한 전설 지원 병종',base:'maiden',tint:0xffedf6,spells:['mend','purify','fortify','inspire','greatMend','focus','ironWall','sanctuary']},
+ yellowTurban:{name:'황건병',role:'황건 계통 1단계 · 곡도로 싸우는 민병',base:'infantry',tint:0xe6c84f,spells:[]},
+ yellowTurbanVeteran:{name:'황건노병',role:'황건 계통 2단계 · 전투 경험을 쌓은 곡도병',base:'infantry',tint:0xe8c23b,spells:[]},
+ yellowTurbanCaptain:{name:'황건두목',role:'황건 계통 3단계 · 갑옷과 곡도를 갖춘 지휘병',base:'infantry',tint:0xd9ad26,spells:[]},
+ yellowTurbanMarshal:{name:'천공장군',role:'황건 계통 4단계 · 곡도술을 완성한 전설 병종',base:'infantry',tint:0xf0cf45,spells:[]},
+ mountedTactician:{name:'기마군사',role:'기마책사 2단계 · 부채 책략과 기동력이 강화된다',base:'strategist',tint:0xbacaff,spells:['fire','gust','ambush','feint','fireWall']},
+ mountedMastermind:{name:'기마귀모',role:'기마책사 3단계 · 전장을 누비며 책략을 연계한다',base:'strategist',tint:0xaebfff,spells:['fire','gust','ambush','feint','fireWall','chainFire']},
+ mountedSage:{name:'기마신산',role:'기마책사 4단계 · 부채 책략의 정점',base:'strategist',tint:0xe0e6ff,spells:['fire','gust','ambush','feint','fireWall','chainFire','skyFire']},
+ pirateRaider:{name:'수적',role:'해적 2단계 · 빠른 곡도 습격병',base:'navy',tint:0x55b8b5,spells:[]},
+ pirateCaptain:{name:'해적두령',role:'해적 3단계 · 갑옷과 곡도를 갖춘 우두머리',base:'navy',tint:0x3b9898,spells:[]},
+ pirateAdmiral:{name:'해왕',role:'해적 4단계 · 곡도술을 완성한 전설의 해적',base:'navy',tint:0x2e7f86,spells:[]},
  thunderGod:{name:'뇌신',role:'도사 3단계 · 벼락을 부리는 원소 책략의 정점',base:'taoist',tint:0xe6f8ff,spells:['fire','gust','windDragon','flood','waterSurge','thunder','whirlwind','tempest','thunderbolt','gale','mire','tidalLine','thunderCross','quake']},
  // 명부대 — 정사·연의에 이름을 남긴 부대
  xiliang:{name:'서량기병',role:'이동 7 · 거친 서쪽 말의 돌격 기병',base:'cavalry',tint:0xe8c890,spells:[]},
@@ -71,12 +84,12 @@ export const classNames:Record<string,string>={infantry:'보병',spearman:'창�
 /** The class whose sprite a unit is drawn with: extended classes borrow their lineage's art. */
 export function artClass(kind:UnitClass):UnitClass{return VARIANTS[kind]?(troopRoles[kind]?.base??familyOf(kind)):kind;}
 /** Every class a player can field, by tier: for codex and recruiting. */
-export const recruitPool:UnitClass[]=['infantry','spearman','cavalry','archer','crossbow','strategist','fengshui','horseArcher','heavyCav','slinger','assassin','rattan','elephant','monk','taoist','bandit','xiliang',
+export const recruitPool:UnitClass[]=['infantry','spearman','cavalry','archer','crossbow','strategist','fengshui','horseArcher','heavyCav','assassin','rattan','elephant','monk','taoist','bandit','xiliang','yellowTurban','mountedStrategist','pirate',
  // 병종 차트로 늘린 계통과 모병 특수 병과
  'swordsman','lord','commander','dancer','mountainCav','valiantCav','lightChariot','crownPrince','transport','nanmanRider','gaemaWarrior','halberdCav','wheelSage',
- 'yellowTurban','ytArcher','ytSpear','ytBrawler','nanmanFoot','northFoot','northRider','palanquin','baguaChariot','flyingBlade','bashuRepeater'];
+ 'ytArcher','ytSpear','ytBrawler','nanmanFoot','northFoot','northRider','palanquin','baguaChariot','flyingBlade','bashuRepeater'];
 
-// 반응(피격) 전용 옛 시트 4장은 지웠다: 145병종 모두 4단계 시트의 피격 칸을 쓴다. 남은 술사·특기 시트는 이야기 무대 인물용이다.
+// 반응(피격) 전용 옛 시트 4장은 지웠다: 모든 병종이 4단계 시트의 피격 칸을 쓴다. 남은 술사·특기 시트는 이야기 무대 인물용이다.
 export const troopSheets=[...paintedTroopSheets,{id:'casters',url:'troops-casters-v1.webp',rows:3},{id:'specialists',url:'troops-specialists-v1.webp',rows:4},{id:'casters-walk',url:'troops-casters-walk-v1.webp',rows:3},{id:'specialists-walk',url:'troops-specialists-walk-v1.webp',rows:4}] as const;
 export const troopArt:Partial<Record<UnitClass,{sheet:'casters'|'specialists';row:number;rows:number}>>={shaman:{sheet:'casters',row:0,rows:3},maiden:{sheet:'casters',row:1,rows:3},taoist:{sheet:'casters',row:2,rows:3},monk:{sheet:'specialists',row:1,rows:4},horseArcher:{sheet:'specialists',row:2,rows:4},bandit:{sheet:'specialists',row:3,rows:4}};
 
