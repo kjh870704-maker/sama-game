@@ -1499,3 +1499,28 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 .duel-stage .damage-number.guarded{opacity:.85;font-size:28px}
 @media (max-height:500px){.duel-stage .fx-word{font-size:20px}.duel-stage .fx-word.big{font-size:30px}.duel-stage.portraits .duel-fighter .damage-number{font-size:28px}.duel-stage.portraits .duel-fighter .damage-number.crit{font-size:38px}}
 @media (prefers-reduced-motion:reduce){.duel-stage .fx,.duel-stage .fx-word,.duel-stage .fx-guard,.duel-flash,.duel-stage .duel-view{animation:none!important}.duel-stage .fx,.duel-flash{display:none}}
+
+/* ── 일기토·설전 v4: 전신 모델 1:1 · 오행 상성 5수 ── */
+.duel-stage.live-models .duel-ground{bottom:16%;gap:10%;align-items:flex-end}
+.duel-stage.live-models .duel-fighter{width:clamp(150px,29%,300px);display:grid;place-items:center}
+.duel-stage.live-models .duel-model,.duel-stage.live-models .duel-model .battle-model{width:clamp(170px,min(37vh,27vw),320px)!important;height:clamp(170px,min(37vh,27vw),320px)!important}
+.duel-stage.live-models .duel-fighter.enemy .battle-model{transform:scaleX(-1)}
+.duel-stage.live-models .duel-mini{top:auto;bottom:calc(100% - 10px);width:160px}
+.duel-stage.live-models .duel-acts{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:7px}
+.duel-stage.live-models .duel-act{grid-template-columns:44px 1fr;column-gap:7px;padding:6px;min-width:0}
+.duel-stage.live-models .duel-act .duel-ico{width:44px;height:44px;padding:5px}
+.duel-stage.live-models .duel-act b{font-size:calc(14px*var(--fs,1))}
+.duel-stage.live-models .duel-act small{font-size:calc(11.5px*var(--fs,1));line-height:1.25}
+.duel-stage.live-models .duel-talk-face{width:82px}
+.duel-stage.live-models .duel-talk{width:min(500px,46%);min-height:82px}
+.duel-clash{position:absolute;left:50%;top:45%;z-index:7;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:3px;padding:7px 14px;border:2px solid #d4bd82;background:rgba(15,11,8,.82);box-shadow:0 0 18px #000;border-radius:4px;animation:clash-pop .65s cubic-bezier(.2,1.5,.4,1) both;pointer-events:none}
+.duel-clash b{font:900 21px/1 LocalSerif,'Batang',serif;letter-spacing:2px}.duel-clash small{font-size:12px;color:#e8ddc5;white-space:nowrap}
+.duel-clash.won{color:#ffe071;border-color:#ffbf3f;box-shadow:0 0 22px #ff7a1a}.duel-clash.lost{color:#a9cbff;border-color:#7296d2;box-shadow:0 0 18px #31588e}.duel-clash.even{color:#efe6d2}
+@keyframes clash-pop{0%{transform:translate(-50%,-50%) scale(.4);opacity:0}45%{transform:translate(-50%,-50%) scale(1.14);opacity:1}100%{transform:translate(-50%,-50%) scale(1)}}
+.duel-fighter.player.motion-feint{animation:feint-r .62s ease-out}.duel-fighter.enemy.motion-feint{animation:feint-l .62s ease-out}
+@keyframes feint-r{25%{transform:translateX(-24px)}58%{transform:translateX(54px)}100%{transform:none}}@keyframes feint-l{25%{transform:translateX(24px)}58%{transform:translateX(-54px)}100%{transform:none}}
+.duel-stage .fx-feint{left:18%;right:18%;top:18%;bottom:18%;border:3px dashed #d5efff;border-radius:50%;box-shadow:0 0 18px #7bc7ff,inset 0 0 18px #7bc7ff;animation:fx-feint .7s ease-out both}
+.duel-stage .fx-feint.debate{border-color:#eadca8;box-shadow:0 0 18px #c6a55e,inset 0 0 18px #c6a55e}
+@keyframes fx-feint{0%{transform:scale(.25) rotate(-45deg);opacity:0}45%{opacity:1}100%{transform:scale(1.15) rotate(18deg);opacity:0}}
+@media(max-width:760px){.duel-stage.live-models .duel-acts{gap:3px}.duel-stage.live-models .duel-act{display:flex!important;flex-direction:column;padding:4px 2px}.duel-stage.live-models .duel-act .duel-ico{width:32px;height:32px}.duel-stage.live-models .duel-act small{display:none}.duel-stage.live-models .duel-talk{width:47%;}.duel-clash{top:48%;padding:5px 9px}.duel-clash b{font-size:15px}}
+@media (orientation:landscape) and (max-height:520px){.duel-stage.live-models .duel-acts{grid-template-columns:repeat(5,minmax(0,1fr))!important}.duel-stage.live-models .duel-model,.duel-stage.live-models .duel-model .battle-model{width:clamp(100px,40vh,200px)!important;height:clamp(100px,40vh,200px)!important}.duel-stage.live-models .duel-ground{bottom:4%;gap:20%}.duel-stage.live-models .duel-talk{width:43%!important}.duel-stage.live-models .duel-mini{bottom:calc(100% - 6px)!important}}

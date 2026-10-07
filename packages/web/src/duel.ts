@@ -1,16 +1,27 @@
-export type DuelAction='attack'|'guard'|'rally'|'special';
+export type DuelAction='attack'|'guard'|'rally'|'feint'|'special';
 export type DuelKind='duel'|'debate';
 export interface DuelFighter {id:string;name:string;stat:number;hp:number;maxHp:number;energy:number}
 export interface DuelRound {round:number;action:DuelAction;enemyAction:DuelAction;dealt:number;taken:number}
 export interface DuelState {kind:DuelKind;round:number;player:DuelFighter;enemy:DuelFighter;history:DuelRound[];result?:'win'|'lose'|'draw';/** 연의의 맞수가 붙어 저절로 열린 대결 */auto?:boolean}
 /** 대결에서 진 쪽에 거는 술법 디버프(2턴). */
 export const DUEL_LOSS_DEBUFF:Record<DuelKind,readonly ('weaken'|'slow'|'confusion'|'seal')[]>={duel:['weaken','slow'],debate:['confusion','seal']};
-export const actionNames={attack:'공격',guard:'방어',rally:'기합',special:'필살기'};
-export const debateNames={attack:'논박',guard:'반론',rally:'숙고',special:'논파'};
+export const actionNames={attack:'공격',guard:'방어',rally:'기합',feint:'간파',special:'필살기'};
+export const debateNames={attack:'논박',guard:'반론',rally:'숙고',feint:'유도',special:'논파'};
 export function duelActionNames(kind:DuelKind){return kind==='debate'?debateNames:actionNames;}
 export function duelLine(kind:DuelKind,action:DuelAction){return (kind==='debate'?{
- attack:'그 주장은 앞뒤가 맞지 않소.',guard:'근거부터 차근차근 살펴봅시다.',rally:'논점을 정리할 시간이 필요하오.',special:'이 증거로 결론을 내리겠소!',
- }:{attack:'빈틈을 보였구나!',guard:'그 일격, 받아내겠다.',rally:'아직 승부는 끝나지 않았다!',special:'이 일격에 승부를 건다!'} as Record<DuelAction,string>)[action];}
+ attack:'그 주장은 앞뒤가 맞지 않소.',guard:'근거부터 차근차근 살펴봅시다.',rally:'논점을 정리할 시간이 필요하오.',feint:'그 말부터 유도한 것이오.',special:'이 증거로 결론을 내리겠소!',
+ }:{attack:'빈틈을 보였구나!',guard:'그 일격, 받아내겠다.',rally:'아직 승부는 끝나지 않았다!',feint:'수는 이미 읽었다!',special:'이 일격에 승부를 건다!'} as Record<DuelAction,string>)[action];}
+
+/** 오행 상성: 방어 > 공격 > 필살 > 기합 > 간파 > 방어. */
+const COUNTER:Record<DuelAction,DuelAction>={guard:'attack',attack:'special',special:'rally',rally:'feint',feint:'guard'};
+export function duelAdvantage(move:DuelAction,other:DuelAction){return COUNTER[move]===other?1:COUNTER[other]===move?-1:0;}
+export function duelExchangeLine(kind:DuelKind,move:DuelAction,other:DuelAction){
+  const edge=duelAdvantage(move,other);
+  if(edge>0)return kind==='duel'?({attack:'필살의 틈을 베었다!',guard:'공격을 완전히 읽었다!',rally:'기세로 간파를 눌렀다!',feint:'방어가 비었다!',special:'기합째 베어 가른다!'} as Record<DuelAction,string>)[move]
+    :({attack:'결론의 허점을 찔렀소!',guard:'그 논박은 이미 예상했소!',rally:'얕은 유도에 흔들리지 않소!',feint:'반론을 유도한 것이오!',special:'숙고할 틈은 끝났소!'} as Record<DuelAction,string>)[move];
+  if(edge<0)return kind==='duel'?'이 수를 읽혔나…!':'내 논리를 역이용했군…!';
+  return duelLine(kind,move);
+}
 export function newDuel(kind:DuelKind,a:{id:string;name:string;stat:number},b:{id:string;name:string;stat:number}):DuelState{
   const fighter=(u:typeof a):DuelFighter=>({...u,hp:DUEL_HP,maxHp:DUEL_HP,energy:0});
   return {kind,round:0,player:fighter(a),enemy:fighter(b),history:[]};
@@ -23,18 +34,21 @@ export const DUEL_HP=300;
  */
 export function duelDamage(stat:number,move:DuelAction,defend:DuelAction,energy=0){
   if(move==='guard'||move==='rally')return 0;
-  return Math.max(1,Math.round(stat*(move==='special'?1.5:1)*(1+energy*.1)*(defend==='guard'?.35:1)));
+  const edge=duelAdvantage(move,defend),base=move==='special'?1.5:move==='feint'?0.8:1;
+  return Math.max(1,Math.round(stat*base*(1+energy*.1)*(edge>0?1.25:edge<0?.35:1)));
 }
 export function duelRound(s:DuelState,action:DuelAction){
   if(s.result||s.round>=5)return false;
   if(!Object.hasOwn(actionNames,action)||action==='special'&&s.player.energy<2)return false;
-  const enemyAction:DuelAction=s.enemy.energy>=2?'special':(['attack','rally','guard','attack','attack'] as const)[(s.round+s.enemy.stat%3)%5]!;
+  const deck=(['attack','guard','rally','feint','attack'] as DuelAction[]),pick=deck[s.round%deck.length]!;
+  const enemyAction:DuelAction=s.enemy.energy>=2&&(s.round+s.enemy.stat)%3===0?'special':pick;
   const dealt=duelDamage(s.player.stat,action,enemyAction,s.player.energy),taken=duelDamage(s.enemy.stat,enemyAction,action,s.enemy.energy);
-  s.player.hp=Math.max(0,s.player.hp-taken);s.enemy.hp=Math.max(0,s.enemy.hp-dealt);
+  const playerHp=s.player.hp-taken,enemyHp=s.enemy.hp-dealt;
+  // 반드시 다섯 합을 모두 겨룬다. 마지막 합 전에는 쓰러질 피해를 받아도 1로 버틴다.
+  s.player.hp=s.round<4?Math.max(1,playerHp):Math.max(0,playerHp);s.enemy.hp=s.round<4?Math.max(1,enemyHp):Math.max(0,enemyHp);
   for(const [u,move] of [[s.player,action],[s.enemy,enemyAction]] as const){if(move==='rally')u.energy=Math.min(3,u.energy+2);else if(move==='special')u.energy-=2;else if(move==='guard')u.energy=Math.min(3,u.energy+1);}
   s.round++;s.history.push({round:s.round,action,enemyAction,dealt,taken});
-  // 한쪽이 쓰러지면 그 자리에서 끝난다(둘 다 쓰러지면 남은 체력이 같으니 무승부).
-  if(s.round===5||s.player.hp<=0||s.enemy.hp<=0)s.result=s.player.hp>s.enemy.hp?'win':s.player.hp<s.enemy.hp?'lose':'draw';
+  if(s.round===5)s.result=s.player.hp>s.enemy.hp?'win':s.player.hp<s.enemy.hp?'lose':'draw';
   return true;
 }
 

@@ -9,7 +9,7 @@ import {dyeOfSide} from '../src/dye.ts';
 const duel=(stat=60)=>newDuel('duel',{id:'a',name:'아군',stat},{id:'b',name:'적군',stat:60});
 describe('five round duels and debates',()=>{
  it('requires energy, rejects invalid moves, and ends exactly on the fifth choice',()=>{const d=duel();expect(duelRound(d,'special')).toBe(false);expect(d.round).toBe(0);for(const a of ['rally','special','guard','attack','attack'] as DuelAction[])expect(duelRound(d,a)).toBe(true);expect(d.round).toBe(5);expect(d.result).toBeDefined();expect(duelRound(d,'attack')).toBe(false);expect(d.history).toHaveLength(5);});
- it('scales damage with stats and reduces incoming damage through guard',()=>{const weak=duel(30),strong=duel(90),guard=duel(30);duelRound(weak,'attack');duelRound(strong,'attack');duelRound(guard,'guard');expect(strong.history[0]!.dealt).toBeGreaterThan(weak.history[0]!.dealt);expect(guard.history[0]!.taken).toBeLessThan(weak.history[0]!.taken);});
+ it('scales damage with stats and resolves five choices like rock-paper-scissors',()=>{const weak=duel(30),strong=duel(90);duelRound(weak,'attack');duelRound(strong,'attack');expect(strong.history[0]!.dealt).toBeGreaterThan(weak.history[0]!.dealt);expect(duelDamage(80,'attack','special')).toBeGreaterThan(duelDamage(80,'attack','guard'));expect(duelDamage(80,'feint','guard')).toBeGreaterThan(duelDamage(80,'feint','rally'));});
  it('replays and undoes mid-debate without losing choices',()=>{
    // 꿈속의 진궁(자부)은 사마의의 설전을 받는다.
    const s=new Session(4,'normal',215,'survival',4);let started=false;
@@ -65,10 +65,10 @@ describe('duel damage is stat-centric',()=>{
   // 능력치가 곧 피해: 일기토는 무력, 설전은 지력 그대로.
   expect(hit(100,60).dealt).toBe(100);expect(hit(60,100).dealt).toBe(60);
   expect(hit(96,70,'debate').dealt).toBe(96);expect(hit(70,96,'debate').dealt).toBe(70);
-  expect(duelDamage(80,'special','attack')).toBe(120);expect(duelDamage(80,'attack','guard')).toBe(28);expect(duelDamage(80,'attack','attack',2)).toBe(96);
-  // 무력 100이 계속 치면 3합에 쓰러지고 그 자리에서 끝난다.
+  expect(duelDamage(80,'special','attack')).toBe(42);expect(duelDamage(80,'attack','guard')).toBe(28);expect(duelDamage(80,'attack','attack',2)).toBe(96);
+  // 큰 피해를 받아도 다섯 합을 모두 겨룬 뒤 승패를 정한다.
   const d=newDuel('duel',{id:'a',name:'갑',stat:100},{id:'b',name:'을',stat:30});d.enemy.stat=30;
-  while(!d.result)duelRound(d,'attack');expect(d.result).toBe('win');expect(d.round).toBeLessThan(5);
+  while(!d.result)duelRound(d,'attack');expect(d.result).toBe('win');expect(d.round).toBe(5);
  });
 });
 describe('사마의 starts as a strategist',()=>{

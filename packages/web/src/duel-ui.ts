@@ -6,7 +6,7 @@
  *     아래에는 검붉은 옻칠 판에 합 순서(一~五)와 행동 칸(먹 그림 아이콘)이 놓인다.
  */
 import type {DuelAction,DuelState} from './duel.ts';
-import {duelActionNames,duelLine,newDuel,duelRound,type DuelKind} from './duel.ts';
+import {duelActionNames,duelAdvantage,duelExchangeLine,newDuel,duelRound,type DuelKind} from './duel.ts';
 import {bustFace,displayName} from './faces.ts';
 import {officerPortrait} from './officer-art.ts';
 
@@ -18,19 +18,21 @@ const ICON:Record<'duel'|'debate',Record<DuelAction,string>>={
     attack:'<path d="M10 54 L50 14 M44 12 L54 10 L52 20 M16 40 L24 48" />',
     guard:'<path d="M32 8 C44 14 52 14 54 16 C54 38 46 50 32 58 C18 50 10 38 10 16 C12 14 20 14 32 8 Z M32 18 V48" />',
     rally:'<path d="M32 56 C18 46 22 34 30 28 C28 38 36 38 36 30 C36 22 30 18 32 8 C46 18 50 34 44 46 C40 54 36 56 32 56 Z" />',
+    feint:'<path d="M8 34 C18 14 44 14 56 34 C44 52 20 52 8 34 Z M25 34 A7 7 0 1 0 39 34 A7 7 0 1 0 25 34 M12 52 L24 42" />',
     special:'<path d="M8 40 C22 34 36 20 56 8 M14 50 C30 44 44 32 58 18 M10 28 C20 22 30 14 40 8" />',
   },
   debate:{
     attack:'<path d="M12 50 L44 18 M40 14 L50 12 L48 22 M12 50 L8 56 L14 54 Z M20 20 C28 12 40 10 48 14" />',
     guard:'<path d="M10 14 H54 V44 H34 L22 56 V44 H10 Z M20 26 H44 M20 34 H38" />',
     rally:'<path d="M32 10 A16 16 0 1 1 31.9 10 M32 18 V26 M32 32 L38 38 M14 54 H50" />',
+    feint:'<path d="M10 18 Q32 4 54 18 Q44 26 34 34 Q24 42 12 54 M24 18 Q34 28 48 30 M14 42 Q28 42 38 54" />',
     special:'<path d="M32 6 L38 24 L58 24 L42 36 L48 56 L32 44 L16 56 L22 36 L6 24 L26 24 Z" />',
   },
 };
 const icon=(kind:'duel'|'debate',a:DuelAction)=>`<svg viewBox="0 0 64 64" aria-hidden="true" class="duel-ico">${ICON[kind][a]}</svg>`;
 const HELP:Record<'duel'|'debate',Record<DuelAction,string>>={
-  duel:{attack:'무력 = 피해',guard:'피해 65% 감소 · 기합 +1',rally:'기합 +2 (피해 +10%씩)',special:'기합 2 · 무력 ×1.5'},
-  debate:{attack:'지력 = 피해',guard:'피해 65% 감소 · 논거 +1',rally:'논거 +2 (피해 +10%씩)',special:'논거 2 · 지력 ×1.5'},
+  duel:{attack:'필살을 끊는다',guard:'공격을 막고 기합 +1',rally:'간파를 누르고 기합 +2',feint:'방어를 깨뜨린다',special:'기합 2 · 기합을 벤다'},
+  debate:{attack:'논파의 허점을 찌른다',guard:'논박을 막고 논거 +1',rally:'유도를 견디고 논거 +2',feint:'반론을 유도한다',special:'논거 2 · 숙고를 끊는다'},
 };
 /** 대결 장소(옆에서 본 배경): 일기토는 들·산길·진영, 설전은 대청·서재·군막. */
 export function duelBackdrop(kind:'duel'|'debate',seed:string,indoor=false){
@@ -39,8 +41,14 @@ export function duelBackdrop(kind:'duel'|'debate',seed:string,indoor=false){
   return `background-image:url(${scene});background-position:center;background-size:cover`;
 }
 const face=(name:string)=>bustFace(name)??`<div class="talk-bust sprite">${officerPortrait(name)}</div>`;
-/** 겨루기 화면에 크게 세우는 장수 초상(그린 초상이 있으면 그 그림, 없으면 인물 그림). */
-export function duelCard(name:string,side:'player'|'enemy'){return `<div class="duel-model duel-card ${side==='enemy'?'face-left':'face-right'}">${face(name)}<span class="duel-card-name">${esc(displayName(name))}</span></div>`;}
+/** 겨루기 화면 중앙에 크게 세우는 전신 전투 모델. */
+export function duelModel(model:string,side:'player'|'enemy',name:string){return `<div class="duel-model ${side==='enemy'?'face-left':'face-right'}" aria-label="${esc(displayName(name))}">${model}</div>`;}
+/** 전투 밖 대결은 병종 정보가 없으므로 일기토는 검객, 설전은 책사 전신 모델을 쓴다. */
+export function contestModel(kind:DuelKind,side:'player'|'enemy',name:string){
+  const sheet=kind==='duel'?'four-stage-swordsman':'four-stage-strategist';
+  const model=`<span class="battle-model" role="img" style="background-image:var(--${sheet}-atlas);background-size:400% 400%;background-position:0 0"></span>`;
+  return duelModel(model,side,name);
+}
 
 /** 1) 대결 선포 화면. */
 export function duelSplash(d:DuelState,acceptLine?:string,historic=false){
@@ -66,6 +74,7 @@ function inkLine(name:string,line:string,pos:'top'|'bottom'){
 export function hitFx(kind:DuelKind,incoming:DuelAction,own:DuelAction,dmg:number,stat:number){
   const fx:string[]=[];
   if(own==='rally')fx.push(`<i class="fx fx-aura ${kind}"></i>`);
+  if(own==='feint')fx.push(`<i class="fx fx-feint ${kind}"></i>`);
   if(dmg>0){
     const big=incoming==='special',guarded=own==='guard';
     if(kind==='duel')fx.push(`<i class="fx fx-slash${big?' big':''}"></i>`,big?'<i class="fx fx-slash cross big"></i>':'','<i class="fx fx-spark"></i>');
@@ -79,8 +88,8 @@ export function hitFx(kind:DuelKind,incoming:DuelAction,own:DuelAction,dmg:numbe
 /** 2) 겨루기 화면. models: 두 사람의 전장 그림(HTML). */
 export function duelArena(d:DuelState,o:{models:{player:string;enemy:string};backdrop:string;openingLine?:string}){
   const labels=duelActionNames(d.kind),last=d.history.at(-1),energy=d.kind==='debate'?'논거':'기합';
-  const pLine=last?duelLine(d.kind,last.action):d.kind==='duel'?'내가 상대해 주마!':'그 말, 내가 받아 주겠소.';
-  const eLine=last?duelLine(d.kind,last.enemyAction):o.openingLine??'덤벼라!';
+  const pLine=last?duelExchangeLine(d.kind,last.action,last.enemyAction):d.kind==='duel'?'내가 상대해 주마!':'그 말, 내가 받아 주겠소.';
+  const eLine=last?duelExchangeLine(d.kind,last.enemyAction,last.action):o.openingLine??'덤벼라!';
   /** 머리 위 작은 막대: 이름·체력(남은 만큼 초록→노랑→빨강)·기합(논거) 구슬. */
   const hp=(u:DuelState['player'],side:string)=>{const k=u.hp/Math.max(1,u.maxHp);return `<div class="duel-mini ${side}${k<=.3?' low':k<=.6?' mid':''}"><b>${esc(displayName(u.name))} <span>${d.kind==='duel'?'무력':'지력'} ${u.stat}</span></b><div class="duel-hp"><i style="width:${(k*100).toFixed(1)}%"></i></div><small>${u.hp}/${u.maxHp}</small><em title="${energy}">${'●'.repeat(u.energy)}${'○'.repeat(Math.max(0,3-u.energy))}</em></div>`;};
   const track=NUM.map((n,i)=>{const h=d.history[i];const cls=!h?'':h.dealt>h.taken?'won':h.dealt<h.taken?'lost':'even';
@@ -91,13 +100,16 @@ export function duelArena(d:DuelState,o:{models:{player:string;enemy:string};bac
   // 타격 연출: 맞은 쪽에 베기·불꽃(일기토) 또는 먹물·글자 충격파(설전), 막으면 방패 번쩍임, 필살기는 화면 번쩍임·크게 흔들림.
   const special=!!last&&((last.action==='special'&&last.dealt>0)||(last.enemyAction==='special'&&last.taken>0));
   const shake=!last?'':special?' shake-big':last.dealt||last.taken?' shake':'';
-  return `<div class="duel-stage portraits ${d.kind}">
+  const edge=last?duelAdvantage(last.action,last.enemyAction):0;
+  const clash=last?`<div class="duel-clash ${edge>0?'won':edge<0?'lost':'even'}"><b>${edge>0?'상성 우세':edge<0?'상성 열세':'정면 승부'}</b><small>${labels[last.action]} ↔ ${labels[last.enemyAction]}</small></div>`:'';
+  return `<div class="duel-stage live-models ${d.kind}">
     <div class="duel-view${shake}" style="${o.backdrop}">${special?`<i class="duel-flash ${d.kind}"></i>`:''}
       <div class="duel-sun"></div>
       <div class="duel-ground">
         <div class="duel-fighter player motion-${last?.action??'idle'}${last?.taken?' hit':''}">${hp(d.player,'left')}${o.models.player}${last?hitFx(d.kind,last.enemyAction,last.action,last.taken,d.enemy.stat):''}</div>
         <div class="duel-fighter enemy motion-${last?.enemyAction??'idle'}${last?.dealt?' hit':''}">${hp(d.enemy,'right')}${o.models.enemy}${last?hitFx(d.kind,last.action,last.enemyAction,last.dealt,d.player.stat):''}</div>
       </div>
+      ${clash}
       ${inkLine(d.player.name,pLine,'top')}${inkLine(d.enemy.name,eLine,'bottom')}
       ${result}
     </div>
@@ -119,7 +131,7 @@ export function playContest(kind:DuelKind,me:{name:string;stat:number},foe:{name
   const el=document.createElement('div');el.className='contest-overlay';
   // 열린 dialog(최상위 층) 안에 붙여야 그 위로 보인다.
   (document.querySelector('dialog[open]')??document.body).appendChild(el);
-  const models={player:duelCard(me.name,'player'),enemy:duelCard(foe.name,'enemy')};
+  const models={player:contestModel(kind,'player',me.name),enemy:contestModel(kind,'enemy',foe.name)};
   return new Promise(resolve=>{
     const arena=()=>{el.innerHTML=`<div class="contest-box">${duelArena(d,{models,backdrop:duelBackdrop(kind,o.seed??foe.name,o.indoor),...(o.acceptLine?{openingLine:o.acceptLine}:{})}).replace('전장으로 돌아가기',esc(o.done??'이야기로 돌아가기')).replace(/전투 체력: 승자 15% · 패자 45% · 무승부 양쪽 25% 피해\(최소 1\)\. 패자는 2턴 [^<]*/,kind==='duel'?'이기면 이번 전투 아군 사기 상승 · 적의 기세가 꺾인다.':'이기면 이번 전투 아군 사기 상승 · 사마의 책략 MP +15.')}</div>`;
       el.querySelectorAll<HTMLButtonElement>('[data-duel-action]').forEach(b=>b.onclick=()=>{if(duelRound(d,b.dataset.duelAction as DuelAction))arena();});
