@@ -168,10 +168,14 @@ export class Battle {
     if (!c.strategies.includes(strategyId)) return fail("보유하지 않은 책략");
     if (c.mp < def.mpCost) return fail(`MP 부족 (필요 ${def.mpCost}, 보유 ${c.mp})`);
     if (this.state.hasStatus(c, "seal")) return fail("책략 봉인 상태");
-    if (manhattan(c.pos, at) > def.range) return fail("시전 사거리 밖");
+    const global = def.shape === "global";
+    if (!global && manhattan(c.pos, at) > def.range) return fail("시전 사거리 밖");
 
     c.mp -= def.mpCost;
-    const area = strategyArea(def, at, c.pos);
+    // 전 맵 책략(모래폭풍 등): 지정한 칸과 상관없이 맵 위의 대상 진영 모두를 친다.
+    const area = global
+      ? this.state.living().filter((t) => def.targetSides.includes(t.side)).map((t) => ({ ...t.pos }))
+      : strategyArea(def, at, c.pos);
     const targets: string[] = [];
     const damages: number[] = [];
 

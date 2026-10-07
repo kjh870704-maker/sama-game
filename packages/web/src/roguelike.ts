@@ -438,7 +438,7 @@ export function prepareRunBattle(state:BattleState,ref:RunBattleRef){
     if(u.unitClass!==ru.unitClass)evolveUnit(u,ru.unitClass);
     if(ru.hero){(u as {name:string}).name='사마의';}
     u.hp=Math.max(1,Math.round(u.stats.maxHp*ru.hp));
-    if(casts(u.unitClass))u.strategies=troopStrategies(u.unitClass,u.level)??availableStrategies(u.level,true,ru.hero?undefined:familyOf(u.unitClass));
+    u.strategies=ru.hero&&casts(u.unitClass)?availableStrategies(u.level,true,undefined):troopStrategies(u.unitClass,u.level)??[];
     u.canUseItems=true;
   }
   // 진화 책사·적 술사가 쓰는 책략을 전장 책략표에 올린다.
@@ -461,7 +461,7 @@ export function addRecruits(state:BattleState,recruits:RunUnit[]){
   const free=cells.filter(p=>!state.unitAt(p)&&open.includes(state.map.tileAt(p).terrain)).sort((a,b)=>(Math.abs(a.x-hero.pos.x)+Math.abs(a.y-hero.pos.y))-(Math.abs(b.x-hero.pos.x)+Math.abs(b.y-hero.pos.y)));
   recruits.forEach((r,i)=>{const pos=free[i];if(!pos||state.find(r.id))return;
     const u=makeUnit({id:r.id,name:r.name,side:'player',unitClass:landClass(r.unitClass),level:r.level,pos});u.hp=Math.max(1,Math.round(u.stats.maxHp*r.hp));u.canUseItems=true;
-    if(casts(u.unitClass))u.strategies=troopStrategies(u.unitClass,u.level)??availableStrategies(u.level,true,familyOf(u.unitClass));
+    u.strategies=troopStrategies(u.unitClass,u.level)??[];
     for(const id of u.strategies){const d=allStrategies.find(x=>x.id===id);if(d&&!state.strategies.has(id))state.strategies.set(id,d);}
     state.add(u);});
 }

@@ -11,7 +11,7 @@ import {applyRomance,temperOf} from './romance.ts';
 import {applyCC} from './cc-apply.ts';
 import {expeditionBattle,expeditions,missionEnemyScale} from './expeditions.ts';
 import {newDuel,duelRound,duelResponse,type DuelState,type DuelAction} from './duel.ts';
-import {availableStrategies,learnedStrategies,allStrategies,applyOfficerFeatures,martialPower,debatePower} from './officers.ts';
+import {availableStrategies,allStrategies,applyOfficerFeatures,martialPower,debatePower} from './officers.ts';
 import approachStage from '../../data/stages/S1-07.json';
 import approachMap from '../../data/maps/hanzhong-approach.json';
 import tongguanStage from '../../data/stages/S1-06.json';
@@ -205,7 +205,7 @@ export class Session {
       if(this.preparation==='command')u.stats.movement+=1;
     }
     for(const unit of state.living('ally')) if(['strategist','fengshui'].includes(unit.unitClass)) unit.strategies=['windDragon'];
-    const battle=new Battle(state,{seed:this.seed,strategies:new Map((this.revision>=4?(this.deployment?.growth?allStrategies:learnedStrategies):strategies).map(s=>[s.id,this.revision>=4?s:this.deployment?{...s,mpCost:s.id==='fire'?6:9}:s])),undoDepth:0,maxTurns:60});
+    const battle=new Battle(state,{seed:this.seed,strategies:new Map((this.revision>=4?allStrategies:strategies).map(s=>[s.id,this.revision>=4?s:this.deployment?{...s,mpCost:s.id==='fire'?6:9}:s])),undoDepth:0,maxTurns:60});
     if((this.deployment?.mission?.version??1)>=3)state.survivalClocks.set('trial_defense',1);
     battle.start();
     const rules=stageRules[entry.stage.id];
@@ -238,7 +238,9 @@ export class Session {
       applyOfficerFeatures(state.living(),this.deployment?.growth);
       for(const u of state.living()){
         if(familyOf(u.unitClass)==='ram'){for(const trait of ['siegeRam','noCounterAttack'])if(!u.traits.includes(trait))u.traits.push(trait);}
-        const officer=(OFFICERS as readonly string[]).includes(u.id)&&u.side==='player',specialty=officer?undefined:troopStrategies(u.unitClass,u.level);if(specialty)u.strategies=specialty;else if(['strategist','fengshui'].includes(familyOf(u.unitClass)))u.strategies=availableStrategies(u.level,!!this.deployment?.growth,officer?undefined:familyOf(u.unitClass));
+        const officer=(OFFICERS as readonly string[]).includes(u.id)&&u.side==='player',specialty=troopStrategies(u.unitClass,u.level);
+        // 주인공 장수(책사 계열)는 모든 책략을 익힐 수 있다. 그 밖의 부대는 계통의 책략·특수기만 쓴다.
+        if(officer&&['strategist','fengshui'].includes(familyOf(u.unitClass)))u.strategies=availableStrategies(u.level,!!this.deployment?.growth,undefined);else if(specialty)u.strategies=specialty;
       }
       addSiegeCompany(state);
       // 보물 특기: 병서·도술서는 책략을 부여하고, 명검·명마·갑주는 전투 특성을 더한다.
@@ -276,7 +278,7 @@ export class Session {
       if(cmd.kind==='move' && key(cmd.to)===key(u.pos)) return {ok:false,error:'다른 칸을 선택해 주세요.'};
       if(cmd.kind==='strategy'){
         const cu=s.find(cmd.unit),def=cu?s.strategyFor(cu,cmd.strategy):s.strategies.get(cmd.strategy);
-        if(!s.map.inBounds(cmd.at) || !def || !(()=>{const area=strategyArea(def,cmd.at,s.find(cmd.unit)?.pos);return s.living().some(e=>def.targetSides.includes(e.side)&&area.some(c=>c.x===e.pos.x&&c.y===e.pos.y));})()) return {ok:false,error:'책략 범위 안에 적이 있어야 합니다.'};
+        if(!s.map.inBounds(cmd.at) || !def || !(()=>{if(def.shape==='global')return s.living().some(e=>def.targetSides.includes(e.side));const area=strategyArea(def,cmd.at,s.find(cmd.unit)?.pos);return s.living().some(e=>def.targetSides.includes(e.side)&&area.some(c=>c.x===e.pos.x&&c.y===e.pos.y));})()) return {ok:false,error:'책략 범위 안에 적이 있어야 합니다.'};
       }
     }
     if(this.chapter===6&&cmd.kind==='capture'&&s.find('ma_chao')?.alive)return {ok:false,error:'마초를 먼저 격퇴해야 돌파 구역을 확보할 수 있습니다.'};
@@ -294,13 +296,14 @@ export class Session {
   private execute(cmd:Command){
     const s=this.state;
     if(this.state.outcome!=='ongoing')return {ok:false,error:'이미 종료된 전투입니다.'};
-    if(cmd.kind==='strategy'&&(this.deployment?.growth||this.deployment?.run)){
+    if(cmd.kind==='strategy'&&this.revision>=4){
       const base=allStrategies.find(x=>x.id===cmd.strategy),u=s.find(cmd.unit),def=base&&u?evolveStrategy(base,u.level):base;
       if(def?.support){
         if(!u?.alive||!u.strategies.includes(def.id)||u.mp<def.mpCost||s.hasStatus(u,'seal')||manhattan(u.pos,cmd.at)>def.range)return {ok:false,error:'지원 책략의 습득·MP·사거리를 확인하세요.'};
         const area=strategyArea(def,cmd.at,u.pos),targets=s.living().filter(t=>t.side!=='enemy'&&area.some(c=>c.x===t.pos.x&&c.y===t.pos.y));
+        if(def.support==='again'){const keep=targets.filter(t=>t.id!==u.id&&t.hasActed);targets.length=0;targets.push(...keep);if(!targets.length)return {ok:false,error:'회귀는 이미 행동을 마친 다른 아군에게만 쓸 수 있습니다.'};}
         if(!targets.length)return {ok:false,error:'지원할 아군을 선택하세요.'};
-        const damage:number[]=[];for(const t of targets){let healed=0;if(def.support==='heal'){healed=Math.min(t.stats.maxHp-t.hp,healAmount(def.power,u.stats.intellect,u.traitParams.healPower??0));t.hp+=healed;}else if(def.support==='cleanse')t.statuses=t.statuses.filter(x=>['guard','haste','rally'].includes(x.kind));else if(def.support==='mana'){const before=t.mp;t.mp=Math.min(t.stats.maxMp,t.mp+def.power);healed=0;void before;}else if(def.support==='valor'){s.applyStatus(t,{kind:'rally',turns:3,magnitude:1});s.applyStatus(t,{kind:'guard',turns:3,magnitude:1});}else if(['guard','haste','rally'].includes(def.support))s.applyStatus(t,{kind:def.support as 'guard'|'haste'|'rally',turns:3,magnitude:1});damage.push(-healed);}
+        const damage:number[]=[];for(const t of targets){let healed=0;if(def.support==='heal'){healed=Math.min(t.stats.maxHp-t.hp,healAmount(def.power,u.stats.intellect,u.traitParams.healPower??0));t.hp+=healed;}else if(def.support==='cleanse')t.statuses=t.statuses.filter(x=>['guard','haste','rally'].includes(x.kind));else if(def.support==='mana'){const before=t.mp;t.mp=Math.min(t.stats.maxMp,t.mp+def.power);healed=0;void before;}else if(def.support==='valor'){s.applyStatus(t,{kind:'rally',turns:3,magnitude:1});s.applyStatus(t,{kind:'guard',turns:3,magnitude:1});}else if(def.support==='again'){t.hasActed=false;t.hasMoved=false;}else if(['guard','haste','rally'].includes(def.support))s.applyStatus(t,{kind:def.support as 'guard'|'haste'|'rally',turns:3,magnitude:1});damage.push(-healed);}
         u.mp-=def.mpCost;s.push({t:'strategy',caster:u.id,strategy:def.id,targets:targets.map(t=>t.id),damage});const result=this.battle.execute({kind:'wait',unit:u.id});this.advanceScenario();return result;
       }
     }
@@ -420,8 +423,8 @@ export class Session {
       // 연의 전장에서 사마의의 전장 레벨이 원정 레벨과 다르면(연의 진행 레벨) 표시만 하고 능력치는 건드리지 않는다.
       const up=to>from&&!!u?.alive&&u.level===from;let learned:string[]=[];
       if(up){levelUpInBattle(u!,to);
-        // 책사 계열은 레벨이 오를 때마다 그 레벨의 책략을 새로 익힌다(이미 아는 것은 그대로).
-        if(['strategist','fengshui'].includes(familyOf(u!.unitClass))){const now=availableStrategies(to,!!this.deployment?.growth,(OFFICERS as readonly string[]).includes(u!.id)&&u!.side==='player'?undefined:familyOf(u!.unitClass)),fresh=now.filter(id=>!u!.strategies.includes(id));
+        // 레벨이 오를 때마다 그 레벨에 열린 계통 책략을 새로 익힌다(이미 아는 것은 그대로).
+        {const hero=(OFFICERS as readonly string[]).includes(u!.id)&&u!.side==='player'&&['strategist','fengshui'].includes(familyOf(u!.unitClass)),now=hero?availableStrategies(to,!!this.deployment?.growth,undefined):troopStrategies(u!.unitClass,to)??[],fresh=now.filter(id=>!u!.strategies.includes(id));
           u!.strategies=[...u!.strategies,...fresh];learned=fresh.map(id=>allStrategies.find(x=>x.id===id)?.name??id);}}
       this.xpGains.set(entry,{...gain,...(up?{level:to}:{}),...(learned.length?{learned}:{})});
     }

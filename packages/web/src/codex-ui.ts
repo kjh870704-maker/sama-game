@@ -23,6 +23,7 @@ import {paintedTroopArt} from './painted-troops.ts';
 import {armorFrame,MOUNTED_FAMILIES,ROBE_FAMILIES,MACHINE_FAMILIES,type ArmorTier} from './armor.ts';
 import {adviceFor} from './troop-tactics.ts';
 import {allStrategies,STATUS_NAMES,SHAPE_TEXT,familyAllows,schoolOf,SCHOOL_NAMES,type LearnedStrategy} from './officers.ts';
+import {classSpellBook} from './class-spells.ts';
 import {officerFeatures} from './officers.ts';
 import {loadMeta,saveMeta} from './meta.ts';
 import {perksFor,perkState,bestLevel,learnPerk,togglePerk,officerClass,perkAt,officerTier,PERK_TIERS} from './officer-perks.ts';
@@ -142,7 +143,7 @@ function ccGrades(c:UnitClass){
 const PROFILE_ROWS:Array<[keyof ReturnType<typeof profileOf>,string]>=[['hp','체력'],['attack','공격'],['defense','방어'],['intellect','지력'],['spirit','정신'],['agility','순발'],['mp','책략']];
 function classesTab(pick:string){
   const all=codexClasses(),c=(all.includes(pick as UnitClass)?pick:all[0]!) as UnitClass,p=profileOf(c),v=VARIANTS[c],line=evolutionLines().find(l=>l.some(([x])=>x===c));
-  const spells=troopRoles[c]?.spells??(p.canUseStrategy&&['strategist','fengshui'].includes(familyOf(c))?allStrategies.filter(s=>familyAllows(familyOf(c),s)).map(s=>s.id):[]);
+  const spells=classSpellBook(c);
   const grid=`<div class="cx-classes">${all.map(k=>`<button data-cx-class="${k}" class="cx-class tier-${tierOf(k)} ${k===c?'chosen':''}">${sprite(k)}<b>${esc(classNames[k]??k)}</b><small>${'◆'.repeat(tierOf(k))}</small></button>`).join('')}</div>`;
   const detail=`<div class="cx-detail"><div class="cx-head">${sprite(c)}<div><small>${'◆'.repeat(tierOf(c))} ${tierOf(c)===1?'기본':tierOf(c)===2?'정예':tierOf(c)===3?'최정예':tierOf(c)===4?'전설':'신화'} · ${esc(classNames[familyOf(c)]??familyOf(c))} 계열</small><h3>${esc(classNames[c]??c)}</h3><p>${esc(troopRoles[c]?.role??adviceFor(c))}</p></div></div>
     <div class="cx-stats">${PROFILE_ROWS.map(([k,label])=>{const n=p[k] as number;return `<div class="cx-stat"><span>${label}</span><i><i style="width:${Math.min(100,n/2.2*100)}%" class="${n>=1.3?'hi':n<0.7?'lo':''}"></i></i><b>${n.toFixed(2)}</b></div>`;}).join('')}</div>
@@ -161,6 +162,39 @@ function classesTab(pick:string){
 const ELEMENT_NAMES:Record<string,string>={fire:'화',wind:'풍',water:'수',thunder:'뇌',earth:'지',support:'술'};
 /** 책략마다 한 줄 풀이(무엇을 하는 계책인가). */
 export const STRATEGY_TEXT:Record<string,string>={
+  // 계통 고유 책략
+  spark:'손끝에서 튄 번갯불이 적 한 부대를 감전시킨다. 도사가 처음 익히는 술법.',
+  earthPulse:'땅의 맥을 건드려 적의 발밑을 무겁게 한다. 피해와 함께 둔화.',
+  hex:'원한을 실은 저주로 적의 갑주를 약하게 만든다. 맞은 적은 받는 피해가 늘어난다.',
+  feintAttack:'한쪽을 치는 척 다른 쪽을 찌르는 양동. 피해를 주고 발을 묶는다.',
+  edict:'황명을 내려 적 장수의 책략을 막는다(책략 봉인).',
+  nightmare:'밤새 악몽을 꾸게 해 주변 적의 기세를 꺾는다(쇠약).',
+  imperialAura:'천자의 위광 앞에 주변 적이 움츠러든다(쇠약).',
+  charmDance:'홀리는 춤으로 주변 적을 혼란에 빠뜨린다.',
+  sandstorm:'맵 전체에 모래폭풍을 일으켜 모든 적에게 약한 피해를 준다. 사거리 제한 없음.',
+  spiritBell:'맑은 방울 소리로 주변 아군의 해로운 상태를 걷어 낸다.',
+  blessing:'한 부대에게 큰 축복을 내려 체력을 많이 회복한다.',
+  swordDance:'칼춤으로 한 부대의 기세를 북돋아 공격 피해를 높인다.',
+  celestialDance:'하늘의 춤으로 주변 아군을 결사의 각오로 이끈다(공격 증가·받는 피해 감소).',
+  banner:'군기를 세워 한 부대를 굳건히 한다(받는 피해 감소).',
+  decree:'호령 한마디로 주변 아군의 발을 재촉한다(이동력 +1).',
+  royalGrace:'황은을 베풀어 주변 아군의 체력을 회복한다.',
+  amnesty:'대사면으로 주변 아군의 해로운 상태를 모두 풀어 준다.',
+  rations:'군량을 나눠 한 부대의 체력을 조금 회복한다.',
+  spareArms:'예비 병기를 나눠 한 부대의 공격 피해를 높인다.',
+  qigong:'기를 돌려 바로 곁의 한 부대(자신 포함)를 회복한다.',
+  ironBody:'금강불괴의 기공으로 곁의 한 부대를 단단하게 한다(받는 피해 감소).',
+  rewind:'시간을 되감아, 이미 행동을 마친 아군 한 부대가 한 번 더 움직이고 싸운다.',
+  // 병종 특수기
+  shieldBash:'방패로 들이받아 피해를 주고 둔화시킨다(보병).',pierce:'창을 깊이 찔러 앞의 두 칸을 꿰뚫는다(창병).',breakthrough:'말을 몰아 앞의 두 칸을 돌파한다(경기병).',
+  trample:'무거운 말발굽으로 짓밟아 큰 피해를 주고 발을 묶는다(중기병).',aimedShot:'숨을 고르고 노려 쏜 화살 한 대(궁병).',volley:'십자 다섯 칸에 화살을 연달아 퍼붓는다(노병).',
+  skirmish:'말 위에서 난사해 피해를 주고 둔화시킨다(궁기병).',stoneRain:'돌을 비처럼 퍼부어 주변 적을 친다(투석병).',assassinate:'급소를 노린 일격. 큰 피해와 출혈(자객).',
+  rattanRush:'등나무 방패를 앞세워 돌진하고 적을 약하게 만든다(등갑병).',tuskCharge:'상아를 휘둘러 십자 다섯 칸을 친다(상병).',plunder:'달려들어 빼앗고 적의 기세를 꺾는다(산적).',
+  westernCharge:'서량 기병의 돌격, 앞의 세 칸을 휩쓴다(서량기병).',gateCrash:'성문도 부수는 망치로 적을 내리쳐 갑주를 깨뜨린다(충차).',deckVolley:'갑판 위에서 화살비를 퍼붓는다(수군).',
+  flashCut:'한 번의 칼빛으로 베어 넘긴다. 위력이 크다(검객).',mountainRaid:'산길을 타고 두 칸 너머의 적을 기습한다(산악기병).',lanceRush:'창을 겨누고 질주해 앞의 두 칸을 꿰뚫는다(효기병).',
+  scytheWheels:'바퀴에 단 날로 십자 다섯 칸을 베고 출혈을 남긴다(전차).',towerShot:'망루 위에서 멀리 있는 적을 쏜다(정란).',beastRoar:'맹수의 포효로 주변 적을 겁먹게 한다(남만).',
+  ironCharge:'철갑 기병의 돌격으로 적의 갑주를 깨뜨린다(개마무사).',halberdSweep:'극을 크게 돌려 십자 다섯 칸을 벤다(극기병).',snare:'올무 함정으로 적을 묶는다(공병).',
+  thunderShot:'불붙은 벽력탄을 쏘아 주변을 불태운다(포차).',chainFist:'끊임없이 이어지는 주먹(무도가).',royalStrike:'군주의 칼이 직접 적을 벤다(군주).',commandStrike:'지휘하며 베어 적의 갑주를 깨뜨린다(도독).',
   bowangFire:'박망파 — 좁은 길로 끌어들인 적을 둘레째 불사른다.',riverDam:'백하의 둑을 터 한 줄의 적을 쓸어 가고 걸음을 늦춘다.',fireShips:'적벽의 화선 — 불붙은 배를 한 줄로 몰아 들이받는다.',
   counterSpy:'반간계 — 적의 첩자를 역으로 써 적 책사의 책략을 봉인한다.',beautyTrap:'미인계 — 적장의 마음을 흔들어 혼란에 빠뜨린다.',lureTiger:'조호이산 — 범을 산에서 끌어내듯 적을 꾀어내 걸음을 늦춘다.',
   burnCamp:'이릉의 연영 화공 — 길게 늘어선 진영을 둘레째 태운다.',rockAmbush:'매복한 병사가 돌을 굴려 한 줄의 적을 치고 포박한다.',selfInjury:'고육계 — 거짓 투항으로 적의 경계를 풀어 받는 피해를 늘린다.',
@@ -195,15 +229,13 @@ export function rangeGrid(cells:Array<{x:number;y:number}>,kind:'cast'|'effect'|
 export function castCells(range:number){const out:Array<{x:number;y:number}>=[];for(let y=-4;y<=4;y++)for(let x=-4;x<=4;x++)if(Math.abs(x)+Math.abs(y)<=range)out.push({x,y});return out;}
 /** 책략을 쓰는 병종: 병종 목록(troops.ts)에 든 병종 + 계통 규칙(책사·풍수사 계열)에 맞는 병종. */
 export function strategyUsers(s:LearnedStrategy):UnitClass[]{
-  const named=Object.entries(troopRoles).filter(([,r])=>r?.spells.includes(s.id)).map(([k])=>k as UnitClass);
-  const fam=(['strategist','fengshui'] as UnitClass[]).flatMap(f=>[f,...(Object.keys(VARIANTS) as UnitClass[]).filter(k=>VARIANTS[k]!.family===f&&VARIANTS[k]!.profile.canUseStrategy)]).filter(k=>!troopRoles[k]&&familyAllows(familyOf(k),s));
-  return [...new Set([...fam,...named])];
+  return codexClasses().filter(k=>classSpellBook(k).includes(s.id));
 }
 const GROUPS:Array<{key:string;name:string;test:(s:LearnedStrategy)=>boolean}>=[
   {key:'fire',name:'불',test:s=>schoolOf(s)==='attack'&&s.element==='fire'},{key:'wind',name:'바람',test:s=>schoolOf(s)==='attack'&&s.element==='wind'},
   {key:'water',name:'물',test:s=>schoolOf(s)==='attack'&&s.element==='water'},{key:'thunder',name:'번개',test:s=>schoolOf(s)==='attack'&&s.element==='thunder'},
   {key:'earth',name:'땅',test:s=>schoolOf(s)==='attack'&&s.element==='earth'},{key:'curse',name:'술법',test:s=>schoolOf(s)==='mind'},
-  {key:'heal',name:'회복',test:s=>schoolOf(s)==='heal'},{key:'buff',name:'고무·지원',test:s=>schoolOf(s)==='buff'}];
+  {key:'heal',name:'회복',test:s=>schoolOf(s)==='heal'},{key:'buff',name:'고무·지원',test:s=>schoolOf(s)==='buff'},{key:'skill',name:'병종 특수기',test:s=>schoolOf(s)==='skill'}];
 function strategiesTab(pick:string,tierPick:StrategyTier=1){
   const list=[...allStrategies].sort((a,b)=>a.level-b.level||a.id.localeCompare(b.id)),s=list.find(x=>x.id===pick)??list[0]!;
   const d=tieredStrategy(s,tierPick),users=strategyUsers(s);

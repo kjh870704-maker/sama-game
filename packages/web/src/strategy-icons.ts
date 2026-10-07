@@ -9,7 +9,7 @@ import {allStrategies,type LearnedStrategy} from './officers.ts';
 const O='stroke="#140c06" stroke-width="1.6" stroke-linejoin="round"';
 type Pal=[string,string,string];
 const PAL:Record<string,Pal>={fire:['#ffd27a','#d4421a','#3b0a02'],wind:['#c8f7dc','#2f9e6e','#0b2e22'],water:['#b8e0ff','#2563eb','#0a1a3d'],thunder:['#f1e4ff','#8b5cf6','#1e0b3d'],
-  earth:['#ecdcae','#8a6a2a','#2a1c08'],curse:['#f6c8ff','#9b2fae','#2a0632'],heal:['#e2ffd0','#3f9a4a','#0c2a10'],buff:['#fff0c0','#c88a1a','#3a2204']};
+  earth:['#ecdcae','#8a6a2a','#2a1c08'],curse:['#f6c8ff','#9b2fae','#2a0632'],heal:['#e2ffd0','#3f9a4a','#0c2a10'],buff:['#fff0c0','#c88a1a','#3a2204'],physical:['#f0e2d0','#a8452e','#2a0c06']};
 export function paletteKey(s:Pick<LearnedStrategy,'element'|'support'>){if(s.support)return s.support==='heal'||s.support==='cleanse'||s.support==='mana'?'heal':'buff';return s.element==='support'?'curse':s.element;}
 
 // ── 그림 조각(64칸 기준)

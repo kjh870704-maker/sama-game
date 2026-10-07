@@ -238,7 +238,7 @@ function bestAction(
   const positions: Coord[] = [unit.pos, ...decodeAll(reach)];
   const usable = unit.strategies
     .map((id) => state.strategyFor(unit, id))
-    .filter((d): d is NonNullable<typeof d> => d !== undefined && d.mpCost <= unit.mp);
+    .filter((d): d is NonNullable<typeof d> => d !== undefined && d.mpCost <= unit.mp && !d.support);
 
   let best: ActionPlan | null = null;
   const consider = (plan: ActionPlan) => {

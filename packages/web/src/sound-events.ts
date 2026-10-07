@@ -25,6 +25,7 @@ export function strategySound(id=''):string{
   if(!s)return 'cast';
   if(s.support)return s.support==='heal'||s.support==='cleanse'?'heal':'buff';
   if(s.element==='support')return 'confuse';
+  if(s.physical)return 'clash';
   if(id==='rockfall')return 'boulder-hit';
   return s.element;
 }

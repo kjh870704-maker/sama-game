@@ -195,7 +195,7 @@ export function computeStrategy(
   map: BattleMap,
   rng: Rng,
 ): DamageResult {
-  const ctx = createDamageContext(caster, target, "strategy");
+  const ctx = strategyContext(caster, target, strategy);
   applyTraitHooks(ctx);
 
   if (ctx.immune) return miss(caster, target, true);
@@ -237,7 +237,24 @@ export function computeStrategy(
  * 지력과 정신이 같으면 지력 × 위력 × 0.6. 빼기식과 달리 지력이 낮아도 0으로 꺾이지 않고,
  * 지력이 오르는 만큼 꾸준히(제곱에 가깝게) 강해진다.
  */
+/**
+ * 책략 한 번의 피해 맥락. 병종 특수 스킬(physical)은 물리 공격처럼 순발력으로 명중을 겨루고 물리 방어 특성을 받는다.
+ * 다만 기본 공격 사거리 밖의 칸을 쳐도 감쇠하지 않는다(스킬 사거리로 이미 정해져 있다).
+ */
+function strategyContext(caster: Unit, target: Unit, strategy: StrategyDef): DamageContext {
+  if (!strategy.physical) return createDamageContext(caster, target, "strategy");
+  const ctx = createDamageContext(caster, target, "physical");
+  const reach = reachMul(caster, target.pos);
+  if (reach > 0) ctx.attackMul /= reach;
+  return ctx;
+}
+
 export function strategyBase(caster: Unit, target: Unit, strategy: StrategyDef, attackMul = 1): number {
+  if (strategy.physical) {
+    if (caster.ccRules) return Math.max(1, ccPhysicalBase(caster, target, 1, 1, attackMul) * (strategy.power / 100));
+    const atk = Math.max(1, caster.stats.attack), def = Math.max(1, target.stats.defense);
+    return Math.max(MIN_DAMAGE, atk * (strategy.power / 100) * attackMul * 1.2 * atk / (atk + def));
+  }
   if (caster.ccRules) return ccStrategyBase(caster, target, strategy.power, attackMul);
   // 옛 규칙 전투(저장 재생)는 예전 빼기식 그대로.
   if (!caster.classTactics) return Math.max(MIN_DAMAGE, caster.stats.intellect * (strategy.power / 100) * attackMul - target.stats.spirit * 0.5);
@@ -271,6 +288,7 @@ function elementalMultiplier(strategy: StrategyDef, map: BattleMap, target: Unit
     case "wind":
       return 1.0; // 지형 무관 — 범용 딜링 계열 (사마의 주력)
     case "support":
+    case "physical":
       return 1.0;
   }
 }
@@ -323,7 +341,7 @@ export function estimateStrategy(
   strategy: StrategyDef,
   map: BattleMap,
 ): number {
-  const ctx = createDamageContext(caster, target, "strategy");
+  const ctx = strategyContext(caster, target, strategy);
   applyTraitHooks(ctx);
   if (ctx.immune) return 0;
 

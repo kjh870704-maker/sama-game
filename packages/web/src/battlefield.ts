@@ -535,7 +535,7 @@ export class Battlefield {
     this.emote(actor.unit.pos,tactic?{text:tactic+'!',color:0xd9a43a,shape:'burst'}:e.t==='counter'?reactions.counter!:cryFor(actor.unit.unitClass,e.t==='strategy',e.t==='strategy'?e.strategy:''));
     // 겨눔 표시와(책략은) 발밑 마법진
     void this.fx.targetMark(to,e.t==='strategy'?760:520);
-    const el:Element|undefined=e.t==='strategy'?(e.strategy==='heal'||e.strategy==='calm'||e.strategy==='repair'||e.damage.some(d=>d<0)||(this.state?.strategies.get(e.strategy)?.targetSides.includes('player')&&!this.state?.strategies.get(e.strategy)?.targetSides.includes('enemy'))?'heal':(this.state?.strategies.get(e.strategy)?.element as Element|undefined)??'support'):undefined;
+    const el:Element|undefined=e.t==='strategy'?(e.strategy==='heal'||e.strategy==='calm'||e.strategy==='repair'||e.damage.some(d=>d<0)||(this.state?.strategies.get(e.strategy)?.targetSides.includes('player')&&!this.state?.strategies.get(e.strategy)?.targetSides.includes('enemy'))?'heal':((el0=>el0==='physical'?'earth':el0)(this.state?.strategies.get(e.strategy)?.element) as Element|undefined)??'support'):undefined;
     if(el)void this.fx.castCircle(from,{fire:0xff8a3a,water:0x6ab8ff,wind:0x8fdf9a,thunder:0xfff06a,earth:0xd8b878,support:0xc080ff,heal:0x9affb0}[el]);
     if(officer)await this.officerFocus(actor,epoch,e.t==='strategy'||ranged);
     if(epoch!==this.animationEpoch)return;

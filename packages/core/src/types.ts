@@ -92,7 +92,7 @@ export const COUNTS_AS_ALLY_LOSS: ReadonlySet<Side> = new Set<Side>(["player", "
 
 // ─────────────────────────────────────────────────────────── 책략
 
-export type StrategyElement = "wind" | "fire" | "water" | "thunder" | "earth" | "support";
+export type StrategyElement = "wind" | "fire" | "water" | "thunder" | "earth" | "support" | "physical";
 export type StrategyShape = "single" | "cross" | "spread" | "line" | "global";
 
 export interface StrategyDef {
@@ -116,6 +116,10 @@ export interface StrategyDef {
   readonly learnLevel?: number;
   /** 진화 단계(진화된 정의에만 붙는다) */
   readonly tier?: 1 | 2 | 3;
+  /** 병종 특수 스킬: 지력 대신 공격력으로 피해를 낸다(명중은 순발력, 받는 쪽은 물리 방어). */
+  readonly physical?: boolean;
+  /** 아군 지원 책략(회복·고무 등). 적 AI는 이런 책략을 공격에 쓰지 않는다. */
+  readonly support?: string;
 }
 
 // ─────────────────────────────────────────────────────────── 상태이상

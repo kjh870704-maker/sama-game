@@ -24,6 +24,22 @@ export function strategyTierLevel(def: StrategyDef, tier: StrategyTier): number 
   return tier === 1 ? base : base + STRATEGY_TIER_STEPS[tier - 2]!;
 }
 
+/**
+ * 책략 범위 상한: 넓게 쓸어 버리는 책략이 없도록 모양마다 크기를 묶는다.
+ * 주변·십자는 반경 1(5칸), 직선은 3칸, 시전 사거리는 한 부대 5 · 범위 책략 4. 전 맵(global) 책략은 그대로.
+ */
+export const MAX_SINGLE_RANGE = 5;
+export const MAX_AREA_RANGE = 4;
+export function capArea<T extends StrategyDef>(def: T): T {
+  if (def.shape === "global") return def;
+  const radius = def.shape === "line" ? Math.min(def.radius, 2) : def.shape === "single" ? 0 : Math.min(def.radius, 1);
+  const range = Math.min(def.range, def.shape === "single" ? MAX_SINGLE_RANGE : MAX_AREA_RANGE);
+  if (radius === def.radius && range === def.range) return def;
+  // 범위를 줄인 만큼 위력을 조금 올려 준다(반경 한 칸 줄 때마다 +15%).
+  const shrunk = def.radius - radius;
+  return { ...def, radius, range, power: shrunk > 0 ? Math.round(def.power * (1 + 0.15 * shrunk)) : def.power };
+}
+
 const cache = new Map<string, StrategyDef>();
 /** 단계를 적용한 정의. 1단이면 원래 정의를 그대로 돌려준다. */
 export function tieredStrategy<T extends StrategyDef>(def: T, tier: StrategyTier): T {
@@ -32,14 +48,13 @@ export function tieredStrategy<T extends StrategyDef>(def: T, tier: StrategyTier
   const hit = cache.get(k);
   if (hit) return hit as T;
   const i = tier - 1;
-  const wide = tier === 3 && (def.shape === "spread" || def.shape === "cross" || def.shape === "line");
+  // 3단에서도 효과 범위는 넓히지 않는다(capArea 상한 유지). 한 부대 책략만 사거리가 한 칸 늘어난다(최대 5).
   const out = {
     ...def,
     tier,
     power: Math.round(def.power * POWER[i]!),
     mpCost: Math.ceil(def.mpCost * COST[i]!),
-    radius: wide ? def.radius + 1 : def.radius,
-    range: tier === 3 && !wide ? def.range + 1 : def.range,
+    range: tier === 3 && def.shape === "single" && !def.physical ? Math.max(def.range, Math.min(MAX_SINGLE_RANGE, def.range + 1)) : def.range,
   } as T;
   cache.set(k, out);
   return out;
