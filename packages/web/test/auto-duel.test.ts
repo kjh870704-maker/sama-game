@@ -13,7 +13,7 @@ describe('연의 맞수의 자동 일기토·설전',()=>{
   expect(s.act({kind:'wait',unit:other.id}).ok).toBe(true);
   expect(s.activeDuel?.kind).toBe('debate');expect(s.activeDuel?.auto).toBe(true);
   expect(s.act({kind:'move',unit:me.id,to:{x:me.pos.x,y:me.pos.y+1}}).ok).toBe(false);
-  for(let i=0;i<5;i++)expect(s.act({kind:'item',unit:me.id,item:'duel-round:attack'}).ok).toBe(true);
+  for(let i=0;i<5&&s.activeDuel;i++)expect(s.act({kind:'item',unit:me.id,item:'duel-round:attack'}).ok).toBe(true);
   expect(s.activeDuel).toBeNull();expect(me.hasActed).toBe(false);
   const d=s.lastDuel!;if(d.result!=='draw'){const loser=d.result==='win'?foe:me;for(const k of DUEL_LOSS_DEBUFF.debate)expect(loser.statuses.some(x=>x.kind===k),k).toBe(true);}
   // 같은 짝은 다시 열리지 않는다

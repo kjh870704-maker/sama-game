@@ -12,26 +12,29 @@ export function duelLine(kind:DuelKind,action:DuelAction){return (kind==='debate
  attack:'그 주장은 앞뒤가 맞지 않소.',guard:'근거부터 차근차근 살펴봅시다.',rally:'논점을 정리할 시간이 필요하오.',special:'이 증거로 결론을 내리겠소!',
  }:{attack:'빈틈을 보였구나!',guard:'그 일격, 받아내겠다.',rally:'아직 승부는 끝나지 않았다!',special:'이 일격에 승부를 건다!'} as Record<DuelAction,string>)[action];}
 export function newDuel(kind:DuelKind,a:{id:string;name:string;stat:number},b:{id:string;name:string;stat:number}):DuelState{
-  const fighter=(u:typeof a):DuelFighter=>({...u,hp:160,maxHp:160,energy:0});
+  const fighter=(u:typeof a):DuelFighter=>({...u,hp:DUEL_HP,maxHp:DUEL_HP,energy:0});
   return {kind,round:0,player:fighter(a),enemy:fighter(b),history:[]};
+}
+/** 대결 체력: 능력치 100짜리가 세 번 제대로 치면 쓰러진다. */
+export const DUEL_HP=300;
+/**
+ * 한 합의 피해. 능력치가 곧 피해다 — 일기토는 무력, 설전은 지력(레벨 포함)을 그대로 준다.
+ * 필살기(논파)는 ×1.5, 기합(논거)이 쌓일수록 +10%씩, 상대가 막으면(반론) 35%만 들어간다.
+ */
+export function duelDamage(stat:number,move:DuelAction,defend:DuelAction,energy=0){
+  if(move==='guard'||move==='rally')return 0;
+  return Math.max(1,Math.round(stat*(move==='special'?1.5:1)*(1+energy*.1)*(defend==='guard'?.35:1)));
 }
 export function duelRound(s:DuelState,action:DuelAction){
   if(s.result||s.round>=5)return false;
   if(!Object.hasOwn(actionNames,action)||action==='special'&&s.player.energy<2)return false;
   const enemyAction:DuelAction=s.enemy.energy>=2?'special':(['attack','rally','guard','attack','attack'] as const)[(s.round+s.enemy.stat%3)%5]!;
-  const damage=(a:DuelFighter,b:DuelFighter,move:DuelAction,defend:DuelAction)=>{
-    if(move==='guard'||move==='rally'||a.hp<=0)return 0;
-    // 능력치 중심: 일기토는 무력, 설전은 지력이 곧 피해다. 같은 능력이면 한 합에 능력의 ¼쯤,
-    // 상대보다 높을수록 (비율^0.9)만큼 더 세진다 — 무력 100이 60을 치면 약 39, 60이 100을 치면 약 9.
-    const ratio=Math.max(.35,Math.min(2.6,a.stat/Math.max(1,b.stat)));
-    const base=Math.max(4,a.stat*.25*ratio**.9);
-    return Math.round(base*(move==='special'?1.8:1)*(1+a.energy*.12)*(defend==='guard'?.35:1));
-  };
-  const dealt=damage(s.player,s.enemy,action,enemyAction),taken=damage(s.enemy,s.player,enemyAction,action);
+  const dealt=duelDamage(s.player.stat,action,enemyAction,s.player.energy),taken=duelDamage(s.enemy.stat,enemyAction,action,s.enemy.energy);
   s.player.hp=Math.max(0,s.player.hp-taken);s.enemy.hp=Math.max(0,s.enemy.hp-dealt);
   for(const [u,move] of [[s.player,action],[s.enemy,enemyAction]] as const){if(move==='rally')u.energy=Math.min(3,u.energy+2);else if(move==='special')u.energy-=2;else if(move==='guard')u.energy=Math.min(3,u.energy+1);}
   s.round++;s.history.push({round:s.round,action,enemyAction,dealt,taken});
-  if(s.round===5)s.result=s.player.hp>s.enemy.hp?'win':s.player.hp<s.enemy.hp?'lose':'draw';
+  // 한쪽이 쓰러지면 그 자리에서 끝난다(둘 다 쓰러지면 남은 체력이 같으니 무승부).
+  if(s.round===5||s.player.hp<=0||s.enemy.hp<=0)s.result=s.player.hp>s.enemy.hp?'win':s.player.hp<s.enemy.hp?'lose':'draw';
   return true;
 }
 

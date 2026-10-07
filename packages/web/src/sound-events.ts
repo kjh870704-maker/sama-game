@@ -14,6 +14,8 @@ export interface SoundEvent {
   heavy?:boolean|undefined;
   structure?:boolean|undefined;
   pan?:number|undefined;
+  /** 설전(먹·종이 소리) */
+  debate?:boolean|undefined;
 }
 export interface SoundShot {name:string;delay?:number;gain?:number;rate?:number;wet?:number;duck?:boolean;priority?:number}
 
@@ -96,7 +98,10 @@ export function soundsFor(e:SoundEvent,r:()=>number=Math.random):SoundShot[]{
     // A costly win: no fanfare or cheering, only the gong and a low lament.
     case 'somber':shots.push({name:'gong',priority:2,duck:true,rate:.85},{name:'lament',delay:.8,gain:.45});break;
     case 'defeat':shots.push({name:'lament',priority:2,duck:true},{name:'gong',rate:.75,gain:.6,delay:1.2});break;
-    case 'duel':shots.push({name:'clash',priority:2},{name:'shout',gain:.6,delay:.04});if(e.critical)shots.push({name:'cheer',gain:.5,delay:.3});break;
+    case 'duel':
+      if(e.debate){shots.push({name:'page',priority:2},{name:'taiko-small',gain:.8,delay:.16});if(e.critical)shots.push({name:'gong',gain:.6,delay:.2},{name:'cheer',gain:.4,delay:.45});}
+      else{shots.push({name:'clash',priority:2},{name:'shout',gain:.6,delay:.04});if(e.critical)shots.push({name:'clash',gain:.8,delay:.24,rate:.8},{name:'cheer',gain:.5,delay:.4});}
+      break;
     case 'ui':shots.push({name:'ui-click',gain:.6,priority:2});break;
     case 'ui-open':shots.push({name:'ui-open',gain:.6,priority:2});break;
     case 'page':shots.push({name:'page',gain:.6,priority:2});break;

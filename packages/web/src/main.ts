@@ -522,13 +522,13 @@ function showDuel(){
   if(d.round===0&&!d.history.length&&duelSplashSeen!==d){
     modal(duelSplash(d,session.lastAccept?.line,!!session.lastAccept?.historic),false);
     document.querySelectorAll<HTMLElement>('[data-vs-model]').forEach(el=>el.innerHTML=el.dataset.vsModel==='enemy'?models.enemy:models.player);
-    sound.event({kind:'duel',critical:true});
+    sound.event({kind:'duel',critical:true,debate:d.kind==='debate'});
     const go=()=>{if(duelSplashSeen===d)return;duelSplashSeen=d;showDuel();};
     $('.vs-go').addEventListener('click',go);setTimeout(go,2600);return;
   }
   const indoor=session.state.map.tileAt(a.pos).terrain==='fort'||/궁|부$|청|막/.test(session.state.stage.subtitle??'');
   modal(duelArena(d,{models,backdrop:duelBackdrop(d.kind,session.state.stage.id+d.enemy.id,indoor),...(session.lastAccept?.line?{openingLine:session.lastAccept.line}:{})}),false);
-  document.querySelectorAll<HTMLButtonElement>('[data-duel-action]').forEach(el=>el.onclick=()=>{sound.event({kind:'duel',critical:el.dataset.duelAction==='special'});act({kind:'item',unit:d.player.id,item:'duel-round:'+el.dataset.duelAction});});
+  document.querySelectorAll<HTMLButtonElement>('[data-duel-action]').forEach(el=>el.onclick=()=>{sound.event({kind:'duel',critical:el.dataset.duelAction==='special',debate:d.kind==='debate'});act({kind:'item',unit:d.player.id,item:'duel-round:'+el.dataset.duelAction});});
   $('#duel-return')?.addEventListener('click',()=>{duelPresented=true;$<HTMLDialogElement>('#modal').close();render();pump();});
 }
 function checkModal(){

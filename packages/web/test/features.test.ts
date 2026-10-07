@@ -1,6 +1,6 @@
 import {romance,temperOf} from '../src/romance.ts';
 import {describe,it,expect,vi} from 'vitest';
-import {newDuel,duelRound,duelResponse,type DuelAction} from '../src/duel.ts';
+import {newDuel,duelRound,duelResponse,type DuelAction,duelDamage} from '../src/duel.ts';
 import {Session,chapters} from '../src/session.ts';
 import {freshCampaign,award,equipSlot,equippedItems,deployment,readCampaign,writeCampaign} from '../src/progression.ts';
 import {availableStrategies} from '../src/officers.ts';
@@ -62,9 +62,13 @@ describe('equipment, traits, spells and castle siege',()=>{
 describe('duel damage is stat-centric',()=>{
  it('scales strongly with 무력/지력 and favours the stronger side',()=>{
   const hit=(a:number,b:number,kind:'duel'|'debate'='duel')=>{const d=newDuel(kind,{id:'a',name:'갑',stat:a},{id:'b',name:'을',stat:b});duelRound(d,'attack');return d.history[0]!;};
-  expect(hit(100,60).dealt).toBeGreaterThan(hit(60,60).dealt*1.4);
-  expect(hit(60,100).dealt).toBeLessThan(hit(60,60).dealt*.7);
-  expect(hit(96,70,'debate').dealt).toBeGreaterThan(hit(70,96,'debate').dealt*1.8);
+  // 능력치가 곧 피해: 일기토는 무력, 설전은 지력 그대로.
+  expect(hit(100,60).dealt).toBe(100);expect(hit(60,100).dealt).toBe(60);
+  expect(hit(96,70,'debate').dealt).toBe(96);expect(hit(70,96,'debate').dealt).toBe(70);
+  expect(duelDamage(80,'special','attack')).toBe(120);expect(duelDamage(80,'attack','guard')).toBe(28);expect(duelDamage(80,'attack','attack',2)).toBe(96);
+  // 무력 100이 계속 치면 3합에 쓰러지고 그 자리에서 끝난다.
+  const d=newDuel('duel',{id:'a',name:'갑',stat:100},{id:'b',name:'을',stat:30});d.enemy.stat=30;
+  while(!d.result)duelRound(d,'attack');expect(d.result).toBe('win');expect(d.round).toBeLessThan(5);
  });
 });
 describe('사마의 starts as a strategist',()=>{

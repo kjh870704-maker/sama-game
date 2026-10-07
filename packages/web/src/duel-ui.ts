@@ -30,8 +30,8 @@ const ICON:Record<'duel'|'debate',Record<DuelAction,string>>={
 };
 const icon=(kind:'duel'|'debate',a:DuelAction)=>`<svg viewBox="0 0 64 64" aria-hidden="true" class="duel-ico">${ICON[kind][a]}</svg>`;
 const HELP:Record<'duel'|'debate',Record<DuelAction,string>>={
-  duel:{attack:'무력만큼 벤다',guard:'피해 65% 감소 · 기합 +1',rally:'기합 +2',special:'기합 2 · 피해 ×1.8'},
-  debate:{attack:'지력만큼 논박',guard:'피해 65% 감소 · 논거 +1',rally:'논거 +2',special:'논거 2 · 피해 ×1.8'},
+  duel:{attack:'무력 = 피해',guard:'피해 65% 감소 · 기합 +1',rally:'기합 +2 (피해 +10%씩)',special:'기합 2 · 무력 ×1.5'},
+  debate:{attack:'지력 = 피해',guard:'피해 65% 감소 · 논거 +1',rally:'논거 +2 (피해 +10%씩)',special:'논거 2 · 지력 ×1.5'},
 };
 /** 대결 장소(옆에서 본 배경): 일기토는 들·산길·진영, 설전은 대청·서재·군막. */
 export function duelBackdrop(kind:'duel'|'debate',seed:string,indoor=false){
@@ -59,6 +59,23 @@ export function duelSplash(d:DuelState,acceptLine?:string,historic=false){
 function inkLine(name:string,line:string,pos:'top'|'bottom'){
   return `<div class="duel-talk ${pos}"><div class="duel-talk-face">${face(name)}</div><div class="duel-talk-body"><b>${esc(displayName(name))}</b><p>${esc(line)}</p></div></div>`;
 }
+/**
+ * 한 사람에게 들어온 한 합의 연출. incoming: 상대의 수, own: 내 수, dmg: 받은 피해, stat: 상대의 무력(지력).
+ * 피해 숫자 아래에 「무력 87」처럼 피해가 어디서 왔는지 적는다.
+ */
+export function hitFx(kind:DuelKind,incoming:DuelAction,own:DuelAction,dmg:number,stat:number){
+  const fx:string[]=[];
+  if(own==='rally')fx.push(`<i class="fx fx-aura ${kind}"></i>`);
+  if(dmg>0){
+    const big=incoming==='special',guarded=own==='guard';
+    if(kind==='duel')fx.push(`<i class="fx fx-slash${big?' big':''}"></i>`,big?'<i class="fx fx-slash cross big"></i>':'','<i class="fx fx-spark"></i>');
+    else fx.push(`<i class="fx fx-ink${big?' big':''}"></i>`,'<i class="fx fx-ring"></i>',`<b class="fx-word${big?' big':''}">${big?'논파!':'논박!'}</b>`);
+    if(big&&kind==='duel')fx.push('<b class="fx-word duel big">필살!</b>');
+    if(guarded)fx.push(`<b class="fx-guard">${kind==='duel'?'막았다':'반론'}</b>`);
+    fx.push(`<b class="damage-number${big?' crit':''}${guarded?' guarded':''}">−${dmg}<small>${kind==='duel'?'무력':'지력'} ${stat}${big?' ×1.5':''}${guarded?' · 방어':''}</small></b>`);
+  }else if(own==='guard'&&(incoming==='attack'||incoming==='special'))fx.push(`<b class="fx-guard">${kind==='duel'?'막았다':'반론'}</b>`);
+  return fx.filter(Boolean).join('');
+}
 /** 2) 겨루기 화면. models: 두 사람의 전장 그림(HTML). */
 export function duelArena(d:DuelState,o:{models:{player:string;enemy:string};backdrop:string;openingLine?:string}){
   const labels=duelActionNames(d.kind),last=d.history.at(-1),energy=d.kind==='debate'?'논거':'기합';
@@ -71,12 +88,15 @@ export function duelArena(d:DuelState,o:{models:{player:string;enemy:string};bac
   const actions=(Object.keys(labels) as DuelAction[]).map(a=>{const off=a==='special'&&d.player.energy<2;
     return `<button type="button" class="duel-act${off?' off':''}" data-duel-action="${a}" ${off||d.result?'disabled':''}>${icon(d.kind,a)}<b>${labels[a]}</b><small>${HELP[d.kind][a]}</small></button>`;}).join('');
   const result=d.result?`<div class="duel-result ${d.result}"><span>${d.result==='win'?'승리':d.result==='lose'?'패배':'무승부'}</span><p>${d.result==='win'?'승리':d.result==='lose'?'패배':'무승부'} · 전투 체력: 승자 15% · 패자 45% · 무승부 양쪽 25% 피해(최소 1). 패자는 2턴 ${d.kind==='duel'?'쇠약·둔화':'혼란·책략 봉인'}.</p><button id="duel-return" class="primary">전장으로 돌아가기</button></div>`:'';
+  // 타격 연출: 맞은 쪽에 베기·불꽃(일기토) 또는 먹물·글자 충격파(설전), 막으면 방패 번쩍임, 필살기는 화면 번쩍임·크게 흔들림.
+  const special=!!last&&((last.action==='special'&&last.dealt>0)||(last.enemyAction==='special'&&last.taken>0));
+  const shake=!last?'':special?' shake-big':last.dealt||last.taken?' shake':'';
   return `<div class="duel-stage portraits ${d.kind}">
-    <div class="duel-view" style="${o.backdrop}">
+    <div class="duel-view${shake}" style="${o.backdrop}">${special?`<i class="duel-flash ${d.kind}"></i>`:''}
       <div class="duel-sun"></div>
       <div class="duel-ground">
-        <div class="duel-fighter player motion-${last?.action??'idle'}${last?.taken?' hit':''}">${hp(d.player,'left')}${o.models.player}${last?.taken?`<b class="damage-number">−${last.taken}</b>`:''}</div>
-        <div class="duel-fighter enemy motion-${last?.enemyAction??'idle'}${last?.dealt?' hit':''}">${hp(d.enemy,'right')}${o.models.enemy}${last?.dealt?`<b class="damage-number">−${last.dealt}</b>`:''}</div>
+        <div class="duel-fighter player motion-${last?.action??'idle'}${last?.taken?' hit':''}">${hp(d.player,'left')}${o.models.player}${last?hitFx(d.kind,last.enemyAction,last.action,last.taken,d.enemy.stat):''}</div>
+        <div class="duel-fighter enemy motion-${last?.enemyAction??'idle'}${last?.dealt?' hit':''}">${hp(d.enemy,'right')}${o.models.enemy}${last?hitFx(d.kind,last.action,last.enemyAction,last.dealt,d.player.stat):''}</div>
       </div>
       ${inkLine(d.player.name,pLine,'top')}${inkLine(d.enemy.name,eLine,'bottom')}
       ${result}
