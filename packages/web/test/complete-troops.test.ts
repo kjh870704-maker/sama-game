@@ -18,7 +18,7 @@ describe('새 화풍 전체 병종 원화',()=>{
     expect(completeTroopSheets).toHaveLength(37);
     for(const sheet of completeTroopSheets){
       expect(sheet.rows).toBe(4);
-      expect(sheet.url).toMatch(/^troops-four-stage-[a-z-]+-v1\.webp$/);
+      expect(sheet.url).toMatch(/^troops-four-stage-[a-z-]+-v[12]\.(?:webp|png)$/);
       const loaded=paintedTroopSheets.find(x=>x.id===sheet.id);
       expect(loaded?.frames).toBe(POSE);
       expect(loaded).toHaveProperty('union',true);
@@ -28,6 +28,7 @@ describe('새 화풍 전체 병종 원화',()=>{
     expect(Object.values(fourStageCorrectionRows).flat()).toContain('divineStrategist');
     expect(Object.values(fourStageCorrectionRows).flat()).toContain('sonOfHeaven');
     expect(completeTroopArt.civilian).toEqual({sheet:'four-stage-civilian',row:0,rows:4});
+    expect(completeTroopSheets.find(x=>x.id==='four-stage-fengshui')?.url).toBe('troops-four-stage-fengshui-v2.png');
   });
 
   it('보병 계열은 기본부터 전설까지 새 화풍의 정확한 4단계 행을 쓴다',()=>{

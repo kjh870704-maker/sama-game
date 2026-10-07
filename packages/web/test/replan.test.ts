@@ -15,9 +15,12 @@ describe('replanned campaign scenarios',()=>{
     const s=new Session(2);
     expect(s.act({kind:'attack',unit:'sima_yi',target:'raider_n'}).ok).toBe(false);
     move(s,'sima_yi',4,5);expect(s.state.captured.has('warehouse')).toBe(true);
-    move(s,'refugee_b',4,4);expect(s.state.get('refugee_b').unitClass).toBe('infantry');
+    for(let i=0;i<5&&!['refugee_a','refugee_b'].some(id=>s.state.get(id).unitClass==='infantry');i++)nextTurn(s);
+    const trained=['refugee_a','refugee_b'].map(id=>s.state.get(id)).find(u=>u.unitClass==='infantry');
+    expect(trained,JSON.stringify(['refugee_a','refugee_b'].map(id=>({id,pos:s.state.get(id).pos,alive:s.state.get(id).alive})))).toMatchObject({side:'allyAi',behavior:'advance'});
     expect(Session.load(s.save()).state.snapshot()).toEqual(s.state.snapshot());
-    expect(s.undo()).toBe(true);expect(s.state.get('refugee_b').unitClass).toBe('civilian');
+    while(['refugee_a','refugee_b'].some(id=>s.state.get(id).unitClass==='infantry')&&s.undo()){}
+    expect(['refugee_a','refugee_b'].every(id=>s.state.get(id).unitClass==='civilian')).toBe(true);
     expect(s.state.captured.has('warehouse')).toBe(true);
   });
   it('consumes scout action and restores its information on undo',()=>{
@@ -75,7 +78,7 @@ describe('replanned campaign scenarios',()=>{
     expect(restored.state.captured.has('warehouse')).toBe(false);
   });
   it.each([false,true,'newRules'] as const)('completes the estate defense with a noncombat protagonist (campaign=%s)',campaign=>{
-    const s=new Session(2,'normal',215,'survival',campaign==='newRules'?4:3,campaign?deployment(freshCampaign()):undefined);move(s,'sima_yi',4,5);move(s,'refugee_b',4,4);
+    const s=new Session(2,'normal',215,'survival',campaign==='newRules'?4:3,campaign?deployment(freshCampaign()):undefined);move(s,'sima_yi',4,5);nextTurn(s);
     for(let i=0;i<600&&s.state.outcome==='ongoing';i++){
       if(CONTROLLABLE.has(s.state.currentSide)){
         const u=s.state.living(s.state.currentSide).find(u=>!u.hasActed);

@@ -4,7 +4,8 @@ import {newDuel,duelRound,duelResponse,type DuelAction} from '../src/duel.ts';
 import {Session,chapters} from '../src/session.ts';
 import {freshCampaign,award,equipSlot,equippedItems,deployment,readCampaign,writeCampaign} from '../src/progression.ts';
 import {availableStrategies} from '../src/officers.ts';
-import {estimatePhysical,decide} from '../../core/src/index.ts';
+import {estimatePhysical,decide,CONTROLLABLE} from '../../core/src/index.ts';
+import {dyeOfSide} from '../src/dye.ts';
 const duel=(stat=60)=>newDuel('duel',{id:'a',name:'아군',stat},{id:'b',name:'적군',stat:60});
 describe('five round duels and debates',()=>{
  it('requires energy, rejects invalid moves, and ends exactly on the fifth choice',()=>{const d=duel();expect(duelRound(d,'special')).toBe(false);expect(d.round).toBe(0);for(const a of ['rally','special','guard','attack','attack'] as DuelAction[])expect(duelRound(d,a)).toBe(true);expect(d.round).toBe(5);expect(d.result).toBeDefined();expect(duelRound(d,'attack')).toBe(false);expect(d.history).toHaveLength(5);});
@@ -70,5 +71,11 @@ describe('사마의 starts as a strategist',()=>{
  it('is a 책사 in chapter 2 with a basic attack and level-1 strategy',()=>{
   const s=new Session(2,'normal',11,'survival',4),u=s.state.get('sima_yi');
   expect(u.unitClass).not.toBe('civilian');expect(u.range[1]).toBeGreaterThanOrEqual(1);expect(u.strategies).toContain('fire');
+ });
+});
+describe('사마가 수비전 피난민',()=>{
+ it('spawns both civilians as autonomous green NPC allies',()=>{
+  const s=new Session(2,'normal',215,'survival',4),refugees=['refugee_a','refugee_b'].map(id=>s.state.get(id));
+  for(const u of refugees){expect(u.side).toBe('allyAi');expect(CONTROLLABLE.has(u.side)).toBe(false);expect(u).toMatchObject({behavior:'escortee',goalRegion:'militia'});expect(dyeOfSide(u.side)).toBe('green');expect(decide(s.state,u).length).toBeGreaterThan(0);}
  });
 });

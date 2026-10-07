@@ -94,13 +94,15 @@
       "actions": [
         {
           "type": "spawn_units",
-          "side": "player",
+          "side": "allyAi",
           "units": [
             {
               "id": "refugee_a",
               "name": "동문 피난민",
               "template": "civilian",
               "level": 12,
+              "behavior": "escortee",
+              "goalRegion": "militia",
               "at": {
                 "x": 10,
                 "y": 5
@@ -111,6 +113,8 @@
               "name": "북문 피난민",
               "template": "civilian",
               "level": 12,
+              "behavior": "escortee",
+              "goalRegion": "militia",
               "at": {
                 "x": 7,
                 "y": 3

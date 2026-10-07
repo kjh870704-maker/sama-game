@@ -45,7 +45,8 @@ export const fourStageCorrectionRows = {
 
 const sheet = (id:string)=>({
   id,
-  url:`troops-${id}-v1.webp`,
+  // 풍수사는 책사의 관복·깃털부채와 겹치지 않는 나침반·팔괘 지팡이 전용 시트다.
+  url:id==='four-stage-fengshui'?'troops-four-stage-fengshui-v2.png':`troops-${id}-v1.webp`,
   rows:4,
   // 투명 배경의 미세한 가장자리는 살리되 이웃 칸의 실루엣은 합치지 않는다.
   alphaCutoff:240,

@@ -70,6 +70,15 @@ describe("스테이지 검증", () => {
     const stage = JSON.parse(readFileSync(join(DATA, "stages/S1-08.json"), "utf8")) as StageDef;
     expect(validateStage(stage)).toEqual([]);
   });
+
+  it("S1-01 피난민은 녹색 자동 우군으로 생성된다", () => {
+    const stage = JSON.parse(readFileSync(join(DATA, "stages/S1-01.json"), "utf8")) as StageDef;
+    const spawn = stage.events?.flatMap((event) => event.actions)
+      .find((action) => action.type === "spawn_units" && action.units?.some((unit) => unit.id === "refugee_a"));
+    expect(spawn?.side).toBe("allyAi");
+    expect(spawn?.units?.filter((unit) => unit.id?.startsWith("refugee_")).map((unit) => [unit.behavior, unit.goalRegion]))
+      .toEqual([["escortee", "militia"], ["escortee", "militia"]]);
+  });
 });
 
 describe("맵 로더", () => {

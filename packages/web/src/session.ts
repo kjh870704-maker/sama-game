@@ -461,9 +461,10 @@ export class Session {
       if(s.map.regionCoords('warehouse').some(p=>key(p)===key(hero.pos)))s.captured.set('warehouse','player');
       if(s.captured.has('warehouse')){
         this.phase='민중 무장 · 습격대 격퇴';
-        for(const u of s.living('player'))if(u.id.startsWith('refugee_')&&u.unitClass==='civilian'&&manhattan(hero.pos,u.pos)<=1){
-          const trained=makeUnit({id:u.id,name:u.name,side:'player',unitClass:'infantry',level:u.level,pos:u.pos});
+        for(const u of s.living('allyAi'))if(u.id.startsWith('refugee_')&&u.unitClass==='civilian'&&manhattan(hero.pos,u.pos)<=1){
+          const trained=makeUnit({id:u.id,name:u.name,side:'allyAi',unitClass:'infantry',level:u.level,pos:u.pos,behavior:'advance'});
           const ratio=u.hp/u.stats.maxHp;u.unitClass='infantry';u.stats=trained.stats;u.hp=Math.ceil(u.stats.maxHp*ratio);u.range=trained.range;
+          u.behavior='advance';delete u.goalRegion;
           s.captured.set('militia','player');
         }
       }
