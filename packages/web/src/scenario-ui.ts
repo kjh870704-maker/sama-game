@@ -2,7 +2,7 @@
  * 시나리오 모드 화면: 장 선택 → 이야기 무대(선택) → 출진 전 정비(반드시) → 전투 → 전투 뒤 장면 → 다음 장.
  * 규칙은 scenario.ts, 무대 연출은 story-stage.ts. 연의 장의 정비·전투·보상은 main.ts의 기존 흐름을 쓴다.
  */
-import {loadScenario,saveScenario,scenarioPath,winOver,currentStep,scriptOf,choose,finishStep,fateChoices,floorFor,scenarioParty,rewardOfficers,endingNotes,routeTales,COMPANIONS,
+import {loadScenario,saveScenario,scenarioPath,winOver,currentStep,scriptOf,choose,undoChoice,finishStep,fateChoices,floorFor,scenarioParty,rewardOfficers,endingNotes,routeTales,COMPANIONS,
   ensureRun,newScenarioRun,inWhatIf,joinCaptive,pendingMarch,marchNodes,recruitOffer,relicOffer,recruitOfficer,healAll,finishMarch,marchFloor,afterFight,loseFight,runMandate,omenOffer,omenOf,chooseOmen,omenReward,addRunBonus,type ScenarioState,type ScenarioStep,type MarchNode} from './scenario.ts';
 import {playScenes,playNarration,Stage} from './story-stage.ts';
 import {startPersuasion,speak,reaction,PITCH,GREETING,AGREE,REFUSE,APPROACH_NAMES,PERSUADE_GOAL,type Approach} from './persuade.ts';
@@ -154,7 +154,7 @@ function detailRows(step:ScenarioStep,state:ScenarioState,heroLevel:number){
     const t=treasures.filter(x=>x.stage===step.stage);if(t.length)rows.push(['보물',t.map(x=>x.name).join(' · ')]);}
   if(step.kind==='tale'||step.kind==='boss'){const r=routeById(step.route)!,foe=step.kind==='boss'?r.region.boss:step.tale!.target;
     rows.push(['적장',`${foe.name} (${classNames[foe.unitClass]??foe.unitClass})${romanceStats(foe.name)?' · '+romanceStats(foe.name):''}`],['지역',r.region.name],['승리 조건',`${foe.name} 격퇴 · 사마의 생존`],['적 수준',`Lv.${enemyBase(state,heroLevel,step)} 안팎`]);}
-  if(step.kind==='fate'){rows.push(['고를 수 있는 길',fateChoices(state,step.id).map(r=>`${r.history?'[정사]':r.custom?'[신세력]':'[가상]'} ${r.choice}`).join(' / ')]);rows.push(['진행','정사를 고르면 연의 장이 이어지고, 가상을 고르면 가상 전장 3장과 우두머리 전투로 바뀐다. 한 번 가상으로 가면 정사로 돌아오지 않는다. 자세한 것은 아래 「갈림길 지도」.']);}
+  if(step.kind==='fate'){rows.push(['고를 수 있는 길',fateChoices(state,step.id).map(r=>`${r.history?'[정사]':r.custom?'[신세력]':'[가상]'} ${r.choice}${r.history?'':` (가상 전장 ${r.tales.length}장 + 우두머리)`}`).join(' / ')]);rows.push(['진행','정사를 고르면 연의 장이 이어지고, 가상을 고르면 그 편이 위에 적은 가상 전장과 우두머리 전투로 바뀐다. 한 번 가상으로 가면 정사로 돌아오지 않는다. 자세한 것은 아래 「갈림길 지도」.']);}
   if(step.kind==='ending')rows.push(['결말',endingFor({...state.route,3:step.route??''}).title]);
   const picked=state.choices[step.id];if(picked&&step.kind!=='fate'){const m=modsText(modsOf(state,step));if(m.length)rows.push(['선택의 효과',m.join(' · ')]);}
   return rows.length?`<dl class="sc-rows">${rows.map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`:'';
@@ -178,6 +178,8 @@ export async function enter(host:ScenarioHost,step:ScenarioStep){
   const state=loadScenario();let script=scriptOf(step.id)??fallbackScript(step,state);flagOf(state);
   // 신세력 회차: 첫 갈림길에 '스스로 기치를 든다'가 더해진다.
   if(step.id==='fate:1'&&state.run?.faction){script=structuredClone(script);for(const sc of script.scenes)for(const st of sc.steps)if('choice' in st&&!st.options.some(o=>o.id==='np1'))st.options.unshift(foundingOption());}
+  // 이 장을 다시 시작하면 전에 고른 답의 효과를 먼저 걷어 낸다(다른 답을 골라도 효과가 겹치지 않게).
+  undoChoice(state,step);saveScenario(state);
   await stage(host,state,step,script.scenes,`${kindTag[step.kind]} · ${script.title}`,true,script.history?{year:script.year,title:script.title,lines:script.history}:undefined);
   if(step.kind==='fate'){
     if(!state.route[step.act])return showFateFallback(host,state,step);

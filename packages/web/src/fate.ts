@@ -4,7 +4,7 @@
  * 원정의 상편·중편·하편 첫 층에서 사마의가 선택한다. 정사를 고르면 연의 전장(스토리 32전장)이 이어지고,
  * 가상을 고르면 그 편의 지역·적·우두머리가 바뀌고 '가상 전장'(서사와 이름난 적장이 있는 전투)이 나온다.
  * 선택지는 나무처럼 갈라진다: 앞에서 고른 길에 따라 다음 갈림길의 상황과 선택지가 달라지고,
- * 한 번 가상으로 들어선 길은 끝까지 가상으로 이어진다(정사로 되돌아가지 않는다). 결말은 하편의 길마다 하나, 열다섯 가지.
+ * 한 번 가상으로 들어선 길은 끝까지 가상으로 이어진다(정사로 되돌아가지 않는다). 결말은 하편의 길마다 하나(신세력 결말 둘을 더해 ALL_ENDINGS).
  * 가상 시나리오는 이 게임의 창작이다.
  */
 import type {UnitClass} from '../../core/src/index.ts';
@@ -300,3 +300,7 @@ export function endingFor(route?:{1?:string;2?:string;3?:string}):Ending{
   return {id:r.id,title:r.ending!.title,lines:r.ending!.lines,history};
 }
 export const ALL_ENDINGS=ROUTES.filter(r=>r.act===3).map(r=>r.id);
+
+/** 가상 길 한 편의 가상 전장 수 범위(우두머리 제외). 안내 문구에 쓴다(길마다 2~3장). */
+export function whatIfTaleRange(){const n=ROUTES.filter(r=>!r.history&&r.tales.length).map(r=>r.tales.length);return {min:Math.min(...n),max:Math.max(...n)};}
+export const taleRangeText=()=>{const {min,max}=whatIfTaleRange();return min===max?`${min}장`:`${min}~${max}장`;};

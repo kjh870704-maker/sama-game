@@ -1,8 +1,8 @@
 /**
  * 시나리오 모드 — 게임의 본편. 『삼국지연의』의 사마의 이야기(연의 32장)를 따라가다가,
  * 사마의의 인생에서 세 번 갈림길(201년 출사 · 220년 조조의 죽음 · 234년 이후)을 만난다.
- * 정사를 고르면 연의 장이 이어지고, 다른 길을 고르면 가상 시나리오의 장(가상 전장 3 + 우두머리)이
- * 이어진다. 한 번 가상으로 들어선 길은 결말까지 가상으로 간다(결말 15종).
+ * 정사를 고르면 연의 장이 이어지고, 다른 길을 고르면 가상 시나리오의 장(가상 전장 2~3 + 우두머리, 길마다 다름)이
+ * 이어진다. 한 번 가상으로 들어선 길은 결말까지 가상으로 간다(결말은 fate.ts ALL_ENDINGS).
  *
  * 한 장의 흐름: 이야기 장면(사마의의 대사 선택) → 출진 전 정비(반드시) → 전투 → 전투 뒤 장면 → 다음 장.
  * 레벨업용 반복 전투(수련·천명의 원정)는 이 흐름 밖의 '반복 퀘스트'로 따로 둔다.
@@ -186,6 +186,25 @@ export function choose(state:ScenarioState,step:ScenarioStep,optionId:string,eff
     if(e.kind==='recruit'&&!state.officers[e.name])state.officers[e.name]={name:e.name,unitClass:landClass(e.unitClass),level:Math.max(1,heroLevel-1),xp:0};
   }
   return true;
+}
+/**
+ * 아직 마치지 않은 장의 이야기를 다시 시작할 때: 그 장에서 전에 고른 대사의 효과(표식·바꿔치기·영입)를 걷어 낸다.
+ * 그러지 않으면 다른 답을 고를 때 서로 어긋나는 표식(자비와 엄벌 등)과 영입이 함께 남는다. 갈림길·마친 장은 건드리지 않는다.
+ */
+export function undoChoice(state:ScenarioState,step:ScenarioStep){
+  if(step.kind==='fate'||state.done.includes(step.id))return;
+  const picked=state.choices[step.id],script=scriptOf(step.id);if(!picked)return;
+  delete state.choices[step.id];if(!script)return;
+  const effects=[...script.scenes,...(script.after??[])].flatMap(sc=>sc.steps).flatMap(st=>'choice' in st?st.options:[]).find(o=>o.id===picked)?.effects??[];
+  // 다른 장에서도 세우는 표식은 남긴다(이 장에서만 세우는 표식만 걷는다).
+  const elsewhere=new Set<string>();
+  for(const [id,opt] of Object.entries(state.choices)){const sc=scriptOf(id);if(!sc)continue;
+    for(const o of [...sc.scenes,...(sc.after??[])].flatMap(x=>x.steps).flatMap(st=>'choice' in st?st.options:[]))if(o.id===opt)for(const e of o.effects??[])if(e.kind==='flag')elsewhere.add(e.flag);}
+  for(const e of effects){
+    if(e.kind==='flag'&&!elsewhere.has(e.flag))state.flags=state.flags.filter(f=>f!==e.flag);
+    if(e.kind==='path'){const alt=EXTRA_TALES.find(t=>t.id===e.tale);if(alt&&state.paths[alt.replaces]===alt.id)delete state.paths[alt.replaces];}
+    if(e.kind==='recruit')delete state.officers[e.name];
+  }
 }
 /** 그 길에서 적으로 만나는 사람. */
 export function foesOf(route:Route){return [route.region.boss.name,...route.tales.map(t=>t.target.name),...EXTRA_TALES.filter(t=>t.route===route.id).map(t=>t.target.name)];}

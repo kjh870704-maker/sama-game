@@ -3,9 +3,9 @@
  *
  * 세 갈림길: ① 201년 조조의 출사 요청(상편 4장 뒤) ② 220년 조조의 죽음(중편 첫머리) ③ 234년 이후(하편 첫머리).
  * 갈림길마다 정사 한 길과 가상 두세 길. 정사를 고르면 연의 장이 이어지고, 가상을 고르면
- * 가상 전장 3장 → 우두머리 1장 → 다음 갈림길(또는 결말)로 간다. 한 번 가상으로 가면 정사로 돌아오지 않는다.
+ * 가상 전장 2~3장(길마다 다름) → 우두머리 1장 → 다음 갈림길(또는 결말)로 간다. 한 번 가상으로 가면 정사로 돌아오지 않는다.
  */
-import {ROUTES,FATE_POINTS,fatePoint,factionText,ALL_ENDINGS,type Route} from './fate.ts';
+import {ROUTES,FATE_POINTS,fatePoint,factionText,ALL_ENDINGS,taleRangeText,type Route} from './fate.ts';
 import {STORY_ORDER} from './roguelike.ts';
 import {loadMeta} from './meta.ts';
 import {loadScenario,routeTales,type ScenarioState} from './scenario.ts';
@@ -43,7 +43,7 @@ export function fateMap(){
   const chosen=[1,2,3].map(a=>state.route[a as 1|2|3]).filter(Boolean).map(id=>ROUTES.find(r=>r.id===id)!);
   const now=chosen.length?chosen.map(r=>`${r.history?'정사':r.custom?'신세력':'가상'} ${esc(factionText(r.name,state.run?.faction?.name))}`).join(' → '):'아직 첫 갈림길 전';
   return `<div class="fate-map">
-  <p class="fm-lead">천명의 길은 『삼국지연의』의 사마의 이야기(연의 32장)를 따라가다 <b>세 번</b> 갈림길을 만난다. 갈림길마다 <span class="route-tag history">정사</span> 한 길과 <span class="route-tag what-if">가상</span> 두세 길이 있다. 정사를 고르면 연의 장이 이어지고, 가상을 고르면 그 편이 <b>가상 전장 3장 + 우두머리 1장</b>으로 바뀐다. 한 번 가상으로 들어서면 정사로 돌아오지 않고, 하편의 길마다 결말이 다르다(결말 ${ALL_ENDINGS.length}종 · 본 것 ${meta.endings.length}).</p>
+  <p class="fm-lead">천명의 길은 『삼국지연의』의 사마의 이야기(연의 32장)를 따라가다 <b>세 번</b> 갈림길을 만난다. 갈림길마다 <span class="route-tag history">정사</span> 한 길과 <span class="route-tag what-if">가상</span> 두세 길이 있다. 정사를 고르면 연의 장이 이어지고, 가상을 고르면 그 편이 <b>가상 전장 ${taleRangeText()} + 우두머리 1장</b>으로 바뀐다(길마다 다르다). 한 번 가상으로 들어서면 정사로 돌아오지 않고, 하편의 길마다 결말이 다르다(결말 ${ALL_ENDINGS.length}종 · 본 것 ${meta.endings.length}).</p>
   <div class="fm-track"><span>이번 회차 · ${now}</span><span>장과 장 사이 행군로(전투·정예·모병·의원·보물고·수련)는 정사·가상 모두 같다</span></div>
   ${([1,2,3] as const).map(a=>fateBlock(a,state,custom)).join('')}
   <section class="fm-fate"><h3><span class="fm-no">?</span>가상 시나리오는 이렇게 진행된다</h3><ul class="fm-rules">
