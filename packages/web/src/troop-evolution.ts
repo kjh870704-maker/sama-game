@@ -14,7 +14,7 @@ import {singleStageCorrectionRows} from './complete-troops.ts';
 import {LORD_NAMES} from './lords.ts';
 import {OFFICER_FACTION,OFFICER_FACTIONS} from './officer-factions.ts';
 import {paintedTroopArt} from './painted-troops.ts';
-import {spriteAtlas} from './sprite-atlas.ts';
+import {spriteAtlas,type AtlasFit} from './sprite-atlas.ts';
 
 const esc=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 export type EvoGroup='all'|'foot'|'spear'|'horse'|'ranged'|'mind'|'siege'|'single'|'officer'|'npc';
@@ -83,13 +83,13 @@ export function evolutionChart(group:EvoGroup='all'){
     ${singles.length?`<section class="evo-line evo-single"><h3>단일 병종 <small>진화하지 않는 병종</small></h3>
     <div class="evo-grid">${singles.map(c=>card(c,0)).join('')}</div></section>`:''}</div>`;
 }
-type SheetDef={id:string;url:string;rows:number;union?:boolean;alphaCutoff?:number;strictGrid?:boolean};
+type SheetDef={id:string;url:string;rows:number;union?:boolean;alphaCutoff?:number;strictGrid?:boolean;fit?:AtlasFit};
 const boxes=new Map<string,Promise<{atlas:HTMLCanvasElement;x:number;y:number;w:number;h:number}|undefined>>();
 /** 시트 한 줄의 대기 자세(첫 칸)에서 실제 그림이 차지하는 둘레. */
 function idleBox(sheet:string,row:number){
   const key=sheet+'#'+row;if(boxes.has(key))return boxes.get(key)!;
   const def=(troopSheets as readonly SheetDef[]).find(s=>s.id===sheet);
-  const p=!def?Promise.resolve(undefined):spriteAtlas(def.url,def.rows,4,!!def.union,def.alphaCutoff??8,!!def.strictGrid).then(atlas=>{
+  const p=!def?Promise.resolve(undefined):spriteAtlas(def.url,def.rows,4,!!def.union,def.alphaCutoff??8,!!def.strictGrid,def.fit).then(atlas=>{
     const cw=Math.floor(atlas.width/4),ch=Math.floor(atlas.height/def.rows),top=row*ch,d=atlas.getContext('2d',{willReadFrequently:true})!.getImageData(0,top,cw,ch).data;
     let l=cw,t=ch,r=-1,b=-1;
     for(let y=0;y<ch;y++)for(let x=0;x<cw;x++)if(d[(y*cw+x)*4+3]!>24){if(x<l)l=x;if(x>r)r=x;if(y<t)t=y;if(y>b)b=y;}

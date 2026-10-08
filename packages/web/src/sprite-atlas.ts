@@ -2,11 +2,14 @@ export const SPRITE_CELL=256;
 /** 완성 병종 원화의 몸집(칸 높이 대비): 걷는 병종 대기 자세 키 · 말·수레·배처럼 옆으로 넓은 병종의 키. */
 export const FOOT_HEIGHT=.6,MOUNT_HEIGHT=.72;
 export interface AtlasPixels {width:number;height:number;data:Uint8ClampedArray}
+/** 장수 시트처럼 병종 병사와 몸집을 맞춰야 하는 시트: height=대기 자세 키(칸 높이 대비), aspect=칸 가로÷세로.
+ * 칸을 가로로 넓히면 창·칼을 길게 내지른 공격 자세 때문에 몸 전체가 줄어들지 않는다(전장은 칸 비율대로 그린다). */
+export interface AtlasFit {height:number;aspect:number}
 
 /** Generated sheets have uneven gutters. Find connected silhouettes before assigning
  * frames, so a spear crossing a nominal cell boundary stays with its owner. */
 /** union=true: 같은 칸에 든 실루엣 조각(투석기와 병사, 떠도는 부적)을 한 프레임으로 합친다. 기본은 칸마다 가장 큰 조각만 쓴다. */
-export function isolateFrames(source:AtlasPixels,rows:number,columns=4,union=false,alphaCutoff=8,strictGrid=false):AtlasPixels {
+export function isolateFrames(source:AtlasPixels,rows:number,columns=4,union=false,alphaCutoff=8,strictGrid=false,fit?:AtlasFit):AtlasPixels {
   const {width,height,data}=source,labels=new Int32Array(width*height);
   if(strictGrid){
     type Box={left:number;top:number;right:number;bottom:number};
@@ -103,17 +106,17 @@ export function isolateFrames(source:AtlasPixels,rows:number,columns=4,union=fal
       b.left=Math.min(b.left,x);b.right=Math.max(b.right,x);b.top=Math.min(b.top,y);b.bottom=Math.max(b.bottom,y);
     }
     boxes.forEach((b,slot)=>{if(b.right<0)throw new Error(`Sprite atlas: empty strict-grid cell ${Math.floor(slot/columns)},${slot%columns}`);});
-    const outWidth=SPRITE_CELL*columns,outHeight=SPRITE_CELL*rows,out=new Uint8ClampedArray(outWidth*outHeight*4);
+    const cellW=Math.round(SPRITE_CELL*(fit?.aspect??1)),outWidth=cellW*columns,outHeight=SPRITE_CELL*rows,out=new Uint8ClampedArray(outWidth*outHeight*4);
     // 병종(행)마다 축척을 따로 정해 모든 병종의 몸집을 맞춘다: 걷는 병종은 대기 자세 키가 FOOT_HEIGHT,
     // 말·수레·배·코끼리처럼 옆으로 넓은 병종은 MOUNT_HEIGHT. 한 행의 네 동작은 같은 축척이라 자세가 바뀌어도 몸집이 같다.
     const rowScale=Array.from({length:rows},(_,row)=>{
       const cells=boxes.slice(row*columns,(row+1)*columns),bw=(b:Box)=>b.right-b.left+1,bh=(b:Box)=>b.bottom-b.top+1;
-      const idle=cells[0]!,wide=bw(idle)/bh(idle)>1.2,target=(wide?MOUNT_HEIGHT:FOOT_HEIGHT)*SPRITE_CELL;
-      return Math.min(target/bh(idle),(SPRITE_CELL-8)/Math.max(...cells.map(bw)),(SPRITE_CELL-16)/Math.max(...cells.map(bh)));
+      const idle=cells[0]!,wide=bw(idle)/bh(idle)>1.2,target=(fit?fit.height:wide?MOUNT_HEIGHT:FOOT_HEIGHT)*SPRITE_CELL;
+      return Math.min(target/bh(idle),(cellW-8)/Math.max(...cells.map(bw)),(SPRITE_CELL-16)/Math.max(...cells.map(bh)));
     });
     boxes.forEach((b,slot)=>{
       const scale=rowScale[Math.floor(slot/columns)]!,w=Math.round((b.right-b.left+1)*scale),h=Math.round((b.bottom-b.top+1)*scale);
-      const ox=(slot%columns)*SPRITE_CELL+Math.floor((SPRITE_CELL-w)/2),oy=Math.floor(slot/columns)*SPRITE_CELL+SPRITE_CELL-14-h;
+      const ox=(slot%columns)*cellW+Math.floor((cellW-w)/2),oy=Math.floor(slot/columns)*SPRITE_CELL+SPRITE_CELL-14-h;
       for(let y=0;y<h;y++)for(let x=0;x<w;x++){
         const sx=b.left+Math.min(b.right-b.left,Math.floor(x/scale)),sy=b.top+Math.min(b.bottom-b.top,Math.floor(y/scale)),p=sy*width+sx;
         if(cellOf[p]!==slot)continue;
@@ -171,7 +174,7 @@ function toCanvas(p:AtlasPixels){
   const g=canvas.getContext('2d',{willReadFrequently:true})!,img=g.createImageData(p.width,p.height);img.data.set(p.data);g.putImageData(img,0,0);return canvas;
 }
 /** Small worker pool: every sheet is cut in parallel, away from the main thread. */
-type Job={url:string;blob:Blob;rows:number;columns:number;union:boolean;alphaCutoff:number;strictGrid:boolean;resolve:(c:HTMLCanvasElement)=>void;reject:(e:unknown)=>void};
+type Job={url:string;blob:Blob;rows:number;columns:number;union:boolean;alphaCutoff:number;strictGrid:boolean;fit?:AtlasFit;resolve:(c:HTMLCanvasElement)=>void;reject:(e:unknown)=>void};
 const queue:Job[]=[],idle:Worker[]=[],pending=new Map<number,Job>(),running=new Map<Worker,number>();let workers=0,jobs=0;
 /** 작업자 파일을 못 불러오면(배포 누락·차단) 다시 쓰지 않고 메인 스레드에서 자른다. 대기가 끝나지 않아 화면이 멈추는 일을 막는다. */
 let workerBroken=false;
@@ -198,22 +201,22 @@ function dispatch(){
     const job=queue.shift()!,id=++jobs;pending.set(id,job);running.set(w,id);
     // 답이 오지 않는 작업은 메인 스레드로 넘긴다(작업자가 조용히 죽은 경우). 시간은 자르기만 잰다.
     setTimeout(()=>{const j=pending.get(id);if(j){pending.delete(id);j.reject(new Error('atlas worker timed out'));}},JOB_TIMEOUT);
-    w.postMessage({id,url:new URL(job.url,location.href).href,blob:job.blob,rows:job.rows,columns:job.columns,union:job.union,alphaCutoff:job.alphaCutoff,strictGrid:job.strictGrid});
+    w.postMessage({id,url:new URL(job.url,location.href).href,blob:job.blob,rows:job.rows,columns:job.columns,union:job.union,alphaCutoff:job.alphaCutoff,strictGrid:job.strictGrid,fit:job.fit});
   }
 }
-async function onMainThread(url:string,rows:number,columns:number,union=false,alphaCutoff=8,strictGrid=false){
+async function onMainThread(url:string,rows:number,columns:number,union=false,alphaCutoff=8,strictGrid=false,fit?:AtlasFit){
   const img=new Image();img.src=url;await img.decode();
   const canvas=document.createElement('canvas');canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
   const context=canvas.getContext('2d',{willReadFrequently:true})!;context.drawImage(img,0,0);
-  return toCanvas(isolateFrames(context.getImageData(0,0,canvas.width,canvas.height),rows,columns,union,alphaCutoff,strictGrid));
+  return toCanvas(isolateFrames(context.getImageData(0,0,canvas.width,canvas.height),rows,columns,union,alphaCutoff,strictGrid,fit));
 }
-export function spriteAtlas(url:string,rows:number,columns=4,union=false,alphaCutoff=8,strictGrid=false){
+export function spriteAtlas(url:string,rows:number,columns=4,union=false,alphaCutoff=8,strictGrid=false,fit?:AtlasFit){
   // 문서 기준 상대 경로를 완전한 주소로: 워커는 자기 스크립트 위치를 기준으로 경로를 풀기 때문이다.
   url=typeof document!=='undefined'?new URL(url,document.baseURI).href:url;
-  const key=url+':'+rows+':'+columns+(union?':u':'')+':a'+alphaCutoff+(strictGrid?':g':'');
-  if(!cache.has(key))cache.set(key,workerBroken||typeof Worker==='undefined'||typeof OffscreenCanvas==='undefined'?onMainThread(url,rows,columns,union,alphaCutoff,strictGrid):
+  const key=url+':'+rows+':'+columns+(union?':u':'')+':a'+alphaCutoff+(strictGrid?':g':'')+(fit?`:f${fit.height}x${fit.aspect}`:'');
+  if(!cache.has(key))cache.set(key,workerBroken||typeof Worker==='undefined'||typeof OffscreenCanvas==='undefined'?onMainThread(url,rows,columns,union,alphaCutoff,strictGrid,fit):
     // 받기는 메인 스레드가 브라우저에 맡기고(느린 회선에서도 시간 제한에 걸리지 않게), 자르기만 작업자에게 넘긴다.
-    download(url).then(blob=>new Promise<HTMLCanvasElement>((resolve,reject)=>{queue.push({url,blob,rows,columns,union,alphaCutoff,strictGrid,resolve,reject});dispatch();})).catch(()=>onMainThread(url,rows,columns,union,alphaCutoff,strictGrid)));
+    download(url).then(blob=>new Promise<HTMLCanvasElement>((resolve,reject)=>{queue.push({url,blob,rows,columns,union,alphaCutoff,strictGrid,...(fit?{fit}:{}),resolve,reject});dispatch();})).catch(()=>onMainThread(url,rows,columns,union,alphaCutoff,strictGrid,fit)));
   return cache.get(key)!;
 }
 

@@ -44,7 +44,10 @@ const legacySheets=[
   {id:'officer-battle-wei',url:'officer-battle-wei-v2.webp',rows:4,strictGrid:true,alphaCutoff:8},
   {id:'officer-battle-rivals',url:'officer-battle-rivals-v2.webp',rows:4,strictGrid:true,alphaCutoff:8},
 ] as const;
-const generatedSheets=officerManifest.flatMap(e=>Object.values(e.battle).map(b=>({id:b.sheet,url:b.sheet,rows:b.rows,strictGrid:true as const,alphaCutoff:8})));
+/** 전장에서 장수는 같은 병종 병사와 같은 키로 선다(병사 아틀라스 실측: 대부분 칸 높이의 0.6, 중기병 0.69).
+ * 칸을 가로 1.5배로 넓혀, 창·칼을 길게 내지른 공격 자세 때문에 몸 전체가 줄어들지 않게 한다. */
+const officerFit=(cls:string)=>({height:cls==='heavyCav'?.69:cls==='cart'?.7:.6,aspect:1.5});
+const generatedSheets=officerManifest.flatMap(e=>Object.entries(e.battle).map(([cls,b])=>({id:b.sheet,url:b.sheet,rows:b.rows,strictGrid:true as const,alphaCutoff:8,fit:officerFit(cls)})));
 export const officerModelSheets=[...legacySheets,...generatedSheets];
 
 const legacy=new Map<string,OfficerBattleModel>();
