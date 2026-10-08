@@ -29,7 +29,7 @@ const SERVE:Chapters=[
           {emote:'순욱',text:'…'},
           {exit:'전령',to:'right'},
         ]},
-      {place:'여양 · 황하 나루의 군영',art:16,cast:[{name:'사마의',look:'strategist',at:[40,62],face:'right'},{name:'조진',look:'cavalry',at:[26,56],face:'right'},{name:'장합',look:'spear',at:[60,54],face:'left'},{name:'곽회',look:'archer'},{name:'위군 병사',look:'infantry',at:[74,70],face:'left'}],
+      {place:'여양 · 황하 나루의 군영',art:16,cast:[{name:'사마의',look:'strategist',at:[40,62],face:'right'},{name:'조진',look:'cavalry',at:[26,56],face:'right'},{name:'장합',look:'cavalry',at:[60,54],face:'left'},{name:'곽회',look:'archer'},{name:'위군 병사',look:'infantry',at:[74,70],face:'left'}],
         steps:[
           {say:'조진',line:'중달, 붓만 쥐던 손으로 진영에 서니 어떤가? 하북 바람이 칼날 같지?',to:'사마의'},
           {enter:'곽회',at:[14,68],from:'left'},
@@ -57,7 +57,7 @@ const SERVE:Chapters=[
           {say:'조진',line:'고간의 목책은 말이 넘기엔 높아. 내 기병은 목책이 끝나는 옆구리로 돈다. 정면은 창병에게 맡기라고.'},
         ],
         again:[{say:'조진',line:'목책 옆구리, 잊지 마! 내 말발굽은 거기로 간다.'}]},
-      {name:'장합',look:'spear',at:[32,72],
+      {name:'장합',look:'cavalry',at:[32,72],
         talk:[
           {say:'사마의',line:'장군, 고간은 어떤 장수입니까?'},
           {say:'장합',line:'서두르지 않는 자요. 이길 싸움이 아니면 칼을 맞대지 않소.'},
@@ -160,7 +160,7 @@ const SERVE:Chapters=[
           {say:'척후',line:'성벽 위엔 노병, 성문 안엔 창병이 겹으로 섰습니다. 다만 동문 쪽은 횃불이 적습니다. 심영의 군사가 지키는 곳입니다.'},
         ],
         again:[{say:'척후',line:'동문 쪽 횃불이 오늘 밤도 적습니다.'}]},
-      {name:'장합',look:'spear',at:[68,60],
+      {name:'장합',look:'cavalry',at:[68,60],
         talk:[
           {say:'장합',line:'심배는 고집이 바위요. 관도 때도 남의 말은 듣지 않았소.'},
           {say:'사마의',line:'그 바위를 물로 깎을 참입니다.',when:'srv_flood'},
@@ -465,7 +465,7 @@ const YUAN:Chapters=[
           {say:'사마의',line:'문 장군, 그 장수는 관우입니다. 홀로 가시면 안량 장군의 뒤를 따르실 뿐입니다.',to:'문추'},
           {exit:'전령',to:'right'},
         ]},
-      {place:'백마 · 흙먼지 날리는 들판',art:16,cast:[{name:'사마의',look:'strategist',at:[34,62],face:'right'},{name:'문추',look:'cavalry',at:[50,56],face:'right'},{name:'장합',look:'spear'},{name:'유비',look:'infantry'}],
+      {place:'백마 · 흙먼지 날리는 들판',art:16,cast:[{name:'사마의',look:'strategist',at:[34,62],face:'right'},{name:'문추',look:'cavalry',at:[50,56],face:'right'},{name:'장합',look:'cavalry'},{name:'유비',look:'infantry'}],
         steps:[
           {enter:'장합',at:[66,60],from:'right'},
           {say:'장합',line:'관우는 아직 백마 들판에 있소. 조조의 은혜를 갚기 전에는 물러가지 않겠다는군.'},
@@ -492,7 +492,7 @@ const YUAN:Chapters=[
           {say:'문추',line:'…알겠소. 오늘은 참겠소. 내일도 참을지는 모르지만.'},
         ],
         again:[{say:'문추',line:'참고 있소. 이를 갈면서.'}]},
-      {name:'장합',look:'spear',at:[32,72],
+      {name:'장합',look:'cavalry',at:[32,72],
         talk:[
           {say:'장합',line:'관우는 조조의 은혜를 갚으려 나왔소. 갚고 나면 떠날 사람이오.'},
           {say:'사마의',line:'그렇다면 오래 싸울 까닭이 없겠군요.'},
@@ -641,7 +641,7 @@ const YUAN:Chapters=[
       '조조의 벽력거가 망루를 부수는 가운데, 본진 앞을 웃통 벗은 장사 허저가 막아선다. 그를 넘으면 조조가 보인다.',
     ],
     scenes:[
-      {place:'관도 · 마주 선 진채',art:17,cast:[{name:'사마의',look:'strategist',at:[32,62],face:'right'},{name:'문추',look:'cavalry',at:[48,56],face:'right'},{name:'장합',look:'spear',at:[20,56],face:'right'},{name:'곽회',look:'archer'},{name:'하북 병사',look:'infantry',at:[66,70],face:'right'}],
+      {place:'관도 · 마주 선 진채',art:17,cast:[{name:'사마의',look:'strategist',at:[32,62],face:'right'},{name:'문추',look:'cavalry',at:[48,56],face:'right'},{name:'장합',look:'cavalry',at:[20,56],face:'right'},{name:'곽회',look:'archer'},{name:'하북 병사',look:'infantry',at:[66,70],face:'right'}],
         steps:[
           {narrate:'조조의 진채에서 돌덩이가 날아올랐다. 벽력거라 불리는 발석거가 하북군의 망루를 하나씩 부수었다.'},
           {emote:'하북 병사',text:'땀'},
@@ -676,7 +676,7 @@ const YUAN:Chapters=[
           {say:'사마의',line:'…그것도 방법이군요. 허저는 힘은 장사지만 셈은 짧습니다.'},
         ],
         again:[{say:'문추',line:'혀로 허저를 벤다니, 그거 보고 싶소!'}]},
-      {name:'장합',look:'spear',at:[44,58],
+      {name:'장합',look:'cavalry',at:[44,58],
         talk:[
           {say:'장합',line:'벽력거는 돌을 높이 던지오. 가까이 붙으면 쏘지 못하오.'},
           {say:'사마의',line:'멀리 있을수록 맞고, 가까울수록 안전하다는 말씀이군요.'},
@@ -706,7 +706,7 @@ const YUAN:Chapters=[
         again:[{say:'망루지기',line:'북채는 손으로 치니까요. 다리는 상관없습니다.'}]},
     ]},
     after:[
-      {place:'관도 · 무너진 앞 진채',art:16,cast:[{name:'사마의',look:'strategist',at:[34,62],face:'right'},{name:'문추',look:'cavalry',at:[54,56],face:'left'},{name:'장합',look:'spear',at:[20,58],face:'right'}],
+      {place:'관도 · 무너진 앞 진채',art:16,cast:[{name:'사마의',look:'strategist',at:[34,62],face:'right'},{name:'문추',look:'cavalry',at:[54,56],face:'left'},{name:'장합',look:'cavalry',at:[20,58],face:'right'}],
         steps:[
           {narrate:'허저가 상처를 입고 물러났다. 조조 본진의 깃발이 흙먼지 너머로 보였다.'},
           {emote:'문추',text:'!'},
@@ -803,7 +803,7 @@ const YUAN:Chapters=[
       '원소는 조맹덕의 목을 거두라 외친다. 그러나 궁지에 몰린 범은 가장 사납다. 관도의 마지막 싸움을 어떻게 끝낼지가 사마의에게 걸렸다.',
     ],
     scenes:[
-      {place:'관도 · 원소의 본진',art:14,cast:[{name:'사마의',look:'strategist',at:[32,62],face:'right'},{name:'원소',look:'civil',at:[62,54],face:'left'},{name:'장합',look:'spear',at:[46,58],face:'right'},{name:'문추',look:'cavalry'},{name:'전령',look:'infantry'}],
+      {place:'관도 · 원소의 본진',art:14,cast:[{name:'사마의',look:'strategist',at:[32,62],face:'right'},{name:'원소',look:'civil',at:[62,54],face:'left'},{name:'장합',look:'cavalry',at:[46,58],face:'right'},{name:'문추',look:'cavalry'},{name:'전령',look:'infantry'}],
         steps:[
           {narrate:'허도가 위태롭다는 소식에 조조의 본진이 흔들렸다.',when:'yuan_xudu'},
           {narrate:'허저가 물러나자 조조의 본진이 맨몸으로 드러났다.',unless:'yuan_xudu'},
@@ -841,7 +841,7 @@ const YUAN:Chapters=[
           {say:'문추',line:'쳇. 원수는 달아나고 원수의 옛 주인만 남았군. 그 주인이라도 베야겠소.',unless:'yuan_liubei'},
         ],
         again:[{say:'문추',line:'선봉은 내 것이오. 아무에게도 안 주오.'}]},
-      {name:'장합',look:'spear',at:[44,58],
+      {name:'장합',look:'cavalry',at:[44,58],
         talk:[
           {say:'장합',line:'조조가 진을 둥글게 말았소. 원진은 어느 쪽에서 쳐도 두께가 같소.'},
           {say:'사마의',line:'그렇다면 어디를 치십니까?'},
@@ -946,7 +946,7 @@ const FATE2:Chapters=[
           {say:'원상',line:'중달! 관도를 이긴 셈은 그대의 것이었다. 그대가 누구 편에 서는지 하북이 보고 있다.',to:'사마의'},
           {emote:'사마의',text:'…'},
         ]},
-      {place:'업성 · 달 비친 회랑',art:13,cast:[{name:'사마의',look:'strategist',at:[36,62],face:'right'},{name:'사마랑',look:'civil'},{name:'장합',look:'spear',at:[62,56],face:'left'},{name:'문추',look:'cavalry',at:[76,60],face:'left'}],
+      {place:'업성 · 달 비친 회랑',art:13,cast:[{name:'사마의',look:'strategist',at:[36,62],face:'right'},{name:'사마랑',look:'civil'},{name:'장합',look:'cavalry',at:[62,56],face:'left'},{name:'문추',look:'cavalry',at:[76,60],face:'left'}],
         steps:[
           {enter:'사마랑',at:[16,66],from:'left'},
           {say:'사마랑',line:'아버님께서 하내에서 기다리신다. 형제가 칼을 겨누는 집에 오래 머물면 우리 집안도 그 칼에 베인다.',to:'사마의'},
@@ -1514,7 +1514,7 @@ const HEIR:Chapters=[
           {say:'서황',line:'조공께서 산 채로 잡으라 하셨소. 그래서 아무도 활을 쏘지 못했지. 오늘은 그런 명이 없소.'},
         ],
         again:[{say:'서황',line:'오늘은 활을 쏘아도 되오. 그 점이 장판과 다르오.'}]},
-      {name:'장합',look:'spear',at:[32,72],
+      {name:'장합',look:'cavalry',at:[32,72],
         talk:[
           {say:'장합',line:'조운이라. 장판에서 겨뤘소. 열 합을 넘기지 못하고 물러났지.'},
           {say:'사마의',line:'다시 겨루시겠습니까?'},
@@ -1815,7 +1815,7 @@ const HEBEI:Chapters=[
           {say:'사마의',line:'형제가 하나로 서면 허창은 한 해를 버티지 못합니다. 그 한 해만 서로를 참아 주십시오.'},
           {exit:'원담',to:'right'},
         ]},
-      {place:'허창 북쪽 · 영천 들판',art:16,cast:[{name:'사마의',look:'strategist',at:[32,62],face:'right'},{name:'장합',look:'spear',at:[48,58],face:'right'},{name:'문추',look:'cavalry',at:[18,56],face:'right'},{name:'사마랑',look:'civil'},{name:'하후돈',look:'cavalry',at:[86,52],face:'left'}],
+      {place:'허창 북쪽 · 영천 들판',art:16,cast:[{name:'사마의',look:'strategist',at:[32,62],face:'right'},{name:'장합',look:'cavalry',at:[48,58],face:'right'},{name:'문추',look:'cavalry',at:[18,56],face:'right'},{name:'사마랑',look:'civil'},{name:'하후돈',look:'cavalry',at:[86,52],face:'left'}],
         steps:[
           {say:'하후돈',line:'관도에서 진 것은 맹덕이지 내가 아니다! 이 하후원양의 한 눈이 너희를 똑똑히 보고 있다!'},
           {enter:'사마랑',at:[12,66],from:'left'},
@@ -1847,7 +1847,7 @@ const HEBEI:Chapters=[
           {say:'문추',line:'하하! 좋아. 서로 하나씩 잃은 게 있군. 그는 눈, 나는 안량.'},
         ],
         again:[{say:'문추',line:'외눈과 외짝. 오늘 누가 더 아픈지 보자고.'}]},
-      {name:'장합',look:'spear',at:[44,58],
+      {name:'장합',look:'cavalry',at:[44,58],
         talk:[
           {say:'장합',line:'하후돈은 조조의 맏형 같은 장수요. 그가 무너지면 허창 성 안이 흔들리오.'},
           {say:'장합',line:'관도에서 조조를 살려 보냈으니, 하후돈은 주인을 지킬 마지막 기회라 여길 거요.',when:'yuan_open'},
@@ -1879,7 +1879,7 @@ const HEBEI:Chapters=[
         again:[{say:'곽회',line:'개울 앞에서 말은 멈춥니다.'}]},
     ]},
     after:[
-      {place:'허창 · 성벽이 보이는 언덕',art:3,cast:[{name:'사마의',look:'strategist',at:[34,62],face:'right'},{name:'장합',look:'spear',at:[52,58],face:'left'},{name:'전풍',look:'strategist'}],
+      {place:'허창 · 성벽이 보이는 언덕',art:3,cast:[{name:'사마의',look:'strategist',at:[34,62],face:'right'},{name:'장합',look:'cavalry',at:[52,58],face:'left'},{name:'전풍',look:'strategist'}],
         steps:[
           {narrate:'하후돈은 허창 성 안으로 물러났다. 조조가 쌓은 도읍의 성벽이 눈앞에 섰다.'},
           {enter:'전풍',at:[70,60],from:'right',when:'hb_tianfeng'},
@@ -1976,7 +1976,7 @@ const HEBEI:Chapters=[
       '관도에서 원소의 객장이던 그가 이번에는 하북의 적이다. 그 곁에는 단복이라 이름을 바꾼 선비 서서가 있다.',
     ],
     scenes:[
-      {place:'신야 · 백하 강둑',art:15,cast:[{name:'사마의',look:'strategist',at:[30,62],face:'right'},{name:'장합',look:'spear',at:[16,56],face:'right'},{name:'유비',look:'infantry',at:[82,52],face:'left'},{name:'서서',look:'civil'},{name:'하북 병사',look:'infantry',at:[50,72],face:'right'}],
+      {place:'신야 · 백하 강둑',art:15,cast:[{name:'사마의',look:'strategist',at:[30,62],face:'right'},{name:'장합',look:'cavalry',at:[16,56],face:'right'},{name:'유비',look:'infantry',at:[82,52],face:'left'},{name:'서서',look:'civil'},{name:'하북 병사',look:'infantry',at:[50,72],face:'right'}],
         steps:[
           {narrate:'신야의 백하는 물이 얕고 둑이 높았다. 둑 위에 유비의 깃발이 섰다.'},
           {say:'유비',line:'중달 공, 백마에서 그대는 내 편지를 칼로 썼지. 오늘 그 칼이 나를 향하는구려.',when:'yuan_liubei'},
@@ -1996,7 +1996,7 @@ const HEBEI:Chapters=[
     ],
     required:['장합','서서'],
     camp:{place:'신야 · 백하 북쪽 진영',art:15,people:[
-      {name:'장합',look:'spear',at:[12,62],
+      {name:'장합',look:'cavalry',at:[12,62],
         talk:[
           {say:'장합',line:'유비는 관도에서 원 공의 객장이었소. 그때 우리와 한솥밥을 먹었지.'},
           {say:'장합',line:'백마에서 그대가 그에게 편지를 쓰게 했던 일, 그도 잊지 않았을 거요.',when:'yuan_liubei'},
@@ -2043,7 +2043,7 @@ const HEBEI:Chapters=[
         again:[{say:'전풍',line:'영웅은 남의 집에 보내 두면 그 집이 시끄러워지오.'}]},
     ]},
     after:[
-      {place:'신야 · 비어 버린 성',art:2,cast:[{name:'사마의',look:'strategist',at:[34,62],face:'right'},{name:'장합',look:'spear',at:[52,58],face:'left'},{name:'전령',look:'cavalry'}],
+      {place:'신야 · 비어 버린 성',art:2,cast:[{name:'사마의',look:'strategist',at:[34,62],face:'right'},{name:'장합',look:'cavalry',at:[52,58],face:'left'},{name:'전령',look:'cavalry'}],
         steps:[
           {narrate:'유비는 백성들을 데리고 남쪽 강릉으로 물러났다. 신야가 비었다.'},
           {enter:'전령',at:[74,66],from:'right'},
@@ -2137,7 +2137,7 @@ const HEBEI:Chapters=[
       '왕을 도울 재목이라 불린 그는 한실의 신하로 남겠다는 사람이다. 허창의 성문이 열리면 천자가 하북의 손에 들어온다.',
     ],
     scenes:[
-      {place:'허창 · 닫힌 성문 앞',art:8,cast:[{name:'사마의',look:'strategist',at:[30,62],face:'right'},{name:'원상',look:'cavalry',at:[16,56],face:'right'},{name:'장합',look:'spear',at:[44,58],face:'right'},{name:'순욱',look:'civil',at:[82,40],face:'left'},{name:'문추',look:'cavalry'}],
+      {place:'허창 · 닫힌 성문 앞',art:8,cast:[{name:'사마의',look:'strategist',at:[30,62],face:'right'},{name:'원상',look:'cavalry',at:[16,56],face:'right'},{name:'장합',look:'cavalry',at:[44,58],face:'right'},{name:'순욱',look:'civil',at:[82,40],face:'left'},{name:'문추',look:'cavalry'}],
         steps:[
           {narrate:'206년. 하북의 대군이 허창을 에워쌌다. 성벽 위에 관복 차림의 순욱이 섰다.'},
           {say:'순욱',line:'나는 조공의 신하이기 전에 한의 신하요. 천자께서 계신 이 성을, 칼 든 자에게는 열지 않겠소.'},
@@ -2164,7 +2164,7 @@ const HEBEI:Chapters=[
           {say:'원상',line:'오늘 성을 얻으면 천자가 내 손에 든다. 아버님이 끝내 쥐지 못한 것을.',unless:'hb_han'},
         ],
         again:[{say:'원상',line:'허창이 열리면 아버님 영전에 제일 먼저 고하겠다.'}]},
-      {name:'장합',look:'spear',at:[28,72],
+      {name:'장합',look:'cavalry',at:[28,72],
         talk:[
           {say:'장합',line:'순욱은 칼을 들지 않소. 허나 그의 말 한마디에 성 안 백성이 성벽에 오르오.'},
           {say:'사마의',line:'그렇다면 저도 말로 하겠습니다. 순욱은 이치를 겨루자 하면 마다하지 않을 사람입니다.'},
@@ -2319,7 +2319,7 @@ const INDEPENDENT:Chapters=[
       '갈 곳을 찾던 그가 하내의 경계에 창을 들고 섰다. 따를 만한 주인인지를 창으로 묻는 그를, 칼로 꺾어야 얻는다.',
     ],
     scenes:[
-      {place:'하내 경계 · 숲길',art:11,cast:[{name:'사마의',look:'strategist',at:[30,62],face:'right'},{name:'문추',look:'cavalry',at:[16,56],face:'right'},{name:'곽회',look:'archer'},{name:'장합',look:'spear',at:[82,54],face:'left'}],
+      {place:'하내 경계 · 숲길',art:11,cast:[{name:'사마의',look:'strategist',at:[30,62],face:'right'},{name:'문추',look:'cavalry',at:[16,56],face:'right'},{name:'곽회',look:'archer'},{name:'장합',look:'cavalry',at:[82,54],face:'left'}],
         steps:[
           {narrate:'203년. 원씨 형제의 의심을 견디지 못한 장합이 업성을 떠났다. 그의 창이 하내의 경계에 멈추었다.'},
           {say:'장합',line:'중달, 원씨는 이제 지킬 그릇이 아니오. 허나 그대가 내 창을 맡길 그릇인지는 창으로 묻겠소.',to:'사마의'},
@@ -2376,7 +2376,7 @@ const INDEPENDENT:Chapters=[
         again:[{say:'하내 사냥꾼',line:'사슴 길은 동쪽입니다. 말은 두고 가세요.'}]},
     ]},
     after:[
-      {place:'하내 경계 · 해 지는 숲',art:11,cast:[{name:'사마의',look:'strategist',at:[34,62],face:'right'},{name:'장합',look:'spear',at:[60,58],face:'left'},{name:'문추',look:'cavalry',at:[20,56],face:'right'}],
+      {place:'하내 경계 · 해 지는 숲',art:11,cast:[{name:'사마의',look:'strategist',at:[34,62],face:'right'},{name:'장합',look:'cavalry',at:[60,58],face:'left'},{name:'문추',look:'cavalry',at:[20,56],face:'right'}],
         steps:[
           {narrate:'해가 질 무렵, 장합은 창을 거꾸로 쥐고 땅에 꽂았다.'},
           {move:'장합',to:[50,60]},
@@ -2395,7 +2395,7 @@ const INDEPENDENT:Chapters=[
       '사흘에 오백 리를 달린다는 하후연의 기병이 태항산을 넘어 하내를 노린다. 산길에서 그를 막아야 사마씨의 깃발이 선다.',
     ],
     scenes:[
-      {place:'태항산 · 굽이진 산길',art:3,cast:[{name:'사마의',look:'strategist',at:[32,62],face:'right'},{name:'장합',look:'spear',at:[18,56],face:'right'},{name:'양준',look:'civil'},{name:'산민',look:'bandit',at:[66,70],face:'left'}],
+      {place:'태항산 · 굽이진 산길',art:3,cast:[{name:'사마의',look:'strategist',at:[32,62],face:'right'},{name:'장합',look:'cavalry',at:[18,56],face:'right'},{name:'양준',look:'civil'},{name:'산민',look:'bandit',at:[66,70],face:'left'}],
         steps:[
           {narrate:'태항산의 산길은 구름 속으로 굽어 올라갔다. 그 너머에서 하후연의 기병이 사흘에 오백 리를 달려온다.'},
           {move:'산민',to:[58,70]},
@@ -2414,7 +2414,7 @@ const INDEPENDENT:Chapters=[
     ],
     required:['양준','문추'],
     camp:{place:'태항산 · 산마을 어귀',art:3,people:[
-      {name:'장합',look:'spear',at:[14,62],
+      {name:'장합',look:'cavalry',at:[14,62],
         talk:[
           {say:'장합',line:'하후연은 빠르오. 사흘에 오백 리. 허나 빠른 군은 꼬리가 길어지오.'},
           {say:'장합',line:'그는 누가 불러도 일기토를 받소. 무력은 나보다 위요. 함부로 부르지 마시오.'},
@@ -2452,7 +2452,7 @@ const INDEPENDENT:Chapters=[
         again:[{say:'문추',line:'내 말은 괜찮다는군.'}]},
     ]},
     after:[
-      {place:'태항산 · 산마루',art:3,cast:[{name:'사마의',look:'strategist',at:[34,62],face:'right'},{name:'장합',look:'spear',at:[52,58],face:'left'},{name:'전령',look:'cavalry'}],
+      {place:'태항산 · 산마루',art:3,cast:[{name:'사마의',look:'strategist',at:[34,62],face:'right'},{name:'장합',look:'cavalry',at:[52,58],face:'left'},{name:'전령',look:'cavalry'}],
         steps:[
           {narrate:'하후연의 기병은 산마루에서 말을 돌렸다. 태항산은 하내의 성벽이 되었다.'},
           {enter:'전령',at:[74,66],from:'right'},
@@ -2471,7 +2471,7 @@ const INDEPENDENT:Chapters=[
       '군령이 엄하기로 이름난 조조의 우금이 황하를 건너려 한다. 나루가 열리면 하내는 사흘을 버티지 못한다.',
     ],
     scenes:[
-      {place:'맹진 · 황하 나루',art:15,cast:[{name:'사마의',look:'strategist',at:[30,62],face:'right'},{name:'장합',look:'spear',at:[16,56],face:'right'},{name:'곽회',look:'archer',at:[44,60],face:'right'},{name:'우금',look:'spear',at:[84,52],face:'left'},{name:'위군 병사',look:'infantry',at:[70,68],face:'left'}],
+      {place:'맹진 · 황하 나루',art:15,cast:[{name:'사마의',look:'strategist',at:[30,62],face:'right'},{name:'장합',look:'cavalry',at:[16,56],face:'right'},{name:'곽회',look:'archer',at:[44,60],face:'right'},{name:'우금',look:'spear',at:[84,52],face:'left'},{name:'위군 병사',look:'infantry',at:[70,68],face:'left'}],
         steps:[
           {narrate:'맹진의 황하는 누렇게 불어 있었다. 건너편 모래톱에 조조군의 배들이 줄지어 섰다.'},
           {say:'우금',line:'하내의 반적은 들어라! 군령에 따라, 항복하지 않는 자는 모두 벤다!'},
@@ -2489,7 +2489,7 @@ const INDEPENDENT:Chapters=[
     ],
     required:['곽회','문추'],
     camp:{place:'맹진 · 황하 북안 진영',art:15,people:[
-      {name:'장합',look:'spear',at:[14,62],
+      {name:'장합',look:'cavalry',at:[14,62],
         talk:[
           {say:'장합',line:'우금의 군은 조조의 군 가운데 가장 엄하오. 군령을 어기면 옛 벗도 벤다더군.'},
           {say:'사마의',line:'그런 군은 뜻밖의 일에 약하다 하셨지요.'},
@@ -2546,7 +2546,7 @@ const INDEPENDENT:Chapters=[
       '갈 곳 잃은 장자의 칼은 사납다. 그를 꺾으면 사마씨의 깃발은 원씨와 조조 사이에 홀로 선다.',
     ],
     scenes:[
-      {place:'하내 · 심수 강둑',art:15,cast:[{name:'사마의',look:'strategist',at:[30,62],face:'right'},{name:'장합',look:'spear',at:[44,58],face:'right'},{name:'문추',look:'cavalry',at:[16,56],face:'right'},{name:'원담',look:'infantry',at:[84,52],face:'left'},{name:'사자',look:'cavalry'}],
+      {place:'하내 · 심수 강둑',art:15,cast:[{name:'사마의',look:'strategist',at:[30,62],face:'right'},{name:'장합',look:'cavalry',at:[44,58],face:'right'},{name:'문추',look:'cavalry',at:[16,56],face:'right'},{name:'원담',look:'infantry',at:[84,52],face:'left'},{name:'사자',look:'cavalry'}],
         steps:[
           {narrate:'205년 봄. 원담의 군이 심수를 따라 하내로 내려왔다. 깃발은 찢겨 있었지만 칼은 아직 날카로웠다.'},
           {say:'원담',line:'사마의! 아버님의 은혜를 입고 등을 돌린 자여! 하내를 내놓아라. 원씨의 장자가 갈 곳은 여기뿐이다!'},
@@ -2565,7 +2565,7 @@ const INDEPENDENT:Chapters=[
     ],
     required:['문추'],
     camp:{place:'하내 · 심수 강둑 진영',art:15,people:[
-      {name:'장합',look:'spear',at:[12,62],
+      {name:'장합',look:'cavalry',at:[12,62],
         talk:[
           {say:'장합',line:'원담은 겁이 많소. 일기토도 말싸움도 피할 거요. 그 둘레의 군을 걷어내야 하오.'},
           {say:'장합',line:'원상의 기병이 북쪽에서 내려오오. 빚은 빨리 갚을수록 싸오.',when:'in_yuanshang'},
@@ -2612,7 +2612,7 @@ const INDEPENDENT:Chapters=[
         again:[{say:'사마방',line:'다녀오너라.'}]},
     ]},
     after:[
-      {place:'하내 온현 · 깃발 아래',art:10,cast:[{name:'사마의',look:'strategist',at:[34,62],face:'right'},{name:'장합',look:'spear',at:[50,58],face:'left'},{name:'고람',look:'spear'},{name:'사마랑',look:'civil'}],
+      {place:'하내 온현 · 깃발 아래',art:10,cast:[{name:'사마의',look:'strategist',at:[34,62],face:'right'},{name:'장합',look:'cavalry',at:[50,58],face:'left'},{name:'고람',look:'spear'},{name:'사마랑',look:'civil'}],
         steps:[
           {narrate:'원담은 심수 가에서 쓰러졌다. 항복의 글을 끝내 찢고, 칼을 쥔 채였다.',when:'in_mercy'},
           {narrate:'원담은 심수 가에서 쓰러졌다. 원씨의 장자는 고향이 아닌 남의 땅에서 눈을 감았다.',unless:'in_mercy'},

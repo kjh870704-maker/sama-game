@@ -146,7 +146,7 @@
             {
               "id": "cao_xiu",
               "name": "조휴",
-              "template": "infantry",
+              "template": "cavalry",
               "level": 12,
               "at": {
                 "x": 21,

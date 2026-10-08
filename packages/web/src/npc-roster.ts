@@ -14,7 +14,7 @@ export const NPC_ROSTER:NpcEntry[]=[
   n('성채 수비장','spearman','allyAi','S2-01'),n('조비','lord','allyAi','S2-02','S2-03'),n('양양 수문장','spearman','allyAi','S2-04'),
   n('사마사','cavalry','ally','S2-05','S2-08','S2-13'),n('사마소','crossbow','ally','S2-05','S2-08','S2-13'),
   n('장합','cavalry','allyAi','S2-06','S2-11'),n('곽회','archer','allyAi','S2-07','S2-12'),n('곽회 창병','spearman','allyAi','S2-07'),
-  n('조휴','infantry','allyAi','S2-08'),n('조휴 궁수','archer','allyAi','S2-08'),
+  n('조휴','cavalry','allyAi','S2-08'),n('조휴 궁수','archer','allyAi','S2-08'),
   n('대릉','infantry','allyAi','S2-09'),n('전선 창병','spearman','allyAi','S2-09'),n('전선 방패병','infantry','allyAi','S2-09'),
   n('양동 깃발대','infantry','ally','S3-01'),n('번성 수비대','spearman','allyAi','S3-03'),
   n('공병','engineer','ally','S3-04'),n('방패 호위병','infantry','ally','S3-04'),

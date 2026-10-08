@@ -39,7 +39,7 @@ const pack:ScenarioPack={
           {name:'사마의',look:'strategist',at:[38,62],face:'right'},
           {name:'곽회',look:'archer',at:[72,68],face:'left'},
           {name:'사마랑',look:'physician'},
-          {name:'장합',look:'spear'},
+          {name:'장합',look:'cavalry'},
           {name:'조진',look:'cavalry'},
         ],steps:[
           {narrate:'그날 밤. 강바람이 군막을 흔든다.'},
@@ -87,7 +87,7 @@ const pack:ScenarioPack={
         ]},
         {place:'낙양 · 대장군부의 서재',art:12,cast:[
           {name:'사마의',look:'strategist',at:[40,60],face:'right'},
-          {name:'장합',look:'spear',at:[74,70],face:'left'},
+          {name:'장합',look:'cavalry',at:[74,70],face:'left'},
           {name:'사마랑',look:'physician'},
           {name:'사마사',look:'cavalry'},
         ],steps:[
@@ -118,7 +118,7 @@ const pack:ScenarioPack={
           {name:'원상',look:'cavalry',at:[66,56],face:'left'},
           {name:'사마의',look:'strategist',at:[36,62],face:'right'},
           {name:'심배',look:'strategist',at:[82,64],face:'left'},
-          {name:'장합',look:'spear',at:[22,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[22,70],face:'right'},
         ],steps:[
           {narrate:'210년. 관도에서 이긴 원씨의 깃발이 마침내 허창 성벽에 올랐다. 조조는 서량으로 달아났고, 젊은 원상이 천자를 끼고 앉았다.'},
           {say:'원상',line:'승상! 아버님도 이루지 못한 일을 그대가 이루었소. 나는 사냥이나 다니겠으니 나랏일은 모두 그대가 보시오.',to:'사마의'},
@@ -131,7 +131,7 @@ const pack:ScenarioPack={
         ]},
         {place:'허창 · 승상부 회랑',art:13,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
-          {name:'장합',look:'spear',at:[24,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[24,70],face:'right'},
           {name:'곽회',look:'archer'},
           {name:'사마랑',look:'physician'},
           {name:'전령',look:'infantry'},
@@ -162,7 +162,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'하내 온현 · 사마가의 뜰',art:0,cast:[
           {name:'사마의',look:'strategist',at:[38,62],face:'right'},
-          {name:'장합',look:'spear',at:[22,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[22,70],face:'right'},
           {name:'고람',look:'spear',at:[54,72],face:'left'},
           {name:'조조의 사자',look:'civil'},
           {name:'사마랑',look:'physician'},
@@ -202,7 +202,7 @@ const pack:ScenarioPack={
           {emote:'사마의',text:'…'},
           {say:'사마의',line:'받기는 할 것이오. 다만 그는 창만큼 머리도 쓰는 자요. 이기더라도 관 안까지 쫓지는 마시오.'},
         ],again:[{say:'조진',line:'관 위의 깃발이 찢어질 듯 펄럭이오. 저 바람이 내일은 우리 편이면 좋겠소.'}]},
-        {name:'장합',look:'spear',at:[28,64],talk:[
+        {name:'장합',look:'cavalry',at:[28,64],talk:[
           {say:'사마의',line:'장 장군, 산길 싸움은 어떻소?'},
           {say:'장합',line:'좁은 길에선 많은 군이 짐이오.'},
           {say:'장합',line:'앞줄은 창으로 막고, 활은 벼랑 위로 올리시오. 기병은 뒤에 두시오. 잔도에선 말이 겁먹소.'},
@@ -254,7 +254,7 @@ const pack:ScenarioPack={
         ]},
         {place:'검각 · 밤의 군막',art:14,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
-          {name:'장합',look:'spear',at:[62,70],face:'left'},
+          {name:'장합',look:'cavalry',at:[62,70],face:'left'},
           {name:'사마랑',look:'physician'},
           {name:'맹달의 밀사',look:'civil'},
         ],steps:[
@@ -296,7 +296,7 @@ const pack:ScenarioPack={
         '성도 앞을 막아선 이는 늙은 조운이다. 장판에서 조조의 대군을 홀로 꿰뚫었던 그 창이다.',
       ],
       camp:{place:'성도 북쪽 · 위군 진영',art:16,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'장판에서 저 노장과 창을 맞댄 적이 있소. 품에 아이를 안고도 창끝이 흔들리지 않더군.'},
           {say:'사마의',line:'다시 겨루고 싶소?'},
           {say:'장합',line:'…그렇소. 조운은 용맹한 자요. 일기토를 걸면 받을 거요. 나를 기억한다면 더더욱.'},
@@ -340,7 +340,7 @@ const pack:ScenarioPack={
         {place:'성도 · 북문 앞 들판',art:2,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
           {name:'조진',look:'cavalry',at:[20,70],face:'right'},
-          {name:'장합',look:'spear',at:[46,72],face:'right'},
+          {name:'장합',look:'cavalry',at:[46,72],face:'right'},
           {name:'조운',look:'heavy',at:[80,62],face:'left'},
           {name:'맹달',look:'infantry'},
         ],steps:[
@@ -390,7 +390,7 @@ const pack:ScenarioPack={
           {say:'곽회',line:'마초의 기병은 태반이 강족입니다. 말 위에서 활을 쏘니, 우리 궁병이 먼저 맞으면 안 됩니다.'},
           {say:'곽회',line:'소금 수레를 받은 추장 둘이 벌써 말머리를 돌렸답니다.',when:'cs_qiang'},
         ],again:[{say:'곽회',line:'골짜기 바닥이 자갈이라 말발굽 소리가 멀리서도 들립니다.'}]},
-        {name:'장합',look:'spear',at:[28,64],talk:[
+        {name:'장합',look:'cavalry',at:[28,64],talk:[
           {say:'사마의',line:'장 장군, 굴러 내려온 소감이 어떻소?'},
           {say:'장합',line:'…다시는 안 하겠소.'},
           {emote:'장합',text:'땀'},
@@ -421,7 +421,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'음평 · 벼랑 위',art:3,cast:[
           {name:'사마의',look:'strategist',at:[30,62],face:'right'},
-          {name:'장합',look:'spear',at:[44,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[44,70],face:'right'},
           {name:'곽회',look:'archer',at:[16,72],face:'right'},
           {name:'조진',look:'cavalry'},
         ],steps:[
@@ -467,7 +467,7 @@ const pack:ScenarioPack={
       history:['마대는 마초의 사촌 아우로, 마초를 따라 촉에 들어와 서량 기병을 이끌었다.','역사에서 그는 제갈량이 죽은 뒤 위연을 베어 이름을 남겼다.','이 길에서 그는 성도가 숨을 고를 시간을 벌려고 홀로 들판에 나섰다.'],
       required:['장합','조진'],
       camp:{place:'성도 북쪽 · 위군 진영',art:16,people:[
-        {name:'장합',look:'spear',at:[20,62],talk:[
+        {name:'장합',look:'cavalry',at:[20,62],talk:[
           {say:'장합',line:'서량 기병은 들판에서 바람 같소. 창을 세우고 기다리는 수밖에 없지.'},
           {say:'사마의',line:'바람도 벽을 만나면 돌아갑니다. 창으로 벽을 세워 주십시오.'},
         ],again:[{say:'장합',line:'창병을 세 겹으로 세웠소.'}]},
@@ -485,7 +485,7 @@ const pack:ScenarioPack={
         {place:'성도 북쪽 들판',art:2,cast:[
           {name:'사마의',look:'strategist',at:[34,62]},
           {name:'조진',look:'cavalry',at:[20,64]},
-          {name:'장합',look:'spear',at:[58,60]}],
+          {name:'장합',look:'cavalry',at:[58,60]}],
         steps:[
           {narrate:'성도 앞 들판에서 돌무더기가 하나둘 놓이기 시작했다. 그 둘레를 서량의 기병이 빙빙 돌았다.'},
           {say:'장합',line:'마대요. 제갈량의 진이 완성될 때까지 우리를 들판에 묶어 두려는 거요.'},
@@ -519,7 +519,7 @@ const pack:ScenarioPack={
         '성도 앞 들판에 제갈량이 마지막 팔진을 펼쳤다. 이 진을 깨뜨리면 삼국은 시작되기도 전에 끝난다.',
       ],
       camp:{place:'성도 앞 · 위군 본진',art:16,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'척후 셋을 진 안에 넣었는데 하나도 안 나왔소. 이런 싸움은 처음이오.'},
           {say:'사마의',line:'돌이 사람을 잡아먹는 게 아니오. 길이 사람을 헤매게 할 뿐이오.'},
           {say:'장합',line:'그럼 길잡이를 앞세우시오. 나는 그 뒤를 지키겠소. 창은 헤매지 않으니.'},
@@ -562,7 +562,7 @@ const pack:ScenarioPack={
         {place:'성도 · 팔진이 펼쳐진 들판',art:16,cast:[
           {name:'사마의',look:'strategist',at:[30,62],face:'right'},
           {name:'제갈량',look:'strategist',at:[76,58],face:'left'},
-          {name:'장합',look:'spear',at:[16,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[16,70],face:'right'},
           {name:'촉군 기수',look:'infantry',at:[88,70],face:'left'},
           {name:'곽회',look:'archer'},
         ],steps:[
@@ -633,7 +633,7 @@ const pack:ScenarioPack={
         '옥새는 업성에 있다. 조조의 호위 대장 허저가 주인을 잃은 궁문을 닫아걸고 그 앞을 막아섰다.',
       ],
       camp:{place:'업성 · 궁문 앞 진지',art:2,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'허저는 무모한 자요. 일기토를 걸면 무조건 받소. 마초와도 웃통 벗고 이백 합을 붙었지.'},
           {say:'사마의',line:'그럼 걸지 말까?'},
           {say:'장합',line:'걸되 여럿이 지치게 하시오. 저자는 힘이 다할 때까지 멈추질 않소.'},
@@ -669,7 +669,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'낙양 · 조조의 침전 앞',art:13,cast:[
           {name:'사마의',look:'strategist',at:[36,62],face:'right'},
-          {name:'장합',look:'spear',at:[22,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[22,70],face:'right'},
           {name:'사마랑',look:'physician'},
           {name:'전령',look:'infantry'},
         ],steps:[
@@ -684,7 +684,7 @@ const pack:ScenarioPack={
         ]},
         {place:'업성 · 닫힌 궁문 앞',art:2,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
-          {name:'장합',look:'spear',at:[20,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[20,70],face:'right'},
           {name:'허저',look:'infantry',at:[76,62],face:'left'},
           {name:'가후',look:'strategist'},
         ],steps:[
@@ -704,7 +704,7 @@ const pack:ScenarioPack={
         {place:'업성 · 열린 궁문',art:2,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
           {name:'허저',look:'infantry',at:[68,64],face:'left'},
-          {name:'장합',look:'spear',at:[24,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[24,70],face:'right'},
         ],steps:[
           {emote:'허저',text:'…'},
           {say:'허저',line:'…승상. 허저가 문을 지키지 못했습니다.'},
@@ -722,7 +722,7 @@ const pack:ScenarioPack={
         '적벽에서 건업까지 함께 싸운 벗이다. 옥새로 가는 길에 놓인 마지막 벽을, 사마의는 넘어야 한다.',
       ],
       camp:{place:'업성 · 종묘 남쪽 진영',art:16,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'자단과는 적벽에서 건업까지 같은 솥 밥을 먹었소. 그의 창 버릇도 아오. 첫 찌르기가 늘 깊소.'},
           {say:'사마의',line:'그 뒤는?'},
           {say:'장합',line:'뒤가 비오. 성질이 급해서. 첫 창만 피하면 그다음은 내 차례요.'},
@@ -764,7 +764,7 @@ const pack:ScenarioPack={
         {place:'업성 · 종묘 앞 광장',art:16,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
           {name:'조진',look:'heavy',at:[76,62],face:'left'},
-          {name:'장합',look:'spear',at:[20,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[20,70],face:'right'},
           {name:'금위병',look:'infantry',at:[88,70],face:'left'},
           {name:'가후',look:'strategist'},
         ],steps:[
@@ -787,7 +787,7 @@ const pack:ScenarioPack={
         {place:'업성 · 종묘 계단',art:16,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
           {name:'조진',look:'heavy',at:[64,66],face:'left'},
-          {name:'장합',look:'spear',at:[24,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[24,70],face:'right'},
         ],steps:[
           {emote:'조진',text:'땀'},
           {say:'조진',line:'…졌소. 중달, 하나만 묻겠소. 조비 공을 죽일 거요?'},
@@ -812,7 +812,7 @@ const pack:ScenarioPack={
           {say:'곽회',line:'예. 말은 버텨도 사람은 지쳤을 겁니다. 하룻밤만 버티면 저들이 먼저 무너집니다.'},
           {say:'곽회',line:'조창은 무모한 자입니다. 일기토를 걸면 무조건 받습니다. 그것도 쓸 만하지요.'},
         ],again:[{say:'곽회',line:'길가 버드나무 사이에 노병을 숨기면 기병이 돌아서지 못합니다.'}]},
-        {name:'장합',look:'spear',at:[30,64],talk:[
+        {name:'장합',look:'cavalry',at:[30,64],talk:[
           {say:'장합',line:'누런 수염…. 무력만은 승상의 아들들 가운데 으뜸이오.'},
           {say:'사마의',line:'그 무력을 형님을 이기는 데 쓰려 하오.'},
           {say:'장합',line:'형제 싸움에 끼어드는 건 늘 뒷맛이 쓰오. 원씨 형제 때도 그랬지.'},
@@ -841,7 +841,7 @@ const pack:ScenarioPack={
         {place:'낙양 서쪽 · 큰길',art:6,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
           {name:'곽회',look:'archer',at:[20,70],face:'right'},
-          {name:'장합',look:'spear',at:[48,72],face:'right'},
+          {name:'장합',look:'cavalry',at:[48,72],face:'right'},
           {name:'조창',look:'cavalry'},
           {name:'북군 기병',look:'cavalry'},
         ],steps:[
@@ -862,7 +862,7 @@ const pack:ScenarioPack={
         {place:'낙양 서쪽 · 흩어진 북군',art:6,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
           {name:'조창',look:'cavalry',at:[70,64],face:'left'},
-          {name:'장합',look:'spear',at:[24,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[24,70],face:'right'},
         ],steps:[
           {emote:'조창',text:'분노'},
           {say:'조창',line:'아버님의 아들이 사마씨에게 지다니…!'},
@@ -877,7 +877,7 @@ const pack:ScenarioPack={
       history:['하후돈은 조조가 처음 군을 일으킬 때부터 곁을 지킨 사람이다. 화살에 한 눈을 잃고도 그 눈을 삼켰다는 이야기가 전한다.','역사에서 그는 조조가 죽은 몇 달 뒤 세상을 떠났다.','이 길에서 그는 숨이 다하기 전, 조조의 아들을 위해 마지막 나루를 지킨다.'],
       required:['장합'],
       camp:{place:'맹진 북쪽 · 진영',art:16,people:[
-        {name:'장합',look:'spear',at:[20,62],talk:[
+        {name:'장합',look:'cavalry',at:[20,62],talk:[
           {say:'장합',line:'하후돈 장군은 병이 깊다 들었소. 그런데도 갑옷을 입었다 하오.'},
           {say:'사마의',line:'그분은 갑옷을 입고 죽고 싶으신 게요.'},
         ],again:[{say:'장합',line:'나루의 배는 모두 남쪽에 묶여 있소.'}]},
@@ -893,7 +893,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'맹진 나루',art:16,cast:[
           {name:'사마의',look:'strategist',at:[34,62]},
-          {name:'장합',look:'spear',at:[20,64]},
+          {name:'장합',look:'cavalry',at:[20,64]},
           {name:'곽회',look:'archer',at:[58,60]}],
         steps:[
           {narrate:'황하의 물살이 거센 맹진. 건너편 둑 위에 외눈의 노장이 말에 올라 있었다.'},
@@ -912,7 +912,7 @@ const pack:ScenarioPack={
         {place:'맹진 남쪽 둑',art:16,cast:[
           {name:'사마의',look:'strategist',at:[40,60]},
           {name:'하후돈',look:'cavalry',at:[64,60],face:'left'},
-          {name:'장합',look:'spear',at:[24,62]}],
+          {name:'장합',look:'cavalry',at:[24,62]}],
         steps:[
           {narrate:'하후돈은 말에서 내려 둑 위에 앉았다. 기침이 멎지 않았다.'},
           {say:'하후돈',line:'맹덕이 너를 처음 불렀을 때, 나는 저 서생이 무엇을 하겠냐고 웃었다.'},
@@ -930,7 +930,7 @@ const pack:ScenarioPack={
         '조비는 낙양 궁에 금군을 모아 아비의 천하를 지키려 한다. 옥좌로 가는 계단은 하나뿐이다.',
       ],
       camp:{place:'낙양 · 궁성 밖 군막',art:14,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'궁 안 금군은 중갑을 입었소. 계단이 좁으니 한 번에 셋 이상은 못 오르오.'},
           {say:'사마의',line:'계단 위의 세자는 어찌 보오?'},
           {say:'장합',line:'조비 공은 신중하오. 일기토도 설전도 쉽게 받지 않을 거요. 끝까지 금군 뒤에 서 있겠지.'},
@@ -975,7 +975,7 @@ const pack:ScenarioPack={
           {name:'사마의',look:'strategist',at:[30,62],face:'right'},
           {name:'조비',look:'civil',at:[72,54],face:'left'},
           {name:'금군',look:'heavy',at:[86,66],face:'left'},
-          {name:'장합',look:'spear',at:[16,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[16,70],face:'right'},
           {name:'곽회',look:'archer',at:[50,72],face:'right'},
         ],steps:[
           {narrate:'낙양. 궁 안은 고요하고, 계단 위에 상복을 입은 조비가 홀로 섰다.'},
@@ -1020,7 +1020,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'낙양 · 새 왕조의 조회',art:5,cast:[
           {name:'사마의',look:'strategist',at:[50,56],face:'right'},
-          {name:'장합',look:'spear',at:[22,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[22,70],face:'right'},
           {name:'곽회',look:'archer',at:[34,72],face:'right'},
           {name:'사마랑',look:'physician',at:[76,70],face:'left'},
           {name:'가후',look:'strategist'},
@@ -1068,7 +1068,7 @@ const pack:ScenarioPack={
           {say:'문빙',line:'이 몸을 부대에 들여 주셨으니, 오늘 밤 갈대밭 물길은 제가 맡겠습니다.',when:'hw_wenpin'},
           {say:'문빙',line:'부대에 들지 못해도 괜찮습니다. 길잡이로라도 쓰십시오.',unless:'hw_wenpin'},
         ],again:[{say:'문빙',line:'수군은 배를 잃으면 끝입니다. 오군의 배부터 노리십시오.'}]},
-        {name:'장합',look:'spear',at:[62,66],talk:[
+        {name:'장합',look:'cavalry',at:[62,66],talk:[
           {say:'사마의',line:'장 장군, 오늘 밤은 잠든 척을 해야 하오.'},
           {say:'장합',line:'나이 들면 원래 잠이 얕소. 척하는 건 일도 아니오.'},
           {say:'장합',line:'감녕이 들어오면 진영 한가운데까지 오게 두시오. 문을 닫는 건 내가 하겠소.'},
@@ -1127,7 +1127,7 @@ const pack:ScenarioPack={
         '관우를 무너뜨린 그 수를 간파하지 못하면, 위군은 강을 건너기도 전에 무너진다.',
       ],
       camp:{place:'장강 · 북쪽 나루 진영',art:15,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'그 장사꾼 손을 다시 떠올려 봤소. 엄지 안쪽에 굳은살. 활을 오래 당긴 손이오.'},
           {say:'사마의',line:'눈이 밝구려.'},
           {say:'장합',line:'전장에서 오래 살면 손부터 보게 되오. 얼굴은 웃어도 손은 거짓말을 못 하니.'},
@@ -1167,7 +1167,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'장강 · 북쪽 나루',art:7,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
-          {name:'장합',look:'spear',at:[20,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[20,70],face:'right'},
           {name:'곽회',look:'archer',at:[48,72],face:'right'},
           {name:'상인',look:'civil'},
         ],steps:[
@@ -1221,7 +1221,7 @@ const pack:ScenarioPack={
           {say:'사마의',line:'나도 망루에서 처음 봤을 때는 숨이 멎었소.'},
           {say:'조진',line:'정말이오? 중달도 놀랄 때가 있구려! …왠지 마음이 놓이오.'},
         ],again:[{say:'조진',line:'다음엔 내가 먼저 가서 성벽을 발로 차 보겠소.'}]},
-        {name:'장합',look:'spear',at:[42,72],talk:[
+        {name:'장합',look:'cavalry',at:[42,72],talk:[
           {say:'장합',line:'성벽이 거짓이라도 그 뒤의 화살은 진짜요. 앞줄은 방패로 세우시오.'},
           {say:'사마의',line:'노병은 가까이 붙으면 약하지.'},
           {say:'장합',line:'그렇소. 한 번 쏘고 다시 당기는 사이에 붙어야 하오. 셋을 세는 동안이오.'},
@@ -1244,7 +1244,7 @@ const pack:ScenarioPack={
         {place:'광릉 · 강가 망루',art:15,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
           {name:'조진',look:'cavalry',at:[20,70],face:'right'},
-          {name:'장합',look:'spear',at:[48,72],face:'right'},
+          {name:'장합',look:'cavalry',at:[48,72],face:'right'},
           {name:'곽회',look:'archer'},
         ],steps:[
           {narrate:'하룻밤 사이, 건업 앞 강가에 수백 리 성벽이 솟았다. 망루와 깃발이 끝없이 이어진다.'},
@@ -1266,7 +1266,7 @@ const pack:ScenarioPack={
         {place:'광릉 · 불타는 거짓 성벽',art:1,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
           {name:'서성',look:'crossbow',at:[70,64],face:'left'},
-          {name:'장합',look:'spear',at:[24,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[24,70],face:'right'},
         ],steps:[
           {emote:'서성',text:'분노'},
           {say:'서성',line:'성은 거짓이었으나, 강동 사람의 결기는 거짓이 아니다!'},
@@ -1281,7 +1281,7 @@ const pack:ScenarioPack={
       history:['정봉은 손책 때부터 싸운 오의 노장이다.','역사에서 그는 동흥의 눈 속에서 갑옷을 벗고 짧은 칼만 든 병사들로 위군을 무너뜨렸다.','이 길에서 그 눈 속의 결사대가 서른 해 일찍, 대장군 사마의를 맞는다.'],
       required:['장합','곽회'],
       camp:{place:'장강 남안 · 위군 진영',art:15,people:[
-        {name:'장합',look:'spear',at:[20,62],talk:[
+        {name:'장합',look:'cavalry',at:[20,62],talk:[
           {say:'장합',line:'갑옷을 벗은 병사라… 미친 짓이거나, 아주 영리한 짓이오.'},
           {say:'사마의',line:'눈밭에서는 가벼운 자가 빠릅니다. 영리한 짓이지요.'},
         ],again:[{say:'장합',line:'병사들 손이 얼었소. 창을 쥐기도 어렵다 하오.'}]},
@@ -1297,7 +1297,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'장강 남안 · 눈 덮인 둑',art:7,cast:[
           {name:'사마의',look:'strategist',at:[34,62]},
-          {name:'장합',look:'spear',at:[20,64]},
+          {name:'장합',look:'cavalry',at:[20,64]},
           {name:'곽회',look:'archer',at:[58,60]}],
         steps:[
           {narrate:'때아닌 눈이 장강 남쪽 둑을 덮었다. 그 위에 갑옷을 벗은 오군이 짧은 칼을 들고 노래를 불렀다.'},
@@ -1342,7 +1342,7 @@ const pack:ScenarioPack={
           {say:'조진',line:'…좋소, 오늘은 나도 참겠소. 숲 쪽으로는 말머리를 돌리지 않겠소.'},
           {say:'조진',line:'모래밭에 진을 쳤더니 발이 푹푹 빠진다고 다들 투덜대오. 그래도 타 죽는 것보단 낫지.',when:'hw_nofire'},
         ],again:[{say:'조진',line:'육손이 싸움을 안 걸어오니 몸이 근질거리오.'}]},
-        {name:'장합',look:'spear',at:[28,64],talk:[
+        {name:'장합',look:'cavalry',at:[28,64],talk:[
           {say:'장합',line:'육손은 지혜로운 자요. 칼은 받지 않겠지만, 말이라면 받을 거요.'},
           {say:'사마의',line:'설전이라.'},
           {say:'장합',line:'서생과 서생의 싸움이니 대장군께서 나서시오. 우리는 그동안 숲을 지키겠소.'},
@@ -1378,7 +1378,7 @@ const pack:ScenarioPack={
         {place:'건업 앞 · 마른 숲',art:11,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
           {name:'조진',look:'cavalry',at:[20,70],face:'right'},
-          {name:'장합',look:'spear',at:[48,72],face:'right'},
+          {name:'장합',look:'cavalry',at:[48,72],face:'right'},
           {name:'정탐병',look:'infantry'},
         ],steps:[
           {narrate:'223년 여름. 위군이 건업 앞 강변에 닿았다. 숲은 바싹 말랐고, 바람은 동남쪽에서 분다.'},
@@ -1433,7 +1433,7 @@ const pack:ScenarioPack={
           {name:'조비',look:'civil',at:[68,54],face:'left'},
           {name:'사마의',look:'strategist',at:[38,62],face:'right'},
           {name:'조진',look:'cavalry',at:[24,70],face:'right'},
-          {name:'장합',look:'spear',at:[52,72],face:'right'},
+          {name:'장합',look:'cavalry',at:[52,72],face:'right'},
           {name:'문빙',look:'infantry'},
           {name:'사마랑',look:'physician'},
         ],steps:[
@@ -1460,7 +1460,7 @@ const pack:ScenarioPack={
         '그 앞을 막는 것은 종친의 이름을 내건 조진이다. 오래 나란히 싸운 벗이, 이번에는 적이 되었다.',
       ],
       camp:{place:'낙양 · 사마가 저택 뜰',art:0,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'금군 북영은 조진이 오래 길렀소. 중기병이 주력이오.'},
           {say:'사마의',line:'자단과 싸우게 될 줄은 몰랐소.'},
           {say:'장합',line:'나도 그렇소. 그는 용맹하니 일기토를 걸면 받을 거요. 다만 그를 쓰러뜨리면 종친 전부가 원수가 되오.'},
@@ -1498,7 +1498,7 @@ const pack:ScenarioPack={
         {place:'낙양 · 가복전 앞',art:13,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
           {name:'사마랑',look:'physician',at:[20,70],face:'right'},
-          {name:'장합',look:'spear',at:[48,72],face:'right'},
+          {name:'장합',look:'cavalry',at:[48,72],face:'right'},
           {name:'조진',look:'heavy'},
         ],steps:[
           {narrate:'226년 여름. 황제 조비가 가복전에서 숨을 거두었다. 마흔. 유조에는 조진·진군·조휴, 그리고 사마의의 이름이 적혀 있었다.'},
@@ -1532,7 +1532,7 @@ const pack:ScenarioPack={
         {place:'낙양 · 금군 북영',art:16,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
           {name:'조진',look:'heavy',at:[70,64],face:'left'},
-          {name:'장합',look:'spear',at:[24,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[24,70],face:'right'},
         ],steps:[
           {emote:'조진',text:'땀'},
           {say:'조진',line:'…또 졌구려. 중달, 그대와 겨루어 이긴 적이 한 번도 없소.'},
@@ -1557,7 +1557,7 @@ const pack:ScenarioPack={
           {say:'사마랑',line:'진짜 약이다. 너 요즘 잠을 못 자잖느냐. 늙은 이리도 잠은 자야 한다.'},
           {emote:'사마의',text:'…'},
         ],again:[{say:'사마랑',line:'약은 먹고 가라. 연기도 몸이 성해야 한다.'}]},
-        {name:'장합',look:'spear',at:[28,64],talk:[
+        {name:'장합',look:'cavalry',at:[28,64],talk:[
           {say:'장합',line:'조상의 금군은 기병이 주력이오. 낙수 다리를 건너야 성으로 들어오오.'},
           {say:'사마의',line:'다리를 막으면 되겠구려.'},
           {say:'장합',line:'그렇소. 다리 위에선 기병이 둘씩밖에 못 서오. 다리 끝은 내가 맡겠소.'},
@@ -1654,7 +1654,7 @@ const pack:ScenarioPack={
           {say:'손자',line:'아무 말씀도 없으십니다. 다만 붓을 쥐시고는 오래 놓지 않으셨답니다. 무언가 쓰고 싶으신 듯했습니다.'},
           {emote:'사마의',text:'…'},
         ],again:[{say:'손자',line:'침전 뒷문은 환관 둘이 지킵니다. 둘 다 돈을 좋아합니다.'}]},
-        {name:'장합',look:'spear',at:[58,66],talk:[
+        {name:'장합',look:'cavalry',at:[58,66],talk:[
           {say:'장합',line:'붓 싸움에 창을 들고 왔으니 좀 어색하오.'},
           {say:'사마의',line:'붓이 끝나는 곳에서 창이 시작되지요.'},
           {say:'장합',line:'그럼 그 끝을 기다리겠소. 궁 안은 기둥이 많아 길게 휘두르기 어렵겠구려. 짧게 잡겠소.'},
@@ -1711,7 +1711,7 @@ const pack:ScenarioPack={
           {say:'사마의',line:'사흘입니다. 형님 약이 좋아서 빨리 나았지요.'},
           {say:'사마랑',line:'내 약은 꾀병에는 안 듣는다. 네 꾀가 좋았던 게지.'},
         ],again:[{say:'사마랑',line:'몸은 정말로 늙었다. 무리하지 마라.'}]},
-        {name:'장합',look:'spear',at:[46,62],talk:[
+        {name:'장합',look:'cavalry',at:[46,62],talk:[
           {say:'장합',line:'환범의 조서가 벌써 성 밖으로 나갔다 하오. 금군 몇이 흔들리고 있소.'},
           {say:'사마의',line:'조서는 붓으로 쓴 것이오. 붓보다 빠른 건 소문뿐이지요.'},
         ],again:[{say:'장합',line:'남궁 문은 셋이오. 둘은 막혔고 하나는 열려 있소.'}]},
@@ -1763,7 +1763,7 @@ const pack:ScenarioPack={
         '섭정이 되려는 노신은 황제의 몸을 다치게 하지 않고 이겨야 한다.',
       ],
       camp:{place:'낙양 · 궁문 앞 진지',art:2,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'폐하 손에 활이 들려 있었소. 어미 사슴을 잃은 새끼를 차마 쏘지 못했다는 그 활이오.'},
           {say:'사마의',line:'그런 아이였지.'},
           {say:'장합',line:'그런 아이에게 창을 들고 왔소. …폐하 계신 누각 쪽으로는 화살 한 대도 쏘지 않게 하겠소.'},
@@ -1806,7 +1806,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'낙양 · 닫힌 궁문',art:2,cast:[
           {name:'사마의',look:'strategist',at:[32,62],face:'right'},
-          {name:'장합',look:'spear',at:[18,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[18,70],face:'right'},
           {name:'곽회',look:'archer',at:[46,72],face:'right'},
           {name:'조예',look:'civil',at:[74,54],face:'left'},
           {name:'금군',look:'heavy',at:[86,66],face:'left'},
@@ -1832,7 +1832,7 @@ const pack:ScenarioPack={
         {place:'낙양 · 옥좌 앞',art:5,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
           {name:'조예',look:'civil',at:[68,56],face:'left'},
-          {name:'장합',look:'spear',at:[24,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[24,70],face:'right'},
         ],steps:[
           {emote:'조예',text:'…'},
           {say:'조예',line:'태부…. 짐은 그대가 무서웠소. 선제께서도 그대를 무서워하셨지.'},
@@ -1854,7 +1854,7 @@ const pack:ScenarioPack={
         {place:'낙양 · 아침 조회',art:5,cast:[
           {name:'조예',look:'civil',at:[68,54],face:'left'},
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
-          {name:'장합',look:'spear',at:[22,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[22,70],face:'right'},
           {name:'사마사',look:'cavalry'},
         ],steps:[
           {narrate:'어린 황제의 손을 잡은 노신이 천하를 다스렸다.'},
@@ -1880,7 +1880,7 @@ const pack:ScenarioPack={
         '이 길에서 허창을 얻은 원씨의 승상 사마의가 남쪽 끝 강하까지 군을 몰았다. 노숙의 맹약을 끊어야 강을 건널 수 있다.',
       ],
       camp:{place:'강하 · 강가 진영',art:15,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'하북 사람에게 강은 낯설소. 바람이 물 냄새를 실어 오니 병사들이 밤마다 뒤척이오.'},
           {say:'사마의',line:'장군도 그렇소?'},
           {say:'장합',line:'나는 관도 이후로 잠을 깊이 자 본 적이 없소. 이젠 상관없소.'},
@@ -1916,7 +1916,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'허창 · 남정 전야의 군영',art:6,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
-          {name:'장합',look:'spear',at:[20,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[20,70],face:'right'},
           {name:'곽회',look:'archer',at:[48,72],face:'right'},
           {name:'장료',look:'cavalry'},
           {name:'하북 병사',look:'infantry'},
@@ -1970,7 +1970,7 @@ const pack:ScenarioPack={
         '끝없는 물 위로 비단 돛을 단 감녕의 금범적 배들이 몰려온다.',
       ],
       camp:{place:'파양호 · 호숫가 진영',art:15,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'배 위에서 창을 쥐어 봤소. 발이 흔들리니 창끝이 춤을 추오.'},
           {say:'사마의',line:'그럼 배에서 싸우지 않으면 되오.'},
           {say:'장합',line:'…그렇소. 호숫가 모래톱으로 끌어내면 하북의 창이 다시 살아나오.'},
@@ -2010,7 +2010,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'파양호 · 북쪽 호숫가',art:7,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
-          {name:'장합',look:'spear',at:[20,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[20,70],face:'right'},
           {name:'곽회',look:'archer',at:[48,72],face:'right'},
           {name:'하북 병사',look:'infantry'},
           {name:'파양 어부',look:'civil'},
@@ -2058,7 +2058,7 @@ const pack:ScenarioPack={
           {say:'곽회',line:'배를 멀리 띄우라는 명은 다 전했습니다. 사슬로 묶은 배는 한 척도 없습니다.',when:'hs_wind'},
           {say:'곽회',line:'황개는 자부심 강한 노장입니다. 일기토를 걸면 받을 겁니다. 매 맞은 등으로도요.'},
         ],again:[{say:'곽회',line:'바람이 바뀌면 불도 방향을 바꿉니다. 그걸 잊지 마십시오.'}]},
-        {name:'장합',look:'spear',at:[28,64],talk:[
+        {name:'장합',look:'cavalry',at:[28,64],talk:[
           {say:'장합',line:'노장이 매를 맞았다는 얘기, 꾸민 것이라도 진짜 맞았을 거요. 그래야 믿게 하니까.'},
           {say:'사마의',line:'고육지계지.'},
           {say:'장합',line:'제 살을 내주고 남을 태우겠다는 자는 무섭소. 불배가 오면 가까이 가지 말고 장대로 밀어내시오.'},
@@ -2092,7 +2092,7 @@ const pack:ScenarioPack={
         {place:'적벽 · 북쪽 강기슭',art:15,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
           {name:'곽회',look:'archer',at:[20,70],face:'right'},
-          {name:'장합',look:'spear',at:[48,72],face:'right'},
+          {name:'장합',look:'cavalry',at:[48,72],face:'right'},
           {name:'황개의 사자',look:'civil'},
         ],steps:[
           {narrate:'적벽. 조조가 오지 않은 이 강에, 이번에는 하북의 배들이 늘어섰다. 강 건너 붉은 벼랑이 노을에 물든다.'},
@@ -2113,7 +2113,7 @@ const pack:ScenarioPack={
         {place:'적벽 · 불타는 빈 배',art:1,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
           {name:'황개',look:'infantry',at:[70,64],face:'left'},
-          {name:'장합',look:'spear',at:[24,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[24,70],face:'right'},
         ],steps:[
           {emote:'황개',text:'분노'},
           {say:'황개',line:'등에 맞은 매가 아깝구나! 이 늙은 살을 내주고도 불 한 번 제대로 못 붙였어.'},
@@ -2128,7 +2128,7 @@ const pack:ScenarioPack={
       history:['여몽은 젊어서 글을 몰랐으나, 손권의 권유로 공부해 노숙을 놀라게 했다. 「사흘을 떨어져 있으면 눈을 비비고 다시 보라」는 말이 여기서 나왔다.','역사에서 그는 훗날 흰 옷을 입고 강을 건너 관우를 사로잡는다.','이 길에서 그는 병든 주유를 대신해 하북군을 먼저 맞는다.'],
       required:['장합','곽회'],
       camp:{place:'시상 북쪽 · 하북군 진영',art:15,people:[
-        {name:'장합',look:'spear',at:[20,62],talk:[
+        {name:'장합',look:'cavalry',at:[20,62],talk:[
           {say:'장합',line:'여몽이라면 글도 모르는 무부라 들었소.'},
           {say:'사마의',line:'그건 몇 해 전 이야기입니다. 지금은 주유의 병서를 외운다 합니다.'},
           {say:'장합',line:'…무부가 글을 배우면 무섭지.'},
@@ -2145,7 +2145,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'시상 강어귀',art:7,cast:[
           {name:'사마의',look:'strategist',at:[34,62]},
-          {name:'장합',look:'spear',at:[20,64]},
+          {name:'장합',look:'cavalry',at:[20,64]},
           {name:'곽회',look:'archer',at:[58,60]}],
         steps:[
           {narrate:'시상으로 들어가는 좁은 강어귀. 양쪽 언덕에 오군의 깃발이 숲처럼 섰다.'},
@@ -2164,7 +2164,7 @@ const pack:ScenarioPack={
         {place:'시상 강어귀',art:15,cast:[
           {name:'사마의',look:'strategist',at:[40,60]},
           {name:'여몽',look:'cavalry',at:[64,60],face:'left'},
-          {name:'장합',look:'spear',at:[24,62]}],
+          {name:'장합',look:'cavalry',at:[24,62]}],
         steps:[
           {narrate:'언덕의 깃발이 하나씩 쓰러지고, 여몽은 배를 타고 시상으로 물러났다.'},
           {say:'여몽',line:'책을 더 읽어야겠소. 이번엔 승상의 책을.'},
@@ -2183,7 +2183,7 @@ const pack:ScenarioPack={
         '강동의 대도독을 꺾으면, 원씨의 깃발 아래 천하가 하나로 묶인다.',
       ],
       camp:{place:'시상 · 하북군 본진',art:16,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'거문고 소리가 밤새 들리오. 병사들이 그 소리에 잠을 못 이루오.'},
           {say:'사마의',line:'주유가 우리 귀를 흔드는 것이오. 소리로도 싸우는 사람이지.'},
           {say:'장합',line:'그럼 북을 치게 하시오. 하북의 북소리로 덮으면 되오.'},
@@ -2223,7 +2223,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'시상 · 강가 진영 앞',art:16,cast:[
           {name:'사마의',look:'strategist',at:[32,62],face:'right'},
-          {name:'장합',look:'spear',at:[18,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[18,70],face:'right'},
           {name:'곽회',look:'archer',at:[44,72],face:'right'},
           {name:'주유',look:'strategist'},
           {name:'오군 기수',look:'infantry'},
@@ -2248,7 +2248,7 @@ const pack:ScenarioPack={
         {place:'시상 · 끊어진 거문고 줄',art:16,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
           {name:'주유',look:'strategist',at:[70,62],face:'left'},
-          {name:'장합',look:'spear',at:[24,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[24,70],face:'right'},
           {name:'전령',look:'infantry'},
         ],steps:[
           {emote:'주유',text:'…'},
@@ -2271,7 +2271,7 @@ const pack:ScenarioPack={
         {place:'허창 · 원씨의 궁정',art:5,cast:[
           {name:'원상',look:'cavalry',at:[68,54],face:'left'},
           {name:'사마의',look:'strategist',at:[38,62],face:'right'},
-          {name:'장합',look:'spear',at:[22,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[22,70],face:'right'},
           {name:'심배',look:'strategist',at:[84,62],face:'left'},
           {name:'장료',look:'cavalry'},
           {name:'사마랑',look:'physician'},
@@ -2299,7 +2299,7 @@ const pack:ScenarioPack={
         '원씨의 충신 봉기가 업성의 백관을 모아 사마의를 탄핵한다. 먼저 칼을 뽑는 쪽이 반역자가 된다.',
       ],
       camp:{place:'업성 · 승상부 뒤뜰',art:0,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'봉기와 곽도가 관도에서 나를 모함했을 때, 원 공께서는 내 말을 들어 주지 않았소.'},
           {say:'장합',line:'그때 승상이 아니었으면 나는 조조에게 갔을 거요.'},
           {say:'사마의',line:'그 빚을 갚으라는 말은 하지 않겠소.'},
@@ -2341,7 +2341,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'업성 · 조당',art:5,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
-          {name:'장합',look:'spear',at:[20,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[20,70],face:'right'},
           {name:'봉기',look:'civil',at:[72,58],face:'left'},
           {name:'심배',look:'strategist',at:[86,62],face:'left'},
         ],steps:[
@@ -2375,7 +2375,7 @@ const pack:ScenarioPack={
         {place:'업성 · 흩어진 조당',art:13,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
           {name:'봉기',look:'civil',at:[70,62],face:'left'},
-          {name:'장합',look:'spear',at:[24,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[24,70],face:'right'},
         ],steps:[
           {emote:'봉기',text:'분노'},
           {say:'봉기',line:'하늘이 보고 있소, 사마의! 원씨의 은혜를 이렇게 갚는가!'},
@@ -2393,7 +2393,7 @@ const pack:ScenarioPack={
         '원소의 무덤을 지키겠다는 마지막 충성이다. 성 안의 곡식은 바닥나고 있다.',
       ],
       camp:{place:'업성 · 성벽 아래 진영',art:8,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'심배는 신중한 자요. 일기토도 설전도 받지 않을 거요. 성벽 뒤에서 끝까지 버티겠지.'},
           {say:'사마의',line:'끝까지 버티는 것이 그의 충성이오.'},
           {say:'장합',line:'그러니 끌어내려 하지 말고 금위를 하나씩 덜어 내시오. 마지막엔 그 혼자 남을 거요.'},
@@ -2434,7 +2434,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'업성 · 궁성 앞 해자',art:8,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
-          {name:'장합',look:'spear',at:[20,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[20,70],face:'right'},
           {name:'곽회',look:'archer',at:[48,72],face:'right'},
           {name:'심배',look:'strategist'},
           {name:'업성 백성',look:'civil'},
@@ -2458,7 +2458,7 @@ const pack:ScenarioPack={
         {place:'업성 북쪽 · 원소의 무덤 앞',art:3,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
           {name:'심배',look:'strategist',at:[70,62],face:'left'},
-          {name:'장합',look:'spear',at:[24,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[24,70],face:'right'},
         ],steps:[
           {emote:'심배',text:'…'},
           {say:'심배',line:'…주공. 심배가 끝까지 지키지 못했습니다.'},
@@ -2483,7 +2483,7 @@ const pack:ScenarioPack={
           {say:'곽회',line:'예. 그래서 물을 건너는 순간만은 서두를 겁니다. 형제 일에는 누구나 서두르지요.'},
           {say:'곽회',line:'오환 선우 둘이 비단을 받고 북쪽으로 물러났습니다. 원희 곁에는 하나만 남았습니다.',when:'ht_wuhuan'},
         ],again:[{say:'곽회',line:'역수에 얕은 여울이 셋입니다. 말이 건널 곳은 거기뿐입니다.'}]},
-        {name:'장합',look:'spear',at:[28,64],talk:[
+        {name:'장합',look:'cavalry',at:[28,64],talk:[
           {say:'장합',line:'역수…. 형가가 진왕을 찌르러 떠나며 노래한 강이오. 「바람은 쓸쓸하고 역수는 차구나.」'},
           {say:'사마의',line:'장 장군이 노래를 다 아시는구려.'},
           {say:'장합',line:'하북 사람이면 다 아오. …오늘은 돌아오지 못할 사람이 없게 합시다.'},
@@ -2516,7 +2516,7 @@ const pack:ScenarioPack={
         {place:'역수 · 북쪽 나루',art:7,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
           {name:'곽회',look:'archer',at:[20,70],face:'right'},
-          {name:'장합',look:'spear',at:[48,72],face:'right'},
+          {name:'장합',look:'cavalry',at:[48,72],face:'right'},
           {name:'정탐병',look:'infantry'},
           {name:'원희',look:'cavalry'},
         ],steps:[
@@ -2552,7 +2552,7 @@ const pack:ScenarioPack={
       history:['역사에서 저수는 관도에서 원소에게 간언했으나 듣지 않아 패했고, 조조에게 사로잡혀 죽었다.','이 길에서는 원소가 관도에서 이겼고, 저수는 원씨의 기둥이 되었다.','봉기도 심배도 쓰러진 지금, 원씨 곁에 남은 마지막 지혜다.'],
       required:['장합','곽회'],
       camp:{place:'업성 서쪽 · 진영',art:8,people:[
-        {name:'장합',look:'spear',at:[20,62],talk:[
+        {name:'장합',look:'cavalry',at:[20,62],talk:[
           {say:'장합',line:'저수 공은 관도에서 나를 감싸 준 사람이오. 그와 칼을 겨눌 줄은 몰랐소.'},
           {say:'사마의',line:'칼은 내가 들겠소. 장군은 길만 열어 주시오.'},
           {emote:'장합',text:'…'},
@@ -2569,7 +2569,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'업성 서쪽 성채',art:8,cast:[
           {name:'사마의',look:'strategist',at:[34,62]},
-          {name:'장합',look:'spear',at:[20,64]},
+          {name:'장합',look:'cavalry',at:[20,64]},
           {name:'곽회',look:'archer',at:[58,60]}],
         steps:[
           {narrate:'업성 서쪽 낮은 언덕의 성채. 낡은 원씨 깃발 아래, 흰 수염의 책사가 성벽에 섰다.'},
@@ -2588,7 +2588,7 @@ const pack:ScenarioPack={
         {place:'업성 서쪽 성채',art:3,cast:[
           {name:'사마의',look:'strategist',at:[40,60]},
           {name:'저수',look:'strategist',at:[64,60],face:'left'},
-          {name:'장합',look:'spear',at:[24,62]}],
+          {name:'장합',look:'cavalry',at:[24,62]}],
         steps:[
           {narrate:'성채의 문이 열리고, 저수가 홀로 걸어 나왔다.'},
           {say:'저수',line:'관도에서 원공은 내 말을 들어 이겼소. 그 뒤로는 한 번도 듣지 않으셨지.'},
@@ -2607,7 +2607,7 @@ const pack:ScenarioPack={
         '이제 원상이 친위 기병을 이끌고 업성 궁을 지킨다. 그릇이 아니라 해도 그는 원소의 아들이다.',
       ],
       camp:{place:'업성 · 궁정 바깥뜰',art:5,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'원상 공이 갑옷 입은 걸 처음 보오. 생각보다 잘 어울리더군.'},
           {say:'사마의',line:'원소 공의 아들이니까요.'},
           {say:'장합',line:'자존심이 센 분이오. 일기토를 걸면 웬만해선 받을 거요. 친위 기병도 그분을 위해 죽을 각오요.'},
@@ -2648,7 +2648,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'업성 · 궁정 앞뜰',art:5,cast:[
           {name:'사마의',look:'strategist',at:[32,62],face:'right'},
-          {name:'장합',look:'spear',at:[18,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[18,70],face:'right'},
           {name:'곽회',look:'archer',at:[44,72],face:'right'},
           {name:'원상',look:'cavalry'},
           {name:'친위 기병',look:'cavalry'},
@@ -2696,7 +2696,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'업성 · 즉위의 단',art:5,cast:[
           {name:'사마의',look:'strategist',at:[50,56],face:'right'},
-          {name:'장합',look:'spear',at:[22,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[22,70],face:'right'},
           {name:'곽회',look:'archer',at:[36,72],face:'right'},
           {name:'고람',look:'spear'},
           {name:'사마랑',look:'physician'},
@@ -2731,7 +2731,7 @@ const pack:ScenarioPack={
           {say:'고람',line:'삼키겠소. 대신 업성 남문은 내 창으로 열겠소. 저 문은 내가 십 년을 지켰던 문이오.'},
           {emote:'고람',text:'…'},
         ],again:[{say:'고람',line:'남문 빗장은 안에서 셋이오. 두 번은 쳐야 열리오.'}]},
-        {name:'장합',look:'spear',at:[28,64],talk:[
+        {name:'장합',look:'cavalry',at:[28,64],talk:[
           {say:'장합',line:'심배는 신중한 자요. 성 밖으로 나오지 않고, 일기토도 설전도 받지 않을 거요.'},
           {say:'사마의',line:'성벽 뒤에서 끝까지 버티겠지.'},
           {say:'장합',line:'그렇소. 그러니 성벽 위 노병부터 떨궈야 하오. 업성 성벽은 높소. 사다리는 길게 만드시오.'},
@@ -2766,7 +2766,7 @@ const pack:ScenarioPack={
         {place:'업성 남쪽 · 연합군 진영',art:16,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
           {name:'고람',look:'spear',at:[20,70],face:'right'},
-          {name:'장합',look:'spear',at:[48,72],face:'right'},
+          {name:'장합',look:'cavalry',at:[48,72],face:'right'},
           {name:'서황',look:'heavy'},
         ],steps:[
           {narrate:'216년. 하내의 사마씨와 허창의 조조가 손을 잡았다. 두 깃발이 업성 남쪽 들판에 나란히 섰다.'},
@@ -2819,7 +2819,7 @@ const pack:ScenarioPack={
         '태항산의 좁은 골짜기가 그의 성벽이다. 이를 뚫어야 원상의 뒤를 쫓을 수 있다.',
       ],
       camp:{place:'태항산 · 골짜기 어귀 야영지',art:4,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'고간은 조조에게 한 번 항복했다가 다시 돌아선 자요. 침착하지만 고집이 있소.'},
           {say:'사마의',line:'일기토는 받겠소?'},
           {say:'장합',line:'내가 걸면 안 받을 거요. 이길 셈이 안 서니까. 그 사람은 셈이 맞을 때만 나서오.'},
@@ -2859,7 +2859,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'태항산 · 병주로 가는 골짜기',art:4,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
-          {name:'장합',look:'spear',at:[20,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[20,70],face:'right'},
           {name:'곽회',look:'archer',at:[48,72],face:'right'},
           {name:'고간',look:'infantry'},
           {name:'병주 병사',look:'infantry'},
@@ -2881,7 +2881,7 @@ const pack:ScenarioPack={
         {place:'태항산 · 꺾인 병주군',art:4,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
           {name:'고간',look:'infantry',at:[70,64],face:'left'},
-          {name:'장합',look:'spear',at:[24,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[24,70],face:'right'},
         ],steps:[
           {emote:'고간',text:'땀'},
           {say:'고간',line:'…병주는 내 땅이다. 원상에게 가는 길만은 내줄 수 없었는데.'},
@@ -2905,7 +2905,7 @@ const pack:ScenarioPack={
           {say:'고람',line:'술을 말로 마시고, 화가 나면 맨손으로 말을 쓰러뜨리는 자요. 무모하니 일기토를 걸면 무조건 받을 거요.'},
           {say:'고람',line:'그 일기토, 나에게 주시오.'},
         ],again:[{say:'고람',line:'초원 사람들은 지는 걸 부끄러워하지 않소. 다만 약한 자를 따르지 않을 뿐이오.'}]},
-        {name:'장합',look:'spear',at:[28,64],talk:[
+        {name:'장합',look:'cavalry',at:[28,64],talk:[
           {say:'장합',line:'들판에서 궁기병과 맞서면 우리는 과녁이오. 산을 등지고 싸워야 하오.'},
           {say:'사마의',line:'백랑산 꼭대기를 쥐면?'},
           {say:'장합',line:'저들은 말에서 내려야 하오. 말에서 내린 오환은 반쪽이오.'},
@@ -2933,7 +2933,7 @@ const pack:ScenarioPack={
         {place:'백랑산 · 북쪽 초원',art:3,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
           {name:'고람',look:'spear',at:[20,70],face:'right'},
-          {name:'장합',look:'spear',at:[48,72],face:'right'},
+          {name:'장합',look:'cavalry',at:[48,72],face:'right'},
           {name:'답돈',look:'horseArcher'},
           {name:'오환 기병',look:'horseArcher'},
         ],steps:[
@@ -2969,7 +2969,7 @@ const pack:ScenarioPack={
       history:['역사에서 문추는 관도 싸움 앞머리 연진에서 조조의 미끼에 걸려 죽었다.','이 길에서 그는 살아남았고, 원씨의 마지막 기병을 이끈다.','조조와 맺은 맹약은 원상의 목을 요구하지만, 문추는 그 목을 내줄 생각이 없다.'],
       required:['장합','곽회'],
       camp:{place:'업성 북쪽 · 진영',art:4,people:[
-        {name:'장합',look:'spear',at:[20,62],talk:[
+        {name:'장합',look:'cavalry',at:[20,62],talk:[
           {say:'장합',line:'문추와는 한 진영에서 오래 싸웠소. 그 자의 창은 왼쪽으로 휘어 들어오오.'},
           {say:'사마의',line:'그러면 오른쪽 방패를 두텁게 하지요.'},
         ],again:[{say:'장합',line:'하북 철기는 돌격 전에 북을 세 번 치오.'}]},
@@ -2986,7 +2986,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'업성 북쪽 들판',art:4,cast:[
           {name:'사마의',look:'strategist',at:[34,62]},
-          {name:'장합',look:'spear',at:[20,64]},
+          {name:'장합',look:'cavalry',at:[20,64]},
           {name:'곽회',look:'archer',at:[58,60]}],
         steps:[
           {narrate:'북쪽 들판에 북소리가 세 번 울렸다. 검은 갑옷의 기병이 들판 끝에서 끝까지 늘어섰다.'},
@@ -3005,7 +3005,7 @@ const pack:ScenarioPack={
         {place:'업성 북쪽 들판',art:4,cast:[
           {name:'사마의',look:'strategist',at:[40,60]},
           {name:'문추',look:'cavalry',at:[64,60],face:'left'},
-          {name:'장합',look:'spear',at:[24,62]}],
+          {name:'장합',look:'cavalry',at:[24,62]}],
         steps:[
           {narrate:'철기의 돌격은 수레 앞에서 멈췄다. 문추는 부러진 창을 들고 말에서 내렸다.'},
           {say:'문추',line:'준예, 너까지 저쪽에 섰구나.'},
@@ -3032,7 +3032,7 @@ const pack:ScenarioPack={
           {say:'고람',line:'…목을 보낸다 하셨지. 알겠소. 다만 그 일은 내 손으로는 못 하겠소.',when:'ia_head'},
           {emote:'고람',text:'…'},
         ],again:[{say:'고람',line:'원상 공은 자존심이 세오. 일기토를 걸면 받을 거요. 아버지를 닮아서.'}]},
-        {name:'장합',look:'spear',at:[28,64],talk:[
+        {name:'장합',look:'cavalry',at:[28,64],talk:[
           {say:'장합',line:'원상 공의 친위 기병은 마지막 남은 하북 정예요. 하나하나가 백 번 싸운 자들이오.'},
           {say:'사마의',line:'그들을 죽이고 싶지 않소.'},
           {say:'장합',line:'그럼 원상 공을 빨리 꺾으시오. 주인이 쓰러지면 창을 내릴 거요. 싸움이 길어질수록 죽는 자가 늘어나오.'},
@@ -3067,7 +3067,7 @@ const pack:ScenarioPack={
         {place:'업성 북쪽 · 사마씨의 군막',art:14,cast:[
           {name:'사마의',look:'strategist',at:[36,62],face:'right'},
           {name:'고람',look:'spear',at:[20,70],face:'right'},
-          {name:'장합',look:'spear',at:[50,72],face:'right'},
+          {name:'장합',look:'cavalry',at:[50,72],face:'right'},
           {name:'조조의 사자',look:'civil'},
         ],steps:[
           {enter:'조조의 사자',at:[84,62],from:'right'},
@@ -3079,7 +3079,7 @@ const pack:ScenarioPack={
         ]},
         {place:'업성 북쪽 · 들판',art:16,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
-          {name:'장합',look:'spear',at:[20,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[20,70],face:'right'},
           {name:'원상',look:'cavalry'},
           {name:'원씨 친위',look:'cavalry'},
         ],steps:[
@@ -3120,7 +3120,7 @@ const pack:ScenarioPack={
         {place:'황하 · 두 깃발이 마주한 나루',art:15,cast:[
           {name:'사마의',look:'strategist',at:[36,62],face:'right'},
           {name:'고람',look:'spear',at:[20,70],face:'right'},
-          {name:'장합',look:'spear',at:[48,72],face:'right'},
+          {name:'장합',look:'cavalry',at:[48,72],face:'right'},
           {name:'조조',look:'civil'},
           {name:'저수',look:'strategist'},
         ],steps:[
@@ -3155,7 +3155,7 @@ const pack:ScenarioPack={
           {say:'고람',line:'화살을 뽑으니 눈알이 딸려 나왔는데, 「부모의 정혈은 버릴 수 없다」며 삼켰다지. …나도 그런 장수가 되고 싶었소.'},
           {say:'고람',line:'그와 겨루는 일, 나에게 맡겨 주시오.'},
         ],again:[{say:'고람',line:'하후돈은 왼쪽 눈이 없소. 왼쪽으로 돌아 들어가시오.'}]},
-        {name:'장합',look:'spear',at:[28,64],talk:[
+        {name:'장합',look:'cavalry',at:[28,64],talk:[
           {say:'장합',line:'허창 북문은 관도 이후에 다시 쌓았소. 돌이 새것이라 단단하오.'},
           {say:'사마의',line:'새 돌은 단단하지만 서로 맞물리지 않았지.'},
           {say:'장합',line:'…그건 생각 못 했소. 문과 성벽이 만나는 모서리를 치면 되겠구려.'},
@@ -3192,7 +3192,7 @@ const pack:ScenarioPack={
         {place:'하내 · 출정의 아침',art:6,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
           {name:'고람',look:'spear',at:[20,70],face:'right'},
-          {name:'장합',look:'spear',at:[48,72],face:'right'},
+          {name:'장합',look:'cavalry',at:[48,72],face:'right'},
           {name:'우금',look:'infantry'},
           {name:'하내 병사',look:'infantry'},
         ],steps:[
@@ -3208,7 +3208,7 @@ const pack:ScenarioPack={
         ]},
         {place:'허창 북문 앞',art:2,cast:[
           {name:'사마의',look:'strategist',at:[36,62],face:'right'},
-          {name:'장합',look:'spear',at:[20,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[20,70],face:'right'},
           {name:'우금',look:'infantry',at:[52,72],face:'left'},
           {name:'하후돈',look:'cavalry'},
         ],steps:[
@@ -3246,7 +3246,7 @@ const pack:ScenarioPack={
         '허저가 웃통을 벗고 막아섰다. 그를 넘지 않으면 조조에게 닿을 수 없다.',
       ],
       camp:{place:'허창 남쪽 · 하내군 진영',art:16,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'일기토를 허락해 주셔서 고맙소. 허저와는 언젠가 겨뤄 보고 싶었소.',when:'ie_duel'},
           {say:'장합',line:'일기토를 허락하지 않으셨지. 아쉽지만 옳소. 저자는 사람이 아니라 곰이오.',unless:'ie_duel'},
           {say:'사마의',line:'허저는 무모한 자요. 누가 걸든 받을 거요.'},
@@ -3285,7 +3285,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'허창 남쪽 · 조조의 본진 앞',art:16,cast:[
           {name:'사마의',look:'strategist',at:[34,62],face:'right'},
-          {name:'장합',look:'spear',at:[20,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[20,70],face:'right'},
           {name:'고람',look:'spear',at:[48,72],face:'right'},
           {name:'허저',look:'infantry'},
         ],steps:[
@@ -3308,7 +3308,7 @@ const pack:ScenarioPack={
         {place:'허창 남쪽 · 무너진 장막',art:16,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
           {name:'허저',look:'infantry',at:[70,64],face:'left'},
-          {name:'장합',look:'spear',at:[24,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[24,70],face:'right'},
         ],steps:[
           {emote:'허저',text:'분노'},
           {say:'허저',line:'승상…. 허저가 못나서….'},
@@ -3354,7 +3354,7 @@ const pack:ScenarioPack={
           {say:'온현 농부',line:'그 말씀 들으니 마음이 놓입니다. 저도 쇠스랑 들고 지키겠습니다.'},
           {say:'사마의',line:'쇠스랑은 두고, 불 끌 물동이를 들어라. 그게 더 필요하다.'},
         ],again:[{say:'온현 농부',line:'물동이 백 개를 모아 두었습니다.'}]},
-        {name:'장합',look:'spear',at:[86,64],talk:[
+        {name:'장합',look:'cavalry',at:[86,64],talk:[
           {say:'장합',line:'조 공은 한 번 이긴 수를 다시 쓰는 사람이오. 처음 이긴 수는 다시 통한다고 믿으니까.'},
           {say:'사마의',line:'그래서 그 수를 거꾸로 돌려줄 수 있지.'},
           {say:'장합',line:'다만 서황은 조 공이 아니오. 거꾸로 당한 걸 알아채면 바로 빠질 거요. 길부터 막으시오.'},
@@ -3402,7 +3402,7 @@ const pack:ScenarioPack={
       history:['조인은 조조의 사촌 아우로, 번성에서 관우의 물길을 견뎌 낸 위의 방패다.','연의에서 그는 신야에서 팔문금쇄진을 펼쳤다가, 서서에게 생문을 읽혀 무너졌다.','이 길에서 그 진을 읽어야 하는 사람은 하내의 사마의다.'],
       required:['장합','고람'],
       camp:{place:'허창 앞 · 하내군 진영',art:16,people:[
-        {name:'장합',look:'spear',at:[20,62],talk:[
+        {name:'장합',look:'cavalry',at:[20,62],talk:[
           {say:'장합',line:'팔문금쇄라… 휴·생·상·두·경·사·경·개. 들어가는 문을 잘못 고르면 다 죽는다 하오.'},
           {say:'사마의',line:'생문으로 들어가 경문으로 나오면 진이 무너진다 했지요. 그것은 서서가 이미 읽어 둔 답입니다.'},
           {say:'장합',line:'조인도 그걸 알 텐데.'},
@@ -3421,7 +3421,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'허창 앞 평원',art:16,cast:[
           {name:'사마의',look:'strategist',at:[34,62]},
-          {name:'장합',look:'spear',at:[20,64]},
+          {name:'장합',look:'cavalry',at:[20,64]},
           {name:'고람',look:'spear',at:[58,60]}],
         steps:[
           {narrate:'허창 앞 평원에 여덟 갈래 문을 가진 진이 섰다. 진 한가운데 조인의 깃발이 높았다.'},
@@ -3440,7 +3440,7 @@ const pack:ScenarioPack={
         {place:'허창 앞 평원',art:16,cast:[
           {name:'사마의',look:'strategist',at:[40,60]},
           {name:'조인',look:'heavy',at:[64,60],face:'left'},
-          {name:'장합',look:'spear',at:[24,62]}],
+          {name:'장합',look:'cavalry',at:[24,62]}],
         steps:[
           {narrate:'여덟 문의 진은 한가운데부터 무너졌다. 조인은 남은 병사들을 이끌고 허창 쪽으로 물러섰다.'},
           {say:'조인',line:'서서가 읽은 진을 바꾸어 두었는데, 너는 땅을 읽었구나.'},
@@ -3459,7 +3459,7 @@ const pack:ScenarioPack={
         '원소도 조조도 아닌 제3의 영웅이 될 수 있느냐. 하내의 사마의가 마지막 싸움에 나선다.',
       ],
       camp:{place:'허창 앞 · 하내군 본진',art:16,people:[
-        {name:'장합',look:'spear',at:[14,70],talk:[
+        {name:'장합',look:'cavalry',at:[14,70],talk:[
           {say:'장합',line:'조 공이 몸소 나왔소. 머리는 셌어도 진은 관도 때와 똑같소. 빈틈이 없소.'},
           {say:'사마의',line:'조 공은 자존심이 강한 분이오. 내가 설전을 걸면 받을 것이오.'},
           {say:'장합',line:'받겠지. 말로도 지는 걸 싫어하는 분이니. 다만 말로 이기려 들지 마시오. 시를 짓는 사람이란 걸 잊지 마시오.'},
@@ -3500,7 +3500,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'허창 앞 · 양군 사이의 평원',art:16,cast:[
           {name:'사마의',look:'strategist',at:[32,62],face:'right'},
-          {name:'장합',look:'spear',at:[18,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[18,70],face:'right'},
           {name:'고람',look:'spear',at:[44,72],face:'right'},
           {name:'조조',look:'civil'},
           {name:'허창 금군',look:'heavy'},
@@ -3526,7 +3526,7 @@ const pack:ScenarioPack={
         {place:'허창 · 해 지는 평원',art:16,cast:[
           {name:'사마의',look:'strategist',at:[40,62],face:'right'},
           {name:'조조',look:'civil',at:[70,58],face:'left'},
-          {name:'장합',look:'spear',at:[24,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[24,70],face:'right'},
         ],steps:[
           {emote:'조조',text:'…'},
           {say:'조조',line:'꿈에 세 마리 말이 한 구유에서 먹는 걸 보았다. 조씨의 구유인 줄 알았더니, 천하의 구유였구나.'},
@@ -3547,7 +3547,7 @@ const pack:ScenarioPack={
       scenes:[
         {place:'낙양 · 새 도읍의 궁정',art:5,cast:[
           {name:'사마의',look:'strategist',at:[50,56],face:'right'},
-          {name:'장합',look:'spear',at:[22,70],face:'right'},
+          {name:'장합',look:'cavalry',at:[22,70],face:'right'},
           {name:'고람',look:'spear',at:[36,72],face:'right'},
           {name:'곽회',look:'archer',at:[78,70],face:'left'},
           {name:'우금',look:'infantry'},

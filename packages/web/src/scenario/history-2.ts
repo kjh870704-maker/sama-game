@@ -974,7 +974,7 @@ const pack:ScenarioPack={
         {place:'석정 · 열린 협석 길',art:11,
           cast:[
             {name:'사마사',look:'cavalry',at:[56,62],face:'left'},
-            {name:'조휴',look:'infantry',at:[70,64],face:'left'},
+            {name:'조휴',look:'cavalry',at:[70,64],face:'left'},
             {name:'사마의',look:'strategist'},
           ],
           steps:[

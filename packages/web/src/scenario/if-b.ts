@@ -465,7 +465,7 @@ const pack:ScenarioPack={chapters:[
       {name:'조식',look:'civil',at:[70,50],face:'left'},
       {name:'사마의',look:'strategist',at:[44,60]},
       {name:'양수',look:'strategist'},
-      {name:'사마사',look:'infantry'},
+      {name:'사마사',look:'cavalry'},
       {name:'사마소',look:'civil'},
       {name:'전령',look:'infantry'}],
     steps:[
@@ -877,7 +877,7 @@ const pack:ScenarioPack={chapters:[
       {name:'조식',look:'civil',at:[66,50],face:'left'},
       {name:'사마의',look:'strategist'},
       {name:'양수',look:'strategist',at:[80,58],face:'left'},
-      {name:'사마사',look:'infantry'},
+      {name:'사마사',look:'cavalry'},
       {name:'육손',look:'strategist'}],
     steps:[
       {narrate:'조식의 재상 사마의가 건업을 함락시켰다. 시를 짓던 왕 아래 천하가 하나 되었다.'},
@@ -910,7 +910,7 @@ const pack:ScenarioPack={chapters:[
       {emote:'사마부',text:'…'},
       {say:'사마부',line:'형님이 옳을 수도 있습니다. 그래도 누군가는 끝까지 신하로 남아야 이 집안이 덜 부끄럽지요.'},
     ],again:[{say:'사마부',line:'조휴는 종친입니다. 사로잡거든 예를 갖춰 주십시오.'}]},
-    {name:'사마사',look:'infantry',at:[32,76],talk:[
+    {name:'사마사',look:'cavalry',at:[32,76],talk:[
       {say:'사마사',line:'조휴는 동쪽에서 옵니다. 낙양 동쪽 길목은 숲이 짙어 기병이 줄지어 들어올 수밖에 없습니다.'},
       {say:'사마의',line:'줄지어 오면 머리와 꼬리가 멀어지겠지.'},
       {say:'사마사',line:'머리를 치면 꼬리는 길을 잃습니다. 조휴는 늘 머리에 서는 사람입니다.'},
@@ -939,7 +939,7 @@ const pack:ScenarioPack={chapters:[
     {place:'낙양 · 사마씨 저택',art:0,cast:[
       {name:'사마의',look:'strategist',at:[40,58]},
       {name:'사마부',look:'civil',at:[60,56],face:'left'},
-      {name:'사마사',look:'infantry'},
+      {name:'사마사',look:'cavalry'},
       {name:'사마소',look:'civil'},
       {name:'전령',look:'infantry'}],
     steps:[
@@ -966,7 +966,7 @@ const pack:ScenarioPack={chapters:[
   after:[
     {place:'낙양 동쪽 · 길목',art:11,cast:[
       {name:'사마의',look:'strategist',at:[40,60]},
-      {name:'사마사',look:'infantry',at:[24,64]},
+      {name:'사마사',look:'cavalry',at:[24,64]},
       {name:'전령',look:'infantry'}],
     steps:[
       {narrate:'조휴의 군은 낙양 동쪽 길목에서 무너졌다. 조휴는 분을 이기지 못해 등창이 터져 쓰러졌다.'},
@@ -990,7 +990,7 @@ const pack:ScenarioPack={chapters:[
       {say:'곽회',line:'자단 장군은 일기토라면 받을 겁니다. 말로 설득하려 하시면 칼로 오라 하겠지요. 그런 분입니다.'},
       {say:'곽회',line:'살려서 잡으라는 명, 궁수들에게 전했습니다. 말의 다리만 노리라고요.',when:'zt_zhen_spared'},
     ],again:[{say:'곽회',line:'금군 중기병은 궁문 앞 돌바닥에서 미끄러집니다.'}]},
-    {name:'사마사',look:'infantry',at:[32,76],talk:[
+    {name:'사마사',look:'cavalry',at:[32,76],talk:[
       {say:'사마사',line:'아버님, 조진은 살려 두면 또 칼을 듭니다. 허창에서 이미 한 번 보셨지요.'},
       {say:'사마의',line:'너의 눈에는 그가 적으로만 보이느냐.'},
       {emote:'사마사',text:'…'},
@@ -1019,7 +1019,7 @@ const pack:ScenarioPack={chapters:[
   scenes:[
     {place:'낙양 · 궁문 앞',art:2,cast:[
       {name:'사마의',look:'strategist',at:[34,64]},
-      {name:'사마사',look:'infantry',at:[20,66]},
+      {name:'사마사',look:'cavalry',at:[20,66]},
       {name:'곽회',look:'archer'},
       {name:'조진',look:'heavy',at:[62,44],face:'left'},
       {name:'금군 병사',look:'spear',at:[76,46],face:'left'}],
@@ -1135,7 +1135,7 @@ const pack:ScenarioPack={chapters:[
   history:['조홍은 조조의 사촌으로, 형양에서 말을 내주어 조조의 목숨을 구한 사람이다.','그는 위에서 손꼽히는 부자였고, 인색하다는 소문으로도 유명했다.','이 길에서 그는 처음으로 곳간을 열었다 — 조카 조식의 옥좌를 지키기 위해.'],
   required:['곽회'],
   camp:{place:'낙양 동쪽 · 위군 진영',art:2,people:[
-    {name:'사마사',look:'infantry',at:[18,64],talk:[
+    {name:'사마사',look:'cavalry',at:[18,64],talk:[
       {say:'사마사',line:'조홍의 사병은 갑옷이 새것입니다. 오늘 아침 장에서 산 것 같습니다.'},
       {say:'사마의',line:'새 갑옷을 입은 병사는 갑옷이 상할까 몸을 사린다.'},
       {say:'사마사',line:'…그러면 갑옷을 노리면 되겠군요.'},
@@ -1153,7 +1153,7 @@ const pack:ScenarioPack={chapters:[
   scenes:[
     {place:'낙양 · 동문 앞',art:2,cast:[
       {name:'사마의',look:'strategist',at:[34,62]},
-      {name:'사마사',look:'infantry',at:[20,66]},
+      {name:'사마사',look:'cavalry',at:[20,66]},
       {name:'곽회',look:'archer',at:[58,60]}],
     steps:[
       {narrate:'동문 앞 다리 건너편에 번쩍이는 새 갑옷의 사병들이 늘어섰다. 그 앞에 백발의 조홍이 말에 올랐다.'},
@@ -1172,7 +1172,7 @@ const pack:ScenarioPack={chapters:[
     {place:'낙양 · 동문',art:2,cast:[
       {name:'사마의',look:'strategist',at:[40,60]},
       {name:'조홍',look:'cavalry',at:[64,60],face:'left'},
-      {name:'사마사',look:'infantry',at:[24,64]}],
+      {name:'사마사',look:'cavalry',at:[24,64]}],
     steps:[
       {narrate:'새 갑옷들은 흩어지고, 조홍만이 말 위에 남았다.'},
       {say:'조홍',line:'형양에서 나는 말을 내주며 「천하에 홍은 없어도 되지만 공은 없어서는 안 된다」 했소. 오늘도 같은 마음이었소.'},
@@ -1196,7 +1196,7 @@ const pack:ScenarioPack={chapters:[
       {say:'사마부',line:'왕께서 지고도 웃으실 수 있게 해 주십시오. 그것이 제가 형님께 드리는 마지막 부탁입니다.'},
       {say:'사마부',line:'궁 안에서 아무도 죽이지 말라 하셨다고요. …형님, 고맙습니다.',when:'zt_no_blood'},
     ],again:[{say:'사마부',line:'저는 회랑 밖에서 기다리겠습니다. 왕께서 나오실 때 맞이할 사람이 있어야지요.'}]},
-    {name:'사마사',look:'infantry',at:[32,76],talk:[
+    {name:'사마사',look:'cavalry',at:[32,76],talk:[
       {say:'사마사',line:'궁 호위병은 회랑 기둥 사이에 숨어 있습니다. 좁은 곳이라 기병은 쓸모가 없습니다.'},
       {say:'사마의',line:'보병과 궁수로 기둥을 하나씩 넘어야겠구나.'},
       {say:'사마사',line:'왕께서는 회랑 끝 옥좌 앞에 서 계십니다. 끝까지 물러나지 않으실 겁니다.'},
@@ -1225,7 +1225,7 @@ const pack:ScenarioPack={chapters:[
     {place:'낙양 · 사마씨 서재',art:12,cast:[
       {name:'사마의',look:'strategist',at:[40,58]},
       {name:'사마부',look:'civil',at:[58,58],face:'left'},
-      {name:'사마사',look:'infantry'}],
+      {name:'사마사',look:'cavalry'}],
     steps:[
       {narrate:'선양의 날을 사흘 앞두고, 궁정의 장수들이 왕을 둘러싸고 문을 닫았다.'},
       {emote:'사마부',text:'…'},
@@ -1277,7 +1277,7 @@ const pack:ScenarioPack={chapters:[
     {place:'낙양 · 수선대',art:5,cast:[
       {name:'조식',look:'civil',at:[64,50],face:'left'},
       {name:'사마의',look:'strategist'},
-      {name:'사마사',look:'infantry',at:[18,64]},
+      {name:'사마사',look:'cavalry',at:[18,64]},
       {name:'사마소',look:'civil',at:[28,68]},
       {name:'사마부',look:'civil'}],
     steps:[
@@ -2538,7 +2538,7 @@ const pack:ScenarioPack={chapters:[
   history:['245년, 위의 조정은 대장군 조상의 손에 있었다. 239년 명제 조예가 죽은 뒤 사마의는 태부로 높여지는 듯 밀려났고, 조상은 측근으로 조정을 채웠다.','한 해 전 조상은 촉을 치러 낙곡으로 들어갔다가 크게 패했으나, 그 권세는 흔들리지 않았다.','역사에서 사마의는 병을 핑계로 몸을 낮춘 채 249년까지 기다렸다가 고평릉에서 정변을 일으킨다.','이 길에서 사마의는 기다림을 버렸다. 지낭이라 불린 환범이 조상에게 달려가기 전에 무기고를 쥐어야 한다.'],
   required:['장제','곽회'],
   camp:{place:'낙양 · 무기고 앞 골목',art:9,people:[
-    {name:'사마사',look:'infantry',at:[12,64],talk:[
+    {name:'사마사',look:'cavalry',at:[12,64],talk:[
       {say:'사마사',line:'무기고 문은 쇠로 감쌌습니다. 도끼로는 반나절, 열쇠라면 한순간입니다.'},
       {say:'사마의',line:'열쇠는 누가 쥐고 있나.'},
       {say:'사마사',line:'무기고 영사입니다. 처가가 하내라 하기에 오늘 밤 술 한 동이를 보내 두었습니다.'},
@@ -2580,7 +2580,7 @@ const pack:ScenarioPack={chapters:[
     {place:'낙양 · 사마씨 저택 뜰',art:0,cast:[
       {name:'사마의',look:'strategist',at:[42,58]},
       {name:'장춘화',look:'lady',at:[58,56],face:'left'},
-      {name:'사마사',look:'infantry'},
+      {name:'사마사',look:'cavalry'},
       {name:'사마소',look:'civil'}],
     steps:[
       {narrate:'245년 가을밤. 대장군 조상이 병권을 쥐고 노신들을 밀어낸 지 여러 해. 사마의는 더 기다리지 않기로 했다.'},
@@ -2595,7 +2595,7 @@ const pack:ScenarioPack={chapters:[
     ]},
     {place:'낙양 · 무기고 앞',art:9,cast:[
       {name:'사마의',look:'strategist',at:[36,62]},
-      {name:'사마사',look:'infantry',at:[50,64],face:'left'},
+      {name:'사마사',look:'cavalry',at:[50,64],face:'left'},
       {name:'장제',look:'civil'},
       {name:'사병',look:'spear',at:[20,68]}],
     steps:[
@@ -2615,7 +2615,7 @@ const pack:ScenarioPack={chapters:[
   after:[
     {place:'낙양 · 무기고 안',art:9,cast:[
       {name:'사마의',look:'strategist',at:[40,60]},
-      {name:'사마사',look:'infantry',at:[58,62],face:'left'},
+      {name:'사마사',look:'cavalry',at:[58,62],face:'left'},
       {name:'전령',look:'infantry'}],
     steps:[
       {narrate:'무기고가 사마씨의 손에 들어왔다. 환범은 사로잡혔다.'},
@@ -2709,7 +2709,7 @@ const pack:ScenarioPack={chapters:[
   history:['245년, 명제의 황후였던 곽태후는 어린 황제 조방의 뒤에 있었다. 역사에서 사마의는 고평릉 정변 때 그 영을 받아 조상을 파면하는 명분으로 삼았다.','이 길에서 사마의는 곽태후의 조서를 받으러 영녕궁으로 갔으나, 조상의 심복 하안이 궁문을 막아섰다.','하안은 이부상서로서 조정의 인사를 쥔 조상의 오른팔이다. 조서가 없으면 이 밤의 정변은 역모로 기록된다.'],
   required:['곽회'],
   camp:{place:'낙양 궁성 · 영녕궁 바깥 회랑',art:13,people:[
-    {name:'사마사',look:'infantry',at:[16,64],talk:[
+    {name:'사마사',look:'cavalry',at:[16,64],talk:[
       {say:'사마사',line:'하안은 분을 바르고 거울을 들고 다닌다 합니다. 칼을 쥘 손이 남아 있을지 모르겠습니다.'},
       {say:'사마의',line:'얕보지 마라. 겁 많은 자는 막다른 곳에서 독해진다.'},
       {say:'사마사',line:'예. 궁 뒤편 쪽문은 알아 두었습니다. 환관 하나가 열어 줄 겁니다.'},
@@ -2741,7 +2741,7 @@ const pack:ScenarioPack={chapters:[
   scenes:[
     {place:'낙양 · 영녕궁 앞',art:13,cast:[
       {name:'사마의',look:'strategist',at:[36,62]},
-      {name:'사마사',look:'infantry',at:[22,66]},
+      {name:'사마사',look:'cavalry',at:[22,66]},
       {name:'하안',look:'civil',at:[70,54],face:'left'},
       {name:'궁 호위병',look:'spear',at:[82,60],face:'left'}],
     steps:[
@@ -2846,7 +2846,7 @@ const pack:ScenarioPack={chapters:[
       {say:'장제',line:'삼족을 멸한다 했나? 중달, 내 서신을 거짓으로 만들 셈인가!',when:'coup_purge'},
       {say:'장제',line:'목숨만은 살린다 외쳤다지. 고맙네. 내 서신이 거짓이 되지 않겠구먼.',when:'coup_mercy'},
     ],again:[{say:'장제',line:'조상은 그대와 말로 겨루자면 받을 걸세. 받지 않으면 겁쟁이로 기록될 테니.'}]},
-    {name:'사마사',look:'infantry',at:[26,76],talk:[
+    {name:'사마사',look:'cavalry',at:[26,76],talk:[
       {say:'사마사',line:'조상의 금군은 이만이지만 절반은 사냥터에서 데려온 몰이꾼들입니다.'},
       {say:'사마의',line:'몰이꾼은 짐승을 쫓을 줄은 알아도 사람에게 쫓겨 본 적은 없지.'},
       {say:'사마사',line:'예. 앞줄만 무너뜨리면 뒷줄은 흩어질 겁니다.'},
@@ -2879,7 +2879,7 @@ const pack:ScenarioPack={chapters:[
   scenes:[
     {place:'낙양 · 사마문 성루',art:8,cast:[
       {name:'사마의',look:'strategist',at:[40,58]},
-      {name:'사마사',look:'infantry',at:[24,62]},
+      {name:'사마사',look:'cavalry',at:[24,62]},
       {name:'사마소',look:'civil'},
       {name:'장제',look:'civil'}],
     steps:[
@@ -2914,7 +2914,7 @@ const pack:ScenarioPack={chapters:[
     {place:'낙양 · 성문 앞',art:2,cast:[
       {name:'사마의',look:'strategist',at:[40,60]},
       {name:'조상',look:'cavalry',at:[64,60],face:'left'},
-      {name:'사마사',look:'infantry',at:[24,64]}],
+      {name:'사마사',look:'cavalry',at:[24,64]}],
     steps:[
       {narrate:'조상은 끝내 칼을 내던졌다. 황제의 수레가 낙양 성문을 지났다.'},
       {say:'조상',line:'…부잣집 늙은이로 살 수만 있다면 족하오.',when:'coup_mercy'},
@@ -2932,7 +2932,7 @@ const pack:ScenarioPack={chapters:[
   scenes:[
     {place:'낙양 · 태부부',art:12,cast:[
       {name:'사마의',look:'strategist',at:[42,58]},
-      {name:'사마사',look:'infantry'},
+      {name:'사마사',look:'cavalry'},
       {name:'사마소',look:'civil'},
       {name:'장춘화',look:'lady',at:[62,56],face:'left'}],
     steps:[
@@ -2989,7 +2989,7 @@ const pack:ScenarioPack={chapters:[
   scenes:[
     {place:'낙양 · 사마씨 저택 문',art:10,cast:[
       {name:'사마의',look:'strategist',at:[40,60]},
-      {name:'사마사',look:'infantry',at:[58,60],face:'left'},
+      {name:'사마사',look:'cavalry',at:[58,60],face:'left'},
       {name:'사마소',look:'civil'}],
     steps:[
       {narrate:'조상이 조정을 휘두르는 낙양을 뒤로하고, 늙은 태부는 남쪽으로 떠날 채비를 했다.'},
@@ -3355,7 +3355,7 @@ const pack:ScenarioPack={chapters:[
     {place:'건업 · 강가 성루',art:8,cast:[
       {name:'사마의',look:'strategist',at:[42,58]},
       {name:'곽회',look:'archer',at:[24,64]},
-      {name:'사마사',look:'infantry'},
+      {name:'사마사',look:'cavalry'},
       {name:'손권',look:'strategist'}],
     steps:[
       {narrate:'위의 노신은 남은 생을 강동에 걸었다. 건업이 무너진 날, 백 년 만에 천하가 한 사람의 이름 아래 모였다.'},

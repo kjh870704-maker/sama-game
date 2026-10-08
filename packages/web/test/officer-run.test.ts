@@ -32,7 +32,7 @@ describe('원정의 장수 편성',()=>{
   const plain=makeUnit({id:'x',unitClass:zhen.unitClass,level:zhen.level,side:'player',pos:{x:0,y:0}});
   expect(zhen.stats.attack).toBeGreaterThan(plain.stats.attack);
   const officer=run.party.find(u=>u.name==='장합')!;grantXp(run,400,[officer]);
-  expect(officer.unitClass).toBe('pikeman');expect(officer.name).toBe('장합');
+  expect(officer.unitClass).toBe('lancer');expect(officer.name).toBe('장합');
  });
  it('offers named officers at the recruiting post and never one already in the party or fallen',()=>{
   const run=fresh();run.floor=2;visitNode(run,{kind:'recruit',label:'',detail:''});

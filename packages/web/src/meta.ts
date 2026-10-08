@@ -41,7 +41,7 @@ export interface Unlock {id:string;name:string;cost:number;effect:string}
 export const UNLOCKS:Unlock[]=[
   {id:'veteran_start',name:'노련한 출발',cost:6,effect:'사마의와 출발 부대가 Lv.6으로 시작한다'},
   {id:'field_medic',name:'군의관',cost:6,effect:'의원이 체력을 모두 회복시킨다'},
-  {id:'wide_network',name:'넓은 인맥',cost:8,effect:'사마사가 중기병을 이끌고 처음부터 함께 떠난다'},
+  {id:'wide_network',name:'넓은 인맥',cost:8,effect:'사마사가 경기병을 이끌고 처음부터 함께 떠난다'},
   {id:'elite_recruits',name:'정예 모병',cost:8,effect:'모병·영입 부대의 레벨 +3'},
   {id:'heirloom',name:'가보',cost:10,effect:'출발할 때 보물 하나를 골라 들고 간다'},
   {id:'scout_map',name:'척후',cost:10,effect:'갈림길이 하나 더(4곳) 보인다'},

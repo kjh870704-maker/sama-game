@@ -141,14 +141,14 @@ export const RECRUITS:UnitClass[]=['infantry','spearman','cavalry','archer','cro
 export interface OfficerSpec {name:string;unitClass:UnitClass}
 /** 원정은 언제나 이 장수들과 함께 떠난다(고르지 않는다): 조진의 기병, 장합의 창병, 곽회의 궁병, 사마랑의 의원. */
 export const STARTING_OFFICERS:OfficerSpec[]=[
-  {name:'조진',unitClass:'cavalry'},{name:'장합',unitClass:'spearman'},{name:'곽회',unitClass:'archer'},{name:'사마랑',unitClass:'fengshui'},
+  {name:'조진',unitClass:'cavalry'},{name:'장합',unitClass:'cavalry'},{name:'곽회',unitClass:'archer'},{name:'사마랑',unitClass:'fengshui'},
 ];
-/** 해금 '넓은 인맥': 사마사가 중기병을 이끌고 처음부터 합류한다. */
-export const NETWORK_OFFICER:OfficerSpec={name:'사마사',unitClass:'heavyCav'};
+/** 해금 '넓은 인맥': 사마사가 경기병을 이끌고 처음부터 합류한다. */
+export const NETWORK_OFFICER:OfficerSpec={name:'사마사',unitClass:'cavalry'};
 /** 원정 중 영입할 수 있는 장수(위의 인재들). 이미 부대에 있거나 쓰러진 장수는 다시 나오지 않는다. */
 export const OFFICER_RECRUITS:OfficerSpec[]=[
-  {name:'사마사',unitClass:'heavyCav'},{name:'사마소',unitClass:'crossbow'},{name:'등애',unitClass:'infantry'},{name:'진태',unitClass:'spearman'},
-  {name:'종회',unitClass:'fengshui'},{name:'손례',unitClass:'cavalry'},{name:'왕기',unitClass:'archer'},{name:'조휴',unitClass:'horseArcher'},
+  {name:'사마사',unitClass:'cavalry'},{name:'사마소',unitClass:'crossbow'},{name:'등애',unitClass:'infantry'},{name:'진태',unitClass:'spearman'},
+  {name:'종회',unitClass:'fengshui'},{name:'손례',unitClass:'cavalry'},{name:'왕기',unitClass:'archer'},{name:'조휴',unitClass:'cavalry'},
   {name:'왕릉',unitClass:'infantry'},{name:'문흠',unitClass:'bandit'},{name:'가규',unitClass:'mountedStrategist'},{name:'호준',unitClass:'monk'},
   // 명부대를 이끄는 장수들
   {name:'학소',unitClass:'crossbow'},{name:'만총',unitClass:'infantry'},{name:'서황',unitClass:'swordsman'},{name:'우금',unitClass:'spearman'},

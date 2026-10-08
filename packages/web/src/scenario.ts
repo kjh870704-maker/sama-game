@@ -209,7 +209,7 @@ export function undoChoice(state:ScenarioState,step:ScenarioStep){
 /** 그 길에서 적으로 만나는 사람. */
 export function foesOf(route:Route){return [route.region.boss.name,...route.tales.map(t=>t.target.name),...EXTRA_TALES.filter(t=>t.route===route.id).map(t=>t.target.name)];}
 /** 가상 루트의 기본 동료: 조진(기병)·장합(창병)·곽회(궁병)·사마랑(의원). 원소 쪽에서 시작한 길에는 조진이 없다. */
-export const COMPANIONS:Array<{name:string;unitClass:UnitClass}>=[{name:'조진',unitClass:'cavalry'},{name:'장합',unitClass:'spearman'},{name:'곽회',unitClass:'archer'},{name:'사마랑',unitClass:'fengshui'}];
+export const COMPANIONS:Array<{name:string;unitClass:UnitClass}>=[{name:'조진',unitClass:'cavalry'},{name:'장합',unitClass:'cavalry'},{name:'곽회',unitClass:'archer'},{name:'사마랑',unitClass:'fengshui'}];
 export function joinCompanions(state:ScenarioState,route:Route,heroLevel:number){
   const yuanSide=state.route[1]==='yuan',foes=new Set(foesOf(route));
   // 원소 쪽 길: 조진 대신 백마에서 살아남은 문추가 곁에 선다.
@@ -278,7 +278,7 @@ export function newScenarioRun(no:number,seed:number,unlocks:readonly string[]=[
   // 신세력: 조씨의 장수 대신 직접 만든 신장수(최대 넷)가 처음부터 함께한다.
   if(opts.faction)for(const c of (opts.customs??[]).slice(0,4))s.officers[c.name]={name:c.name,unitClass:landClass(c.unitClass),level:lv,xp:0};
   else s.officers['조진']={name:'조진',unitClass:'cavalry',level:lv,xp:0};
-  if(unlocks.includes('wide_network'))s.officers['사마사']={name:'사마사',unitClass:'heavyCav',level:lv,xp:0};
+  if(unlocks.includes('wide_network'))s.officers['사마사']={name:'사마사',unitClass:'cavalry',level:lv,xp:0};
   const r=new Rng(seed>>>0||1),relics=unlocks.includes('heirloom')?[RELICS[r.int(0,RELICS.length-1)]!.id]:[];
   s.run={seed,no,hp:{},relics,fallen:[],marched:[],guard:unlocks.includes('second_chance'),nodes:0,status:'alive',...(opts.faction?{faction:{...opts.faction}}:{})};
   syncFaction(s);return s;
