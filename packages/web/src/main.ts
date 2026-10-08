@@ -1,7 +1,7 @@
 import {trialGoals,trialGoalText,trialProgress} from './expedition-objectives.ts';
 import {DOCK_ICONS} from './dock-icons.ts';
 import {navalAtlas} from './naval-art.ts';
-import {evolutionChart,paintArmor,type EvoGroup} from './troop-evolution.ts';
+import {evolutionChart,paintArmor,fitEvoSprites,type EvoGroup} from './troop-evolution.ts';
 import {troopAdvice,adviceFor,recommendExpeditionSupport,supportWarnings,physicalMatchup} from './troop-tactics.ts';
 import {officerLooks,officerLook,officerPortrait,dialogueCaption,splitSpokenLine,storyActorStyle,customFace} from './officer-art.ts';
 import {troopRoles,supportOptions,visualClass,troopArt,troopSheets,basicReactionArt,evolutionLines,classSheets,loadClassSheets} from './troops.ts';
@@ -259,7 +259,7 @@ function showTroopGallery(group:EvoGroup='all'){
  menuOpen=true;clearTimeout(aiTimer);
  modal(`<div class="briefing troop-evolution"><div class="eyebrow">병종 · 진화표</div><h2>병종은 이렇게 강해진다</h2><p class="muted">레벨이 오르면 진화하고, 공격 범위가 넓어진다.</p>${evolutionChart(group)}<div class="modal-actions"><button id="troop-back">← 본영</button></div></div>`,false);
  document.querySelectorAll<HTMLButtonElement>('[data-evo-group]').forEach(b=>b.onclick=()=>showTroopGallery(b.dataset.evoGroup as EvoGroup));
- void paintArmor();$('#troop-back').onclick=showMenu;
+ void paintArmor();void fitEvoSprites();$('#troop-back').onclick=showMenu;
 }
 function showExpeditions(tab:Expedition['kind']='challenge'){
  menuOpen=true;clearTimeout(aiTimer);

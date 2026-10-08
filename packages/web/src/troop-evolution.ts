@@ -5,19 +5,22 @@
  */
 import type {UnitClass} from '../../core/src/index.ts';
 import {VARIANTS,tierOf,familyOf,profileOf,classTactics,reachOffsets,reachLabel} from '../../core/src/index.ts';
-import {classNames,evolutionLines} from './troops.ts';
+import {classNames,evolutionLines,troopSheets} from './troops.ts';
 import {classSprite,paintArmor} from './codex-ui.ts';
 import {classTraitSummary} from './perks.ts';
 import {officerManifest,officerEntry,type OfficerEntry} from './officer-models.ts';
 import {NPC_ROSTER} from './npc-roster.ts';
 import {singleStageCorrectionRows} from './complete-troops.ts';
 import {LORD_NAMES} from './lords.ts';
+import {OFFICER_FACTION,OFFICER_FACTIONS} from './officer-factions.ts';
+import {paintedTroopArt} from './painted-troops.ts';
+import {spriteAtlas} from './sprite-atlas.ts';
 
 const esc=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
-export type EvoGroup='all'|'foot'|'spear'|'horse'|'ranged'|'mind'|'siege'|'single';
+export type EvoGroup='all'|'foot'|'spear'|'horse'|'ranged'|'mind'|'siege'|'single'|'officer'|'npc';
 export const EVO_GROUPS:Array<[EvoGroup,string,string[]]>=[
   ['all','전체',[]],['foot','보병',['infantry','bandit','monk']],['spear','창병',['spearman']],['horse','기병',['cavalry','heavyCav','horseArcher']],
-  ['ranged','궁·노',['archer','crossbow']],['mind','책사·술사',['strategist','fengshui','shaman','maiden','taoist']],['siege','공성·수군',['engineer','catapult','ram','navy']],['single','단일·NPC',[]],
+  ['ranged','궁·노',['archer','crossbow']],['mind','책사·술사',['strategist','fengshui','shaman','maiden','taoist']],['siege','공성·수군',['engineer','catapult','ram','navy']],['single','단일',[]],['officer','장수',[]],['npc','NPC',[]],
 ];
 const TIER_NAME=['','기본','정예','최정예','전설','신화'];
 /** 평타가 닿는 칸을 작은 격자로(가운데 = 자기). 진화할수록 넓어지는 모양이 한눈에 보인다. */
@@ -30,45 +33,73 @@ function card(c:UnitClass,lv:number,prev?:UnitClass){
   const p=profileOf(c),q=prev?profileOf(prev):undefined,v=VARIANTS[c],t=tierOf(c);
   const grew=!!prev&&(reachLabel(prev)!==reachLabel(c)||p.range[1]>q!.range[1]);
   const tactic=v?.bloom?{name:v.bloom.name,description:classTraitSummary(v.traits)||v.bloom.description}:classTactics(c)[0];
-  return `<article class="evo-card t${t}"><div class="evo-top">${classSprite(c)}<div><small>${'◆'.repeat(t)} ${TIER_NAME[t]}${lv?` · Lv.${lv}`:''}</small><h4>${esc(classNames[c]??c)}</h4></div></div>
+  return `<article class="evo-card t${t}"><div class="evo-top">${classArt(c)}<div><small>${'◆'.repeat(t)} ${TIER_NAME[t]}${lv?` · Lv.${lv}`:''}</small><h4>${esc(classNames[c]??c)}</h4></div></div>
     <div class="evo-range">${reachMini(c)}<p><b class="${grew?'up':''}">${esc(reachLabel(c))}${grew?' ▲':''}</b><span>사거리 ${p.range[0]===p.range[1]?p.range[0]:p.range[0]+'~'+p.range[1]} · 이동 ${p.movement}</span></p></div>
     ${tactic?`<p class="evo-skill" title="${esc(tactic.description)}"><b>${v?.bloom?'개화':'전법'} 「${esc(tactic.name)}」</b>${v?.bloom&&tactic.description?`<span>${esc(tactic.description)}</span>`:''}</p>`:''}</article>`;
 }
-/** 이 병종들로 싸우는 이름 있는 장수(전용 전투 그림이 있는 장수). */
-function officersOf(classes:Set<string>){
-  return officerManifest.flatMap(e=>{
-    // 군주(조조·유비·손권 등)는 그림이 어느 병종이든 군주 계통에 선다.
-    if(LORD_NAMES.includes(e.name)){const b=Object.values(e.battle)[0];return classes.has('lord')&&b?[{e,cls:'lord',b}]:[];}
-    return Object.entries(e.battle).filter(([k])=>classes.has(k)&&k!=='cart').map(([k,b])=>({e,cls:k,b}));
-  });
+/** 그림 칸마다 여백이 달라 병종끼리 크기가 들쭉날쭉하다(민중은 작고 기병·배는 크다).
+ * 진화표에서는 대기 자세의 실제 그림 둘레를 재서 같은 상자에 꽉 차게 다시 그린다(fitEvoSprites). 그 전에는 원래 그림을 보인다. */
+const fitCanvas=(sheet:string,row:number)=>`<canvas class="evo-fit" data-fit="${esc(sheet)}" data-row="${row}"></canvas>`;
+function classArt(c:UnitClass){
+  const p=paintedTroopArt[c];if(!p)return classSprite(c);
+  return `<div class="cx-sprite" role="img" aria-label="${esc(classNames[c]??c)}" style="background-image:var(--${p.sheet}-atlas);background-size:400% ${p.rows*100}%;background-position:0 ${p.rows>1?p.row/(p.rows-1)*100:0}%">${fitCanvas(p.sheet,p.row)}</div>`;
 }
-const officerArt=(name:string,b:OfficerEntry['battle'][string])=>{const [w,h]=b.cell;return `<span class="evo-person-art" role="img" aria-label="${esc(name)}" style="aspect-ratio:${w}/${h};background-image:url('${b.sheet}');background-size:400% ${b.rows*100}%;background-position:0 0"></span>`;};
-function officerChip({e,cls,b}:{e:OfficerEntry;cls:string;b:OfficerEntry['battle'][string]}){
-  return `<figure class="evo-person officer" title="${esc(e.name)} · ${esc(classNames[cls as UnitClass]??cls)}">${officerArt(e.name,b)}<figcaption>${esc(e.name)}</figcaption></figure>`;
+const officerArt=(name:string,b:OfficerEntry['battle'][string])=>`<div class="cx-sprite" role="img" aria-label="${esc(name)}">${fitCanvas(b.sheet,0)}</div>`;
+const rangeLine=(c:UnitClass)=>{const p=profileOf(c);return `<div class="evo-range">${reachMini(c)}<p><b>${esc(classNames[c]??c)} · ${esc(reachLabel(c))}</b><span>사거리 ${p.range[0]===p.range[1]?p.range[0]:p.range[0]+'~'+p.range[1]} · 이동 ${p.movement}</span></p></div>`;};
+const personCard=(art:string,small:string,name:string,c:UnitClass)=>`<article class="evo-card evo-person-card"><div class="evo-top">${art}<div><small>${small}</small><h4>${esc(name)}</h4></div></div>${rangeLine(c)}</article>`;
+/** 장수의 병종: 군주 9명은 군주, 나머지는 전용 전투 그림의 첫 병종(제갈량 수레 제외). */
+const officerClass=(e:OfficerEntry):UnitClass=>(LORD_NAMES.includes(e.name)?'lord':Object.keys(e.battle).find(k=>k!=='cart')) as UnitClass;
+const officerSheet=(e:OfficerEntry,c:string)=>e.battle[c]??Object.entries(e.battle).find(([k])=>k!=='cart')?.[1];
+function officerCards(){
+  return OFFICER_FACTIONS.map(f=>{
+    const list=officerManifest.filter(e=>(OFFICER_FACTION[e.id]??'군웅')===f);if(!list.length)return '';
+    return `<section class="evo-line"><h3>${f} <small>${list.length}명</small></h3><div class="evo-grid">${list.map(e=>{const c=officerClass(e),b=officerSheet(e,c);return personCard(b?officerArt(e.name,b):classArt(c),'장수',e.name,c);}).join('')}</div></section>`;
+  }).join('');
 }
-/** NPC로 나오는 장수는 전용 전투 그림을, 이름 없는 NPC는 그 병종 그림을 보여 준다. */
-function npcChip(n:typeof NPC_ROSTER[number]){
-  const e=officerEntry({id:'npc',name:n.name}),own=e?.battle[n.unitClass]??(e&&LORD_NAMES.includes(e.name)?Object.values(e.battle)[0]:undefined);
-  return `<figure class="evo-person npc ${n.side}" title="${esc(n.name)} · ${n.side==='allyAi'?'NPC(아군 AI)':'우군'} · ${n.stages.join(', ')}">${own?officerArt(n.name,own):classSprite(n.unitClass)}<figcaption>${esc(n.name)}<small>${n.side==='allyAi'?'NPC':'우군'} · ${esc(n.stages.join(' '))}</small></figcaption></figure>`;
+/** 본편 전장의 NPC(아군 AI). 장수가 NPC로 나오면 그 장수의 전용 그림, 이름 없는 NPC는 그 병종 그림. */
+export const npcList=()=>NPC_ROSTER.filter(n=>n.side==='allyAi');
+function npcCards(){
+  return `<div class="evo-grid">${npcList().map(n=>{const e=officerEntry({id:'npc',name:n.name}),b=e&&officerSheet(e,LORD_NAMES.includes(e.name)?'lord':n.unitClass);
+    return personCard(b?officerArt(n.name,b):classArt(n.unitClass),`NPC · ${esc(n.stages.join(' '))}`,n.name,n.unitClass);}).join('')}</div>`;
 }
-/** 계통 아래에 붙는 "장수 · NPC" 줄. 둘 다 없으면 비운다. */
-function peopleRow(classes:Set<string>){
-  const officers=officersOf(classes),npcs=NPC_ROSTER.filter(n=>classes.has(n.unitClass));
-  if(!officers.length&&!npcs.length)return '';
-  return `<div class="evo-people">${officers.length?`<div class="evo-people-group"><b>장수</b><div>${officers.map(officerChip).join('')}</div></div>`:''}${npcs.length?`<div class="evo-people-group npc"><b>NPC·우군</b><div>${npcs.map(npcChip).join('')}</div></div>`:''}</div>`;
-}
-/** 진화하지 않는 단일 병종(민중·물자대·공병·수군 등). NPC가 주로 쓴다. */
+/** 진화하지 않는 단일 병종(민중·물자대·공병·수군 등). */
 function singleLines(){
   return (Object.values(singleStageCorrectionRows).flat() as UnitClass[]).filter((c,i,a)=>a.indexOf(c)===i);
 }
 export function evolutionChart(group:EvoGroup='all'){
+  const tabs=(note:string)=>`<div class="evo-tabs">${EVO_GROUPS.map(([id,name])=>`<button data-evo-group="${id}" class="${id===group?'active':''}">${name}</button>`).join('')}<span class="muted">${note}</span></div>`;
+  if(group==='officer')return `${tabs('장수 '+officerManifest.length)}<div class="evo-lines">${officerCards()}</div>`;
+  if(group==='npc')return `${tabs('NPC '+npcList().length)}<div class="evo-lines">${npcCards()}</div>`;
   const fams=EVO_GROUPS.find(g=>g[0]===group)![2];
   const lines=group==='single'?[]:evolutionLines().filter(l=>!fams.length||fams.includes(familyOf(l[0]![0])));
   const singles=group==='all'||group==='single'?singleLines():[];
-  return `<div class="evo-tabs">${EVO_GROUPS.map(([id,name])=>`<button data-evo-group="${id}" class="${id===group?'active':''}">${name}</button>`).join('')}<span class="muted">${lines.length?lines.length+'계통':''}${lines.length&&singles.length?' · ':''}${singles.length?'단일 병종 '+singles.length:''}</span></div>
+  return `${tabs(`${lines.length?lines.length+'계통':''}${lines.length&&singles.length?' · ':''}${singles.length?'단일 병종 '+singles.length:''}`)}
   <div class="evo-lines">${lines.map(l=>`<section class="evo-line"><h3>${esc(classNames[l[0]![0]]??l[0]![0])} 계통 <small>${esc(classNames[familyOf(l[0]![0])]??'')} 계열</small></h3>
-    <div class="evo-row">${l.map(([c,lv],i)=>`${i?'<i class="evo-arrow2">▶</i>':''}${card(c,lv,i?l[i-1]![0]:undefined)}`).join('')}</div>${peopleRow(new Set(l.map(([c])=>c)))}</section>`).join('')}
-    ${singles.length?`<section class="evo-line evo-single"><h3>단일 병종 <small>진화하지 않는 병종 · NPC가 주로 쓴다</small></h3>
-    <div class="evo-row single">${singles.map(c=>`<div class="evo-single-col">${card(c,0)}${peopleRow(new Set([c]))}</div>`).join('')}</div></section>`:''}</div>`;
+    <div class="evo-row">${l.map(([c,lv],i)=>`${i?'<i class="evo-arrow2">▶</i>':''}${card(c,lv,i?l[i-1]![0]:undefined)}`).join('')}</div></section>`).join('')}
+    ${singles.length?`<section class="evo-line evo-single"><h3>단일 병종 <small>진화하지 않는 병종</small></h3>
+    <div class="evo-grid">${singles.map(c=>card(c,0)).join('')}</div></section>`:''}</div>`;
+}
+type SheetDef={id:string;url:string;rows:number;union?:boolean;alphaCutoff?:number;strictGrid?:boolean};
+const boxes=new Map<string,Promise<{atlas:HTMLCanvasElement;x:number;y:number;w:number;h:number}|undefined>>();
+/** 시트 한 줄의 대기 자세(첫 칸)에서 실제 그림이 차지하는 둘레. */
+function idleBox(sheet:string,row:number){
+  const key=sheet+'#'+row;if(boxes.has(key))return boxes.get(key)!;
+  const def=(troopSheets as readonly SheetDef[]).find(s=>s.id===sheet);
+  const p=!def?Promise.resolve(undefined):spriteAtlas(def.url,def.rows,4,!!def.union,def.alphaCutoff??8,!!def.strictGrid).then(atlas=>{
+    const cw=Math.floor(atlas.width/4),ch=Math.floor(atlas.height/def.rows),top=row*ch,d=atlas.getContext('2d',{willReadFrequently:true})!.getImageData(0,top,cw,ch).data;
+    let l=cw,t=ch,r=-1,b=-1;
+    for(let y=0;y<ch;y++)for(let x=0;x<cw;x++)if(d[(y*cw+x)*4+3]!>24){if(x<l)l=x;if(x>r)r=x;if(y<t)t=y;if(y>b)b=y;}
+    return r<0?undefined:{atlas,x:l,y:top+t,w:r-l+1,h:b-t+1};
+  }).catch(()=>undefined);
+  boxes.set(key,p);return p;
+}
+/** 진화표의 모든 병종·장수·NPC 그림을 같은 상자 크기로 맞춘다: 그림 둘레가 가로형 상자(5:4) 폭 96%·높이 90% 안에 꽉 차고 발은 같은 선에 선다. */
+export async function fitEvoSprites(root:ParentNode=document){
+  await Promise.all([...root.querySelectorAll<HTMLCanvasElement>('canvas.evo-fit:not(.on)')].map(async el=>{
+    const box=await idleBox(el.dataset.fit!,Number(el.dataset.row??0));if(!box||!el.isConnected)return;
+    const W=320,H=256,k=Math.min(W*.96/box.w,H*.9/box.h),w=box.w*k,h=box.h*k,g=el.getContext('2d')!;
+    el.width=W;el.height=H;g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';
+    g.drawImage(box.atlas,box.x,box.y,box.w,box.h,(W-w)/2,H*.96-h,w,h);el.classList.add('on');
+  }));
 }
 export {paintArmor};
