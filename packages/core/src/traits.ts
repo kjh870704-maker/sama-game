@@ -117,6 +117,20 @@ export function guardsAdjacent(unit: Unit): boolean {
 
 // ─────────────────────────────────────────────────────────── 기본 특성 정의
 
+// 지켜야 할 대상(피난민·호송 수레·필수 생존 장수 등): 한 번의 공격으로 최대 체력의 param%보다 많이 잃지 않는다.
+// 피해 상한은 battle.ts가 타격을 확정할 때 적용한다(capHit). 특성은 표시와 판정용 표식이다.
+defineTrait({
+  id: "steadfast",
+  name: "버팀",
+  description: "한 번의 공격으로 최대 체력의 param%보다 많이 잃지 않는다(한 방에 쓰러지지 않는다).",
+  hooks: {},
+});
+/** 버팀 특성의 피해 상한을 적용한 피해. */
+export function capHit(defender: Unit, damage: number): number {
+  const cap = defender.traits.includes("steadfast") ? defender.traitParams["steadfast"] ?? 0 : 0;
+  return cap > 0 ? Math.min(damage, Math.ceil(defender.stats.maxHp * cap / 100)) : damage;
+}
+
 // 피해 감소 계열
 defineTrait({
   id: "physicalDamageReduction",

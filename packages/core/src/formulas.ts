@@ -7,7 +7,7 @@ import type { BattleMap } from "./grid.ts";
 import { manhattan } from "./grid.ts";
 import { engageDistance, reachMul } from "./reach.ts";
 import type { Rng } from "./rng.ts";
-import { applyTraitHooks, combine, type AttackKind, type DamageContext } from "./traits.ts";
+import { applyTraitHooks, capHit, combine, type AttackKind, type DamageContext } from "./traits.ts";
 import { familyOf } from "./classes.ts";
 import { hasTrait, traitParam } from "./traits.ts";
 import { tacticMultiplier } from "./tactics.ts";
@@ -332,7 +332,7 @@ export function estimatePhysical(attacker: Unit, defender: Unit, map: BattleMap)
     (1 + doubleAttackChance(attacker, defender) / 100);
 
   const hitRate = ctx.alwaysHit ? 1 : accuracy(ctx, map) / 100;
-  return Math.max(0, raw * hitRate);
+  return Math.max(0, capHit(defender, raw) * hitRate);
 }
 
 export function estimateStrategy(
@@ -346,7 +346,7 @@ export function estimateStrategy(
   if (ctx.immune) return 0;
 
   const base = strategyBase(caster, target, strategy, ctx.attackMul);
-  const raw = base * elementalMultiplier(strategy, map, target) * (1 - ctx.reduction);
+  const raw = capHit(target, base * elementalMultiplier(strategy, map, target) * (1 - ctx.reduction));
   const hitRate = ctx.alwaysHit ? 1 : accuracy(ctx, map) / 100;
   return Math.max(0, raw * hitRate);
 }

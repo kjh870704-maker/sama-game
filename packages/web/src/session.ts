@@ -133,6 +133,10 @@ export interface Save {version:2; revision?:2|3|4|5; deployment?:Deployment; cha
  * counter budgets, patrol progress and RNG when undoing across a phase boundary. */
 /** 천명의 시련 배율 */
 export const TRIAL={hp:1.2,attack:1.12,defense:1.1};
+/** 지켜야 할 대상의 한 번 피해 상한(최대 체력 대비 %). */
+export const STEADFAST_CAP=40;
+/** 규칙표의 실패 조건(protectedFailure)이 지키라고 하는 장수. */
+const MUST_SURVIVE=new Set(['cao_shuang','sima_zhao','sima_shi','dai_ling','cao_xiu','cao_pi']);
 export class Session {
   battle: Battle;
   journal: Intent[] = [];
@@ -399,7 +403,18 @@ export class Session {
     return result;
   }
   /** 『삼국지연의』 장수록의 능력·고유능력을 처음 보는 장수에게 입힌다(현행 규칙 전투만). */
+  /** 지켜야 할 대상: 쓰러지면 지거나 목표를 잃는 아군·NPC(필수 생존 장수, 호송·구출 대상, 피난민 등 민간인). */
+  private mustSurvive(state:BattleState,u:Unit){
+    if(u.side==='enemy')return false;
+    if(u.unitClass==='civilian'||['convoy_trial','rescue_target'].includes(u.id))return true;
+    if(state.stage.defeat.some(d=>d.type==='retreat'&&d.unit===u.id))return true;
+    const rules=stageRules[state.stage.id];
+    if(rules?.protect?.some(p=>p.unit===u.id)||(this.chapter===8||this.chapter===9)&&u.id==='cao_cao')return true;
+    return MUST_SURVIVE.has(u.id);
+  }
   private applyRomanceToNew(state:BattleState){
+    // 지켜야 할 대상은 한 번의 공격으로 최대 체력의 40%보다 많이 잃지 않는다(한 방에 쓰러지지 않게).
+    for(const u of state.living())if(!u.traits.includes('steadfast')&&this.mustSurvive(state,u)){u.traits.push('steadfast');u.traitParams.steadfast=STEADFAST_CAP;}
     if(this.revision<4)return;
     // 꿈속의 환영과 호위 대상(일부러 맞춘 체력·이동)은 연의 능력을 입히지 않는다.
     const escorts=new Set([...(stageRules[state.stage.id]?.protect??[]).map(p=>p.unit),...(this.chapter===8||this.chapter===9?['cao_cao']:[])]);

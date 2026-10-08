@@ -7,7 +7,7 @@ import { ok, fail } from "./commands.ts";
 import { ccRecoverChance } from "./cc-rules.ts";
 import type { StatusKind } from "./types.ts";
 import { computePhysical, computeStrategy, createDamageContext, doubleAttackChance } from "./formulas.ts";
-import { applyTraitHooks, counterLimitOf, ignoresRough, hasTrait, guardsAdjacent, getTrait, traitParam } from "./traits.ts";
+import { applyTraitHooks, capHit, counterLimitOf, ignoresRough, hasTrait, guardsAdjacent, getTrait, traitParam } from "./traits.ts";
 import { DialogueScript } from "./dialogue.ts";
 import { runEvents } from "./events.ts";
 import { evaluateGroup } from "./conditions.ts";
@@ -145,7 +145,9 @@ export class Battle {
   /** 한 번의 물리 타격(조조전 규칙이면 순발력 비율로 한 번 더 친다). */
   private strike(a: Unit, d: Unit, isCounter: boolean): void {
     const once = (double: boolean): boolean => {
-      const res = computePhysical(a, d, this.state.map, this.state.rng, { isCounter });
+      const raw = computePhysical(a, d, this.state.map, this.state.rng, { isCounter });
+      const capped = raw.hit ? capHit(d, raw.damage) : raw.damage;
+      const res = capped === raw.damage ? raw : { ...raw, damage: capped, lethal: capped >= d.hp };
       const extra = double ? { double: true } : {};
       if (isCounter) this.state.push({ t: "counter", attacker: a.id, defender: d.id, damage: res.damage, hit: res.hit, ...(res.hit && res.tactic ? { tactic: res.tactic } : {}), ...extra });
       else this.state.push({ t: "attack", attacker: a.id, defender: d.id, damage: res.damage, hit: res.hit, critical: res.critical, ...(res.hit && res.tactic ? { tactic: res.tactic } : {}), ...extra });
@@ -182,7 +184,9 @@ export class Battle {
     for (const coord of area) {
       const t = this.state.unitAt(coord);
       if (!t || !def.targetSides.includes(t.side)) continue;
-      const res = computeStrategy(c, t, def, this.state.map, this.state.rng);
+      const raw = computeStrategy(c, t, def, this.state.map, this.state.rng);
+      const capped = raw.hit ? capHit(t, raw.damage) : raw.damage;
+      const res = capped === raw.damage ? raw : { ...raw, damage: capped, lethal: capped >= t.hp };
       targets.push(t.id);
       damages.push(res.damage);
       if (res.hit) {
