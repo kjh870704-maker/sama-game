@@ -219,12 +219,15 @@ function briefing(chapter:number,expeditionId?:string,scenario?:ScenarioDeployme
   /** 출진 장수: 필수(잠김) + 선택(난이도별 인원 제한). */
   const sortieMarkup=()=>{const {allowed,capacity}=optionalOfficers(c.stage,c.map),limit=Math.min(capacity,storySortieLimit(difficulty));
     const lv=deployment(campaign,true).levels,ext=difficulty==='extreme',sheet=ext?storyCostSheet(c.stage,pickExtras(c.stage,c.map,extras,difficulty,lv),lv):undefined;
-    const costOf=(id:string)=>{const r=sheet?.rows.find(x=>x.id===id);return r?r.cost:unitCost(storyClassAt(id,lv[id]??1));};
-    const tag=(id:string)=>{if(!ext)return '';const r=sheet?.rows.find(x=>x.id===id);return ` · 코스트 ${costOf(id)}${r&&r.unitClass!==r.natural?` (${classNames[r.unitClass]??r.unitClass}로 낮춰 출진)`:''}`;};
+    const costOf=(id:string)=>unitCost(storyClassAt(id,lv[id]??1));
+    const tag=(id:string)=>ext?` · ${classNames[storyClassAt(id,lv[id]??1)]??''} 코스트 ${costOf(id)}`:'';
+    // 극한: 이미 고른 장수는 체크, 남은 코스트에 들지 않는 장수는 고를 수 없다.
+    const chosen=(id:string)=>ext?!!sheet?.rows.some(r=>r.id===id&&!r.forced):extras.includes(id);
+    const blocked=(id:string)=>ext&&!chosen(id)&&costOf(id)>sheet!.left;
     return `<fieldset class="sortie-picker"><legend>출진 장수 · 필수 ${c.stage.deployment.forced.length}명${allowed.length?` + 선택 최대 ${limit}명`:''}${ext?` · 극한 출진 코스트 <b class="${sheet!.used>sheet!.cap?'over':''}">${sheet!.used}/${sheet!.cap}</b>`:''}</legend>
     ${c.stage.deployment.forced.map(id=>`<span class="sortie-chip forced">🔒 ${officerNames[id]??id}${tag(id)}</span>`).join('')}
-    ${allowed.map(id=>`<label class="sortie-chip"><input type="checkbox" data-extra="${id}" ${extras.includes(id)?'checked':''}> ${officerNames[id]??id} · Lv.${levelInfo(campaign.xp[id]??0).level}${ext?` · 코스트 ${costOf(id)}`:''}</label>`).join('')}
-    ${ext?'<small>극한은 출진 코스트 합이 상한을 넘으면 더 데려갈 수 없다. 병종 코스트: 1단 2 · 2단 3 · 3단 4 · 4단 6, 기마·코끼리 +1. 필수 장수만으로 넘으면 한 단계 낮은 병종으로 나선다.</small>':''}
+    ${allowed.map(id=>`<label class="sortie-chip${blocked(id)?' blocked':''}"${blocked(id)?` title="남은 코스트 ${sheet!.left} — 코스트 ${costOf(id)}는 들어가지 않는다"`:''}><input type="checkbox" data-extra="${id}" ${chosen(id)?'checked':''} ${blocked(id)?'disabled':''}> ${officerNames[id]??id} · Lv.${levelInfo(campaign.xp[id]??0).level}${tag(id)}</label>`).join('')}
+    ${ext?`<small>극한은 출진 코스트 안에서 고른다: 필수 장수의 코스트가 먼저 잡히고, 남은 코스트 <b>${sheet!.left}</b> 안에 드는 장수만 데려갈 수 있다. 병종은 낮추지 않는다. 병종 코스트: 1단 2 · 2단 3 · 3단 4 · 4단 6, 기마·코끼리 +1.${sheet!.rows.filter(r=>r.forced).reduce((n,r)=>n+r.cost,0)>=sheet!.cap?' 이 장은 필수 장수만으로 상한이 찼다.':''}</small>`:''}
     ${allowed.length?'':'<small>이 장은 이야기상 정해진 장수만 출진한다.</small>'}</fieldset>`;};
   const draw=()=>{
     const previousScroll=$('#modal-content .camp-screen')?$<HTMLDialogElement>('#modal').scrollTop:0;

@@ -8,11 +8,11 @@
  *
  * 극한은 인원 대신 '출진 코스트'로 제한한다: 병종마다 코스트(진화 단계가 높을수록, 기마는 +1)가 있고,
  * 출진하는 장수들의 코스트 합이 전장의 상한을 넘으면 더 데려갈 수 없다.
- * 연의 장의 필수 장수만으로 상한을 넘으면, 필수 장수는 상한에 맞을 때까지 한 단계 낮은 병종으로 나선다(사마의는 마지막).
+ * 필수 장수는 언제나 제 병종 그대로 나서고 그 코스트가 먼저 잡힌다. 남은 코스트 안에서만 다른 장수를 고를 수 있다
+ * (필수 장수만으로 상한을 채우거나 넘으면 더 데려갈 수 없다).
  */
 import type {MapFile,StageDef,UnitClass} from '../../core/src/index.ts';
 import {evolvedClass,familyOf,tierOf} from '../../core/src/index.ts';
-import {fourStageCorrectionRows} from './complete-troops.ts';
 import {campaignOrder,chapters} from './session.ts';
 
 /** 연의 장에서 사마의 곁에 설 수 있는 시기(스테이지 id 범위, 연의 진행 순서 기준). */
@@ -35,23 +35,9 @@ export function taleCostCap(act:1|2|3,boss:boolean){return (act===3?18:act===2?1
 /** 연의 장 장수의 본래 병종(레벨이 오르면 진화한다). */
 export const STORY_BASE_CLASS:Record<string,UnitClass>={sima_yi:'strategist',sima_lang:'infantry',cao_zhen:'heavyCav',sima_fang:'spearman'};
 export const storyClassAt=(id:string,level:number)=>evolvedClass(STORY_BASE_CLASS[id]??'infantry',level);
-/** 한 단계 낮은 병종(1단이면 그대로). */
-export function previousClass(c:UnitClass):UnitClass{
-  for(const line of Object.values(fourStageCorrectionRows) as ReadonlyArray<readonly UnitClass[]>){const i=line.indexOf(c);if(i>0)return line[i-1]!;}
-  return c;
-}
-/**
- * 필수 장수를 상한에 맞춘다: 코스트가 가장 큰 장수부터 한 단계씩 낮춘다(사마의는 다른 장수가 모두 1단일 때만).
- * 돌려주는 값: id → 실제로 나설 병종.
- */
-export function fitForcedToCap(units:ReadonlyArray<{id:string;unitClass:UnitClass}>,cap:number){
-  const out=new Map(units.map(u=>[u.id,u.unitClass] as const));
-  const total=()=>[...out.values()].reduce((n,c)=>n+unitCost(c),0);
-  for(let guard=0;guard<40&&total()>cap;guard++){
-    const order=[...out.entries()].filter(([,c])=>previousClass(c)!==c).sort((a,b)=>(a[0]==='sima_yi'?1:0)-(b[0]==='sima_yi'?1:0)||unitCost(b[1])-unitCost(a[1]));
-    if(!order.length)break;const [id,c]=order[0]!;out.set(id,previousClass(c));
-  }
-  return out;
+/** 연의 장 필수 장수의 출진 코스트(제 병종 그대로). */
+export function forcedCost(stage:StageDef,levels:Readonly<Record<string,number>>){
+  return stage.deployment.forced.filter(id=>STORY_BASE_CLASS[id]).reduce((n,id)=>n+unitCost(storyClassAt(id,levels[id]??1)),0);
 }
 /** 연의 장에 더 데려갈 수 있는 장수와 남은 출진 칸. */
 export function optionalOfficers(stage:StageDef,map:MapFile):{allowed:string[];capacity:number}{
@@ -68,18 +54,17 @@ export function pickExtras(stage:StageDef,map:MapFile,wanted:readonly string[],d
   const {allowed,capacity}=optionalOfficers(stage,map);
   const picked=wanted.filter((id,i)=>allowed.includes(id)&&wanted.indexOf(id)===i).slice(0,Math.min(capacity,storySortieLimit(difficulty)));
   if(difficulty!=='extreme'||!levels)return picked;
-  // 극한: 필수 장수(상한에 맞춘 뒤)의 코스트에 더해 상한 안에 드는 장수만.
-  const cap=storyCostCap(stage.id),forced=fitForcedToCap(stage.deployment.forced.filter(id=>STORY_BASE_CLASS[id]).map(id=>({id,unitClass:storyClassAt(id,levels[id]??1)})),cap);
-  let used=[...forced.values()].reduce((n,c)=>n+unitCost(c),0);const out:string[]=[];
+  // 극한: 필수 장수의 코스트를 먼저 잡고, 남은 코스트 안에 드는 장수만.
+  const cap=storyCostCap(stage.id);let used=forcedCost(stage,levels);const out:string[]=[];
   for(const id of picked){const c=unitCost(storyClassAt(id,levels[id]??1));if(used+c<=cap){out.push(id);used+=c;}}
   return out;
 }
-/** 화면용: 연의 장 극한 코스트(필수·선택 장수별 병종·코스트와 합계). */
+/** 화면용: 연의 장 극한 코스트(필수·선택 장수별 병종·코스트, 합계와 남은 코스트). */
 export function storyCostSheet(stage:StageDef,ids:readonly string[],levels:Readonly<Record<string,number>>){
   const cap=storyCostCap(stage.id),forcedIds=stage.deployment.forced.filter(id=>STORY_BASE_CLASS[id]);
-  const fitted=fitForcedToCap(forcedIds.map(id=>({id,unitClass:storyClassAt(id,levels[id]??1)})),cap);
-  const rows=[...forcedIds,...ids.filter(id=>!forcedIds.includes(id))].map(id=>{const natural=storyClassAt(id,levels[id]??1),c=fitted.get(id)??natural;return {id,unitClass:c,natural,cost:unitCost(c),forced:forcedIds.includes(id)};});
-  return {cap,rows,used:rows.reduce((n,r)=>n+r.cost,0)};
+  const rows=[...forcedIds,...ids.filter(id=>!forcedIds.includes(id))].map(id=>{const c=storyClassAt(id,levels[id]??1);return {id,unitClass:c,cost:unitCost(c),forced:forcedIds.includes(id)};});
+  const used=rows.reduce((n,r)=>n+r.cost,0);
+  return {cap,rows,used,left:Math.max(0,cap-used)};
 }
 
 /** 가상 전장에 고를 수 있는 장수 수(필수 장수 제외). */

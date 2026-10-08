@@ -300,6 +300,7 @@ body.nightmare .map-vignette {box-shadow:inset 0 0 85px #11162baa}
 .sortie-picker legend{color:#e4c487;padding:0 6px;font-size:calc(13.5px*var(--fs,1))}
 .sortie-chips{display:flex;flex-wrap:wrap;gap:6px}
 .sortie-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #556355;padding:5px 10px;font-size:calc(13.5px*var(--fs,1))}
+.sortie-chip.blocked{opacity:.45;cursor:not-allowed}
 .sortie-chip.forced{border-color:#c79c4a;color:#ffd38a;background:#c79c4a14}
 .sortie-chip:has(:checked){border-color:#4f86e8;background:#4f86e81a}
 .sortie-chip:has(:disabled:not(:checked)){opacity:.5}
