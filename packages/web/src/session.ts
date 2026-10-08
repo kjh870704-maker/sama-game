@@ -430,7 +430,7 @@ export class Session {
     // 극한 한중 정벌전 下: 경쟁 우군 기병이 한 칸 더 빨리 성채로 달린다.
     if(this.chapter===1&&this.difficulty==='extreme')for(const u of state.living('allyAi'))if(u.behavior==='race'&&!this.romanced.has(u.id))u.stats.movement+=1;
     // 극한: 성채 수비대장이 오래 버텨, 우군과의 선점 경쟁이 실제로 빠듯해진다.
-    if(this.chapter===1&&this.difficulty==='extreme'){const z=state.find('zhang_lu');if(z?.alive&&!this.romanced.has(z.id)){z.stats.maxHp=Math.round(z.stats.maxHp*3);z.hp=z.stats.maxHp;}}
+    if(this.chapter===1&&this.difficulty==='extreme'){const z=state.find('zhang_lu');if(z?.alive&&!this.romanced.has(z.id)){z.stats.maxHp=Math.round(z.stats.maxHp*4.3);z.hp=z.stats.maxHp;}}
     if(this.revision<4)return;
     // 꿈속의 환영과 호위 대상(일부러 맞춘 체력·이동)은 연의 능력을 입히지 않는다.
     const escorts=new Set([...(stageRules[state.stage.id]?.protect??[]).map(p=>p.unit),...(this.chapter===8||this.chapter===9?['cao_cao']:[])]);

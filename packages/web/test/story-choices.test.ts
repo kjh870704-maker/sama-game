@@ -41,3 +41,13 @@ describe('가상 상·중편 회고',()=>{
     expect(endingNotes(state)).toEqual(ifA.slice(0,ENDING_NOTES_PER_ACT).map(n=>n.line));
   });
 });
+
+describe('이야기 밖 대결 상대의 병종',()=>{
+  it('이야기 중 대결 상대는 모두 병종을 안다',async()=>{
+    const {foeClassOf}=await import('../src/scenario-ui.ts');
+    const foes=new Set(PACKS.flatMap(p=>p.chapters).flatMap(c=>[...c.scenes,...(c.after??[])]).flatMap(s=>s.steps).flatMap(x=>'choice' in x?x.options.flatMap(o=>(o.effects??[]).flatMap(e=>e.kind==='duel'||e.kind==='debate'?[e.foe]:[])):[]));
+    expect(foes.size).toBeGreaterThan(0);
+    for(const f of foes)expect(foeClassOf(f),f).toBeDefined();
+    expect(foeClassOf('학소')).toBe('spearman');expect(foeClassOf('없는장수')).toBeUndefined();
+  });
+});

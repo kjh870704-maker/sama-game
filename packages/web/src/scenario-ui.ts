@@ -3,12 +3,12 @@
  * 규칙은 scenario.ts, 무대 연출은 story-stage.ts. 연의 장의 정비·전투·보상은 main.ts의 기존 흐름을 쓴다.
  */
 import {loadScenario,saveScenario,scenarioPath,winOver,currentStep,scriptOf,choose,undoChoice,finishStep,fateChoices,floorFor,scenarioParty,rewardOfficers,endingNotes,routeTales,COMPANIONS,
-  ensureRun,newScenarioRun,inWhatIf,joinCaptive,pendingMarch,marchNodes,recruitOffer,relicOffer,recruitOfficer,healAll,finishMarch,marchFloor,afterFight,loseFight,runMandate,omenOffer,omenOf,chooseOmen,omenReward,addRunBonus,type ScenarioState,type ScenarioStep,type MarchNode} from './scenario.ts';
+  ensureRun,newScenarioRun,inWhatIf,joinCaptive,pendingMarch,marchNodes,recruitOffer,relicOffer,recruitOfficer,healAll,finishMarch,marchFloor,afterFight,loseFight,runMandate,omenOffer,omenOf,chooseOmen,omenReward,addRunBonus,EXTRA_TALES,type ScenarioState,type ScenarioStep,type MarchNode} from './scenario.ts';
 import {playScenes,playNarration,Stage} from './story-stage.ts';
 import {startPersuasion,speak,reaction,PITCH,GREETING,AGREE,REFUSE,APPROACH_NAMES,PERSUADE_GOAL,type Approach} from './persuade.ts';
 import {openCamp} from './story-camp.ts';
 import {isoBackdrop} from './story-iso.ts';
-import {routeById,fatePoint,endingFor,factionText,ALL_ENDINGS,type Route} from './fate.ts';
+import {ROUTES,routeById,fatePoint,endingFor,factionText,ALL_ENDINGS,type Route} from './fate.ts';
 import {foundingOption} from './newpower.ts';
 import {showFateMap} from './run-ui.ts';
 import {pickFaction} from './custom-ui.ts';
@@ -97,13 +97,22 @@ async function runContest(host:ScenarioHost,state:ScenarioState,step:ScenarioSte
   // 병종을 아는 쪽은 전투 화면과 같은 모습으로 선다: 사마의·부대 장수, 가상 전장의 적장·우두머리.
   const myClass:UnitClass|undefined=by==='사마의'?storyClassAt('sima_yi',hero.level):state.officers[by]?.unitClass;
   const route=step.route?routeById(step.route):undefined;
-  const foeClass:UnitClass|undefined=step.tale?.target.name===foe?step.tale.target.unitClass:step.kind==='boss'&&route?.region.boss.name===foe?route.region.boss.unitClass:undefined;
+  const foeClass:UnitClass|undefined=step.tale?.target.name===foe?step.tale.target.unitClass:step.kind==='boss'&&route?.region.boss.name===foe?route.region.boss.unitClass:foeClassOf(foe);
   const model=(c:UnitClass|undefined,n:string,side:'player'|'enemy')=>c?host.unitModel?.(c,n,side):undefined;
   const mine=model(myClass,by,'player'),theirs=model(foeClass,foe,'enemy');
   const r=await playContest(kind,{name:by,stat:stat(by,lvOf(by))},{name:foe,stat:stat(foe,foeLv)},{...(line?{acceptLine:line}:{}),seed:step.id+foe,done:'돌아가기',sound:c=>host.contestSound?.(kind,c),models:{...(mine?{player:mine}:{}),...(theirs?{enemy:theirs}:{})}});
   state.flags=state.flags.filter(f=>!f.startsWith(`contest:${step.id}:`));state.flags.push(`contest:${step.id}:${kind}:${r}`);
   if(r==='lose'&&by==='사마의'&&state.run)state.run.hp['사마의']=Math.min(state.run.hp['사마의']??1,.7);
   saveScenario(state);return r;
+}
+/** 연의 장수 → 병종(가상 전장·우두머리에 정해 둔 병종이 없을 때). */
+const FOE_CLASS:Record<string,UnitClass>={위연:'cavalry',조운:'cavalry',관우:'cavalry',장비:'spearman',마초:'cavalry',황충:'archer',제갈량:'strategist',강유:'cavalry',
+  장료:'cavalry',허저:'infantry',하후돈:'cavalry',하후연:'cavalry',서황:'heavyCav',장합:'cavalry',조진:'heavyCav',조인:'infantry',여포:'cavalry',주유:'strategist',육손:'strategist',
+  손권:'strategist',여몽:'cavalry',감녕:'cavalry',양수:'strategist',진궁:'strategist',맹달:'infantry',학소:'spearman',원상:'cavalry',원담:'infantry',심배:'strategist',공손연:'infantry'};
+/** 대결 상대의 병종: 가상 전장 적장·우두머리로 정해 둔 병종, 없으면 위 표. */
+export function foeClassOf(name:string):UnitClass|undefined{
+  for(const r of ROUTES){if(r.region.boss.name===name)return r.region.boss.unitClass;const t=r.tales.find(x=>x.target.name===name);if(t)return t.target.unitClass;}
+  return EXTRA_TALES.find(t=>t.target.name===name)?.target.unitClass??FOE_CLASS[name];
 }
 /** 선택으로 고른 효과 → 이번 전투의 효과. */
 export function modsOf(state:ScenarioState,step:ScenarioStep):BattleMods{

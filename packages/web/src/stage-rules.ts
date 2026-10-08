@@ -197,7 +197,8 @@ export const stageRules:Record<string,StageRules>={
     calm:true,
     medicine:3,
     weather:'가을 하늘 · 큰 별이 떨어진 다음 날',
-    labels:[{region:'west_exit',text:'촉의 퇴로'},{region:'east_exit',text:'동쪽 철수로'},{region:'plateau',text:'오장원'}],
+    // 깃발이 돌아서면 이 숲에서 매복 기병이 나온다: 철수로를 고를 단서.
+    labels:[{region:'west_exit',text:'촉의 퇴로'},{region:'east_exit',text:'동쪽 철수로'},{region:'plateau',text:'오장원'},{region:'flank',text:'깊은 숲 · 매복 주의'}],
     tick:({state})=>{
       if(!state.firedEvents.has('wuzhang/banner')){
         for(const u of state.living('enemy'))if(u.behavior==='flee'&&state.map.regionCoords('west_exit').some(c=>c.x===u.pos.x&&c.y===u.pos.y)){state.units.delete(u.id);state.survivalClocks.set('escaped',(state.survivalClocks.get('escaped')??0)+1);}

@@ -117,7 +117,9 @@ function strikeQuarry(session: any, unit: any): boolean {
   const quarry = state.victory
     .filter((c: { type: string; unit?: string }) => c.type === "retreat" && c.unit)
     .map((c: { unit: string }) => state.find(c.unit))
-    .find((u: any) => u?.alive && u.side === "enemy" && u.behavior === "flee");
+    // 도망치는 적장, 또는 홀로 남아 체력이 절반 아래로 깎인 채 버티는 적장(사람은 대치만 하다 기한을 넘기지 않는다).
+    .find((u: any) => u?.alive && u.side === "enemy" && (u.behavior === "flee" ||
+      (u.behavior === "hold" && u.hp < u.stats.maxHp * 0.5 && state.living("enemy").filter((e: any) => !/^(gate|tower|barricade)_/.test(e.id)).length === 1)));
   if (!quarry) return false;
   const reach = state.map.reachable(unit, state.occupancy());
   // 책략이 닿으면 가장 센 공격 책략으로 노린다(사람은 도망치는 적장에게 화력을 모은다).
@@ -134,6 +136,8 @@ function strikeQuarry(session: any, unit: any): boolean {
       return unit.hasActed;
     }
   }
+  // 버티는 적장은 책략으로만 마무리한다(칼을 들고 뛰어들면 반격에 쓰러진다).
+  if (quarry.behavior !== "flee") return false;
   if (unit.range[1] <= 0) return false;
   for (const k of reach.keys()) {
     const [x, y] = k.split(",").map(Number);
@@ -351,7 +355,7 @@ for (const chapter of targets) {
         if (process.env.SIM_DEBUG && reasons.get(reason) === 1) {
           console.log(`  [${stage.id} ${difficulty} seed ${seed}] ${reason} · ${session.state.turn}턴`);
           for (const e of session.state.log.slice(-Number(process.env.SIM_DEBUG_TAIL ?? 10))) console.log("    " + JSON.stringify(e));
-          if (process.env.SIM_DEBUG_UNITS) console.log("    units", JSON.stringify(session.state.living().map((u: any) => [u.id, u.side, u.pos.x, u.pos.y, u.hp])), JSON.stringify([...session.state.regionHolds]));
+          if (process.env.SIM_DEBUG_UNITS) console.log("    units", JSON.stringify(session.state.living().map((u: any) => [u.id, u.side, u.unitClass, u.pos.x, u.pos.y, `${u.hp}/${u.stats.maxHp}`, `mp${u.mp}`, u.behavior ?? ""])), JSON.stringify([...session.state.regionHolds]));
         }
       }
     }

@@ -170,7 +170,9 @@ export class Soundscape {
     const g=this.env(t,.12,d,v*.45);o.connect(lp);o2.connect(lp);lp.connect(g);this.out(g,bus,.35);
   }
   private bell(f:number,t:number,v:number,bus=this.music,d=2.6){
-    if(!this.ctx||!bus)return;for(const [r,a] of [[1,1],[2.76,.45],[5.4,.22],[8.9,.1]] as const){if(f*r>this.ctx.sampleRate*.45)continue;const o=this.osc('sine',f*r,t,d/r**.3),g=this.env(t,.003,d/r**.3,v*a);o.connect(g);this.out(g,bus,.5);}
+    if(!this.ctx||!bus)return;
+    // Recorded hand chimes (pitched bells) when loaded.
+    if(this.sampled('chime',69+12*Math.log2(f/440),t,v*1.8,d,bus,{release:.6,wet:.5}))return;for(const [r,a] of [[1,1],[2.76,.45],[5.4,.22],[8.9,.1]] as const){if(f*r>this.ctx.sampleRate*.45)continue;const o=this.osc('sine',f*r,t,d/r**.3),g=this.env(t,.003,d/r**.3,v*a);o.connect(g);this.out(g,bus,.5);}
   }
   private voice(lead:Lead,f:number,t:number,d:number,v:number){
     const m=69+12*Math.log2(f/440);

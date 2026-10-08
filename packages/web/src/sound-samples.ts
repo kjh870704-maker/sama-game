@@ -44,7 +44,7 @@ export const SAMPLE_GROUPS:Record<string,{files:string[];midi?:number[]}>={
   'frame-drum':{files:["frame-drum-0.mp3", "frame-drum-1.mp3", "frame-drum-2.mp3"]},
   'woodblock':{files:["woodblock-0.mp3", "woodblock-1.mp3", "woodblock-2.mp3"]},
   'cymbal':{files:["cymbal-0.mp3", "cymbal-1.mp3"]},
-  'chime':{files:["chime-0.mp3", "chime-1.mp3", "chime-2.mp3", "chime-3.mp3", "chime-4.mp3"]},
+  'chime':{files:["chime-0.mp3", "chime-1.mp3", "chime-2.mp3", "chime-3.mp3", "chime-4.mp3"], midi:[69, 72, 84, 74, 76]},
   'bell-tree':{files:["bell-tree-0.mp3", "bell-tree-1.mp3"]},
   'handbell':{files:["handbell-0.mp3", "handbell-1.mp3", "handbell-2.mp3"]},
   'horn':{files:["horn-0.mp3", "horn-1.mp3"]},
