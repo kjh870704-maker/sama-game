@@ -1536,3 +1536,10 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 /* 극한 출진 코스트 */
 .sortie-picker legend b.over,.prep-cost.over{color:#ff6a50}
 .prep-cost{color:#f0d79c}
+
+/* 승리·패배 조건 */
+.battle-conditions{display:grid;gap:3px;margin:6px 0;font-size:calc(12.5px*var(--fs,1));line-height:1.45}
+.battle-conditions p{margin:0}
+.battle-conditions b{display:inline-block;min-width:2.6em;margin-right:4px;padding:0 5px;border-radius:3px;font-size:.9em;text-align:center}
+.battle-conditions .cond-win b{background:#2f5d3a;color:#e8f6e8}
+.battle-conditions .cond-lose b{background:#6b2620;color:#fde8e4}

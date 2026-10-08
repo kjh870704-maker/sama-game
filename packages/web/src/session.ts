@@ -6,6 +6,8 @@ import {applyPerkGrants,validGrants} from './perks.ts';
 import {stretchMap,stretchStage,canStretch,wideCoord} from './stretch.ts';
 import {applyTreasureSpecial} from './treasure-specials.ts';
 import './scenario.ts';
+import {battleConditions,type BattleConditions} from './battle-conditions.ts';
+import {trialGoalText} from './expedition-objectives.ts';
 import {pickExtras,fitForcedToCap,storyCostCap,storyClassAt,STORY_BASE_CLASS} from './sortie.ts';
 import {applyRomance,temperOf} from './romance.ts';
 import {applyCC} from './cc-apply.ts';
@@ -411,6 +413,15 @@ export class Session {
     const rules=stageRules[state.stage.id];
     if(rules?.protect?.some(p=>p.unit===u.id)||(this.chapter===8||this.chapter===9)&&u.id==='cao_cao')return true;
     return MUST_SURVIVE.has(u.id);
+  }
+  /** 화면에 보일 승리·패배 조건: 스테이지 판정 조건 + 지켜야 할 장수 + 기한. */
+  get conditions():BattleConditions{
+    const st=this.state,rules=stageRules[st.stage.id];
+    const ids=new Set([...(rules?.protect??[]).map(p=>p.unit),...MUST_SURVIVE,...(this.chapter===8||this.chapter===9?['cao_cao']:[])]);
+    const guarded=[...ids].map(id=>st.find(id)).filter(u=>u&&u.side!=='enemy').map(u=>u!.name);
+    const c=battleConditions(st,{guarded,deadline:this.deadline??60});
+    const m=this.deployment?.mission;if(m&&(m.version??1)>=3)c.win=[trialGoalText(m.id)];
+    return c;
   }
   private applyRomanceToNew(state:BattleState){
     // 지켜야 할 대상은 한 번의 공격으로 최대 체력의 40%보다 많이 잃지 않는다(한 방에 쓰러지지 않게).
