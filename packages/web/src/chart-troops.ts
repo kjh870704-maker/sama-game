@@ -50,8 +50,8 @@ export const CHART_ROLES:Partial<Record<UnitClass,Role>>={
   heavyChariot:r('중전차','전차 3단계 · 철갑으로 물리 피해를 덜 받는다','heavyCav',0x9098a0),
   divineChariot:r('신전차','전차 4단계 · 용머리 금전차','heavyCav',0xffd060),
   // 정란계
-  siegeTower:r('경정란','높은 망루에서 활을 쏘는 단일 공성 병종 · 사거리 1~3','catapult',0xc0a070),
-  jinglan:r('정란','정란 2단계 · 공격력이 오른다','catapult',0xb08860),
+  siegeTower:r('정란','높은 망루에서 활을 쏘는 단일 공성 병종 · 사거리 1~3','catapult',0xc0a070),
+  jinglan:r('강정란','옛 정란 2단계(이전 저장) · 공격력이 오른다','catapult',0xb08860),
   heavyJinglan:r('중정란','정란 3단계 · 두꺼운 판벽','catapult',0x907860),
   divineJinglan:r('신정란','정란 4단계 · 금장 망루, 방어를 꿰뚫는다','catapult',0xf0d080),
   // 황실 NPC — 서로 진화하지 않는 독립 단일 병종
