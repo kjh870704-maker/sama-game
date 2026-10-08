@@ -1722,5 +1722,21 @@ const pack:ScenarioPack={
       ],
     },
   ],
+  endingNotes:[
+    {flag:'mengda_letter',line:'맹달에게 먼저 보낸 안심의 편지 — 여드레 만의 진격은 그 편지 한 장에서 시작되었다.'},
+    {flag:'wuwei_mercy',line:'무위의 반란군을 너그럽게 다스린 일은 서쪽 변경에서 오래 이야기되었다.'},
+    {flag:'wuwei_stern',line:'무위의 반란군을 엄하게 다스린 뒤로, 서쪽 변경은 그의 이름만 들어도 조용해졌다.'},
+    {flag:'h2_teach_shi',line:'허창에서 뒤를 지키는 법을 배운 사마사는, 훗날 그 누구보다 단단한 뒤가 되었다.'},
+    {flag:'h2_volunteer_xiangyang',line:'새 황제 앞에서 양양으로 가겠다고 나선 그날, 조예는 비로소 그의 얼굴을 기억했다.'},
+    {flag:'h2_trust_zhanghe',line:'가정에서 장합에게 퇴로를 맡긴 믿음 — 그 믿음은 목문도에서 끝내 무거운 값을 치렀다.'},
+    {flag:'heeded_zhanghe',line:'목문도에서 장합의 말을 들은 일은, 노장에게 건넨 마지막 존중으로 남았다.'},
+    {flag:'advised_retreat',line:'자오곡의 비 속에서 조진에게 회군을 권했다. 친구는 그 말을 듣고 돌아왔고, 그것이 마지막 원정이 되었다.'},
+    {flag:'h2_sons_together',line:'석정에서 두 아들에게 서로의 깃발을 놓치지 말라 일렀다. 형제는 그 말을 평생 지켰다.'},
+    {flag:'sons_vow',line:'호로곡에 들기 전 두 아들에게 남긴 말 — 불길 속에서 그들은 그 말을 붙잡고 아버지를 찾았다.'},
+    {flag:'father_first',line:'호로곡의 불길 속에서도 아버지를 먼저 찾던 두 아들의 얼굴을, 그는 잊지 못했다.'},
+    {flag:'wary_pursuit',line:'오장원에서 물러나는 촉군을 조심스럽게 쫓았다. "죽은 제갈이 산 중달을 달아나게 했다"는 말은 그렇게 남았다.'},
+    {flag:'hard_pursuit',line:'오장원에서 끝까지 촉군을 몰아쳤다. 그러나 제갈량의 군은 흐트러지지 않고 물러갔다.'},
+    {flag:'h2_ford_zhanghe',line:'세 나루에서 장합의 이름을 불러 병사들을 다독였다. 죽은 장수의 이름이 산 병사를 지켰다.'},
+  ],
 };
 export default pack;

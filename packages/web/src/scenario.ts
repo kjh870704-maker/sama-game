@@ -255,8 +255,16 @@ export function rewardOfficers(state:ScenarioState,party:RunUnit[],earned:Record
   return run.news;
 }
 
-/** 결말 덧말: 이번 이야기에서 남긴 표식에 따른 한 줄들. */
-export function endingNotes(state:ScenarioState){return ENDING_NOTES.filter(n=>state.flags.includes(n.flag)).map(n=>n.line);}
+/** 상·중편에서 결말 회고로 꺼내는 줄 수(편마다). 하편의 덧말은 모두 보인다. */
+export const ENDING_NOTES_PER_ACT=2;
+/**
+ * 결말 덧말: 이번 이야기에서 남긴 표식에 따른 한 줄들 — 상편·중편의 선택이 먼저 회고되고 하편의 덧말이 뒤따른다.
+ * 상·중편은 대본에 적힌 순서(무게 순)로 편마다 ENDING_NOTES_PER_ACT줄까지만.
+ */
+export function endingNotes(state:ScenarioState){
+  const has=(n:{flag:string})=>state.flags.includes(n.flag);
+  return PACKS.flatMap((p,i)=>{const got=(p.endingNotes??[]).filter(has);return i<2?got.slice(0,ENDING_NOTES_PER_ACT):got;}).map(n=>n.line);
+}
 
 
 // ─────────────────────────────────────────────── 로그라이크 회차
