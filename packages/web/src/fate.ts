@@ -149,7 +149,7 @@ export const ROUTES:Route[]=[
     tales:[
       {id:'IF3-sn-1',title:'진창',intro:'진창성을 학소가 지킨다. 제갈량을 스무 날 붙잡았던 성을, 사마의는 사흘 안에 넘으려 한다.',target:{name:'학소',unitClass:'spearman'}},
       {id:'IF3-sn-2',title:'가정 너머',intro:'가정을 지나 장안으로. 위의 명장 장합이 마지막 길을 막는다.',target:{name:'장합',unitClass:'cavalry'}},
-      {id:'IF3-sn-3',title:'동관의 활',intro:'장안을 잃은 위는 동관에 마지막 둑을 쌓았다. 곽회가 관문 위에 활을 세웠다.',target:{name:'곽회',unitClass:'crossbow'}},
+      {id:'IF3-sn-3',title:'동관의 활',intro:'장안을 잃은 위는 동관에 마지막 둑을 쌓았다. 곽회가 관문 위에 활을 세웠다.',target:{name:'곽회',unitClass:'archer'}},
     ]},
   {id:'shu_south',act:3,history:false,after:['shu'],choice:'남중을 평정하고 촉의 승상이 된다',detail:'제갈량의 뒤를 이어 남중의 맹획을 꺾고, 촉의 안쪽부터 다진다.',name:'가상 · 촉의 승상',
     ending:{title:'촉의 승상',lines:['남중의 맹획이 일곱 번째로 머리를 숙였다. 사마의는 제갈량의 뒤를 이어 촉의 승상이 되었다.','위에서 태어나 촉에서 늙은 책사 — 그는 끝내 고향 하내로 돌아가지 않았다.']},

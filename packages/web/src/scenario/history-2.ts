@@ -768,7 +768,7 @@ const pack:ScenarioPack={
         '그 틈에 촉장 위연이 곽회의 진을 치고 양평관으로 돌아가려 한다. 비와 싸울 것인가, 위연을 막을 것인가가 사마의 앞에 놓였다.',
       ],
       camp:{place:'자오곡 · 비 새는 야영',art:4,people:[
-        {name:'곽회',look:'spear',at:[50,60],
+        {name:'곽회',look:'archer',at:[50,60],
           talk:[
             {say:'곽회',line:'도독, 제 진영은 목책이 두 겹입니다. 위연이 정면으로 오면 한나절, 옆으로 돌면 그보다 짧습니다.'},
             {say:'사마의',line:'위연은 옆으로 돌 자요. 자오곡으로 장안을 찌르자던 자니까.'},
@@ -829,7 +829,7 @@ const pack:ScenarioPack={
         {place:'자오곡 · 서른 날의 비',art:4,
           cast:[
             {name:'사마의',look:'strategist',at:[36,60],face:'right'},
-            {name:'곽회',look:'spear'},
+            {name:'곽회',look:'archer'},
           ],
           steps:[
             {narrate:'비가 서른 날 그치지 않았다. 잔도가 끊기고, 군량 수레는 진흙에 박혀 꿈쩍하지 않았다.'},
@@ -856,7 +856,7 @@ const pack:ScenarioPack={
       after:[
         {place:'양평관 · 비 그친 저녁',art:11,
           cast:[
-            {name:'곽회',look:'spear',at:[56,62],face:'left'},
+            {name:'곽회',look:'archer',at:[56,62],face:'left'},
             {name:'사마의',look:'strategist',at:[40,60],face:'right'},
           ],
           steps:[
@@ -1008,7 +1008,7 @@ const pack:ScenarioPack={
             {say:'장합',line:'늙은 장수들 가운데는 아직 도독을 문관으로만 보는 자도 있소. 성고로 그 입을 닫으시오.',unless:'advised_retreat'},
           ],
           again:[{say:'장합',line:'성고를 빨리 치시오. 대릉이 오래는 못 버티오.'}]},
-        {name:'곽회',look:'spear',at:[30,72],
+        {name:'곽회',look:'archer',at:[30,72],
           talk:[
             {say:'곽회',line:'대릉 장군은 고집이 셉니다. 죽어도 강둑에서 물러서지 않을 겁니다. 그래서 오래 둘 수 없습니다.'},
             {say:'사마의',line:'성채를 쥐면 강 건너 투석기가 흔들린다. 그 전까지는 대릉의 방패가 버텨야 하고.'},
@@ -1046,7 +1046,7 @@ const pack:ScenarioPack={
           cast:[
             {name:'사마의',look:'strategist',at:[34,60],face:'right'},
             {name:'장합',look:'cavalry',at:[54,62],face:'left'},
-            {name:'곽회',look:'spear'},
+            {name:'곽회',look:'archer'},
           ],
           steps:[
             {narrate:'231년 봄. 조진이 병석에 눕자 황제 조예는 사마의를 장안으로 불러 서쪽의 모든 군을 맡겼다. 제갈량이 네 번째로 기산에 나왔다.'},
@@ -1089,7 +1089,7 @@ const pack:ScenarioPack={
       after:[
         {place:'성고 · 되찾은 성채',art:8,
           cast:[
-            {name:'곽회',look:'spear',at:[56,62],face:'left'},
+            {name:'곽회',look:'archer',at:[56,62],face:'left'},
             {name:'사마의',look:'strategist',at:[40,60],face:'right'},
             {name:'이엄의 사자',look:'civil'},
           ],
@@ -1115,7 +1115,7 @@ const pack:ScenarioPack={
         '사마의는 불길과 함정을 헤치고 수레를 막아야 한다. 군량을 끊는 자가 이 긴 싸움의 끝을 쥔다.',
       ],
       camp:{place:'상규 · 보리밭 동쪽 진영',art:16,people:[
-        {name:'곽회',look:'spear',at:[50,60],
+        {name:'곽회',look:'archer',at:[50,60],
           talk:[
             {say:'곽회',line:'도독, 낙양에서 부고가 왔습니다. 대사마께서 끝내 일어나지 못하셨습니다.'},
             {emote:'사마의',text:'…'},
@@ -1161,7 +1161,7 @@ const pack:ScenarioPack={
         {place:'상규 · 군막',art:14,
           cast:[
             {name:'사마의',look:'strategist',at:[36,60],face:'right'},
-            {name:'곽회',look:'spear'},
+            {name:'곽회',look:'archer'},
           ],
           steps:[
             {narrate:'그러나 제갈량은 곧장 물러나지 않았다. 굶주린 군을 이끌고 상규로 가, 익어 가는 보리를 베기 시작했다.'},
@@ -1201,7 +1201,7 @@ const pack:ScenarioPack={
       after:[
         {place:'상규 · 타고 남은 밭',art:4,
           cast:[
-            {name:'곽회',look:'spear',at:[56,62],face:'left'},
+            {name:'곽회',look:'archer',at:[56,62],face:'left'},
             {name:'사마의',look:'strategist',at:[40,60],face:'right'},
           ],
           steps:[
@@ -1237,7 +1237,7 @@ const pack:ScenarioPack={
             {emote:'장합',text:'…'},
           ],
           again:[{say:'장합',line:'골짜기 어귀에서 기다리겠소.'}]},
-        {name:'곽회',look:'spear',at:[30,72],
+        {name:'곽회',look:'archer',at:[30,72],
           talk:[
             {say:'곽회',line:'도독, 장 장군의 말이 빠릅니다. 본대가 서둘러도 거리가 벌어질 겁니다.'},
             {say:'사마의',line:'장군은 어귀에 닿으면 멈춘다 했소. 그 전에 우리가 따라붙어야 하오.'},
@@ -1273,7 +1273,7 @@ const pack:ScenarioPack={
         {place:'기산 · 물러나는 촉군',art:14,
           cast:[
             {name:'사마의',look:'strategist',at:[34,60],face:'right'},
-            {name:'곽회',look:'spear',at:[20,62],face:'right'},
+            {name:'곽회',look:'archer',at:[20,62],face:'right'},
             {name:'장합',look:'cavalry'},
           ],
           steps:[
@@ -1313,7 +1313,7 @@ const pack:ScenarioPack={
       after:[
         {place:'목둔 · 돌아오는 길',art:11,
           cast:[
-            {name:'곽회',look:'spear',at:[56,62],face:'left'},
+            {name:'곽회',look:'archer',at:[56,62],face:'left'},
             {name:'사마의',look:'strategist',at:[40,60],face:'right'},
             {name:'위군 병사',look:'infantry'},
           ],
@@ -1338,7 +1338,7 @@ const pack:ScenarioPack={
         '위수에는 건널 수 있는 여울이 셋. 사마의는 가운데를 두텁게 하고 예비대로 양 측면을 받쳐, 세 갈래로 오는 촉군을 막아야 한다.',
       ],
       camp:{place:'위수 북안 · 여울 앞 진영',art:15,people:[
-        {name:'곽회',look:'spear',at:[50,60],
+        {name:'곽회',look:'archer',at:[50,60],
           talk:[
             {say:'곽회',line:'북원은 제가 맡습니다. 제갈량은 북원을 쥐어 농우와 우리를 갈라 놓으려 할 겁니다.'},
             {say:'사마의',line:'그대가 그걸 먼저 보았기에 북원을 맡긴 것이오.'},
@@ -1386,7 +1386,7 @@ const pack:ScenarioPack={
           cast:[
             {name:'사마의',look:'strategist',at:[36,60],face:'right'},
             {name:'사마사',look:'cavalry',at:[22,62],face:'right'},
-            {name:'곽회',look:'spear'},
+            {name:'곽회',look:'archer'},
           ],
           steps:[
             {narrate:'234년 봄. 세 해 동안 목우와 유마로 군량을 모은 제갈량이 다섯 번째로 나왔다. 이번에는 둔전까지 일구며 오래 머물 채비였다.'},
@@ -1425,7 +1425,7 @@ const pack:ScenarioPack={
       after:[
         {place:'위수 · 물러선 남안',art:4,
           cast:[
-            {name:'곽회',look:'spear',at:[56,62],face:'left'},
+            {name:'곽회',look:'archer',at:[56,62],face:'left'},
             {name:'사마의',look:'strategist',at:[40,60],face:'right'},
           ],
           steps:[
@@ -1562,7 +1562,7 @@ const pack:ScenarioPack={
         '이제 그 추격의 날이 왔다. 수레 위에 앉은 제갈량은 진짜인가. 사마의는 의심과 결단 사이에서 군을 몰아야 한다.',
       ],
       camp:{place:'위수 · 별이 떨어진 아침',art:6,people:[
-        {name:'곽회',look:'spear',at:[50,60],
+        {name:'곽회',look:'archer',at:[50,60],
           talk:[
             {say:'곽회',line:'도독, 퇴로부터 열어 두라 하셨지요. 동쪽 길에 표식을 세웠습니다. 무슨 일이 있어도 그리로 물러나면 됩니다.',when:'wary_pursuit'},
             {say:'곽회',line:'수레까지 쫓으라 하셨지요. 따르겠습니다. 다만 동쪽 길에 표식 하나는 세워 두었습니다. 제 고집입니다.',when:'hard_pursuit'},
@@ -1626,7 +1626,7 @@ const pack:ScenarioPack={
         {place:'위수 · 별이 떨어진 밤',art:14,
           cast:[
             {name:'사마의',look:'strategist',at:[36,60],face:'right'},
-            {name:'곽회',look:'spear'},
+            {name:'곽회',look:'archer'},
           ],
           steps:[
             {enter:'곽회',at:[56,62],from:'right'},
@@ -1662,7 +1662,7 @@ const pack:ScenarioPack={
       after:[
         {place:'오장원 · 동쪽으로 돌아가는 길',art:11,
           cast:[
-            {name:'곽회',look:'spear',at:[56,62],face:'left'},
+            {name:'곽회',look:'archer',at:[56,62],face:'left'},
             {name:'사마의',look:'strategist',at:[40,60],face:'right'},
           ],
           steps:[

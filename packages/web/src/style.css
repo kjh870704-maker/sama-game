@@ -1573,3 +1573,4 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 .evo-fit{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none;image-rendering:auto}.evo-fit.on{opacity:1}
 .evo-top .cx-sprite:has(.evo-fit.on){background-image:none!important}
 .evo-person-card .evo-range b{font-size:calc(14px*var(--fs,1))}
+.evo-escort{margin:0;font-size:calc(13px*var(--fs,1));color:#a9c9a0}

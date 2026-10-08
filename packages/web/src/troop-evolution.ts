@@ -46,7 +46,7 @@ function classArt(c:UnitClass){
 }
 const officerArt=(name:string,b:OfficerEntry['battle'][string])=>`<div class="cx-sprite" role="img" aria-label="${esc(name)}">${fitCanvas(b.sheet,0)}</div>`;
 const rangeLine=(c:UnitClass)=>{const p=profileOf(c);return `<div class="evo-range">${reachMini(c)}<p><b>${esc(classNames[c]??c)} · ${esc(reachLabel(c))}</b><span>사거리 ${p.range[0]===p.range[1]?p.range[0]:p.range[0]+'~'+p.range[1]} · 이동 ${p.movement}</span></p></div>`;};
-const personCard=(art:string,small:string,name:string,c:UnitClass)=>`<article class="evo-card evo-person-card"><div class="evo-top">${art}<div><small>${small}</small><h4>${esc(name)}</h4></div></div>${rangeLine(c)}</article>`;
+const personCard=(art:string,small:string,name:string,c:UnitClass,extra='')=>`<article class="evo-card evo-person-card"><div class="evo-top">${art}<div><small>${small}</small><h4>${esc(name)}</h4></div></div>${rangeLine(c)}${extra}</article>`;
 /** 장수의 병종: 군주 9명은 군주, 나머지는 전용 전투 그림의 첫 병종(제갈량 수레 제외). */
 const officerClass=(e:OfficerEntry):UnitClass=>(LORD_NAMES.includes(e.name)?'lord':Object.keys(e.battle).find(k=>k!=='cart')) as UnitClass;
 const officerSheet=(e:OfficerEntry,c:string)=>e.battle[c]??Object.entries(e.battle).find(([k])=>k!=='cart')?.[1];
@@ -56,11 +56,15 @@ function officerCards(){
     return `<section class="evo-line"><h3>${f} <small>${list.length}명</small></h3><div class="evo-grid">${list.map(e=>{const c=officerClass(e),b=officerSheet(e,c);return personCard(b?officerArt(e.name,b):classArt(c),'장수',e.name,c);}).join('')}</div></section>`;
   }).join('');
 }
-/** 본편 전장의 NPC(아군 AI). 장수가 NPC로 나오면 그 장수의 전용 그림, 이름 없는 NPC는 그 병종 그림. */
-export const npcList=()=>NPC_ROSTER.filter(n=>n.side==='allyAi');
+/** 본편 전장의 NPC(아군 AI). 한 사람은 카드 한 장·병종 하나다.
+ * "곽회 창병"·"조휴 궁수"·"조상 친위"처럼 장수 이름을 단 부대는 따로 세우지 않고 그 장수 카드에 휘하로 적는다. */
+const escortOf=(n:typeof NPC_ROSTER[number],all:typeof NPC_ROSTER)=>all.find(o=>o!==n&&n.name.startsWith(o.name+' '));
+export const npcList=()=>{const ai=NPC_ROSTER.filter(n=>n.side==='allyAi');return ai.filter(n=>!escortOf(n,ai));};
 function npcCards(){
+  const ai=NPC_ROSTER.filter(n=>n.side==='allyAi');
   return `<div class="evo-grid">${npcList().map(n=>{const e=officerEntry({id:'npc',name:n.name}),b=e&&officerSheet(e,LORD_NAMES.includes(e.name)?'lord':n.unitClass);
-    return personCard(b?officerArt(n.name,b):classArt(n.unitClass),`NPC · ${esc(n.stages.join(' '))}`,n.name,n.unitClass);}).join('')}</div>`;
+    const escorts=ai.filter(o=>escortOf(o,ai)===n).map(o=>classNames[o.unitClass]??o.unitClass);
+    return personCard(b?officerArt(n.name,b):classArt(n.unitClass),`NPC · ${esc(n.stages.join(' '))}`,n.name,n.unitClass,escorts.length?`<p class="evo-escort">휘하 ${esc(escorts.join('·'))} 부대</p>`:'');}).join('')}</div>`;
 }
 /** 진화하지 않는 단일 병종(민중·물자대·공병·수군 등). */
 function singleLines(){

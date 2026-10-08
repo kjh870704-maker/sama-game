@@ -113,7 +113,7 @@
             {
               "id": "guo_huai",
               "name": "곽회",
-              "template": "infantry",
+              "template": "archer",
               "level": 12,
               "at": {
                 "x": 7,

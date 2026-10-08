@@ -41,6 +41,11 @@ describe('NPC 목록', ()=>{
     expect(npc).not.toContain('우군');
     expect(npc).not.toContain('<h4>사마사</h4>');
     expect(npc.match(/evo-person-card/g)?.length).toBe(npcList().length);
+    // 한 사람은 카드 한 장: 같은 이름이 두 번 나오지 않고, 장수 이름을 단 부대는 그 장수 카드의 휘하로 들어간다.
+    const names=[...npc.matchAll(/<h4>([^<]+)<\/h4>/g)].map(m=>m[1]);
+    expect(new Set(names).size).toBe(names.length);
+    for(const n of ['곽회 창병','조휴 궁수','조상 친위'])expect(names).not.toContain(n);
+    expect(npc).toMatch(/<h4>곽회<\/h4>[\s\S]*?휘하 창병 부대/);
   });
   it('장수는 모두 위·촉·오·군웅 중 하나에 속한다', ()=>{
     for(const e of officerManifest)expect(OFFICER_FACTION[e.id],e.id).toBeDefined();
