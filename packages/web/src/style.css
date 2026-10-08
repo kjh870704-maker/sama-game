@@ -1633,3 +1633,13 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 .evo-top .cx-sprite:has(.evo-fit.on){background-image:none!important}
 .evo-person-card .evo-range b{font-size:calc(14px*var(--fs,1))}
 .evo-escort{margin:0;font-size:calc(13px*var(--fs,1));color:#a9c9a0}
+
+/* 일기토 체력 상자는 인물 밖 화면 위 양쪽에 고정한다: 인물 안에 두면 돌진·정면 승부 때 함께 움직여 가운데서 겹치고, 내 대사 상자에 가려졌다. */
+.duel-stage.live-models .duel-view>.duel-mini.fixed{position:absolute!important;transform:none!important;bottom:auto!important;width:160px!important;z-index:7}
+.duel-stage.live-models .duel-view>.duel-mini.fixed.left{left:1%!important;right:auto!important;top:calc(2% + 104px)!important}
+.duel-stage.live-models .duel-view>.duel-mini.fixed.right{right:1%!important;left:auto!important;top:2%!important}
+@media (orientation:landscape) and (max-height:520px){.duel-stage.live-models .duel-view>.duel-mini.fixed{width:150px!important}.duel-stage.live-models .duel-view>.duel-mini.fixed b{white-space:nowrap;font-size:calc(12px*var(--fs,1))}.duel-stage.live-models .duel-view>.duel-mini.fixed.left,.duel-stage.live-models .duel-view>.duel-mini.fixed.right{top:calc(2% + 66px)!important}}
+/* 피해 숫자는 돌진이 끝나 제자리로 돌아온 뒤 머리 위에 띄운다(정면 승부 때 두 숫자가 가운데서 겹치지 않게). */
+.duel-stage.live-models .duel-fighter .damage-number{animation-delay:.5s}
+.duel-stage.live-models .duel-ground.clash-even .duel-fighter .damage-number{animation-delay:.74s}
+.duel-stage.live-models .duel-view:has(.duel-cutin) .duel-fighter .damage-number{animation-delay:1.45s}

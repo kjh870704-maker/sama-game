@@ -50,7 +50,7 @@ export function duelBackdrop(kind:'duel'|'debate',seed:string,indoor=false){
 const face=(name:string)=>bustFace(name)??`<div class="talk-bust sprite">${officerPortrait(name)}</div>`;
 /** 겨루기 화면 중앙에 크게 세우는 전신 전투 모델. */
 export function duelModel(model:string,side:'player'|'enemy',name:string){
-  const mounted=/마초|여포|사마사|관우|조운|장료|장합|하후돈|하후연/.test(displayName(name));
+  const mounted=/마초|여포|사마사|관우|조운|장료|장합|하후돈|하후연|조조|조비/.test(displayName(name));
   return `<div class="duel-model ${side==='enemy'?'face-left':'face-right'}${mounted?' mounted':''}" aria-label="${esc(displayName(name))}">${model}</div>`;
 }
 /** 전투 밖 대결에서 병종을 모르는 쪽: 일기토는 검객, 설전은 책사 전신 모델을 쓴다. */
@@ -123,9 +123,10 @@ export function duelArena(d:DuelState,o:{models:{player:string;enemy:string};bac
     <div class="duel-view${shake}" style="${o.backdrop}">${special?`<i class="duel-flash ${d.kind}"></i>`:''}
       <div class="duel-sun"></div>
       <div class="duel-ground${even?' clash-even':''}${d.result?' resolved':''}">
-        <div class="duel-fighter player motion-${last?.action??'idle'}${last?.taken?' hit':''}${endClass(true)}">${hp(d.player,'left')}${o.models.player}${last?hitFx(d.kind,last.enemyAction,last.action,last.taken,d.enemy.stat):''}</div>
-        <div class="duel-fighter enemy motion-${last?.enemyAction??'idle'}${last?.dealt?' hit':''}${endClass(false)}">${hp(d.enemy,'right')}${o.models.enemy}${last?hitFx(d.kind,last.action,last.enemyAction,last.dealt,d.player.stat):''}</div>
+        <div class="duel-fighter player motion-${last?.action??'idle'}${last?.taken?' hit':''}${endClass(true)}">${o.models.player}${last?hitFx(d.kind,last.enemyAction,last.action,last.taken,d.enemy.stat):''}</div>
+        <div class="duel-fighter enemy motion-${last?.enemyAction??'idle'}${last?.dealt?' hit':''}${endClass(false)}">${o.models.enemy}${last?hitFx(d.kind,last.action,last.enemyAction,last.dealt,d.player.stat):''}</div>
       </div>
+      ${hp(d.player,'left fixed')}${hp(d.enemy,'right fixed')}
       ${cutin}
       ${clash}
       ${inkLine(d.player.name,pLine,'top')}${inkLine(d.enemy.name,eLine,'bottom')}
