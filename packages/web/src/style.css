@@ -1562,3 +1562,21 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 .battle-conditions b{display:inline-block;min-width:2.6em;margin-right:4px;padding:0 5px;border-radius:3px;font-size:.9em;text-align:center}
 .battle-conditions .cond-win b{background:#2f5d3a;color:#e8f6e8}
 .battle-conditions .cond-lose b{background:#6b2620;color:#fde8e4}
+
+/* 병종 진화표: 계통 아래 "장수 · NPC·우군" 줄 */
+.evo-people{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:8px;padding-top:6px;border-top:1px dashed #ffffff1a}
+.evo-people-group{display:flex;gap:8px;align-items:flex-start;min-width:0}
+.evo-people-group>b{flex:0 0 auto;font-size:calc(13px*var(--fs,1));color:#e5c991;padding-top:22px;writing-mode:horizontal-tb}
+.evo-people-group.npc>b{color:#8fd49a}
+.evo-people-group>div{display:flex;flex-wrap:wrap;gap:4px;min-width:0}
+.evo-person{margin:0;width:82px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 2px;border-radius:6px;background:#0f1517;border:1px solid #ac8d5944}
+.evo-person.npc{border-color:#4f8a5a88;background:#0f1712}
+.evo-person.npc.ally{border-color:#5a7fae88;background:#0f1419}
+.evo-person-art{display:block;width:74px;background-repeat:no-repeat;image-rendering:auto}
+.evo-person .cx-sprite{width:56px;height:56px;border-radius:6px;background-color:transparent}
+.evo-person figcaption{font-size:calc(12.5px*var(--fs,1));color:#efe6cf;text-align:center;line-height:1.25}
+.evo-person figcaption small{display:block;font-size:calc(11px*var(--fs,1));color:#9fbf9f}
+.evo-row.single{flex-wrap:wrap;overflow-x:visible}
+.evo-single-col{flex:1 0 220px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.evo-single-col .evo-people{margin-top:2px}
+@media (max-height:500px){.evo-person{width:66px}.evo-person-art{width:58px}.evo-person .cx-sprite{width:44px;height:44px}}

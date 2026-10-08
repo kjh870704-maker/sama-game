@@ -2556,7 +2556,7 @@ const INDEPENDENT:Chapters=[
           {say:'장합',line:'원상의 손을 잡으면 원담은 쉽게 꺾이겠지만, 그 빚은 원상이 기억할 거요.'},
           {move:'사마의',to:[38,62]},
           {choice:'사마의',options:[
-            {id:'yuanshang',text:'원상의 손을 잡는다. 형을 아우의 기병과 함께 친다',reply:'빚은 나중에 갚으면 됩니다. 지금은 하내를 지키는 것이 먼저입니다.',answer:{speaker:'사자',line:'원상 공께서 기뻐하실 겁니다. 기병이 곧 북쪽에서 내려옵니다.'},note:'원상의 기병이 초록 깃발로 돕는다. 원상에게 빚이 남는다',effects:[{kind:'reinforce',name:'원상',unitClass:'cavalry',side:'npc'},{kind:'flag',flag:'in_yuanshang'}]},
+            {id:'yuanshang',text:'원상의 손을 잡는다. 형을 아우의 기병과 함께 친다',reply:'빚은 나중에 갚으면 됩니다. 지금은 하내를 지키는 것이 먼저입니다.',answer:{speaker:'사자',line:'원상 공께서 기뻐하실 겁니다. 기병이 곧 북쪽에서 내려옵니다.'},note:'원상의 기병이 초록 깃발로 돕는다. 원상에게 빚이 남는다',effects:[{kind:'reinforce',name:'원상',unitClass:'lord',side:'npc'},{kind:'flag',flag:'in_yuanshang'}]},
             {id:'mercy',text:'원담에게 항복을 권하는 글을 보낸다. 장자의 목숨은 살린다',reply:'원 공께 받은 은혜가 있습니다. 그 아드님을 베고 싶지는 않습니다. 받지 않으면 그때는 칼입니다.',note:'책략 MP +15',effects:[{kind:'insight'},{kind:'flag',flag:'in_mercy'}]},
             {id:'alone',text:'누구의 손도 빌리지 않고 사마씨의 깃발만으로 맞선다',reply:'제3의 깃발은 남의 기병으로 서지 않습니다. 하내의 힘만으로 이겨야 하북과 중원이 우리를 봅니다.',note:'정면 승부: 적 정예 1부대 추가, 경험치 1.5배',effects:[{kind:'bold'}]},
           ]},
@@ -2629,7 +2629,7 @@ const INDEPENDENT:Chapters=[
 const pack:ScenarioPack={
   chapters:[...SERVE,...YUAN,...FATE2,...CHIBI,...HEIR,...HEBEI,...INDEPENDENT],
   extraTales:[
-    {id:'IF1-srv-nanpi',route:'serve',replaces:'IF1-srv-3',title:'남피 설원',intro:'업성을 둘러싸 둔 채 형 원담부터 치기로 했다. 정월의 남피, 해자는 얼어붙었고 원담은 성문을 열고 나와 죽기로 싸운다. 형을 꺾으면 아우는 돌아올 곳을 잃는다.',target:{name:'원담',unitClass:'infantry'}},
+    {id:'IF1-srv-nanpi',route:'serve',replaces:'IF1-srv-3',title:'남피 설원',intro:'업성을 둘러싸 둔 채 형 원담부터 치기로 했다. 정월의 남피, 해자는 얼어붙었고 원담은 성문을 열고 나와 죽기로 싸운다. 형을 꺾으면 아우는 돌아올 곳을 잃는다.',target:{name:'원담',unitClass:'lord'}},
     {id:'IF1-yuan-xudu',route:'yuan',replaces:'IF1-yuan-3',title:'허도 급습',intro:'오소를 지킨 그 밤, 허유의 계책대로 경기병이 영천의 숲길을 내달린다. 텅 빈 줄 알았던 허도 앞에 조조의 종제 조홍이 남은 군을 모아 기다린다.',target:{name:'조홍',unitClass:'cavalry'}},
     {id:'IF2-cb-sanjiang',route:'chibi',replaces:'IF2-cb-3',title:'삼강구 기습',intro:'불을 기다리지 않고 먼저 놓기로 했다. 날랜 배들이 오군의 수채가 있는 삼강구로 내려간다. 오하아몽이라 불리던 여몽이 그곳을 지킨다.',target:{name:'여몽',unitClass:'infantry'}},
     {id:'IF2-hr-micang',route:'heir',replaces:'IF2-hr-3',title:'미창 산길',intro:'굳게 닫힌 양평관을 두고 미창산 샛길로 돈다. 좁은 골짜기 끝에서 서량의 금마초가 원한 서린 창을 들고 기다린다.',target:{name:'마초',unitClass:'cavalry'}},

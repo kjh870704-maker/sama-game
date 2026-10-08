@@ -92,7 +92,7 @@
             {
               "id": "gongsun_yuan",
               "name": "공손연",
-              "template": "infantry",
+              "template": "lord",
               "level": 16,
               "at": {
                 "x": 19,
@@ -161,7 +161,7 @@
             {
               "id": "decoy",
               "name": "공손연",
-              "template": "infantry",
+              "template": "lord",
               "level": 16,
               "count": 2,
               "region": "decoys",

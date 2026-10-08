@@ -80,7 +80,7 @@ export interface Region {name:string;arc:string;terrain:0|1|2;boss:{name:string;
 export const REGIONS:Region[]=[
   {name:'관중 평원',arc:'상편',terrain:0,boss:{name:'마초',unitClass:'cavalry' as UnitClass},pool:['infantry','spearman','cavalry','archer','crossbow','pirate','horseArcher'] as UnitClass[]},
   {name:'기산 산악',arc:'중편',terrain:1,boss:{name:'제갈량',unitClass:'strategist' as UnitClass},pool:['infantry','spearman','bandit','assassin','archer','crossbow','taoist','strategist','heavyCav'] as UnitClass[]},
-  {name:'요동 요수',arc:'하편',terrain:2,boss:{name:'공손연',unitClass:'infantry' as UnitClass},pool:['infantry','spearman','cavalry','horseArcher','crossbow','archer','heavyCav','bandit','rattan'] as UnitClass[]},
+  {name:'요동 요수',arc:'하편',terrain:2,boss:{name:'공손연',unitClass:'lord' as UnitClass},pool:['infantry','spearman','cavalry','horseArcher','crossbow','archer','heavyCav','bandit','rattan'] as UnitClass[]},
 ];
 export const actOf=(floor:number)=>Math.min(3,Math.max(1,Math.ceil(floor/FLOORS_PER_ACT)));
 export const regionOf=(floor:number)=>REGIONS[actOf(floor)-1]!;

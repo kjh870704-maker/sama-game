@@ -14,6 +14,7 @@ import {OFFICER_RECRUITS} from './roguelike.ts';
 import type {MetaState} from './meta.ts';
 import {perkSlots,researchGrants} from './research.ts';
 import {heirGrants} from './chuhan.ts';
+import {LORD_NAMES} from './lords.ts';
 import {perkText,type PerkGrant,type PerkGrants} from './perks.ts';
 
 export interface OfficerPerk {
@@ -32,6 +33,7 @@ export function officerClass(name:string):UnitClass{
   const c=customList().find(o=>o.name===name);if(c)return c.unitClass;
   const r=OFFICER_RECRUITS.find(o=>o.name===name);if(r)return r.unitClass;
   if(COMPANION_CLASS[name])return COMPANION_CLASS[name]!;
+  if(LORD_NAMES.includes(name))return 'lord';
   const s=romanceByName(name);if(!s)return 'infantry';
   if(s.int>=s.war+15)return s.pol>=s.int?'fengshui':'strategist';
   if(s.war>=88)return s.lead>=85?'heavyCav':'cavalry';

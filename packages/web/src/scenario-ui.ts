@@ -106,9 +106,9 @@ async function runContest(host:ScenarioHost,state:ScenarioState,step:ScenarioSte
   saveScenario(state);return r;
 }
 /** 연의 장수 → 병종(가상 전장·우두머리에 정해 둔 병종이 없을 때). */
-const FOE_CLASS:Record<string,UnitClass>={위연:'cavalry',조운:'cavalry',관우:'cavalry',장비:'spearman',마초:'cavalry',황충:'archer',제갈량:'strategist',강유:'cavalry',
+const FOE_CLASS:Record<string,UnitClass>={조조:'lord',조비:'lord',조예:'lord',유비:'lord',유방:'lord',위연:'cavalry',조운:'cavalry',관우:'cavalry',장비:'spearman',마초:'cavalry',황충:'archer',제갈량:'strategist',강유:'cavalry',
   장료:'cavalry',허저:'infantry',하후돈:'cavalry',하후연:'cavalry',서황:'heavyCav',장합:'cavalry',조진:'heavyCav',조인:'infantry',여포:'cavalry',주유:'strategist',육손:'strategist',
-  손권:'strategist',여몽:'cavalry',감녕:'cavalry',양수:'strategist',진궁:'strategist',맹달:'infantry',학소:'spearman',원상:'cavalry',원담:'infantry',심배:'strategist',공손연:'infantry'};
+  손권:'lord',여몽:'cavalry',감녕:'cavalry',양수:'strategist',진궁:'strategist',맹달:'infantry',학소:'spearman',원상:'lord',원담:'lord',심배:'strategist',공손연:'lord'};
 /** 대결 상대의 병종: 가상 전장 적장·우두머리로 정해 둔 병종, 없으면 위 표. */
 export function foeClassOf(name:string):UnitClass|undefined{
   for(const r of ROUTES){if(r.region.boss.name===name)return r.region.boss.unitClass;const t=r.tales.find(x=>x.target.name===name);if(t)return t.target.unitClass;}

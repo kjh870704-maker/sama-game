@@ -128,7 +128,7 @@
             {
               "id": "cao_cao",
               "name": "조조",
-              "template": "infantry",
+              "template": "lord",
               "at": {
                 "x": 4,
                 "y": 11

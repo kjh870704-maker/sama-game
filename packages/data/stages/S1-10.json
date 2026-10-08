@@ -103,7 +103,7 @@
             {
               "id": "cao_cao",
               "name": "조조",
-              "template": "infantry",
+              "template": "lord",
               "level": 8,
               "at": {
                 "x": 0,

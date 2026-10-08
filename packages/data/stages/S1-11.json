@@ -183,7 +183,7 @@
             {
               "id": "sun_quan",
               "name": "손권",
-              "template": "strategist",
+              "template": "lord",
               "level": 9,
               "at": {
                 "x": 6,

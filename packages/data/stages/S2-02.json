@@ -94,7 +94,7 @@
             {
               "id": "cao_pi",
               "name": "조비",
-              "template": "strategist",
+              "template": "lord",
               "level": 9,
               "at": {
                 "x": 21,
