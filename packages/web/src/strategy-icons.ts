@@ -112,7 +112,7 @@ const MOTIF:Record<string,()=>string>={
   blessing:()=>lotus(32,38,.8,'#fff0a8')+cross(32,20,.55,'#ffffff'),amnesty:()=>scroll(26,34,.8,'#f3e7bd')+chain(45,36,.55,'#d9e2ec')+`<path d="M43 23 L51 15" stroke="#fff" stroke-width="3"/>`,
   shieldBash:()=>shield(26,36,.9)+fist(45,34,.7),pierce:()=>spear(32,34,1.15,70)+burst(48,33,.4),breakthrough:()=>brokenWall(40,36,.75)+spear(21,34,.85,70),trample:()=>boot(32,32,1.15)+crack(32,48,.7),
   aimedShot:()=>bow(31,34,1)+`<circle cx="49" cy="34" r="6" fill="none" stroke="#ffdf8a" stroke-width="2"/><circle cx="49" cy="34" r="2" fill="#c0342a"/>`,volley:()=>bow(21,35,.75)+bow(42,35,.75)+`<path d="M14 18 H50" stroke="#eef4ff" stroke-width="2"/>`,
-  skirmish:()=>bow(35,32,.8,-15)+boot(18,43,.55),stoneRain:()=>rock(18,24,.55)+rock(32,20,.65)+rock(46,26,.5)+burst(32,46,.4,'#d6c080'),assassinate:()=>sword(32,34,1.1,45)+eye(20,20,.45,'#d85a68'),
+  skirmish:()=>bow(35,32,.8,-15)+boot(18,43,.55),assassinate:()=>sword(32,34,1.1,45)+eye(20,20,.45,'#d85a68'),
   rattanRush:()=>shield(25,37,.8,'#8a6b32','#d8c478')+boot(45,39,.6),tuskCharge:()=>`<path d="M14 42 C22 15 32 17 36 34 C40 16 51 17 52 42" fill="#efe4c8" ${O}/>`+burst(32,44,.45),plunder:()=>rice(23,39,.7)+sword(43,33,.85,45),
   westernCharge:()=>spear(36,33,1,65)+flag(18,32,.65,'#b13a2a'),gateCrash:()=>gate(40,37,.8)+fist(18,37,.8),deckVolley:()=>boat(30,43,.75)+bow(42,25,.65,-20),flashCut:()=>sword(32,34,1.2,45)+`<path d="M10 45 L54 17" stroke="#fff6b0" stroke-width="3"/>`,
   mountainRaid:()=>mountain(31,40,.9)+sword(43,27,.6,45),lanceRush:()=>spear(32,34,1.1,65)+boot(18,45,.5),scytheWheels:()=>wheel(22,38,.7)+wheel(43,38,.7)+sword(32,22,.55,90),towerShot:()=>gate(23,41,.65)+bow(44,27,.65,-15),

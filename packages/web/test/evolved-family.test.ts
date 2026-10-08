@@ -14,9 +14,9 @@ import {RECRUITS} from '../src/roguelike.ts';
 
 /** 병종 확장 2차: 2단계에서 끝나던 계통의 3단계와 새 기본 계통(투창병). */
 const NEW_CLASSES:Array<[UnitClass,UnitClass,1|2|3]>=[
- ['ironPagoda','heavyCav',3],['elephantKing','heavyCav',3],['boulderCorps','archer',3],['wraith','bandit',3],
+ ['ironPagoda','heavyCav',3],['elephantKing','heavyCav',3],['sharpshooter','archer',3],['wraith','bandit',3],
  ['wuguoRattan','infantry',3],['greenwoodKing','bandit',3],['arhat','monk',3],['demonKing','shaman',3],
- ['celestial','maiden',3],['thunderGod','taoist',3],['liangzhouIron','cavalry',3],['cloudRam','ram',3],
+ ['celestial','maiden',3],['thunderGod','taoist',3],['mountedMastermind','strategist',3],['pirateCaptain','navy',3],
 ];
 const STATS=['hp','mp','attack','defense','intellect','spirit','agility'] as const;
 describe('새 병종과 진화 계통',()=>{

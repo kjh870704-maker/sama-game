@@ -99,7 +99,6 @@ describe('출진 보정이 전장에 실린다',()=>{
 describe('병종과 책략',()=>{
  it('adds the named-unit lines, recruitable and with officers to lead them',()=>{
   for(const c of ['xiliang'] as const){expect(recruitPool).toContain(c);expect(EVOLUTION[c]).toBeUndefined();expect(troopRoles[c]).toBeDefined();}
-  for(const c of ['feixiong','liangzhouIron'] as const)expect(classNames[c]).toBeTruthy();
   // 겹치던 명부대 계통은 지우고, 그 장수들은 이어받는 병종을 이끈다.
   for(const c of ['axeman','mountaineer','qingzhou','jishi','shieldBow','drummer','riderSage'])expect(recruitPool as string[]).not.toContain(c);
   expect(OFFICER_RECRUITS.find(o=>o.name==='학소')?.unitClass).toBe('crossbow');expect(OFFICER_RECRUITS.find(o=>o.name==='가후')?.unitClass).toBe('wheelSage');

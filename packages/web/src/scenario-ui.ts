@@ -271,7 +271,7 @@ function showEnding(host:ScenarioHost,state:ScenarioState,step:ScenarioStep){
 
 // ─────────────────────────────────────────────── 가상 전장의 출진 전 정비
 
-const LOOK_OF:Partial<Record<string,Look>>={infantry:'infantry',spearman:'spear',archer:'archer',cavalry:'cavalry',heavyCav:'heavy',crossbow:'crossbow',strategist:'strategist',fengshui:'sage',monk:'monk',bandit:'bandit',horseArcher:'horseArcher',shaman:'shaman',maiden:'lady',taoist:'taoist',engineer:'engineer',slinger:'archer',assassin:'assassin',rattan:'infantry',elephant:'elephant'};
+const LOOK_OF:Partial<Record<string,Look>>={infantry:'infantry',spearman:'spear',archer:'archer',cavalry:'cavalry',heavyCav:'heavy',crossbow:'crossbow',strategist:'strategist',fengshui:'sage',monk:'monk',bandit:'bandit',horseArcher:'horseArcher',shaman:'shaman',maiden:'lady',taoist:'taoist',engineer:'engineer',assassin:'assassin',rattan:'infantry',elephant:'elephant'};
 const lookOf=(c:UnitClass):Look=>LOOK_OF[c]??LOOK_OF[familyOf(c)]??'infantry';
 
 export function showIfPrep(host:ScenarioHost,state:ScenarioState,step:ScenarioStep,picked?:string[],focus?:string,difficulty:'normal'|'extreme'='normal'){

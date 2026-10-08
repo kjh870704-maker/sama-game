@@ -93,7 +93,7 @@ const signature:LearnedStrategy[]=[
 const skills:LearnedStrategy[]=([
  ['shieldBash','방패 강타','single',1,0,4,115,'slow'],['pierce','관통 찌르기','line',1,1,4,105,undefined],['breakthrough','돌파','line',1,1,5,105,undefined],
  ['trample','짓밟기','single',1,0,4,140,'immobile'],['aimedShot','조준 사격','single',3,0,4,135,undefined],['volley','연발 사격','cross',3,1,6,60,undefined],
- ['skirmish','기사 난사','single',3,0,4,115,'slow'],['stoneRain','돌팔매 비','cross',3,1,6,60,undefined],['assassinate','암살','single',1,0,5,150,'bleed'],
+ ['skirmish','기사 난사','single',3,0,4,115,'slow'],['assassinate','암살','single',1,0,5,150,'bleed'],
  ['rattanRush','등패 돌진','single',1,0,4,110,'weaken'],['tuskCharge','상아 돌격','cross',1,1,6,75,undefined],['plunder','약탈','single',1,0,4,115,'weaken'],
  ['westernCharge','서량 돌격','line',1,2,5,95,undefined],['gateCrash','성문 파쇄','single',1,0,4,165,'breach'],['deckVolley','갑판 화살비','cross',3,1,6,60,undefined],
  ['flashCut','일섬','single',1,0,4,150,undefined],['mountainRaid','산악 기습','single',2,0,4,120,undefined],['lanceRush','질주 창격','line',1,1,5,100,undefined],

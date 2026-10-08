@@ -89,9 +89,6 @@ export const VARIANTS: Partial<Record<UnitClass, ClassVariant>> = {
   whiteHorse: { family: "horseArcher", tier: 3, profile: p(1.18, 0.46, 1.15, 1.02, 0.68, 0.9, 1.4, 7, [2, 3]), traits: { critical: 15, penetrate: 15 },
     bloom: { name: "백마의종", description: "회심 15% · 적 방어 15% 무시" } },
   // 새 기본 병종과 그 정예
-  slinger: { family: "archer", tier: 1, profile: p(0.85, 0.4, 0.9, 0.8, 0.6, 0.85, 1.05, 5, [1, 2]) },
-  hurler: { family: "archer", tier: 2, profile: p(0.95, 0.43, 1.08, 0.88, 0.64, 0.9, 1.12, 5, [1, 3]), traits: { penetrate: 15 },
-    bloom: { name: "벽력", description: "사거리 1~3 · 적 방어 15% 무시" } },
   assassin: { family: "bandit", tier: 1, profile: p(0.8, 0.4, 1.25, 0.7, 0.7, 0.8, 1.45, 6, [1, 1]), traits: { critical: 15 } },
   phantom: { family: "bandit", tier: 2, profile: p(0.9, 0.43, 1.42, 0.78, 0.75, 0.85, 1.6, 6, [1, 1]), traits: { critical: 22, lifesteal: 10 },
     bloom: { name: "그림자 일격", description: "회심 30% · 입힌 피해의 15%만큼 체력 회복" } },
@@ -117,8 +114,6 @@ export const VARIANTS: Partial<Record<UnitClass, ClassVariant>> = {
     bloom: { name: "철부도", description: "물리 피해 15% 감소 · 반격 위력 20% 증가 · 적 방어 15% 무시" } },
   elephantKing: { family: "heavyCav", tier: 3, profile: p(2.2, 0.34, 1.52, 1.48, 0.46, 0.9, 0.68, 4, [1, 1]), traits: { physicalDamageReduction: 15, counterBoost: 25, physicalReflect: 10 },
     bloom: { name: "상왕의 진격", description: "물리 피해 15% 감소 · 반격 위력 25% 증가 · 받은 물리 피해의 10%를 되돌린다" } },
-  boulderCorps: { family: "archer", tier: 3, profile: p(1.02, 0.46, 1.2, 0.94, 0.68, 0.96, 1.2, 5, [1, 3]), traits: { penetrate: 25, critical: 10 },
-    bloom: { name: "천균 낙석", description: "사거리 1~3 · 적 방어 25% 무시 · 회심 10%" } },
   wraith: { family: "bandit", tier: 3, profile: p(0.96, 0.46, 1.55, 0.83, 0.8, 0.9, 1.72, 6, [1, 1]), traits: { critical: 25, lifesteal: 12, penetrate: 12 },
     bloom: { name: "귀영 살수", description: "회심 35% · 입힌 피해의 20%만큼 체력 회복 · 적 방어 15% 무시" } },
   wuguoRattan: { family: "infantry", tier: 3, profile: p(1.42, 0.46, 1.2, 1.36, 0.56, 0.9, 0.95, 5, [1, 1]), traits: { physicalDamageReduction: 30, fireWeakness: 50, counterBoost: 15 },
@@ -136,20 +131,6 @@ export const VARIANTS: Partial<Record<UnitClass, ClassVariant>> = {
   // ── 명부대(이름난 부대) 계통: 정사·연의에 이름이 남은 부대를 병종으로 ──
   // 서량기병 → 비웅군(동탁): 거친 서쪽 기병
   xiliang: { family: "cavalry", tier: 1, profile: p(1.05, 0.4, 1.15, 0.9, 0.55, 0.8, 1.2, 7, [1, 1]), traits: { attackBoost: 3 } },
-  feixiong: { family: "cavalry", tier: 2, profile: p(1.2, 0.43, 1.35, 1.0, 0.58, 0.85, 1.26, 7, [1, 1]), traits: { attackBoost: 5, lifesteal: 10, lastStand: 15 },
-    bloom: { name: "비웅군", description: "동탁의 서량 정예 · 공격력 +5 · 입힌 피해의 10% 회복 · 체력이 낮을수록 공격력 상승" } },
-  // ── 2단계에서 끝나던 명부대 계통의 3단계(v41): 모든 계통은 3단 진화
-  liangzhouIron: { family: "cavalry", tier: 3, profile: p(1.32, 0.46, 1.48, 1.1, 0.62, 0.9, 1.33, 7, [1, 1]), traits: { attackBoost: 7, lifesteal: 8, lastStand: 20, physicalDamageReduction: 8 },
-    bloom: { name: "서량철기", description: "공격력 +7 · 입힌 피해의 12% 회복 · 체력이 낮을수록 공격력 상승 · 물리 피해 8% 감소" } },
-  // ── 공성·수군 계통도 3단 진화(v41)
-  ironRam: { family: "ram", tier: 2, profile: p(1.75, 0.22, 0.98, 1.6, 0.42, 0.86, 0.53, 3, [1, 1]), traits: { physicalDamageReduction: 15 },
-    bloom: { name: "철충차", description: "쇠를 씌운 충차 · 물리 피해 15% 감소" } },
-  cloudRam: { family: "ram", tier: 3, profile: p(2.0, 0.24, 1.12, 1.8, 0.45, 0.92, 0.56, 3, [1, 1]), traits: { physicalDamageReduction: 22, physicalReflect: 10 },
-    bloom: { name: "파성충차", description: "성문을 부수는 큰 망치 수레 · 물리 피해 22% 감소 · 받은 물리 피해의 10%를 되돌린다" } },
-  mengchong: { family: "navy", tier: 2, profile: p(1.12, 0.53, 1.15, 1.05, 0.84, 0.96, 1.08, 6, [1, 2]), traits: { chargePower: 12 },
-    bloom: { name: "몽충", description: "가죽을 씌운 돌격선 · 움직인 뒤 물리 공격 +12%" } },
-  louchuan: { family: "navy", tier: 3, profile: p(1.32, 0.56, 1.3, 1.2, 0.9, 1.02, 1.14, 6, [1, 3]), traits: { chargePower: 15, physicalDamageReduction: 12, penetrate: 10 },
-    bloom: { name: "누선", description: "여러 층 망루를 올린 큰 배 · 사거리 1~3 · 물리 피해 12% 감소 · 적 방어 10% 무시" } },
 };
 
 /** 진화 계통: 병종 → [다음 병종, 진화 레벨] */
@@ -163,7 +144,6 @@ export const EVOLUTION: Partial<Record<UnitClass, readonly [UnitClass, number]>>
   strategist: ["tactician", 8], tactician: ["mastermind", 16],
   fengshui: ["sage", 8], sage: ["immortal", 16],
   horseArcher: ["nomad", 10], nomad: ["whiteHorse", 18],
-  slinger: ["hurler", 10], hurler: ["boulderCorps", 18],
   assassin: ["phantom", 12], phantom: ["wraith", 20],
   rattan: ["rattanElite", 12], rattanElite: ["wuguoRattan", 20],
   elephant: ["warElephant", 12], warElephant: ["elephantKing", 22],
@@ -172,8 +152,6 @@ export const EVOLUTION: Partial<Record<UnitClass, readonly [UnitClass, number]>>
   taoist: ["stormSage", 12], stormSage: ["thunderGod", 20],
   monk: ["warriorMonk", 10], warriorMonk: ["arhat", 18],
   bandit: ["outlaw", 10], outlaw: ["greenwoodKing", 18],
-  xiliang: ["feixiong", 12], feixiong: ["liangzhouIron", 20],
-  ram: ["ironRam", 10], ironRam: ["cloudRam", 18], navy: ["mengchong", 10], mengchong: ["louchuan", 18],
 };
 
 // 병종 차트로 늘린 계통·4단계·모병 특수 병과(chart-classes.ts)를 합친다.
@@ -185,13 +163,6 @@ export const EVOLUTION: Partial<Record<UnitClass, readonly [UnitClass, number]>>
 
 // 신규 계통은 같은 무기군과 같은 나이대의 정체성을 유지하고 장비만 발전한다.
 Object.assign(VARIANTS, {
-  // 폐기/단일화된 계통의 기존 저장 ID는 그림과 저장 호환을 위해 등록만 유지한다.
-  meteorSlinger: { family: "archer", tier: 4, profile: p(1.08, 0.5, 1.3, 1.0, 0.72, 1.0, 1.26, 5, [1, 3]) },
-  heavenXiliang: { family: "cavalry", tier: 4, profile: p(1.42, 0.5, 1.58, 1.18, 0.66, 0.96, 1.4, 7, [1, 1]) },
-  divineGaema: { family: "heavyCav", tier: 4, profile: p(1.55, 0.5, 1.5, 1.55, 0.68, 0.96, 1.08, 6, [1, 1]) },
-  sapper: { family: "engineer", tier: 2, profile: p(0.9, 0.34, 0.62, 0.9, 0.78, 0.98, 0.86, 5, [1, 1]) },
-  masterBuilder: { family: "engineer", tier: 3, profile: p(1.0, 0.38, 0.72, 1.0, 0.88, 1.08, 0.92, 5, [1, 1]) },
-  divineEngineer: { family: "engineer", tier: 4, profile: p(1.1, 0.42, 0.82, 1.1, 0.98, 1.18, 0.98, 5, [1, 1]) },
   heavenPriestess: { family: "maiden", tier: 4, profile: p(1.05, 1.95, 0.74, 0.98, 1.3, 2.0, 1.18, 5, [1, 1], true), traits: { healPower: 40, strategyDamageReduction: 20, strategyEvasion: 12 }, bloom: { name: "천부의 가호", description: "부적술로 회복과 책략 방호를 완성한다" } },
   yellowTurban: { family: "infantry", tier: 1, profile: p(1.0, 0.4, 1.0, 0.9, 0.55, 0.8, 1.0, 5, [1, 1]) },
   yellowTurbanVeteran: { family: "infantry", tier: 2, profile: p(1.1, 0.43, 1.12, 1.0, 0.58, 0.86, 1.06, 5, [1, 1]), traits: { lastStand: 10 }, bloom: { name: "황건의 결의", description: "궁지에서 더욱 끈질기게 싸운다" } },
@@ -268,7 +239,7 @@ export const SINGLE_STAGE_CLASSES: ReadonlySet<UnitClass> = new Set([
 ]);
 for (const line of FOUR_STAGE_LINES) {
   const root = line[0];
-  // 투석병은 플레이 계통에서 폐기하고, 지정된 완성형 병종은 진화 연결을 만들지 않는다.
+  // 지정된 완성형 병종은 진화 연결을 만들지 않는다.
   if (SINGLE_STAGE_CLASSES.has(root)) continue;
   const family = VARIANTS[root]?.family ?? root;
   const fallbackLevels = [8, 16, 30] as const;

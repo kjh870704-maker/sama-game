@@ -16,6 +16,7 @@ import {watchCssAtlases} from './css-atlas.ts';
 import {actionNames,duelActionNames,duelLine,temperNames,type DuelAction} from './duel.ts';
 import {spriteAtlas} from './sprite-atlas.ts';
 import {paintedTroopArt} from './painted-troops.ts';
+import {officerModelStyle} from './officer-models.ts';
 import {coachStep,COACH_KEY} from './tutorial.ts';
 import {dueLines} from './battle-lines.ts';
 import {loadSettings,saveSettings} from './settings.ts';
@@ -323,6 +324,8 @@ function describe(e:LogEntry){const name=(id:string)=>session.state.find(id)?.na
 }}
 function consumeLog(){const logs=session.state.log.slice(lastLog);lastLog=session.state.log.length;if(logs.some(e=>e.t==='terrain'))field.repaintTerrain();field.play(logs);hudFight(logs);for(const e of logs){const line=describe(e);if(line)$('#latest-log').textContent=line;if(e.t==='turnStart'){const banner=$('#phase-banner');banner.textContent=`${sideNames[e.side]}의 차례`;banner.classList.add('show');setTimeout(()=>banner.classList.remove('show'),1300);sound.event({kind:'turn',side:e.side});if(e.side!=='player')sound.focus=undefined;}}}
 function portraitFor(u:Unit,reaction=false):string{
+  const officer=officerModelStyle(u);
+  if(officer)return `<span class="battle-model officer-battle-model" role="img" aria-label="${unitName(u)} 전신" style="${officer}"></span>`;
   const painted=paintedTroopArt[u.unitClass];
   if(painted)return `<span class="battle-model" role="img" aria-label="${unitName(u)}" style="background-image:var(--${painted.sheet}-atlas);background-size:400% ${painted.rows*100}%;background-position:${reaction?100:0}% ${painted.rows>1?painted.row/(painted.rows-1)*100:0}%"></span>`;
   // 신장수: 직접 만든 초상

@@ -91,9 +91,6 @@ const LINES: Line[] = [
   ] },
   { family: "catapult", base: BASE.siegeTower, stages: [
     { id: "siegeTower", level: 1 },
-    { id: "jinglan", level: 10, traits: { attackBoost: 4 }, bloom: ["높은 사대", "공격력 +4"] },
-    { id: "heavyJinglan", level: 20, traits: { attackBoost: 6, physicalDamageReduction: 10 }, bloom: ["두꺼운 판벽", "공격력 +6 · 물리 피해 10% 감소"] },
-    { id: "divineJinglan", level: 30, traits: { attackBoost: 8, physicalDamageReduction: 15, penetrate: 15 }, bloom: ["신정란", "공격력 +8 · 물리 피해 15% 감소 · 방어 15% 관통"] },
   ] },
   { family: "strategist", base: BASE.prince, stages: [
     { id: "crownPrince", level: 1 },
@@ -103,9 +100,6 @@ const LINES: Line[] = [
   ] },
   { family: "engineer", base: BASE.supply, stages: [
     { id: "transport", level: 1 },
-    { id: "baggageTrain", level: 10, traits: { healPower: 15 }, bloom: ["보급", "회복량 +15%"] },
-    { id: "woodenOx", level: 20, traits: { healPower: 20, physicalDamageReduction: 10 }, bloom: ["목우유마", "회복량 +20% · 물리 피해 10% 감소"] },
-    { id: "divineOx", level: 30, traits: { healPower: 30, physicalDamageReduction: 15, strategyDamageReduction: 10 }, bloom: ["신목우", "회복량 +30% · 물리 15%·책략 10% 피해 감소"] },
   ] },
   { family: "cavalry", base: BASE.nanmanRider, stages: [
     { id: "nanmanRider", level: 1 },
@@ -113,8 +107,6 @@ const LINES: Line[] = [
   ] },
   { family: "heavyCav", base: BASE.gaema, stages: [
     { id: "gaemaWarrior", level: 1 },
-    { id: "gaemaCaptain", level: 12, traits: { physicalDamageReduction: 10 }, bloom: ["개마", "사람과 말 모두 철갑, 물리 피해 10% 감소"] },
-    { id: "whiteTigerCav", level: 22, traits: { physicalDamageReduction: 15, penetrate: 15 }, bloom: ["백호", "물리 피해 15% 감소 · 방어 15% 관통"] },
   ] },
   { family: "cavalry", base: BASE.halberdCav, stages: [
     { id: "halberdCav", level: 1 },
@@ -134,9 +126,7 @@ const FOURTH: Array<{ from: UnitClass; id: UnitClass; boost: Record<string, numb
   { from: "thunderGod", id: "heavenTaoist", boost: { strategyDamageReduction: 10 }, bloom: ["천도", "벼락 책략에 더해 받는 책략 피해 10% 감소"] },
   { from: "arhat", id: "fistSaint", boost: { critical: 10 }, bloom: ["권성", "금강의 몸에 더해 회심 +10%"] },
   { from: "greenwoodKing", id: "chieftain", boost: { lifesteal: 8 }, bloom: ["두령", "산채의 왕에 더해 입힌 피해의 8% 회복"] },
-  { from: "louchuan", id: "admiral", boost: { counterBoost: 10 }, bloom: ["수군도독", "누선의 위세에 더해 반격 피해 +10%"] },
   { from: "ironPagoda", id: "wujiHeavyCav", boost: { attackBoost: 5 }, bloom: ["무극중기", "철부도의 돌파에 더해 공격력 +5"] },
-  { from: "cloudRam", id: "dragonRam", boost: { physicalDamageReduction: 5 }, bloom: ["신충차", "용머리 충각, 물리 피해를 더 덜 받는다"] },
 ];
 
 /** 모병 특수 병과: 진화 없이 그 자체로 쓰는 부대. */

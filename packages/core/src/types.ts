@@ -64,20 +64,16 @@ export type UnitClass =
   // 확장 병종과 진화 단계 (classes.ts: 계열·능력치·진화 계통)
   | "shieldGuard" | "royalGuard" | "pikeman" | "halberdier" | "lancer" | "tigerRider" | "ironCav"
   | "longbow" | "sharpshooter" | "repeater" | "greatBow" | "tactician" | "mastermind" | "sage" | "immortal"
-  | "nomad" | "whiteHorse" | "slinger" | "hurler" | "assassin" | "phantom" | "rattan" | "rattanElite"
+  | "nomad" | "whiteHorse" | "assassin" | "phantom" | "rattan" | "rattanElite"
   | "elephant" | "warElephant"
-  | "ironPagoda" | "elephantKing" | "boulderCorps" | "wraith" | "wuguoRattan" | "greenwoodKing" | "arhat"
+  | "ironPagoda" | "elephantKing" | "wraith" | "wuguoRattan" | "greenwoodKing" | "arhat"
   | "demonKing" | "celestial" | "thunderGod"
-  // v41에 추가된 진화 병종
-  | "liangzhouIron"
-  | "ironRam" | "cloudRam" | "mengchong" | "louchuan"
-  | "meteorSlinger" | "heavenXiliang" | "divineGaema"
-  | "sapper" | "masterBuilder" | "divineEngineer"
+  // 포차 계통의 상위 단계
   | "thunderCart" | "greatTrebuchet" | "divineCatapult"
   // 명부대(이름난 부대) 계통
-  | "xiliang" | "feixiong"
+  | "xiliang"
   // 병종 차트로 늘린 계통·4단계·모병 특수 병과 (chart-classes.ts)
-  | "admiral" | "assaultChariot" | "baggageTrain" | "baguaChariot" | "bashuRepeater" | "beauty" | "chieftain" | "commander" | "crownPrince" | "dancer" | "divineChariot" | "divineJinglan" | "divineOx" | "divineSpear" | "divineStrategist" | "dragonCav" | "dragonRam" | "emperor" | "fanSage" | "fistSaint" | "flyingBlade" | "gaemaCaptain" | "gaemaWarrior" | "grandCommander" | "halberdCav" | "heavenCav" | "heavenCommander" | "heavenDancer" | "heavenEmperor" | "heavenTaoist" | "heavyChariot" | "heavyHalberdCav" | "heavyJinglan" | "hegemon" | "ironInfantry" | "jinglan" | "knightErrant" | "lightChariot" | "lord" | "marshal" | "mountainCav" | "nanmanBeast" | "nanmanFoot" | "nanmanRider" | "northFoot" | "northRider" | "palanquin" | "pegasusCav" | "raidCav" | "royalPrince" | "scoutCav" | "siegeTower" | "sonOfHeaven" | "songstress" | "sovereign" | "stormCav" | "swordArtist" | "swordMaster" | "swordSaint" | "swordsman" | "transport" | "valiantCav" | "wheelSage" | "whiteTigerCav" | "woodenOx" | "wujiHeavyCav" | "yellowTurban" | "ytArcher" | "ytBrawler" | "ytSpear"
+  | "assaultChariot" | "baguaChariot" | "bashuRepeater" | "beauty" | "chieftain" | "commander" | "crownPrince" | "dancer" | "divineChariot" | "divineSpear" | "divineStrategist" | "dragonCav" | "emperor" | "fanSage" | "fistSaint" | "flyingBlade" | "gaemaWarrior" | "grandCommander" | "halberdCav" | "heavenCav" | "heavenCommander" | "heavenDancer" | "heavenEmperor" | "heavenTaoist" | "heavyChariot" | "heavyHalberdCav" | "hegemon" | "ironInfantry" | "knightErrant" | "lightChariot" | "lord" | "marshal" | "mountainCav" | "nanmanBeast" | "nanmanFoot" | "nanmanRider" | "northFoot" | "northRider" | "palanquin" | "pegasusCav" | "raidCav" | "royalPrince" | "scoutCav" | "siegeTower" | "sonOfHeaven" | "songstress" | "sovereign" | "stormCav" | "swordArtist" | "swordMaster" | "swordSaint" | "swordsman" | "transport" | "valiantCav" | "wheelSage" | "wujiHeavyCav" | "yellowTurban" | "ytArcher" | "ytBrawler" | "ytSpear"
   // 구분이 뚜렷한 신규 4단계 계통
   | "heavenPriestess"
   | "yellowTurbanVeteran" | "yellowTurbanCaptain" | "yellowTurbanMarshal"

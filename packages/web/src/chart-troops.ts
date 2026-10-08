@@ -51,9 +51,6 @@ export const CHART_ROLES:Partial<Record<UnitClass,Role>>={
   divineChariot:r('신전차','전차 4단계 · 용머리 금전차','heavyCav',0xffd060),
   // 정란계
   siegeTower:r('정란','높은 망루에서 활을 쏘는 단일 공성 병종 · 사거리 1~3','catapult',0xc0a070),
-  jinglan:r('강정란','옛 정란 2단계(이전 저장) · 공격력이 오른다','catapult',0xb08860),
-  heavyJinglan:r('중정란','정란 3단계 · 두꺼운 판벽','catapult',0x907860),
-  divineJinglan:r('신정란','정란 4단계 · 금장 망루, 방어를 꿰뚫는다','catapult',0xf0d080),
   // 황실 NPC — 서로 진화하지 않는 독립 단일 병종
   crownPrince:r('황태자','황실의 후계 · 회복과 정화','strategist',0xa0b8e0,HEAL),
   royalPrince:r('친왕공','황실의 친왕 · 책략 피해를 덜 받는다','strategist',0xc0c8d0,HEAL),
@@ -61,15 +58,10 @@ export const CHART_ROLES:Partial<Record<UnitClass,Role>>={
   heavenEmperor:r('천자도록','천자의 위광을 나타내는 황실 NPC','strategist',0xfff0c0,HEAL),
   // 보급계
   transport:r('수송대','손수레로 군량을 나르며 다친 병사를 돌본다','engineer',0xc8b088,['mend']),
-  baggageTrain:r('치중대','보급 2단계 · 수레 행렬, 회복이 오른다','engineer',0xd0b890,['mend','purify']),
-  woodenOx:r('목우유마','보급 3단계 · 제갈량의 나무 소','engineer',0xb08858,HEAL),
-  divineOx:r('신목우','보급 4단계 · 금빛 신목우','engineer',0xffd060,HEAL),
   // 모병 특수 병과 계통
   nanmanRider:r('남만기병','남만의 날랜 기마병','cavalry',0xc08860),
   nanmanBeast:r('남만맹수병','남만기병 2단계 · 맹수를 탄 기병','cavalry',0xa07050),
   gaemaWarrior:r('고구려 개마무사','사람과 말 모두 쇠미늘을 두른 기병','heavyCav',0x808890),
-  gaemaCaptain:r('개마대장','개마 2단계 · 물리 피해를 덜 받는다','heavyCav',0x9098a8),
-  whiteTigerCav:r('백호기병','개마 3단계 · 백호 갑주, 방어를 꿰뚫는다','heavyCav',0xf0f0f0),
   halberdCav:r('극기병','극을 든 기병 · 창병 상대로 버틴다','cavalry',0xb09070),
   heavyHalberdCav:r('중장극기병','극기병 2단계 · 반격이 강해진다','cavalry',0x9098a0),
   wheelSage:r('사륜거 책사','수레 위의 책사 · 느리지만 책략이 강하다','strategist',0xe0e0d0,CAST),
@@ -92,19 +84,11 @@ export const CHART_ROLES:Partial<Record<UnitClass,Role>>={
   heavenTaoist:r('천도사','도사 4단계 · 하늘의 도를 부린다','taoist',0xfff0a0,['fire','gust','windDragon','flood','waterSurge','thunder','whirlwind','tempest','thunderbolt','gale','mire','tidalLine','thunderCross','quake']),
   fistSaint:r('권성','무도가 4단계 · 주먹의 성인','monk',0xffd060,['mend','march','fortify']),
   chieftain:r('두령','산적 4단계 · 산채의 두령','bandit',0xe0a060),
-  admiral:r('수군도독','수군 4단계 · 수군을 거느리는 도독','navy',0x80a0e0),
   wujiHeavyCav:r('무극중기병','중기병 4단계 · 금장 중기병','heavyCav',0xffd060),
-  dragonRam:r('신충차','충차 4단계 · 용머리 충차','ram',0x80c080),
 };
 
-// 기존 저장 id는 유지하되, 빈 4단계와 공성 계통을 별도 병종으로 채운다.
+// 활성 4단계 계통의 빈 단계만 채운다. 폐기 ID는 core 저장 호환 계층에서만 읽는다.
 Object.assign(CHART_ROLES, {
-  meteorSlinger:r('천석투병','투석병 전설 · 같은 투석구로 내리꽂는다','archer',0xd8b870),
-  heavenXiliang:r('천량철기','서량기병 전설 · 같은 장창으로 설원을 돌파한다','cavalry',0xd8c090),
-  divineGaema:r('신개마무사','개마무사 전설 · 같은 장창으로 중장 돌격한다','heavyCav',0xd8c8a0),
-  sapper:r('축성병','공병 정예 · 같은 사각 망치로 방책과 기계를 다룬다','engineer',0x80a890),
-  masterBuilder:r('공성장인','공병 최정예 · 같은 사각 망치로 견고하게 보수한다','engineer',0x7098a8),
-  divineEngineer:r('신기장','공병 전설 · 같은 사각 망치로 전장을 요새화한다','engineer',0xd0b870),
   thunderCart:r('벽력거','포차 정예 · 같은 투석 기구로 거석을 날린다','catapult',0xb09068),
   greatTrebuchet:r('천균거','포차 최정예 · 같은 투석 기구를 대형화한다','catapult',0x9b8060),
   divineCatapult:r('신포차','포차 전설 · 같은 투석 기구로 성곽을 붕괴시킨다','catapult',0xd0a050),

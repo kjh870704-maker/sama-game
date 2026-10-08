@@ -1060,6 +1060,8 @@ interface Painted {url:string;w:number;h:number;cropTop:number;kinds:Kind[];
   sx?:number;sy?:number;arts?:number[];
   /** 같은 장소의 야간·우천 전용 원화. */
   variant?:'night'|'rain';
+  /** 같은 종류 안에서도 이 장소 이름에만 우선 쓰는 전용 원화. */
+  places?:RegExp;
   /** 그림 자체에 빛(밤·노을)이 들어 있어 따로 색을 입히지 않는다. */
   lit?:boolean;
   /** 바닥 뒤 모서리와 오른쪽 모서리(원화 좌표): 격자 원점과 칸 크기를 맞춘다. */
@@ -1083,7 +1085,34 @@ function storyVariant(url:string,kinds:Kind[],variant:'night'|'rain',yTop:number
   return {url,w:1600,h:900,cropTop:0,kinds,variant,lit:true,back:[800,yTop],right:[1560,yTop+190],figScale,
     floor:[[45,yTop],[1555,yTop],[1600,900],[0,900]],blocks:[]};
 }
+/** 3번째 3×3 판: 지역 전용 5장 + 강가/성 밖 진영의 밤·비 4장. */
+function specialPanel(idx:number,kinds:Kind[],yTop:number,o:{variant?:'night'|'rain';places:RegExp;inset?:[number,number];fig?:number}):Painted{
+  const edges=[0,340,682,1024],row=Math.floor(idx/3),w=508,h=edges[row+1]!-edges[row]!-4,cropTop=Math.max(0,Math.min(h-254,yTop-150)),[l,r]=o.inset??[8,8];
+  return {url:'story-backgrounds-3.webp',sx:idx%3*512+2,sy:edges[row]!+2,w,h,cropTop,kinds,lit:true,...(o.variant?{variant:o.variant}:{}),places:o.places,
+    back:[w/2,yTop+2],right:[w+40,yTop+(h-yTop)*.55],figScale:o.fig??1.18,
+    floor:[[l,yTop],[w-r,yTop],[w,h],[0,h]],blocks:[]};
+}
+interface SpecialPanelSpec {idx:number;kinds:Kind[];yTop:number;variant?:'night'|'rain';places:RegExp;inset?:[number,number];fig?:number}
+const SPECIAL_PANELS:SpecialPanelSpec[]=[
+  {idx:0,kinds:['forest','valley','camp'],yTop:235,places:/남만|팔납|은갱|독룡|오과|맹획/,inset:[24,24]},
+  {idx:1,kinds:['field','hill','camp'],yTop:218,places:/초원|백랑산|오환/,inset:[16,16]},
+  {idx:2,kinds:['wall','fort','gatehouse'],yTop:216,places:/눈|설원|겨울|남피|동흥|얼어붙/,inset:[24,24]},
+  {idx:3,kinds:['valley','hill'],yTop:205,places:/잔도|절벽|벼랑|검각|자오곡/,inset:[54,54],fig:1.08},
+  {idx:4,kinds:['deck'],yTop:205,places:/./,inset:[44,44],fig:1.08},
+  {idx:5,kinds:['camp','bank'],yTop:208,variant:'night',places:/강가 진영|강변 진영|강둑 진영|상류 강가/},
+  {idx:6,kinds:['camp','bank'],yTop:208,variant:'rain',places:/강가 진영|강변 진영|강둑 진영|상류 강가/},
+  {idx:7,kinds:['camp'],yTop:208,variant:'night',places:/성 밖 진영|성외 진영/},
+  {idx:8,kinds:['camp'],yTop:208,variant:'rain',places:/성 밖 진영|성외 진영/},
+];
+/** 테스트와 문서가 쓰는 3번째 배경판 칸 번호. */
+export function specialBackdropCell(art:number,place:string){
+  const kind=kindFor(art,place),mood=moodOf(place,kind),variant=mood.weather==='rain'?'rain':mood.light==='night'?'night':undefined;
+  return SPECIAL_PANELS.find(s=>s.kinds.includes(kind)&&s.variant===variant&&s.places.test(place))?.idx
+    ??SPECIAL_PANELS.find(s=>s.kinds.includes(kind)&&!s.variant&&s.places.test(place))?.idx;
+}
 const PAINTED:Painted[]=[
+  // 레퍼런스 전투 화면과 같은 낮은 디테일 밀도·넓은 인물 배치 공간의 지역 전용 배경.
+  ...SPECIAL_PANELS.map(s=>specialPanel(s.idx,s.kinds,s.yTop,{places:s.places,...(s.variant?{variant:s.variant}:{}),...(s.inset?{inset:s.inset}:{}),...(s.fig!==undefined?{fig:s.fig}:{})})),
   storyVariant('story-tent-night-v1.webp',['tent'],'night',350),
   storyVariant('story-tent-rain-v1.webp',['tent'],'rain',350),
   storyVariant('story-camp-night-v1.webp',['camp','battlefield'],'night',420,.98),
@@ -1108,18 +1137,24 @@ export async function loadPaintedScenes(){
   cache.clear();
 }
 const inPoly=(x:number,y:number,poly:ReadonlyArray<readonly [number,number]>)=>{let inside=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const [xi,yi]=poly[i]!,[xj,yj]=poly[j]!;if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)inside=!inside;}return inside;};
-function paintedFor(kind:Kind,art=-1,place='',variantOnly=false){
+function paintedFor(kind:Kind,art=-1,place='',variantOnly=false,placeOnly=false){
   const ok=PAINTED.filter(p=>p.kinds.includes(kind)&&paintedImg.has(p.url)),mood=moodOf(place,kind);
   const variant=mood.weather==='rain'?'rain':mood.light==='night'?'night':undefined;
-  if(variant){const themed=ok.find(p=>p.variant===variant);if(themed)return themed;}
+  if(variant){const themed=ok.find(p=>p.variant===variant&&p.places?.test(place))??ok.find(p=>p.variant===variant&&!p.places);if(themed)return themed;}
   if(variantOnly)return undefined;
-  return ok.find(p=>!p.variant&&p.arts?.includes(art))??ok.find(p=>!p.variant);
+  if(placeOnly)return ok.find(p=>!p.variant&&p.places?.test(place));
+  return ok.find(p=>!p.variant&&p.places?.test(place))??ok.find(p=>!p.variant&&p.arts?.includes(art))??ok.find(p=>!p.variant&&!p.places);
 }
 function buildPainted(p:Painted,kind:Kind,place:string):IsoScene{
   const img=paintedImg.get(p.url)!,mood=moodOf(place,kind),k=W/p.w;
   const canvas=document.createElement('canvas');canvas.width=W*SS;canvas.height=H*SS;const g=canvas.getContext('2d')!;g.scale(SS,SS);g.imageSmoothingQuality='high';
   g.fillStyle='#120c08';g.fillRect(0,0,W,H);
+  // 전투 인물·이동 효과보다 배경의 잔무늬가 먼저 튀지 않도록 레퍼런스 화면 수준으로 눌러 그린다.
+  // 원본 자산은 보존하고 실제 무대에 합성할 때만 채도·대비와 미세 선명도를 낮춘다.
+  g.save();g.filter='saturate(.72) contrast(.84) brightness(.93) blur(.45px)';
   if(p.sx!==undefined)g.drawImage(img,p.sx,p.sy!+p.cropTop,p.w,H/k,0,0,W,H);else g.drawImage(img,0,-p.cropTop*k,W,p.h*k);
+  g.restore();
+  g.fillStyle='rgba(104,99,88,.08)';g.fillRect(0,0,W,H);
   const grade=(color:string,op:GlobalCompositeOperation)=>{g.save();g.globalCompositeOperation=op;g.fillStyle=color;g.fillRect(0,0,W,H);g.restore();};
   if(!p.lit&&mood.light==='night'){grade('rgba(40,60,120,.58)','multiply');grade('rgba(255,190,110,.10)','screen');}
   if(!p.lit&&mood.light==='dawn')grade('rgba(170,180,230,.3)','multiply');
@@ -1175,6 +1210,8 @@ function groundScene(kind:Kind,seed:number,place:string,clearPct:readonly At[]):
 function build(kind:Kind,seed:number,place='',clear:Set<string>=new Set(),artNo=-1):IsoScene{
   // 반복이 많은 군막·야외 진영·대전은 밤/비 전용 원화를 먼저 쓴다.
   const themed=paintedFor(kind,artNo,place,true);if(themed)return buildPainted(themed,kind,place);
+  // 지역 이름이 지정된 신규 원화(남만·초원·설성·잔도·갑판)는 절차식 야외 지도보다 먼저 쓴다.
+  const dedicated=paintedFor(kind,artNo,place,false,true);if(dedicated)return buildPainted(dedicated,kind,place);
   // 알현(옥좌) 장면은 자리 배치가 따로 있어 그린 배경을 쓴다.
   if(OUTDOOR.has(kind)){const t=groundScene(kind,seed,place,[...clear].map(k=>{const [c,r]=k.split(',').map(Number);return [((c!-r!)*TW/2+OX)/W*100,(OY+(c!+r!)*TH/2)/H*100] as At;}));if(t)return t;}
   if(kind!=='throne'){const p=paintedFor(kind,artNo,place);if(p)return buildPainted(p,kind,place);}

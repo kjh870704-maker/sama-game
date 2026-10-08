@@ -17,7 +17,7 @@ const PART_NAMES:Record<string,string>={face:'얼굴형',skin:'피부',eyes:'눈
 
 export interface CustomHost {modal(html:string,closable?:boolean):void;toast(text:string):void}
 const esc=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
-const LOOK:Record<string,Look>={infantry:'infantry',spearman:'spear',archer:'archer',cavalry:'cavalry',heavyCav:'heavy',crossbow:'crossbow',strategist:'strategist',horseArcher:'horseArcher',bandit:'bandit',monk:'monk',taoist:'taoist',fengshui:'sage',slinger:'archer',assassin:'assassin'};
+const LOOK:Record<string,Look>={infantry:'infantry',spearman:'spear',archer:'archer',cavalry:'cavalry',heavyCav:'heavy',crossbow:'crossbow',strategist:'strategist',horseArcher:'horseArcher',bandit:'bandit',monk:'monk',taoist:'taoist',fengshui:'sage',assassin:'assassin'};
 const TEMPER_HINT:Record<string,string>={reckless:'싸움을 마다하지 않는다',brave:'명분과 용기를 따른다',proud:'존중받기를 바란다',calm:'판을 읽고 움직인다',cautious:'손익을 따진다',wise:'형세를 꿰뚫는다',timid:'힘 있는 쪽에 기댄다'};
 
 export function customs(){return loadMeta().customOfficers??[];}

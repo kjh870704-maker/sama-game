@@ -37,20 +37,20 @@ export const fourStageCorrectionRows = {
   'four-stage-catapult':['catapult','thunderCart','greatTrebuchet','divineCatapult'],
 } as const satisfies Readonly<Record<string,readonly [UnitClass,UnitClass,UnitClass,UnitClass]>>;
 
-/** 진화하지 않는 독립 병종. 옛 저장의 상위 단계 ID도 같은 단일 그림으로 표시한다. */
+/** 진화하지 않는 독립 병종. 옛 저장 ID는 core의 currentClass에서 이 ID로 먼저 정규화한다. */
 export const singleStageCorrectionRows = {
   'single-stage-crown-prince':['crownPrince'],
   'single-stage-royal-prince':['royalPrince'],
   'single-stage-emperor':['emperor'],
   'single-stage-heaven-emperor':['heavenEmperor'],
   'single-stage-civilian':['civilian'],
-  'single-stage-xiliang':['xiliang','feixiong','liangzhouIron','heavenXiliang'],
-  'single-stage-ram':['ram','ironRam','cloudRam','dragonRam'],
-  'single-stage-navy':['navy','mengchong','louchuan','admiral'],
-  'single-stage-siege-tower':['siegeTower','jinglan','heavyJinglan','divineJinglan'],
-  'single-stage-transport':['transport','baggageTrain','woodenOx','divineOx'],
-  'single-stage-gaema-warrior':['gaemaWarrior','gaemaCaptain','whiteTigerCav','divineGaema'],
-  'single-stage-engineer':['engineer','sapper','masterBuilder','divineEngineer'],
+  'single-stage-xiliang':['xiliang'],
+  'single-stage-ram':['ram'],
+  'single-stage-navy':['navy'],
+  'single-stage-siege-tower':['siegeTower'],
+  'single-stage-transport':['transport'],
+  'single-stage-gaema-warrior':['gaemaWarrior'],
+  'single-stage-engineer':['engineer'],
 } as const satisfies Readonly<Record<string,readonly UnitClass[]>>;
 
 /** 그림 제작/검수 기준: 한 계통의 네 단계는 이 무기군을 끝까지 유지한다. */

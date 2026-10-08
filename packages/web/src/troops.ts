@@ -4,6 +4,7 @@ import {VARIANTS,EVOLUTION,familyOf} from '../../core/src/index.ts';
 import {allStrategies} from './officers.ts';
 import {paintedTroopSheets,paintedTroopArt} from './painted-troops.ts';
 import {CHART_ROLES} from './chart-troops.ts';
+import {officerModelSheets} from './officer-models.ts';
 
 export const troopRoles:Partial<Record<UnitClass,{name:string;role:string;base:UnitClass;tint:number;spells:string[]}>>={
  shaman:{name:'주술사',role:'독·봉인·혼란으로 적을 약화하는 책략 병종',base:'strategist',tint:0xd7afff,spells:['fire','embers','bind','poison','silence','confuse','feint','demoralize','weakenCurse','terror','plague','rumor','chaos']},
@@ -32,8 +33,6 @@ export const troopRoles:Partial<Record<UnitClass,{name:string;role:string;base:U
  immortal:{name:'선인',role:'풍수사 3단계 · 책략 피해를 덜 받는 회복의 대가',base:'fengshui',tint:0xfff0a8,spells:['mend','purify','fortify','inspire','greatMend','focus','ironWall','sanctuary']},
  nomad:{name:'유목기병',role:'궁기병 2단계 · 이동 7의 기동 사격',base:'horseArcher',tint:0xdcefb8,spells:[]},
  whiteHorse:{name:'백마의종',role:'궁기병 3단계 · 공손찬의 백마 기사단, 회심 사격',base:'horseArcher',tint:0xffffff,spells:[]},
- slinger:{name:'투석병',role:'사거리 1~2, 붙어 있는 적에게도 돌을 던지는 경보병',base:'archer',tint:0xd9c8a6,spells:[]},
- hurler:{name:'벽력투석대',role:'투석병 2단계 · 사거리 1~3',base:'archer',tint:0xf0d38a,spells:[]},
  assassin:{name:'자객',role:'이동 6 · 높은 회심률, 몸은 약하다',base:'bandit',tint:0x8e8aa8,spells:[]},
  phantom:{name:'무영객',role:'자객 2단계 · 그림자 같은 일격',base:'bandit',tint:0x6f6a96,spells:[]},
  rattan:{name:'등갑병',role:'물리 피해 25% 감소 · 화계에 크게 약하다',base:'infantry',tint:0xd8b36a,spells:[]},
@@ -47,7 +46,6 @@ export const troopRoles:Partial<Record<UnitClass,{name:string;role:string;base:U
  warElephant:{name:'전투상',role:'상병 2단계 · 쇠 갑주를 두른 코끼리',base:'heavyCav',tint:0xd3cbbb,spells:[]},
  ironPagoda:{name:'철부도',role:'중기병 3단계 · 사람과 말 모두 쇠로 감싼 돌파 기병, 방어를 꿰뚫는다',base:'heavyCav',tint:0xa9b4c6,spells:[]},
  elephantKing:{name:'상왕군',role:'상병 3단계 · 남만 상왕의 코끼리 부대, 때린 적에게 피해를 되돌린다',base:'heavyCav',tint:0xf0e2b8,spells:[]},
- boulderCorps:{name:'천균대',role:'투석병 3단계 · 사거리 1~3, 천 근 돌로 방어를 깨뜨린다',base:'archer',tint:0xffc66e,spells:[]},
  wraith:{name:'영귀',role:'자객 3단계 · 보이지 않는 살수, 회심과 흡혈',base:'bandit',tint:0x4e4878,spells:[]},
  wuguoRattan:{name:'오과 등갑군',role:'등갑병 3단계 · 오과국 정예, 물리 피해 40% 감소 · 불에는 여전히 약하다',base:'infantry',tint:0xf6d27a,spells:[]},
  greenwoodKing:{name:'녹림대왕',role:'산적 3단계 · 산채의 왕, 궁지에 몰릴수록 사나워진다',base:'bandit',tint:0xf4cf8e,spells:[]},
@@ -68,12 +66,6 @@ export const troopRoles:Partial<Record<UnitClass,{name:string;role:string;base:U
  thunderGod:{name:'뇌신',role:'도사 3단계 · 벼락을 부리는 원소 책략의 정점',base:'taoist',tint:0xe6f8ff,spells:['fire','gust','windDragon','flood','waterSurge','thunder','whirlwind','tempest','thunderbolt','gale','mire','tidalLine','thunderCross','quake']},
  // 명부대 — 정사·연의에 이름을 남긴 부대
  xiliang:{name:'서량기병',role:'이동 7 · 거친 서쪽 말의 돌격 기병',base:'cavalry',tint:0xe8c890,spells:[]},
- feixiong:{name:'비웅군',role:'서량기병 2단계 · 동탁의 정예, 피를 보면 더 사나워진다',base:'cavalry',tint:0xd07a6a,spells:[]},
- liangzhouIron:{name:'서량철기',role:'서량기병 3단계 · 쇠를 두른 서쪽의 철기, 쓰러질수록 사납다',base:'cavalry',tint:0xff7a5a,spells:[]},
- ironRam:{name:'철충차',role:'충차 2단계 · 쇠를 씌워 불화살을 견디는 충차',base:'ram',tint:0xb0b8c8,spells:[]},
- cloudRam:{name:'파성충차',role:'충차 3단계 · 성문을 부수는 큰 망치 수레',base:'ram',tint:0xffd060,spells:[]},
- mengchong:{name:'몽충',role:'수군 2단계 · 쇠가죽을 씌운 돌격선',base:'navy',tint:0x90c0e0,spells:[]},
- louchuan:{name:'누선',role:'수군 3단계 · 여러 층 망루를 올린 큰 배',base:'navy',tint:0xffd070,spells:[]},
  ...CHART_ROLES,
 };
 export const supportOptions:UnitClass[]=['infantry','fengshui','strategist','shaman','maiden','taoist','monk','horseArcher','bandit','spearman','crossbow','archer','cavalry','heavyCav','catapult','ram','engineer'];
@@ -90,7 +82,7 @@ export const recruitPool:UnitClass[]=['infantry','spearman','cavalry','archer','
  'ytArcher','ytSpear','ytBrawler','nanmanFoot','northFoot','northRider','palanquin','baguaChariot','flyingBlade','bashuRepeater'];
 
 // 반응(피격) 전용 옛 시트 4장은 지웠다: 모든 병종이 4단계 시트의 피격 칸을 쓴다. 남은 술사·특기 시트는 이야기 무대 인물용이다.
-export const troopSheets=[...paintedTroopSheets,{id:'casters',url:'troops-casters-v1.webp',rows:3},{id:'specialists',url:'troops-specialists-v1.webp',rows:4},{id:'casters-walk',url:'troops-casters-walk-v1.webp',rows:3},{id:'specialists-walk',url:'troops-specialists-walk-v1.webp',rows:4}] as const;
+export const troopSheets=[...paintedTroopSheets,...officerModelSheets,{id:'casters',url:'troops-casters-v1.webp',rows:3},{id:'specialists',url:'troops-specialists-v1.webp',rows:4},{id:'casters-walk',url:'troops-casters-walk-v1.webp',rows:3},{id:'specialists-walk',url:'troops-specialists-walk-v1.webp',rows:4}] as const;
 export const troopArt:Partial<Record<UnitClass,{sheet:'casters'|'specialists';row:number;rows:number}>>={shaman:{sheet:'casters',row:0,rows:3},maiden:{sheet:'casters',row:1,rows:3},taoist:{sheet:'casters',row:2,rows:3},monk:{sheet:'specialists',row:1,rows:4},horseArcher:{sheet:'specialists',row:2,rows:4},bandit:{sheet:'specialists',row:3,rows:4}};
 
 export const basicReactionArt:Partial<Record<UnitClass,{sheet:string;row:number;rows:number}>>={

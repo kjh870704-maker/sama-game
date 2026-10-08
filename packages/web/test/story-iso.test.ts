@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {stepsBetween,offscreenCell,kindFor,W,type Cell,type IsoScene} from '../src/story-iso.ts';
+import {stepsBetween,offscreenCell,kindFor,specialBackdropCell,W,type Cell,type IsoScene} from '../src/story-iso.ts';
 
 const blocked=new Set(['3,0','3,1','3,2','3,3']);
 const scene={passable:([c,r]:Cell)=>!blocked.has(`${c},${r}`)&&c>=0&&r>=0} as unknown as IsoScene;
@@ -42,5 +42,16 @@ describe('장소 이름에 맞는 배경',()=>{
   expect(kindFor(7,'맹진 · 물러가는 배들')).toBe('deck');
   expect(kindFor(9,'연진 · 타고 남은 볏짚')).toBe('fire');
   expect(kindFor(3,'백랑산 · 흩어진 오환 기병')).toBe('hill');
+ });
+ it('selects the nine reference-style regional and camp-weather backgrounds',()=>{
+  expect(specialBackdropCell(11,'팔납동 · 숲 어귀')).toBe(0);
+  expect(specialBackdropCell(3,'백랑산 · 북쪽 초원')).toBe(1);
+  expect(specialBackdropCell(8,'남피 · 얼어붙은 해자')).toBe(2);
+  expect(specialBackdropCell(3,'검각 · 잔도 어귀')).toBe(3);
+  expect(specialBackdropCell(7,'오림 · 장강 위의 누선')).toBe(4);
+  expect(specialBackdropCell(15,'강하 · 강가 진영의 밤')).toBe(5);
+  expect(specialBackdropCell(15,'강하 · 강가 진영 · 폭우')).toBe(6);
+  expect(specialBackdropCell(16,'허창 · 성 밖 진영 · 야간')).toBe(7);
+  expect(specialBackdropCell(16,'허창 · 성 밖 진영 · 비')).toBe(8);
  });
 });

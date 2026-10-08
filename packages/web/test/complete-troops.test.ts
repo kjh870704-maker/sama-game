@@ -1,18 +1,18 @@
 import {describe,it,expect} from 'vitest';
-import {allUnitClasses,EVOLUTION,SINGLE_STAGE_CLASSES,VARIANTS} from '../../core/src/index.ts';
+import {allUnitClasses,currentClass,EVOLUTION,SINGLE_STAGE_CLASSES,VARIANTS} from '../../core/src/index.ts';
 import {completeTroopArt,completeTroopSheets,fourStageCorrectionRows,lineageWeapons,singleStageCorrectionRows,singleStageWeapons} from '../src/complete-troops.ts';
 import {paintedTroopArt,paintedTroopSheets,POSE} from '../src/painted-troops.ts';
 import {classSprite} from '../src/codex-ui.ts';
 import {classSheets} from '../src/troops.ts';
 
 describe('새 화풍 전체 병종 원화',()=>{
-  it('전체 유닛을 빠짐없이 매핑하고 폐기된 상위 단계는 단일 병종 그림을 공유한다',()=>{
+  it('활성 유닛을 빠짐없이 매핑하고 폐기 ID는 로딩 때 단일 병종으로 정규화한다',()=>{
     const classes=allUnitClasses();
-    expect(classes).toHaveLength(153);
+    expect(classes).toHaveLength(132);
     expect(Object.keys(completeTroopArt).sort()).toEqual([...classes].sort());
     for(const c of classes)expect(paintedTroopArt[c],c).toEqual(completeTroopArt[c]);
-    expect(completeTroopArt.feixiong).toEqual(completeTroopArt.xiliang);
-    expect(completeTroopArt.divineEngineer).toEqual(completeTroopArt.engineer);
+    expect(currentClass('feixiong')).toBe('xiliang');
+    expect(currentClass('divineEngineer')).toBe('engineer');
   });
 
   it('진화 계통은 4행, 단일 병종은 실제 1행·4열 시트를 사용한다',()=>{
@@ -61,7 +61,8 @@ describe('새 화풍 전체 병종 원화',()=>{
       expect(completeTroopSheets.find(x=>x.id===sheet)?.rows,sheet).toBe(1);
       for(const troop of classes)expect(completeTroopArt[troop]).toEqual({sheet,row:0,rows:1});
     }
-    expect(EVOLUTION.slinger).toBeUndefined();
+    expect((EVOLUTION as Record<string,unknown>).slinger).toBeUndefined();
+    expect(currentClass('slinger')).toBe('archer');
   });
 
   it('보병 계열은 기본부터 전설까지 새 화풍의 정확한 4단계 행을 쓴다',()=>{

@@ -36,7 +36,7 @@ export function readPortrait(raw:unknown):PortraitSpec|undefined{
   return out;
 }
 const hashName=(s:string)=>{let h=2166136261;for(const ch of s)h=Math.imul(h^ch.charCodeAt(0),16777619);return h>>>0;};
-const MARTIAL=new Set(['infantry','spearman','cavalry','heavyCav','horseArcher','bandit','archer','crossbow','slinger','assassin']);
+const MARTIAL=new Set(['infantry','spearman','cavalry','heavyCav','horseArcher','bandit','archer','crossbow','assassin']);
 /** 이름·병종·성격으로 어울리는 초상을 지어 준다(무작위의 씨앗은 이름). */
 export function suggestPortrait(name:string,unitClass:UnitClass|string,temper:Temper|string,salt=0):PortraitSpec{
   let h=hashName(name+'#'+salt);const pick=(n:number)=>{h=Math.imul(h^(h>>>15),2246822519)>>>0;return h%n;};
@@ -48,7 +48,7 @@ export function suggestPortrait(name:string,unitClass:UnitClass|string,temper:Te
   if(temper==='proud'){s.eyes=0;s.brows=2;}
   if(temper==='timid'){s.eyes=4;s.brows=1;s.mouth=0;}
   if(s.age===2&&s.hair<2)s.hair=2+pick(2);
-  s.item=unitClass==='strategist'||unitClass==='fengshui'?1+pick(2)*3:['archer','crossbow','horseArcher','slinger'].includes(String(unitClass))?5:['spearman'].includes(String(unitClass))?3:martial?2:pick(2)?4:0;
+  s.item=unitClass==='strategist'||unitClass==='fengshui'?1+pick(2)*3:['archer','crossbow','horseArcher'].includes(String(unitClass))?5:['spearman'].includes(String(unitClass))?3:martial?2:pick(2)?4:0;
   return s;
 }
 

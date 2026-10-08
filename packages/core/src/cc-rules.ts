@@ -48,7 +48,6 @@ const LINE_GRADES: Partial<Record<UnitClass, GradeProfile>> = {
   horseArcher:g("궁기병계", "SBBBA", [100, 5], [10, 1], "horse"),
   // 궁·노
   archer:     g("궁병계", "ABBBS", [90, 4], [10, 1], "foot"),
-  slinger:    g("투석병", "ABBCS", [90, 4], [10, 1], "foot"),
   crossbow:   g("노병", "SBACA", [90, 4], [10, 1], "foot"),
   catapult:   g("포차계", "SBACA", [90, 4], [10, 1], "machine"),
   ram:        g("충차", "ACSCC", [110, 6], [5, 1], "machine"),

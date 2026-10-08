@@ -13,7 +13,7 @@ let ctx:FactionContext={name:'신세력',emblem:'신',companions:[]};
 export function setFactionContext(c:FactionContext){ctx=c;}
 export const factionContext=()=>ctx;
 
-const LOOK:Partial<Record<string,Look>>={infantry:'infantry',spearman:'spear',archer:'archer',cavalry:'cavalry',heavyCav:'heavy',crossbow:'crossbow',strategist:'strategist',horseArcher:'horseArcher',bandit:'bandit',monk:'monk',taoist:'taoist',fengshui:'sage',slinger:'archer',assassin:'assassin'};
+const LOOK:Partial<Record<string,Look>>={infantry:'infantry',spearman:'spear',archer:'archer',cavalry:'cavalry',heavyCav:'heavy',crossbow:'crossbow',strategist:'strategist',horseArcher:'horseArcher',bandit:'bandit',monk:'monk',taoist:'taoist',fengshui:'sage',assassin:'assassin'};
 const lookOf=(c:string):Look=>LOOK[c]??'infantry';
 const T=(s:string)=>factionText(s,ctx.name);
 const YEARS:Record<string,string>={NP1:'200년',NP2:'210년',NP3:'225년'};
