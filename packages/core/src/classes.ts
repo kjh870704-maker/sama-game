@@ -232,9 +232,6 @@ export const FOUR_STAGE_LINES: readonly (readonly [UnitClass, UnitClass, UnitCla
   ["mountedStrategist", "mountedTactician", "mountedMastermind", "mountedSage"],
   ["pirate", "pirateRaider", "pirateCaptain", "pirateAdmiral"],
   ["bandit", "outlaw", "greenwoodKing", "chieftain"],
-  ["xiliang", "feixiong", "liangzhouIron", "heavenXiliang"],
-  ["ram", "ironRam", "cloudRam", "dragonRam"],
-  ["navy", "mengchong", "louchuan", "admiral"],
   ["swordsman", "knightErrant", "swordMaster", "swordSaint"],
   ["lord", "hegemon", "sovereign", "sonOfHeaven"],
   ["commander", "grandCommander", "marshal", "heavenCommander"],
@@ -242,13 +239,8 @@ export const FOUR_STAGE_LINES: readonly (readonly [UnitClass, UnitClass, UnitCla
   ["mountainCav", "scoutCav", "raidCav", "pegasusCav"],
   ["valiantCav", "dragonCav", "stormCav", "heavenCav"],
   ["lightChariot", "assaultChariot", "heavyChariot", "divineChariot"],
-  ["siegeTower", "jinglan", "heavyJinglan", "divineJinglan"],
-  ["crownPrince", "royalPrince", "emperor", "heavenEmperor"],
-  ["transport", "baggageTrain", "woodenOx", "divineOx"],
   ["nanmanRider", "nanmanBeast", "nanmanFoot", "ytBrawler"],
-  ["gaemaWarrior", "gaemaCaptain", "whiteTigerCav", "divineGaema"],
   ["halberdCav", "heavyHalberdCav", "ytSpear", "swordArtist"],
-  ["engineer", "sapper", "masterBuilder", "divineEngineer"],
   ["catapult", "thunderCart", "greatTrebuchet", "divineCatapult"],
 ];
 
@@ -271,7 +263,8 @@ const originalEvolution = { ...EVOLUTION };
 for (const key of Object.keys(EVOLUTION) as UnitClass[]) delete EVOLUTION[key];
 /** 이 병종들은 완성형 단일 병종이며 레벨업으로 외형/병종이 바뀌지 않는다. */
 export const SINGLE_STAGE_CLASSES: ReadonlySet<UnitClass> = new Set([
-  "crownPrince", "civilian", "xiliang", "ram", "navy", "siegeTower", "transport", "gaemaWarrior", "engineer",
+  "crownPrince", "royalPrince", "emperor", "heavenEmperor", "civilian",
+  "xiliang", "ram", "navy", "siegeTower", "transport", "gaemaWarrior", "engineer",
 ]);
 for (const line of FOUR_STAGE_LINES) {
   const root = line[0];
@@ -321,6 +314,7 @@ export function familyOf(unitClass: UnitClass): UnitClass {
 
 /** 1 = 기본 병종, 2·3 = 진화 단계. */
 export function tierOf(unitClass: UnitClass): ClassTier {
+  if (SINGLE_STAGE_CLASSES.has(unitClass)) return 1;
   return VARIANTS[unitClass]?.tier ?? 1;
 }
 
@@ -357,6 +351,13 @@ export const RETIRED_CLASSES: Readonly<Record<string, UnitClass>> = {
   shieldBow: "crossbow", xiandeng: "repeater", baizhan: "greatBow",
   drummer: "fengshui", warDrummer: "sage", grandBand: "immortal",
   riderSage: "wheelSage", swiftSage: "fanSage", divineSage: "fanSage",
+  feixiong: "xiliang", liangzhouIron: "xiliang", heavenXiliang: "xiliang",
+  ironRam: "ram", cloudRam: "ram", dragonRam: "ram",
+  mengchong: "navy", louchuan: "navy", admiral: "navy",
+  jinglan: "siegeTower", heavyJinglan: "siegeTower", divineJinglan: "siegeTower",
+  baggageTrain: "transport", woodenOx: "transport", divineOx: "transport",
+  gaemaCaptain: "gaemaWarrior", whiteTigerCav: "gaemaWarrior", divineGaema: "gaemaWarrior",
+  sapper: "engineer", masterBuilder: "engineer", divineEngineer: "engineer",
   jiangdong: "infantry", bawang: "shieldGuard", overlordGuard: "royalGuard",
   langzhong: "valiantCav", yulin: "dragonCav", huben: "stormCav",
 };

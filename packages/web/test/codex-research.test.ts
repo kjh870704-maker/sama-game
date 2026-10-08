@@ -122,7 +122,7 @@ describe('병종과 책략',()=>{
  it('lists every strategy with a description and shows royal and support NPCs in the class codex',()=>{
   for(const s of allStrategies)expect(STRATEGY_TEXT[s.id],s.id).toBeTruthy();
   expect(codexClasses().length).toBeGreaterThan(80);
-  expect(codexClasses()).toEqual(expect.arrayContaining(['crownPrince','royalPrince','emperor','heavenEmperor','civilian','transport','ram','navy']));
+  expect(codexClasses()).toEqual(expect.arrayContaining(['crownPrince','royalPrince','emperor','heavenEmperor','civilian','transport','ram','navy','siegeTower']));
   expect(NPC_CODEX_CLASSES).toEqual(['crownPrince','royalPrince','emperor','heavenEmperor','civilian']);
  });
 });

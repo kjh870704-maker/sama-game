@@ -66,8 +66,15 @@ export const EXTRA_TREASURE_SHEETS=[
 ] as const;
 type ExtraArt={sheet:number;cell:number};
 const EXTRA_ART=new Map<string,ExtraArt>(EXTRA_TREASURE_SHEETS.flatMap((items,sheet)=>items.map((id,cell)=>[id,{sheet,cell}] as const)));
+/** 삼국지14에서 더한 26점의 전용 3×4 그림판. 기존 보물 그림을 빌려 쓰지 않는다. */
+export const UNIQUE_TREASURE_SHEETS=[
+  ['zhansheSword','baipiDao','guoxiaMa','liangzhouMa','baihu','fourWheelCart','simaFa','weiLiaozi','shiji','hanfeizi','guanzi','shangjunshu'],
+  ['yanziChunqiu','yinfu','siminYueling','yantielun','laozi','zhuangzi','lunyu','shijing','shujing','yijing','liji','taipingYaoshu'],
+  ['shanhaijing','xishuMap'],
+] as const;
+const UNIQUE_ART=new Map<string,ExtraArt>(UNIQUE_TREASURE_SHEETS.flatMap((items,sheet)=>items.map((id,cell)=>[id,{sheet,cell}] as const)));
 /** 실제 그림이 등록된 추가 보물·회차 보물 id. */
-export const TREASURE_ART:ReadonlySet<string>=new Set(EXTRA_ART.keys());
+export const TREASURE_ART:ReadonlySet<string>=new Set([...EXTRA_ART.keys(),...UNIQUE_ART.keys()]);
 
 const esc=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 const EDGES=[0,150,306,458,610,764,919,1072,1228,1387,1619];
@@ -77,22 +84,17 @@ const sheetIcon=(key:string)=>{
   const col=art.cell%3,row=Math.floor(art.cell/3);
   return `<i class="treasure-icon sheet" style="background-image:url(treasures-extra-${String(art.sheet+1).padStart(2,'0')}-v1.webp);background-size:300% 400%;background-position:${col*50}% ${row*100/3}%;background-repeat:no-repeat"></i>`;
 };
+const uniqueSheetIcon=(key:string)=>{
+  const art=UNIQUE_ART.get(key);if(!art)return '';
+  const col=art.cell%3,row=Math.floor(art.cell/3);
+  return `<i class="treasure-icon sheet" style="background-image:url(treasures-unique-${String(art.sheet+1).padStart(2,'0')}-v1.webp);background-size:300% 400%;background-position:${col*50}% ${row*100/3}%;background-repeat:no-repeat"></i>`;
+};
 const pendingIcon=(glyph:string,grade:number,label:string)=>`<i class="treasure-icon pending g${grade}" title="${esc(label)} · 그림 준비 중">${esc(glyph)}</i>`;
 
-/**
- * 삼국지14 명품으로 더한 보물: 전용 그림이 나오기 전까지 같은 형태의 기존 그림을 빌려 쓴다.
- * (서책은 서책, 말은 말, 칼은 칼 — 등급 테두리는 보물 자신의 것.)
- */
-export const BORROWED_ART:Record<string,string>={
-  simaFa:'sunzi',weiLiaozi:'threeStrategies',shiji:'springAutumn',hanfeizi:'bambooSlips',guanzi:'sixTeachings',shangjunshu:'mengde',yanziChunqiu:'springAutumn',
-  yinfu:'dunjia',siminYueling:'bambooSlips',yantielun:'threeStrategies',laozi:'taiping',zhuangzi:'dunjia',lunyu:'bambooSlips',shijing:'sixTeachings',shujing:'sunzi',
-  yijing:'formationScroll',liji:'mengde',taipingYaoshu:'taiping',shanhaijing:'qingshu',xishuMap:'formationScroll',
-  guoxiaMa:'nomadSteed',liangzhouMa:'yellowHorse',baihu:'fordHorse',fourWheelCart:'swiftSaddle',zhansheSword:'jadeSword',baipiDao:'ringBlade',
-};
 /** 장착 보물의 그림. */
 export function treasureIcon(id:string):string{
-  if(TREASURE_ART.has(id))return sheetIcon(id);
-  const borrowed=BORROWED_ART[id];if(borrowed)return treasureIcon(borrowed);
+  if(UNIQUE_ART.has(id))return uniqueSheetIcon(id);
+  if(EXTRA_ART.has(id))return sheetIcon(id);
   const info=treasureInfo(id);if(info.icon>=0)return atlasIcon(info.icon);
   return pendingIcon(formName(formOf(id)).slice(0,1),info.grade,formName(formOf(id)));
 }

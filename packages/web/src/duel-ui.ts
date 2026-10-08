@@ -34,10 +34,17 @@ const HELP:Record<'duel'|'debate',Record<DuelAction,string>>={
   duel:{attack:'필살을 끊는다',guard:'공격을 막고 기합 +1',rally:'간파를 누르고 기합 +2',feint:'방어를 깨뜨린다',special:'기합 2 · 기합을 벤다'},
   debate:{attack:'논파의 허점을 찌른다',guard:'논박을 막고 논거 +1',rally:'유도를 견디고 논거 +2',feint:'반론을 유도한다',special:'논거 2 · 숙고를 끊는다'},
 };
-/** 대결 장소(옆에서 본 배경): 일기토는 들·산길·진영, 설전은 대청·서재·군막. */
+const DUEL_BACKDROPS=['duel-arena-field-v2.webp','duel-arena-river-v2.webp','duel-arena-gate-v2.webp'] as const;
+const DEBATE_BACKDROPS=['debate-arena-palace-v2.webp','debate-arena-tent-v2.webp'] as const;
+const backdropIndex=(seed:string,length:number)=>{
+  let hash=2166136261;
+  for(const ch of seed)hash=Math.imul(hash^ch.charCodeAt(0),16777619);
+  return (hash>>>0)%length;
+};
+/** 대결 장소(옆에서 본 배경): 일기토는 들판·강변·성문, 설전은 궁전·군막을 번갈아 쓴다. */
 export function duelBackdrop(kind:'duel'|'debate',seed:string,indoor=false){
-  void seed;
-  const scene=kind==='debate'||indoor?'debate-arena-v1.png':'duel-arena-v1.png';
+  const scenes=kind==='debate'||indoor?DEBATE_BACKDROPS:DUEL_BACKDROPS;
+  const scene=scenes[backdropIndex(seed,scenes.length)];
   return `background-image:url(${scene});background-position:center;background-size:cover`;
 }
 const face=(name:string)=>bustFace(name)??`<div class="talk-bust sprite">${officerPortrait(name)}</div>`;

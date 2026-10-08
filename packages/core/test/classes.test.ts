@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { makeUnit, evolveUnit, statsFor, profileOf } from "../src/units.ts";
 import { getTrait } from "../src/traits.ts";
 import "../src/index.ts";
-import { evolvedClass, familyOf, tierOf, nextEvolution, VARIANTS, EVOLUTION } from "../src/classes.ts";
+import { evolvedClass, familyOf, tierOf, nextEvolution, VARIANTS, EVOLUTION, currentClass, SINGLE_STAGE_CLASSES } from "../src/classes.ts";
 import { matchupMultiplier } from "../src/formulas.ts";
 import { flatMap } from "./fixtures.ts";
 import type { UnitClass } from "../src/types.ts";
@@ -27,6 +27,13 @@ describe("병종 계통과 진화", () => {
       expect(familyOf(to)).toBe(familyOf(from));
       expect(tierOf(to)).toBeGreaterThan(tierOf(from));
     }
+  });
+  it("keeps designated troops and imperial NPCs as independent single-stage classes", () => {
+    for(const c of SINGLE_STAGE_CLASSES){expect(tierOf(c),c).toBe(1);expect(nextEvolution(c),c).toBeUndefined();}
+    expect(currentClass('feixiong')).toBe('xiliang');
+    expect(currentClass('cloudRam')).toBe('ram');
+    expect(currentClass('divineEngineer')).toBe('engineer');
+    expect(currentClass('emperor')).toBe('emperor');
   });
   it("keeps the HP ratio and swaps in the new class's range and traits on evolution", () => {
     const u = makeUnit({ id: "a", side: "player", unitClass: "archer", level: 16, pos: { x: 0, y: 0 } });

@@ -1,6 +1,6 @@
 import {describe,it,expect} from 'vitest';
 import {treasures,treasureInfo} from '../src/progression.ts';
-import {treasureIcon,formOf,BORROWED_ART} from '../src/treasure-art.ts';
+import {treasureIcon,formOf,UNIQUE_TREASURE_SHEETS} from '../src/treasure-art.ts';
 import {treasurePowers} from '../../core/src/treasure-traits.ts';
 import {treasureSource} from '../src/treasure-codex.ts';
 
@@ -15,12 +15,14 @@ describe('삼국지14 명품 이름의 보물',()=>{
   expect(new Set(names).size).toBe(names.length);
  });
  it('새 보물은 보물 사냥에서 얻고, 효과·형태·그림이 있다',()=>{
-  for(const id of Object.keys(BORROWED_ART)){
+  for(const id of UNIQUE_TREASURE_SHEETS.flat()){
    const t=treasures.find(x=>x.id===id)!;expect(t,id).toBeDefined();expect(t.quest).toMatch(/^R0[1-5]$/);
    expect(treasureSource(t.stage)).toContain('보물 사냥');
    expect(treasurePowers.some(p=>p.id===id)).toBe(true);
    expect(treasureIcon(id)).not.toContain('pending');
+   expect(treasureIcon(id)).toContain('treasures-unique-');
    expect(formOf(id)==='book'||formOf(id)==='mount'||treasureInfo(id).slot==='weapon').toBe(true);
   }
+  expect(UNIQUE_TREASURE_SHEETS.flat()).toHaveLength(26);
  });
 });

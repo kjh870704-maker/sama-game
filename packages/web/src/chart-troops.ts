@@ -50,15 +50,15 @@ export const CHART_ROLES:Partial<Record<UnitClass,Role>>={
   heavyChariot:r('중전차','전차 3단계 · 철갑으로 물리 피해를 덜 받는다','heavyCav',0x9098a0),
   divineChariot:r('신전차','전차 4단계 · 용머리 금전차','heavyCav',0xffd060),
   // 정란계
-  siegeTower:r('경정란','높은 망루에서 활을 쏘는 공성탑 · 사거리 1~3','catapult',0xc0a070),
+  siegeTower:r('정란','높은 망루에서 활을 쏘는 단일 공성 병종 · 사거리 1~3','catapult',0xc0a070),
   jinglan:r('정란','정란 2단계 · 공격력이 오른다','catapult',0xb08860),
   heavyJinglan:r('중정란','정란 3단계 · 두꺼운 판벽','catapult',0x907860),
   divineJinglan:r('신정란','정란 4단계 · 금장 망루, 방어를 꿰뚫는다','catapult',0xf0d080),
-  // 천자계
+  // 황실 NPC — 서로 진화하지 않는 독립 단일 병종
   crownPrince:r('황태자','황실의 후계 · 회복과 정화','strategist',0xa0b8e0,HEAL),
-  royalPrince:r('친왕공','천자 2단계 · 책략 피해를 덜 받는다','strategist',0xc0c8d0,HEAL),
-  emperor:r('황제','천자 3단계 · 회복이 강해진다','strategist',0xffd040,HEAL),
-  heavenEmperor:r('천자도록','천자 4단계 · 천자의 위광','strategist',0xfff0c0,HEAL),
+  royalPrince:r('친왕공','황실의 친왕 · 책략 피해를 덜 받는다','strategist',0xc0c8d0,HEAL),
+  emperor:r('황제','천하의 군주 · 황은으로 아군을 회복한다','strategist',0xffd040,HEAL),
+  heavenEmperor:r('천자도록','천자의 위광을 나타내는 황실 NPC','strategist',0xfff0c0,HEAL),
   // 보급계
   transport:r('수송대','손수레로 군량을 나르며 다친 병사를 돌본다','engineer',0xc8b088,['mend']),
   baggageTrain:r('치중대','보급 2단계 · 수레 행렬, 회복이 오른다','engineer',0xd0b890,['mend','purify']),

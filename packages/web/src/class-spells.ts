@@ -1,5 +1,5 @@
 import type {UnitClass} from '../../core/src/index.ts';
-import {fourStageCorrectionRows} from './complete-troops.ts';
+import {fourStageCorrectionRows,singleStageCorrectionRows} from './complete-troops.ts';
 import {allStrategies} from './officers.ts';
 
 /**
@@ -9,12 +9,18 @@ import {allStrategies} from './officers.ts';
  * - 물리로 싸우는 계통은 특수기를 하나씩 가진다(공격력으로 피해, MP 조금).
  * - 같은 계통의 진화형은 같은 목록을 쓰고, 레벨이 오르면 습득 레벨에 맞춰 하나씩 열린다.
  */
-export type Lineage=keyof typeof fourStageCorrectionRows|'civilian';
+export type Lineage=keyof typeof fourStageCorrectionRows|keyof typeof singleStageCorrectionRows;
 export const SHARED=new Set(['mend','purify','focus']);
 
 const LINEAGE:Partial<Record<UnitClass,Lineage>>={};
 for(const [key,classes] of Object.entries(fourStageCorrectionRows))for(const c of classes)LINEAGE[c as UnitClass]=key as Lineage;
-export const lineageOf=(c:UnitClass):Lineage=>LINEAGE[c]??'civilian';
+for(const [key,classes] of Object.entries(singleStageCorrectionRows))for(const c of classes){
+  const lineage=key==='single-stage-royal-prince'||key==='single-stage-emperor'||key==='single-stage-heaven-emperor'?'single-stage-crown-prince':key;
+  LINEAGE[c as UnitClass]=lineage as Lineage;
+}
+export const lineageOf=(c:UnitClass):Lineage=>LINEAGE[c]??'single-stage-civilian';
+
+const IMPERIAL=['edict','purify','royalGrace','imperialAura','strawBoats','secretPath','amnesty','focus'] as const;
 
 /** 책략 계통의 고유 책략(습득 레벨은 책략 정의를 따른다). */
 export const LINEAGE_SPELLS:Partial<Record<Lineage,readonly string[]>>={
@@ -35,9 +41,9 @@ export const LINEAGE_SPELLS:Partial<Record<Lineage,readonly string[]>>={
   // 군주: 통솔
   'four-stage-lord':['banner','warCry','decree','valor','burnBoats','backWater','peachOath'],
   // 황태자: 황명
-  'four-stage-crown-prince':['edict','purify','royalGrace','imperialAura','strawBoats','secretPath','amnesty','focus'],
+  'single-stage-crown-prince':IMPERIAL,
   // 수송대: 보급
-  'four-stage-transport':['rations','spareArms','supplyLine','woodenOx','focus'],
+  'single-stage-transport':['rations','spareArms','supplyLine','woodenOx','focus'],
   // 무도가: 기공
   'four-stage-monk':['qigong','ironBody'],
   // 기마책사: 이동하면서 기를 모으는 부채 책략
@@ -49,10 +55,10 @@ export const LINEAGE_SKILL:Partial<Record<Lineage,string>>={
   'four-stage-infantry':'shieldBash','four-stage-spearman':'pierce','four-stage-cavalry':'breakthrough','four-stage-heavy-cavalry':'trample',
   'four-stage-archer':'aimedShot','four-stage-crossbow':'volley','four-stage-horse-archer':'skirmish',
   'four-stage-assassin':'assassinate','four-stage-rattan':'rattanRush','four-stage-elephant':'tuskCharge','four-stage-bandit':'plunder',
-  'four-stage-xiliang':'westernCharge','four-stage-ram':'gateCrash','four-stage-navy':'deckVolley','four-stage-swordsman':'flashCut',
+  'single-stage-xiliang':'westernCharge','single-stage-ram':'gateCrash','single-stage-navy':'deckVolley','four-stage-swordsman':'flashCut',
   'four-stage-mountain-cavalry':'mountainRaid','four-stage-valiant-cavalry':'lanceRush','four-stage-chariot':'scytheWheels',
-  'four-stage-siege-tower':'towerShot','four-stage-nanman':'beastRoar','four-stage-gaema':'ironCharge','four-stage-halberd-cavalry':'halberdSweep',
-  'four-stage-engineer':'snare','four-stage-catapult':'thunderShot','four-stage-monk':'chainFist','four-stage-lord':'royalStrike',
+  'single-stage-siege-tower':'towerShot','four-stage-nanman':'beastRoar','single-stage-gaema-warrior':'ironCharge','four-stage-halberd-cavalry':'halberdSweep',
+  'single-stage-engineer':'snare','four-stage-catapult':'thunderShot','four-stage-monk':'chainFist','four-stage-lord':'royalStrike',
   'four-stage-commander':'commandStrike',
   'four-stage-yellow-turban':'yellowSlash','four-stage-pirate':'boardingSlash',
 };

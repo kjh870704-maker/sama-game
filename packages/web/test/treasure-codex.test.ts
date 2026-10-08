@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { filterTreasures, defaultFilter } from "../src/treasure-codex.ts";
-import { EXTRA_TREASURE_SHEETS, TREASURE_ART, formOf, FORMS, relicIcon, treasureIcon } from "../src/treasure-art.ts";
+import { EXTRA_TREASURE_SHEETS, UNIQUE_TREASURE_SHEETS, TREASURE_ART, formOf, FORMS, relicIcon, treasureIcon } from "../src/treasure-art.ts";
 import { treasures } from "../src/progression.ts";
 import { RELICS } from "../src/roguelike.ts";
 
@@ -25,11 +25,14 @@ describe("보물 도감 필터", () => {
   });
   it("그림 판 밖의 보물과 회차 보물도 모두 추가 그림판에 등록한다", () => {
     expect(EXTRA_TREASURE_SHEETS.flat()).toHaveLength(66);
-    expect(TREASURE_ART.size).toBe(66);
+    expect(UNIQUE_TREASURE_SHEETS.flat()).toHaveLength(26);
+    expect(TREASURE_ART.size).toBe(92);
     for(const t of treasures)expect(treasureIcon(t.id),t.id).not.toContain("pending");
     for(const r of RELICS)expect(relicIcon(r.id,r.name),r.id).not.toContain("pending");
     expect(treasureIcon("lionHelm")).toContain("treasures-extra-02-v1.webp");
     expect(relicIcon("whetstone", "숫돌")).toContain("treasures-extra-05-v1.webp");
     expect(relicIcon("drum", "진군고")).not.toContain("pending");
+    expect(treasureIcon("laozi")).toContain("treasures-unique-02-v1.webp");
+    expect(treasureIcon("shanhaijing")).toContain("treasures-unique-03-v1.webp");
   });
 });

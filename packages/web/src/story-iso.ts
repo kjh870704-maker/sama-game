@@ -111,7 +111,7 @@ export function kindFor(art:number,place:string):Kind{
  */
 export function isoScene(art:number,place:string,clear:readonly At[]=[]):IsoScene{
   const kind=kindFor(art,place);OY=originFor(kind);
-  const cells=[...new Set(clear.map(a=>pctCell(a).join(',')))].sort(),key=`${kind}:${place}:${cells.join(';')}:${FLAG.emblem}${FLAG.color}`;
+  const cells=[...new Set(clear.map(a=>pctCell(a).join(',')))].sort(),key=`${kind}:${art}:${place}:${cells.join(';')}:${FLAG.emblem}${FLAG.color}`;
   const hit=cache.get(key);if(hit)return hit;
   const scene=build(kind,hash(place)+art*7919,place,new Set(cells),art);cache.set(key,scene);return scene;
 }
@@ -1058,6 +1058,8 @@ const CASTLE_H=230;
 interface Painted {url:string;w:number;h:number;cropTop:number;kinds:Kind[];
   /** 여러 장이 모인 판에서 이 그림의 자리(없으면 그림 전체). arts: 이 그림을 먼저 고를 이야기 배경 번호. */
   sx?:number;sy?:number;arts?:number[];
+  /** 같은 장소의 야간·우천 전용 원화. */
+  variant?:'night'|'rain';
   /** 그림 자체에 빛(밤·노을)이 들어 있어 따로 색을 입히지 않는다. */
   lit?:boolean;
   /** 바닥 뒤 모서리와 오른쪽 모서리(원화 좌표): 격자 원점과 칸 크기를 맞춘다. */
@@ -1077,7 +1079,17 @@ function sidePanel(idx:number,kinds:Kind[],yTop:number,o:{blocks?:Array<Array<[n
     back:[w/2,yTop+2],right:[w+40,yTop+(h-yTop)*.55],figScale:o.fig??1.4,
     floor:[[l,yTop],[w-r,yTop],[w,h],[0,h]],blocks:o.blocks??[]};
 }
+function storyVariant(url:string,kinds:Kind[],variant:'night'|'rain',yTop:number,figScale=1.08):Painted{
+  return {url,w:1600,h:900,cropTop:0,kinds,variant,lit:true,back:[800,yTop],right:[1560,yTop+190],figScale,
+    floor:[[45,yTop],[1555,yTop],[1600,900],[0,900]],blocks:[]};
+}
 const PAINTED:Painted[]=[
+  storyVariant('story-tent-night-v1.webp',['tent'],'night',350),
+  storyVariant('story-tent-rain-v1.webp',['tent'],'rain',350),
+  storyVariant('story-camp-night-v1.webp',['camp','battlefield'],'night',420,.98),
+  storyVariant('story-camp-rain-v1.webp',['camp','battlefield'],'rain',420,.98),
+  storyVariant('story-palace-night-v1.webp',['palace'],'night',430,1.02),
+  storyVariant('story-palace-rain-v1.webp',['palace'],'rain',430,1.02),
   {url:'scenes/study.webp',w:1800,h:1004,cropTop:56,kinds:['study','home','hall'],back:[905,300],right:[1745,690],figScale:1.35,
     floor:[[905,330],[1700,690],[905,1100],[110,690]],
     blocks:[[[50,560],[490,450],[590,530],[150,740]],[[470,400],[770,370],[780,470],[560,560]],[[850,300],[960,300],[960,380],[850,380]],[[920,370],[1320,430],[1330,620],[1170,640],[910,480]],[[1330,540],[1760,600],[1760,720],[1500,800],[1330,650]]]},
@@ -1096,7 +1108,13 @@ export async function loadPaintedScenes(){
   cache.clear();
 }
 const inPoly=(x:number,y:number,poly:ReadonlyArray<readonly [number,number]>)=>{let inside=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const [xi,yi]=poly[i]!,[xj,yj]=poly[j]!;if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)inside=!inside;}return inside;};
-function paintedFor(kind:Kind,art=-1){const ok=PAINTED.filter(p=>p.kinds.includes(kind)&&paintedImg.has(p.url));return ok.find(p=>p.arts?.includes(art))??ok[0];}
+function paintedFor(kind:Kind,art=-1,place='',variantOnly=false){
+  const ok=PAINTED.filter(p=>p.kinds.includes(kind)&&paintedImg.has(p.url)),mood=moodOf(place,kind);
+  const variant=mood.weather==='rain'?'rain':mood.light==='night'?'night':undefined;
+  if(variant){const themed=ok.find(p=>p.variant===variant);if(themed)return themed;}
+  if(variantOnly)return undefined;
+  return ok.find(p=>!p.variant&&p.arts?.includes(art))??ok.find(p=>!p.variant);
+}
 function buildPainted(p:Painted,kind:Kind,place:string):IsoScene{
   const img=paintedImg.get(p.url)!,mood=moodOf(place,kind),k=W/p.w;
   const canvas=document.createElement('canvas');canvas.width=W*SS;canvas.height=H*SS;const g=canvas.getContext('2d')!;g.scale(SS,SS);g.imageSmoothingQuality='high';
@@ -1155,9 +1173,11 @@ function groundScene(kind:Kind,seed:number,place:string,clearPct:readonly At[]):
 
 // ─────────────────────────────────────────────── 장면 조립
 function build(kind:Kind,seed:number,place='',clear:Set<string>=new Set(),artNo=-1):IsoScene{
+  // 반복이 많은 군막·야외 진영·대전은 밤/비 전용 원화를 먼저 쓴다.
+  const themed=paintedFor(kind,artNo,place,true);if(themed)return buildPainted(themed,kind,place);
   // 알현(옥좌) 장면은 자리 배치가 따로 있어 그린 배경을 쓴다.
   if(OUTDOOR.has(kind)){const t=groundScene(kind,seed,place,[...clear].map(k=>{const [c,r]=k.split(',').map(Number);return [((c!-r!)*TW/2+OX)/W*100,(OY+(c!+r!)*TH/2)/H*100] as At;}));if(t)return t;}
-  if(kind!=='throne'){const p=paintedFor(kind,artNo);if(p)return buildPainted(p,kind,place);}
+  if(kind!=='throne'){const p=paintedFor(kind,artNo,place);if(p)return buildPainted(p,kind,place);}
   const R=rng(seed),indoor=INDOOR.has(kind),mood=moodOf(place,kind);
   LIGHTS=[];SHAFTS=[];
   // 두 배 크기로 그린다(화면에서 다가가 보아도 또렷하게). 그리는 좌표는 그대로 W×H.

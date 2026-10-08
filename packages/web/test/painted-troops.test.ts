@@ -25,14 +25,14 @@ describe('dedicated troop art',()=>{
 });
 import {hasPaintedMotion} from '../src/troops.ts';
 import {paintedFrames,paintedTroopSheets,POSE} from '../src/painted-troops.ts';
-import {fourStageCorrectionRows} from '../src/complete-troops.ts';
+import {fourStageCorrectionRows,singleStageCorrectionRows} from '../src/complete-troops.ts';
 describe('완성 원화만 쓰는 병종 그림',()=>{
-  it('loads only the registered four-stage families and the civilian sheet',()=>{
+  it('loads registered evolution families and actual one-row single-stage sheets',()=>{
     expect(paintedTroopSheets.map(s=>s.id)).toEqual([
       ...Object.keys(fourStageCorrectionRows),
-      'four-stage-civilian',
+      ...Object.keys(singleStageCorrectionRows),
     ]);
-    expect(paintedTroopSheets.every(s=>s.url.startsWith('troops-four-stage-'))).toBe(true);
+    expect(paintedTroopSheets.filter(s=>s.id.startsWith('single-stage-')).every(s=>s.rows===1&&s.url.startsWith('troops-single-stage-'))).toBe(true);
     expect(paintedFrames('four-stage-infantry')).toBe(POSE);
   });
   it('lets the battlefield use the painted walk and facing frames',()=>{

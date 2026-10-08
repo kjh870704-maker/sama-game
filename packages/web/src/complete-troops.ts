@@ -25,9 +25,6 @@ export const fourStageCorrectionRows = {
   'four-stage-taoist':['taoist','stormSage','thunderGod','heavenTaoist'],
   'four-stage-monk':['monk','warriorMonk','arhat','fistSaint'],
   'four-stage-bandit':['bandit','outlaw','greenwoodKing','chieftain'],
-  'four-stage-xiliang':['xiliang','feixiong','liangzhouIron','heavenXiliang'],
-  'four-stage-ram':['ram','ironRam','cloudRam','dragonRam'],
-  'four-stage-navy':['navy','mengchong','louchuan','admiral'],
   'four-stage-swordsman':['swordsman','knightErrant','swordMaster','swordSaint'],
   'four-stage-lord':['lord','hegemon','sovereign','sonOfHeaven'],
   'four-stage-commander':['commander','grandCommander','marshal','heavenCommander'],
@@ -35,15 +32,26 @@ export const fourStageCorrectionRows = {
   'four-stage-mountain-cavalry':['mountainCav','scoutCav','raidCav','pegasusCav'],
   'four-stage-valiant-cavalry':['valiantCav','dragonCav','stormCav','heavenCav'],
   'four-stage-chariot':['lightChariot','assaultChariot','heavyChariot','divineChariot'],
-  'four-stage-siege-tower':['siegeTower','jinglan','heavyJinglan','divineJinglan'],
-  'four-stage-crown-prince':['crownPrince','royalPrince','emperor','heavenEmperor'],
-  'four-stage-transport':['transport','baggageTrain','woodenOx','divineOx'],
   'four-stage-nanman':['nanmanRider','nanmanBeast','nanmanFoot','ytBrawler'],
-  'four-stage-gaema':['gaemaWarrior','gaemaCaptain','whiteTigerCav','divineGaema'],
   'four-stage-halberd-cavalry':['halberdCav','heavyHalberdCav','ytSpear','swordArtist'],
-  'four-stage-engineer':['engineer','sapper','masterBuilder','divineEngineer'],
   'four-stage-catapult':['catapult','thunderCart','greatTrebuchet','divineCatapult'],
 } as const satisfies Readonly<Record<string,readonly [UnitClass,UnitClass,UnitClass,UnitClass]>>;
+
+/** 진화하지 않는 독립 병종. 옛 저장의 상위 단계 ID도 같은 단일 그림으로 표시한다. */
+export const singleStageCorrectionRows = {
+  'single-stage-crown-prince':['crownPrince'],
+  'single-stage-royal-prince':['royalPrince'],
+  'single-stage-emperor':['emperor'],
+  'single-stage-heaven-emperor':['heavenEmperor'],
+  'single-stage-civilian':['civilian'],
+  'single-stage-xiliang':['xiliang','feixiong','liangzhouIron','heavenXiliang'],
+  'single-stage-ram':['ram','ironRam','cloudRam','dragonRam'],
+  'single-stage-navy':['navy','mengchong','louchuan','admiral'],
+  'single-stage-siege-tower':['siegeTower','jinglan','heavyJinglan','divineJinglan'],
+  'single-stage-transport':['transport','baggageTrain','woodenOx','divineOx'],
+  'single-stage-gaema-warrior':['gaemaWarrior','gaemaCaptain','whiteTigerCav','divineGaema'],
+  'single-stage-engineer':['engineer','sapper','masterBuilder','divineEngineer'],
+} as const satisfies Readonly<Record<string,readonly UnitClass[]>>;
 
 /** 그림 제작/검수 기준: 한 계통의 네 단계는 이 무기군을 끝까지 유지한다. */
 export const lineageWeapons = {
@@ -59,6 +67,20 @@ export const lineageWeapons = {
   'four-stage-commander':'sword',
   'four-stage-mountain-cavalry':'short-spear-and-buckler',
   'four-stage-horse-archer':'bow',
+  'four-stage-dancer':'silk-ribbon',
+  'four-stage-halberd-cavalry':'crescent-halberd',
+  'four-stage-archer':'bow',
+  'four-stage-crossbow':'crossbow',
+  'four-stage-bandit':'curved-cleaver',
+  'four-stage-swordsman':'straight-jian',
+  'four-stage-assassin':'twin-daggers',
+} as const;
+
+export const singleStageWeapons = {
+  'single-stage-crown-prince':'court-tablet','single-stage-royal-prince':'court-tablet',
+  'single-stage-emperor':'court-tablet','single-stage-heaven-emperor':'court-tablet',
+  'single-stage-xiliang':'curved-saber','single-stage-gaema-warrior':'spear',
+  'single-stage-engineer':'construction-hammer',
 } as const;
 
 // 서로 닮았던 계통은 무기·투구·갑옷 윤곽을 갈라 다시 그린 v2 시트를 쓴다.
@@ -66,18 +88,22 @@ const V2_SHEETS=new Set([
   'four-stage-fengshui','four-stage-heavy-cavalry','four-stage-lord',
   'four-stage-valiant-cavalry','four-stage-rattan','four-stage-yellow-turban',
   'four-stage-commander','four-stage-mountain-cavalry',
+  'four-stage-dancer','four-stage-halberd-cavalry',
+  'four-stage-archer','four-stage-crossbow','four-stage-bandit',
+  'four-stage-swordsman',
+  'four-stage-assassin',
 ]);
 // 화풍 재통일: 보병·등갑병의 픽셀 비율과 명암으로 교정한 v3를 쓴다.
 const SHEET_FILES:Readonly<Record<string,string>>={
-  'four-stage-monk':'troops-four-stage-monk-v3.png',
-  'four-stage-maiden':'troops-four-stage-maiden-v3.png',
-  'four-stage-mounted-strategist':'troops-four-stage-mounted-strategist-v3.png',
-  'four-stage-pirate':'troops-four-stage-pirate-v3.png',
+  'four-stage-monk':'troops-four-stage-monk-v3.webp',
+  'four-stage-maiden':'troops-four-stage-maiden-v3.webp',
+  'four-stage-mounted-strategist':'troops-four-stage-mounted-strategist-v3.webp',
+  'four-stage-pirate':'troops-four-stage-pirate-v3.webp',
 };
-const sheet = (id:string)=>({
+const sheet = (id:string,rows=4)=>({
   id,
-  url:SHEET_FILES[id]??`troops-${id}-${V2_SHEETS.has(id)?'v2.png':'v1.webp'}`,
-  rows:4,
+  url:id.startsWith('single-stage-')?`troops-${id}-v1.webp`:SHEET_FILES[id]??`troops-${id}-${V2_SHEETS.has(id)?'v2.webp':'v1.webp'}`,
+  rows,
   // 투명 배경의 미세한 가장자리는 살리되 이웃 칸의 실루엣은 합치지 않는다.
   alphaCutoff:240,
   strictGrid:true,
@@ -85,8 +111,8 @@ const sheet = (id:string)=>({
 
 /** 진화 계보와 진화하지 않는 민간인 전용 시트. */
 export const completeTroopSheets = [
-  ...Object.keys(fourStageCorrectionRows).map(sheet),
-  sheet('four-stage-civilian'),
+  ...Object.keys(fourStageCorrectionRows).map(id=>sheet(id,4)),
+  ...Object.keys(singleStageCorrectionRows).map(id=>sheet(id,1)),
 ];
 
 export type CompleteTroopCell={sheet:string;row:number;rows:number};
@@ -95,9 +121,14 @@ const evolvedTroopArt=Object.fromEntries(
     troop,{sheet:sheetId,row,rows:4},
   ])),
 ) as Partial<Record<UnitClass,CompleteTroopCell>>;
+const singleTroopArt=Object.fromEntries(
+  Object.entries(singleStageCorrectionRows).flatMap(([sheetId,classes])=>classes.map(troop=>[
+    troop,{sheet:sheetId,row:0,rows:1},
+  ])),
+) as Partial<Record<UnitClass,CompleteTroopCell>>;
 
 /** 게임의 모든 병종은 새 4행 규격만 사용한다. */
 export const completeTroopArt={
   ...evolvedTroopArt,
-  civilian:{sheet:'four-stage-civilian',row:0,rows:4},
+  ...singleTroopArt,
 } as Record<UnitClass,CompleteTroopCell>;

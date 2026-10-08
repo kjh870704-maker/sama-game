@@ -5,9 +5,14 @@ import {strategyIconUrl} from '../src/strategy-icons.ts';
 import {allStrategies} from '../src/officers.ts';
 
 describe('대결과 책략 이미지',()=>{
-  it('일기토와 설전이 각각 전용 대치 배경을 쓴다',()=>{
-    expect(duelBackdrop('duel','seed')).toContain('duel-arena-v1.png');
-    expect(duelBackdrop('debate','seed')).toContain('debate-arena-v1.png');
+  it('일기토 3종과 설전 2종 전용 WebP 배경을 장면마다 바꿔 쓴다',()=>{
+    const duelScenes=new Set(Array.from({length:40},(_,i)=>duelBackdrop('duel',`seed-${i}`)));
+    const debateScenes=new Set(Array.from({length:40},(_,i)=>duelBackdrop('debate',`seed-${i}`)));
+    expect(duelScenes.size).toBe(3);
+    expect(debateScenes.size).toBe(2);
+    for(const scene of [...duelScenes,...debateScenes])expect(scene).toContain('.webp');
+    expect([...duelScenes].some(scene=>scene.includes('duel-arena-river-v2.webp'))).toBe(true);
+    expect([...debateScenes].some(scene=>scene.includes('debate-arena-tent-v2.webp'))).toBe(true);
   });
 
   it('초상 카드 대신 두 전신 모델과 5수 상성 결과를 표시한다',()=>{

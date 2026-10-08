@@ -54,8 +54,10 @@ export function hitStyle(family:string,unitClass:string,strategy?:string):HitSty
   }
 }
 
-/** 완성 병종 원화 한 칸을 전장에 그리는 크기(px). 걷는 병종 키는 이 값의 0.6, 기마·수레·배는 0.72. */
-const TROOP_CELL_SIZE=86;
+/** 완성 병종 원화 한 칸을 전장에 그리는 크기(px).
+ * 48px 전투 칸에 인접한 병종의 실루엣이 침범하지 않도록 투명 여백을 포함한 프레임을 64px로 제한한다.
+ * 실제 인물 키는 보병 38px(0.6), 기마·수레·배 46px(0.72)라 한 칸 안에서 읽힌다. */
+const TROOP_CELL_SIZE=64;
 export class Battlefield {
   app=new Application();
   world=new Container();
