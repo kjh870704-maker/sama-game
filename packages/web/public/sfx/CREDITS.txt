@@ -10,4 +10,5 @@ Sources:
 - Micro Pack: Organic Wooshes, Kitchen Knives — Ben Burnes (Abstraction) — https://abstractionmusic.com
 - Warfork CC0 assets (players, weapons) — Team Forbidden (Warfork) — https://github.com/lavenderdotpet/CC0-Public-Domain-Sounds
 
+Music instruments (flute/erhu/pipa) also come from VCSL (CC0 1.0).
 Per-file origins: docs/tech/sound-credits.md

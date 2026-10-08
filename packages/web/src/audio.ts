@@ -132,21 +132,35 @@ export class Soundscape {
     if(!this.ctx)return;const len=Math.floor(this.ctx.sampleRate*Math.min(2,d+.05)),b=this.ctx.createBuffer(1,len,this.ctx.sampleRate),c=b.getChannelData(0);for(let i=0;i<len;i++)c[i]=Math.random()*2-1;
     const src=this.ctx.createBufferSource(),bq=this.ctx.createBiquadFilter();src.buffer=b;bq.type='bandpass';bq.frequency.value=f;bq.Q.value=q;const g=this.env(t,Math.min(.2,d*.3),d,v);src.connect(bq);bq.connect(g);this.out(g,bus,.3);src.start(t);
   }
-  /** Guzheng from pre-rendered Karplus–Strong notes. */
+  /**
+   * A recorded, pitched instrument note: the take nearest in pitch, resampled to the target.
+   * Returns false when that group has not loaded (the caller then synthesizes).
+   */
+  private sampled(group:string,m:number,t:number,v:number,d:number,bus:AudioNode,o:{attack?:number;release?:number;wet?:number}={}){
+    const rec=this.samples.get(group),pitches=SAMPLE_GROUPS[group]?.midi;if(!this.ctx||!rec?.length||!pitches)return false;
+    let best=0;pitches.forEach((p,i)=>{if(Math.abs(p-m)<Math.abs(pitches[best]!-m))best=i;});
+    const b=rec[best];if(!b)return false;
+    const src=this.ctx.createBufferSource(),g=this.ctx.createGain();src.buffer=b;src.playbackRate.value=2**((m-pitches[best]!)/12);
+    const a=o.attack??0;g.gain.setValueAtTime(a?0:v,t);if(a)g.gain.linearRampToValueAtTime(v,t+a);g.gain.setTargetAtTime(.0001,t+d,o.release??.25);
+    src.connect(g);this.out(g,bus,o.wet??.35);src.start(t);src.stop(t+d+(o.release??.25)*5);return true;
+  }
+  /** Guzheng: recorded đàn tranh (a close cousin of the guzheng) when loaded, else Karplus–Strong. */
   private zheng(m:number,t:number,v:number,bus=this.music,d=1.8){
     if(!this.ctx||!bus)return;
-    // Recorded đàn tranh (a close cousin of the guzheng) when loaded, else Karplus–Strong.
-    const rec=this.samples.get('zheng'),pitches=SAMPLE_GROUPS.zheng?.midi;let b:AudioBuffer|undefined,rate=1,gain=v*3;
-    if(rec&&pitches){let best=0;pitches.forEach((p,i)=>{if(Math.abs(p-m)<Math.abs(pitches[best]!-m))best=i;});b=rec[best];rate=2**((m-pitches[best]!)/12);gain=v*2.2;}
-    else b=this.note(Math.round(m));
-    if(!b)return;const src=this.ctx.createBufferSource(),g=this.ctx.createGain();src.buffer=b;src.playbackRate.value=rate;g.gain.setValueAtTime(gain,t);g.gain.setTargetAtTime(.0001,t+d,.25);src.connect(g);this.out(g,bus,.35);src.start(t);src.stop(t+d+1.2);
+    if(this.sampled('zheng',m,t,v*2.2,d,bus))return;
+    const b=this.note(Math.round(m));
+    if(!b)return;const src=this.ctx.createBufferSource(),g=this.ctx.createGain();src.buffer=b;g.gain.setValueAtTime(v*3,t);g.gain.setTargetAtTime(.0001,t+d,.25);src.connect(g);this.out(g,bus,.35);src.start(t);src.stop(t+d+1.2);
   }
   private flute(f:number,t:number,d:number,v:number,bus=this.music){
-    if(!this.ctx||!bus)return;const o=this.osc('sine',f,t,d),o3=this.osc('sine',f*2,t,d);this.vibrato(o,t,d,5.4,f*.012);
+    if(!this.ctx||!bus)return;
+    // Recorded alto recorder with vibrato stands in for the dizi.
+    if(this.sampled('flute',69+12*Math.log2(f/440),t,v*1.6,d,bus,{attack:.05,release:.18,wet:.45}))return;const o=this.osc('sine',f,t,d),o3=this.osc('sine',f*2,t,d);this.vibrato(o,t,d,5.4,f*.012);
     const g=this.env(t,.08,d,v),g3=this.env(t,.1,d*.7,v*.12);o.connect(g);o3.connect(g3);this.out(g,bus,.5);this.out(g3,bus,.3);this.noise(t,.2,v*.3,f*2,6,bus);
   }
   private erhu(f:number,t:number,d:number,v:number,bus=this.music){
-    if(!this.ctx||!bus)return;const o=this.osc('sawtooth',f,t,d),body=this.ctx.createBiquadFilter(),res=this.ctx.createBiquadFilter();
+    if(!this.ctx||!bus)return;
+    // Recorded bowed psaltery: a bowed string close to the erhu's voice.
+    if(this.sampled('erhu',69+12*Math.log2(f/440),t,v*1.4,d,bus,{attack:.1,release:.2,wet:.45}))return;const o=this.osc('sawtooth',f,t,d),body=this.ctx.createBiquadFilter(),res=this.ctx.createBiquadFilter();
     body.type='lowpass';body.frequency.value=Math.min(3600,f*5);body.Q.value=1.5;res.type='peaking';res.frequency.value=1100;res.Q.value=3;res.gain.value=6;
     o.frequency.setValueAtTime(f*.96,t);o.frequency.linearRampToValueAtTime(f,t+.1);this.vibrato(o,t,d,6,f*.018);
     const g=this.env(t,.18,d,v*.6);o.connect(body);body.connect(res);res.connect(g);this.out(g,bus,.45);
@@ -161,7 +175,7 @@ export class Soundscape {
   private voice(lead:Lead,f:number,t:number,d:number,v:number){
     const m=69+12*Math.log2(f/440);
     if(lead==='zheng')this.zheng(m,t,v,this.music,d);
-    else if(lead==='pipa'){for(let k=0;k<3;k++)this.zheng(m,t+k*.07,v*(1-k*.25),this.music,.35);}
+    else if(lead==='pipa'){if(this.music&&this.sampled('pipa',m,t,v*2,Math.min(d,1.2),this.music)){this.sampled('pipa',m,t+.09,v*1.1,.4,this.music);}else for(let k=0;k<3;k++)this.zheng(m,t+k*.07,v*(1-k*.25),this.music,.35);}
     else if(lead==='flute')this.flute(f,t,d,v);else if(lead==='erhu')this.erhu(f,t,d,v);else if(lead==='horn')this.horn(f,t,d,v);else this.bell(f,t,v,this.music,d);
   }
   private hit(name:string,t:number,v:number,rate=1){this.play(name,{at:t,gain:v*4,rate,bus:'music',wet:.25,priority:0});}
