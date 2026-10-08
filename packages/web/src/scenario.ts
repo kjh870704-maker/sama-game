@@ -255,15 +255,17 @@ export function rewardOfficers(state:ScenarioState,party:RunUnit[],earned:Record
   return run.news;
 }
 
-/** 상·중편에서 결말 회고로 꺼내는 줄 수(편마다). 하편의 덧말은 모두 보인다. */
+/** 상·중편에서 결말 회고로 꺼내는 줄 수(대본 묶음마다). 하편(연의·가상)의 덧말은 모두 보인다. */
 export const ENDING_NOTES_PER_ACT=2;
+/** 상·중편 대본 묶음: 연의 상편·중편(history-1·2)과 가상 상·중편(if-a). */
+const EARLY_PACKS=new Set([0,1,3]);
 /**
  * 결말 덧말: 이번 이야기에서 남긴 표식에 따른 한 줄들 — 상편·중편의 선택이 먼저 회고되고 하편의 덧말이 뒤따른다.
  * 상·중편은 대본에 적힌 순서(무게 순)로 편마다 ENDING_NOTES_PER_ACT줄까지만.
  */
 export function endingNotes(state:ScenarioState){
   const has=(n:{flag:string})=>state.flags.includes(n.flag);
-  return PACKS.flatMap((p,i)=>{const got=(p.endingNotes??[]).filter(has);return i<2?got.slice(0,ENDING_NOTES_PER_ACT):got;}).map(n=>n.line);
+  return PACKS.flatMap((p,i)=>{const got=(p.endingNotes??[]).filter(has);return EARLY_PACKS.has(i)?got.slice(0,ENDING_NOTES_PER_ACT):got;}).map(n=>n.line);
 }
 
 

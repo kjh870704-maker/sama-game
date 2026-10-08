@@ -33,3 +33,11 @@ describe('결말 회고',()=>{
     expect(lines.at(-1)).toBe(PACKS[2]!.endingNotes!.at(-1)!.line);
   });
 });
+
+describe('가상 상·중편 회고',()=>{
+  it('가상 상·중편(if-a)의 선택도 두 줄까지 회고된다',()=>{
+    const ifA=PACKS[3]!.endingNotes!;expect(ifA.length).toBeGreaterThan(20);
+    const state=freshScenario();state.flags.push(...ifA.map(n=>n.flag));
+    expect(endingNotes(state)).toEqual(ifA.slice(0,ENDING_NOTES_PER_ACT).map(n=>n.line));
+  });
+});
