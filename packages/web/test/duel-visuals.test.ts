@@ -20,6 +20,8 @@ describe('대결과 책략 이미지',()=>{
     duelRound(duel,'feint');
     const html=duelArena(duel,{models:{player:contestModel('duel','player','관우'),enemy:contestModel('duel','enemy','여포')},backdrop:''});
     expect(html).toContain('live-models');expect(html).not.toContain('duel-card');expect(html.match(/data-duel-action=/g)).toHaveLength(5);expect(html).toContain('duel-clash');
+    expect(contestModel('duel','enemy','여포')).toContain('mounted');
+    expect(contestModel('debate','enemy','진궁')).not.toContain('mounted');
     expect(duelAdvantage('guard','attack')).toBe(1);expect(duelAdvantage('feint','guard')).toBe(1);expect(duelAdvantage('special','rally')).toBe(1);
   });
 

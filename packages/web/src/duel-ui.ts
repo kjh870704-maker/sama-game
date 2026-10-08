@@ -49,7 +49,10 @@ export function duelBackdrop(kind:'duel'|'debate',seed:string,indoor=false){
 }
 const face=(name:string)=>bustFace(name)??`<div class="talk-bust sprite">${officerPortrait(name)}</div>`;
 /** 겨루기 화면 중앙에 크게 세우는 전신 전투 모델. */
-export function duelModel(model:string,side:'player'|'enemy',name:string){return `<div class="duel-model ${side==='enemy'?'face-left':'face-right'}" aria-label="${esc(displayName(name))}">${model}</div>`;}
+export function duelModel(model:string,side:'player'|'enemy',name:string){
+  const mounted=/마초|여포|사마사|관우|조운|장료|장합|하후돈|하후연/.test(displayName(name));
+  return `<div class="duel-model ${side==='enemy'?'face-left':'face-right'}${mounted?' mounted':''}" aria-label="${esc(displayName(name))}">${model}</div>`;
+}
 /** 전투 밖 대결에서 병종을 모르는 쪽: 일기토는 검객, 설전은 책사 전신 모델을 쓴다. */
 export function contestModel(kind:DuelKind,side:'player'|'enemy',name:string){
   const sheet=kind==='duel'?'four-stage-swordsman':'four-stage-strategist';
@@ -89,7 +92,10 @@ export function hitFx(kind:DuelKind,incoming:DuelAction,own:DuelAction,dmg:numbe
     if(big&&kind==='duel')fx.push('<b class="fx-word duel big">필살!</b>');
     if(guarded)fx.push(`<b class="fx-guard">${kind==='duel'?'막았다':'반론'}</b>`);
     fx.push(`<b class="damage-number${big?' crit':''}${guarded?' guarded':''}">−${dmg}<small>${kind==='duel'?'무력':'지력'} ${stat}${big?' ×1.5':''}${guarded?' · 방어':''}</small></b>`);
-  }else if(own==='guard'&&(incoming==='attack'||incoming==='special'))fx.push(`<b class="fx-guard">${kind==='duel'?'막았다':'반론'}</b>`);
+  }else if(own==='guard'&&(incoming==='attack'||incoming==='special')){
+    if(kind==='duel')fx.push('<i class="fx fx-spark block"></i>');
+    fx.push(`<b class="fx-guard">${kind==='duel'?'막았다':'반론'}</b>`);
+  }
   return fx.filter(Boolean).join('');
 }
 /** 2) 겨루기 화면. models: 두 사람의 전장 그림(HTML). */
@@ -109,13 +115,18 @@ export function duelArena(d:DuelState,o:{models:{player:string;enemy:string};bac
   const shake=!last?'':special?' shake-big':last.dealt||last.taken?' shake':'';
   const edge=last?duelAdvantage(last.action,last.enemyAction):0;
   const clash=last?`<div class="duel-clash ${edge>0?'won':edge<0?'lost':'even'}"><b>${edge>0?'상성 우세':edge<0?'상성 열세':'정면 승부'}</b><small>${labels[last.action]} ↔ ${labels[last.enemyAction]}</small></div>`:'';
+  const cutin=last?[last.action==='special'?{side:'player',name:d.player.name}:undefined,last.enemyAction==='special'?{side:'enemy',name:d.enemy.name}:undefined]
+    .filter((x):x is {side:string;name:string}=>!!x).map(x=>`<div class="duel-cutin ${x.side}" aria-hidden="true"><span>${face(x.name)}</span><b>${esc(displayName(x.name))}<small>${d.kind==='duel'?'필살기':'논파'}</small></b></div>`).join(''):'';
+  const endClass=(player:boolean)=>!d.result?'':d.result==='draw'?' result-draw':(d.result==='win')===player?' result-winner':' result-loser';
+  const even=!!last&&edge===0&&d.kind==='duel';
   return `<div class="duel-stage live-models ${d.kind}">
     <div class="duel-view${shake}" style="${o.backdrop}">${special?`<i class="duel-flash ${d.kind}"></i>`:''}
       <div class="duel-sun"></div>
-      <div class="duel-ground">
-        <div class="duel-fighter player motion-${last?.action??'idle'}${last?.taken?' hit':''}">${hp(d.player,'left')}${o.models.player}${last?hitFx(d.kind,last.enemyAction,last.action,last.taken,d.enemy.stat):''}</div>
-        <div class="duel-fighter enemy motion-${last?.enemyAction??'idle'}${last?.dealt?' hit':''}">${hp(d.enemy,'right')}${o.models.enemy}${last?hitFx(d.kind,last.action,last.enemyAction,last.dealt,d.player.stat):''}</div>
+      <div class="duel-ground${even?' clash-even':''}${d.result?' resolved':''}">
+        <div class="duel-fighter player motion-${last?.action??'idle'}${last?.taken?' hit':''}${endClass(true)}">${hp(d.player,'left')}${o.models.player}${last?hitFx(d.kind,last.enemyAction,last.action,last.taken,d.enemy.stat):''}</div>
+        <div class="duel-fighter enemy motion-${last?.enemyAction??'idle'}${last?.dealt?' hit':''}${endClass(false)}">${hp(d.enemy,'right')}${o.models.enemy}${last?hitFx(d.kind,last.action,last.enemyAction,last.dealt,d.player.stat):''}</div>
       </div>
+      ${cutin}
       ${clash}
       ${inkLine(d.player.name,pLine,'top')}${inkLine(d.enemy.name,eLine,'bottom')}
       ${result}
