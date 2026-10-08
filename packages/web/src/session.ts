@@ -137,6 +137,8 @@ export interface Save {version:2; revision?:2|3|4|5; deployment?:Deployment; cha
 export const TRIAL={hp:1.2,attack:1.12,defense:1.1};
 /** 지켜야 할 대상의 한 번 피해 상한(최대 체력 대비 %). */
 export const STEADFAST_CAP=40;
+/** 극한 낙양 탈출(S1-02): 불길이 남문을 덮기 전에 빠져나가야 하는 턴. */
+export const ESCAPE_DEADLINE=8;
 /** 규칙표의 실패 조건(protectedFailure)이 지키라고 하는 장수. */
 const MUST_SURVIVE=new Set(['cao_shuang','sima_zhao','sima_shi','dai_ling','cao_xiu','cao_pi']);
 export class Session {
@@ -394,7 +396,7 @@ export class Session {
     const result=this.battle.execute(cmd);
     if(result.ok){
       this.funds-=cost;
-      if(paying){this.bribes++;for(const e of this.state.living('enemy'))this.state.applyStatus(e,{kind:'confusion',turns:3,magnitude:1});}
+      if(paying){this.bribes++;for(const e of this.state.living('enemy'))this.state.applyStatus(e,{kind:'confusion',turns:this.difficulty==='extreme'?1:3,magnitude:1});}
       // A destructible gate occupies the exit tile in revision 4. Paying at
       // the adjacent checkpoint admits both brothers without attacking it.
       if(gate&&this.revision>=4&&s.outcome==='ongoing'){
@@ -409,6 +411,8 @@ export class Session {
   private mustSurvive(state:BattleState,u:Unit){
     if(u.side==='enemy')return false;
     if(u.unitClass==='civilian'||['convoy_trial','rescue_target'].includes(u.id))return true;
+    // 극한: 직접 움직이는 장수(사마의 형제 등)는 버티지 않는다 — 피난민·호송·호위 대상만 지킨다.
+    if(this.difficulty==='extreme'&&u.side==='player'&&!stageRules[state.stage.id]?.protect?.some(p=>p.unit===u.id))return false;
     if(state.stage.defeat.some(d=>d.type==='retreat'&&d.unit===u.id))return true;
     const rules=stageRules[state.stage.id];
     if(rules?.protect?.some(p=>p.unit===u.id)||(this.chapter===8||this.chapter===9)&&u.id==='cao_cao')return true;
@@ -426,6 +430,10 @@ export class Session {
   private applyRomanceToNew(state:BattleState){
     // 지켜야 할 대상은 한 번의 공격으로 최대 체력의 40%보다 많이 잃지 않는다(한 방에 쓰러지지 않게).
     for(const u of state.living())if(!u.traits.includes('steadfast')&&this.mustSurvive(state,u)){u.traits.push('steadfast');u.traitParams.steadfast=STEADFAST_CAP;}
+    // 극한 한중 정벌전 下: 경쟁 우군 기병이 한 칸 더 빨리 성채로 달린다.
+    if(this.chapter===1&&this.difficulty==='extreme')for(const u of state.living('allyAi'))if(u.behavior==='race'&&!this.romanced.has(u.id))u.stats.movement+=1;
+    // 극한: 성채 수비대장이 오래 버텨, 우군과의 선점 경쟁이 실제로 빠듯해진다.
+    if(this.chapter===1&&this.difficulty==='extreme'){const z=state.find('zhang_lu');if(z?.alive&&!this.romanced.has(z.id)){z.stats.maxHp=Math.round(z.stats.maxHp*3);z.hp=z.stats.maxHp;}}
     if(this.revision<4)return;
     // 꿈속의 환영과 호위 대상(일부러 맞춘 체력·이동)은 연의 능력을 입히지 않는다.
     const escorts=new Set([...(stageRules[state.stage.id]?.protect??[]).map(p=>p.unit),...(this.chapter===8||this.chapter===9?['cao_cao']:[])]);
@@ -531,6 +539,7 @@ export class Session {
       const combat=s.victory.some(v=>v.type==='annihilate');
       if(this.revision>=4)for(const tower of s.living('enemy').filter(u=>u.id.startsWith('tower_')))tower.behavior=combat?'hold':'passive';
       this.phase=combat?'교전 돌파':this.bribes?'남문으로':'잠입';
+      if(this.difficulty==='extreme'&&s.outcome==='ongoing'&&s.turn>ESCAPE_DEADLINE){this.failure=`불길이 남문을 덮어 성문이 닫혔습니다(${ESCAPE_DEADLINE}턴).`;s.outcome='defeat';s.push({t:'outcome',outcome:'defeat'});}
       if(!combat&&s.outcome==='ongoing'&&!s.activeDialogue&&['sima_yi','sima_lang'].every(id=>s.map.regionCoords('south_gate').some(p=>(key(p)===key(s.get(id).pos)||(this.revision>=4&&manhattan(p,s.get(id).pos)<=1))))){
         if(this.funds<1000){this.failure='남문 통행료 1,000전이 부족합니다.';s.outcome='defeat';s.push({t:'outcome',outcome:'defeat'});}
         else {s.activeDialogue='gate_payment';this.phase='남문 통행';}
@@ -566,7 +575,7 @@ export class Session {
     return awardedSeals(this.state,this.difficulty);
   }
   /** The turn by which the stage must be won, when its rules set one. */
-  get deadline(){return stageRules[this.state.stage.id]?.deadline;}
+  get deadline(){return stageRules[this.state.stage.id]?.deadline??(this.chapter===0&&this.difficulty==='extreme'?ESCAPE_DEADLINE:undefined);}
   get somber(){return stageRules[this.state.stage.id]?.somber===true;}
   get canCalm(){return stageRules[this.state.stage.id]?.calm===true;}
   get weather(){return this.chapter===4?'☾ 흉몽 · 짙은 안개':stageRules[this.state.stage.id]?.weather??'☀ 맑음 · 바람 약함';}
