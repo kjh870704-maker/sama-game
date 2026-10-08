@@ -43,7 +43,7 @@ export function duelBackdrop(kind:'duel'|'debate',seed:string,indoor=false){
 const face=(name:string)=>bustFace(name)??`<div class="talk-bust sprite">${officerPortrait(name)}</div>`;
 /** 겨루기 화면 중앙에 크게 세우는 전신 전투 모델. */
 export function duelModel(model:string,side:'player'|'enemy',name:string){return `<div class="duel-model ${side==='enemy'?'face-left':'face-right'}" aria-label="${esc(displayName(name))}">${model}</div>`;}
-/** 전투 밖 대결은 병종 정보가 없으므로 일기토는 검객, 설전은 책사 전신 모델을 쓴다. */
+/** 전투 밖 대결에서 병종을 모르는 쪽: 일기토는 검객, 설전은 책사 전신 모델을 쓴다. */
 export function contestModel(kind:DuelKind,side:'player'|'enemy',name:string){
   const sheet=kind==='duel'?'four-stage-swordsman':'four-stage-strategist';
   const model=`<span class="battle-model" role="img" style="background-image:var(--${sheet}-atlas);background-size:400% 400%;background-position:0 0"></span>`;
@@ -128,12 +128,14 @@ export function duelArena(d:DuelState,o:{models:{player:string;enemy:string};bac
  */
 export function playContest(kind:DuelKind,me:{name:string;stat:number},foe:{name:string;stat:number},o:{acceptLine?:string;seed?:string;indoor?:boolean;done?:string;
   /** 효과음(전투 중 겨루기와 같은 소리): 선포 화면은 critical, 겨루기는 필살·논파만 critical. */
-  sound?:(critical:boolean)=>void}={}):Promise<'win'|'lose'|'draw'>{
+  sound?:(critical:boolean)=>void;
+  /** 병종을 아는 쪽의 전신 모델(없으면 일기토 검객·설전 책사). */
+  models?:{player?:string;enemy?:string}}={}):Promise<'win'|'lose'|'draw'>{
   const d=newDuel(kind,{id:'me',...me},{id:'foe',...foe});
   const el=document.createElement('div');el.className='contest-overlay';
   // 열린 dialog(최상위 층) 안에 붙여야 그 위로 보인다.
   (document.querySelector('dialog[open]')??document.body).appendChild(el);
-  const models={player:contestModel(kind,'player',me.name),enemy:contestModel(kind,'enemy',foe.name)};
+  const models={player:o.models?.player?duelModel(o.models.player,'player',me.name):contestModel(kind,'player',me.name),enemy:o.models?.enemy?duelModel(o.models.enemy,'enemy',foe.name):contestModel(kind,'enemy',foe.name)};
   return new Promise(resolve=>{
     const arena=()=>{el.innerHTML=`<div class="contest-box">${duelArena(d,{models,backdrop:duelBackdrop(kind,o.seed??foe.name,o.indoor),...(o.acceptLine?{openingLine:o.acceptLine}:{})}).replace('전장으로 돌아가기',esc(o.done??'이야기로 돌아가기')).replace(/전투 체력: 승자 15% · 패자 45% · 무승부 양쪽 25% 피해\(최소 1\)\. 패자는 2턴 [^<]*/,kind==='duel'?'이기면 이번 전투 아군 사기 상승 · 적의 기세가 꺾인다.':'이기면 이번 전투 아군 사기 상승 · 사마의 책략 MP +15.')}</div>`;
       el.querySelectorAll<HTMLButtonElement>('[data-duel-action]').forEach(b=>b.onclick=()=>{if(duelRound(d,b.dataset.duelAction as DuelAction)){o.sound?.(b.dataset.duelAction==='special');arena();}});

@@ -141,7 +141,7 @@ const runHost:RunHost={modal:(html,closable)=>modal(html,closable),showMenu:()=>
   backToBattle:()=>{const s=openRunSession();if(s&&s!==session){session=s;activate();return;}menuOpen=false;closeModal();}};
 
 /** 시나리오 모드(본편)가 쓰는 연결: 연의 장의 정비·전투와 가상 전장 출진, 사마의의 성장 기록. */
-const scenarioHost:ScenarioHost={modal:(html,closable)=>{menuOpen=true;clearTimeout(aiTimer);sound.scene='camp';modal(html,closable);},contestSound:(kind,critical)=>sound.event({kind:'duel',critical,debate:kind==='debate'}),showSlots:()=>showSlots(()=>showScenario(scenarioHost)),showMenu:()=>showMenu(),toast:t=>toast(t),
+const scenarioHost:ScenarioHost={modal:(html,closable)=>{menuOpen=true;clearTimeout(aiTimer);sound.scene='camp';modal(html,closable);},contestSound:(kind,critical)=>sound.event({kind:'duel',critical,debate:kind==='debate'}),unitModel:(unitClass,name,side)=>portraitFor({id:'contest',name,unitClass,side} as unknown as Unit),showSlots:()=>showSlots(()=>showScenario(scenarioHost)),showMenu:()=>showMenu(),toast:t=>toast(t),
   storyBriefing:(chapter,sc)=>briefing(chapter,undefined,sc),
   startBattle:(dep,seed,difficulty='normal')=>{session=new Session(RUN_CHAPTER,difficulty,seed,'survival',RULES,dep);activate();persist();},
   hero:()=>{const l=levelInfo(campaign.xp.sima_yi??0);return {level:l.level,xp:l.next?Math.min(99,Math.floor(l.xp/l.next*100)):0};},
