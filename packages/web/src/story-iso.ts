@@ -1059,7 +1059,7 @@ interface Painted {url:string;w:number;h:number;cropTop:number;kinds:Kind[];
   /** 여러 장이 모인 판에서 이 그림의 자리(없으면 그림 전체). arts: 이 그림을 먼저 고를 이야기 배경 번호. */
   sx?:number;sy?:number;arts?:number[];
   /** 같은 장소의 야간·우천 전용 원화. */
-  variant?:'night'|'rain';
+  variant?:'day'|'night'|'rain';
   /** 같은 종류 안에서도 이 장소 이름에만 우선 쓰는 전용 원화. */
   places?:RegExp;
   /** 그림 자체에 빛(밤·노을)이 들어 있어 따로 색을 입히지 않는다. */
@@ -1081,7 +1081,7 @@ function sidePanel(idx:number,kinds:Kind[],yTop:number,o:{blocks?:Array<Array<[n
     back:[w/2,yTop+2],right:[w+40,yTop+(h-yTop)*.55],figScale:o.fig??1.4,
     floor:[[l,yTop],[w-r,yTop],[w,h],[0,h]],blocks:o.blocks??[]};
 }
-function storyVariant(url:string,kinds:Kind[],variant:'night'|'rain',yTop:number,figScale=1.08):Painted{
+function storyVariant(url:string,kinds:Kind[],variant:'day'|'night'|'rain',yTop:number,figScale=1.08):Painted{
   return {url,w:1600,h:900,cropTop:0,kinds,variant,lit:true,back:[800,yTop],right:[1560,yTop+190],figScale,
     floor:[[45,yTop],[1555,yTop],[1600,900],[0,900]],blocks:[]};
 }
@@ -1113,10 +1113,13 @@ export function specialBackdropCell(art:number,place:string){
 const PAINTED:Painted[]=[
   // 레퍼런스 전투 화면과 같은 낮은 디테일 밀도·넓은 인물 배치 공간의 지역 전용 배경.
   ...SPECIAL_PANELS.map(s=>specialPanel(s.idx,s.kinds,s.yTop,{places:s.places,...(s.variant?{variant:s.variant}:{}),...(s.inset?{inset:s.inset}:{}),...(s.fig!==undefined?{fig:s.fig}:{})})),
+  storyVariant('story-tent-day-v1.webp',['tent'],'day',350),
   storyVariant('story-tent-night-v1.webp',['tent'],'night',350),
   storyVariant('story-tent-rain-v1.webp',['tent'],'rain',350),
+  storyVariant('story-camp-day-v1.webp',['camp','battlefield'],'day',420,.98),
   storyVariant('story-camp-night-v1.webp',['camp','battlefield'],'night',420,.98),
   storyVariant('story-camp-rain-v1.webp',['camp','battlefield'],'rain',420,.98),
+  storyVariant('story-palace-day-v1.webp',['palace'],'day',430,1.02),
   storyVariant('story-palace-night-v1.webp',['palace'],'night',430,1.02),
   storyVariant('story-palace-rain-v1.webp',['palace'],'rain',430,1.02),
   {url:'scenes/study.webp',w:1800,h:1004,cropTop:56,kinds:['study','home','hall'],back:[905,300],right:[1745,690],figScale:1.35,
@@ -1139,7 +1142,7 @@ export async function loadPaintedScenes(){
 const inPoly=(x:number,y:number,poly:ReadonlyArray<readonly [number,number]>)=>{let inside=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const [xi,yi]=poly[i]!,[xj,yj]=poly[j]!;if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)inside=!inside;}return inside;};
 function paintedFor(kind:Kind,art=-1,place='',variantOnly=false,placeOnly=false){
   const ok=PAINTED.filter(p=>p.kinds.includes(kind)&&paintedImg.has(p.url)),mood=moodOf(place,kind);
-  const variant=mood.weather==='rain'?'rain':mood.light==='night'?'night':undefined;
+  const variant=mood.weather==='rain'?'rain':mood.light==='night'?'night':mood.light==='day'?'day':undefined;
   if(variant){const themed=ok.find(p=>p.variant===variant&&p.places?.test(place))??ok.find(p=>p.variant===variant&&!p.places);if(themed)return themed;}
   if(variantOnly)return undefined;
   if(placeOnly)return ok.find(p=>!p.variant&&p.places?.test(place));
