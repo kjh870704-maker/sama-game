@@ -16,6 +16,7 @@ import {officerLook} from './officer-art.ts';
 import {romanceByName} from './romance.ts';
 import {spriteAtlas,SPRITE_CELL} from './sprite-atlas.ts';
 import {PX_COLS,PX_ROWS,PX_POSE,type PxPose} from './story-pixel.ts';
+import {officerEntry,officerManifest} from './officer-models.ts';
 
 export const FIG_W=160,FIG_H=160;
 /** 칸 안에서 인물의 키(발끝은 칸 바닥에서 FOOT px 위). 그림을 크게 만들어 화면에서 줄여 쓴다(확대하면 계단이 진다). */
@@ -64,12 +65,16 @@ const NECK=[0.25,0.205,0.235,0.235,0.255,0.245,0.235,0.255];
 const HEAD_UP=1.15,BODY_DOWN=0.74;
 
 const ready=new Map<string,HTMLCanvasElement>();
+const storyReady=new Set<string>();
 const atlasKey=(url:string,rows:number)=>url+':'+rows;
 /** 무대에 쓰는 그림들을 미리 읽어 둔다(main.ts가 시작할 때 부른다). */
 export async function loadFigures(){
   const want=new Map<string,{url:string;rows:number}>([[atlasKey(OFFICERS.url,OFFICERS.rows),OFFICERS]]);
   for(const s of Object.values(BY_LOOK)){want.set(atlasKey(s.url,s.rows),s);if(s.walk)want.set(atlasKey(s.walk.url,s.walk.rows),s.walk);}
-  await Promise.all([...want].map(async([k,s])=>{try{ready.set(k,await spriteAtlas(s.url,s.rows));}catch{/* 없는 그림은 건너뛴다 */}}));
+  await Promise.all([
+    ...[...want].map(async([k,s])=>{try{ready.set(k,await spriteAtlas(s.url,s.rows));}catch{/* 없는 그림은 건너뛴다 */}}),
+    ...officerManifest.filter(e=>e.story).map(e=>new Promise<void>(resolve=>{const url=`officers/${e.story}`,img=new Image();img.onload=()=>{storyReady.add(url);resolve();};img.onerror=()=>resolve();img.src=url;})),
+  ]);
 }
 export const figuresReady=()=>ready.has(atlasKey(OFFICERS.url,OFFICERS.rows));
 
@@ -167,6 +172,8 @@ const sheets=new Map<string,string>();
 const artKey=(a:FigArt,tint:number)=>a.kind==='fig'?`f${a.slot}:${a.tint+tint}`:`s${a.look}:${tint}`;
 /** 무대 인물 시트(data URL). 그림이 아직 안 읽혔으면 undefined. */
 export function figSheet(name:string,look:Look):string|undefined{
+  const entry=officerEntry({id:'story_actor',name}),story=entry?.story?`officers/${entry.story}`:undefined;
+  if(story&&storyReady.has(story))return story;
   const art=figArtFor(name,look),tint=art.kind==='sheet'?sideTint(name):0,key=artKey(art,tint);
   const hit=sheets.get(key);if(hit)return hit;
   const frames=figFrames(art,tint);if(!frames)return undefined;

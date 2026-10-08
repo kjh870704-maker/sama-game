@@ -52,7 +52,8 @@ function spriteFace(look:Look){
  */
 export function talkBox(speaker:string,line:string,place:'top'|'bottom',stageLook?:Look,skin:'ink'|'paper'='ink'){
   const look=officerLook(speaker),base=look?.name??speaker;
-  let face=bustFace(base);
+  const expression=/분노|격노|죽|베어|용서.*못|!{1,}|！/.test(line)?'angry':/하하|후후|기쁘|반갑|잘했|좋[군소다]|웃/.test(line)?'smile':'neutral';
+  let face=bustFace(base,expression);
   if(!face){let f=officerPortrait(speaker);
     if(stageLook&&(f.includes('unknown-face')||f.includes('troop-face'))){const art=artFor(speaker,stageLook);f=art.kind==='fig'?figFace(art):f.includes('unknown-face')?spriteFace(art.look):f;}
     face=`<div class="talk-bust sprite">${f}</div>`;}

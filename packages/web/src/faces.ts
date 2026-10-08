@@ -13,6 +13,7 @@ import {romanceByName,temperOf} from './romance.ts';
 import {customNames,customList,portraitOf} from './custom.ts';
 import {CHUHAN_FACES} from './chuhan.ts';
 import {officerClass} from './officer-perks.ts';
+import {officerEntry} from './officer-models.ts';
 
 const esc=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 
@@ -35,7 +36,14 @@ export function cardFace(name:string){
  * 대화창 흉상. 넣은 그림·원화는 아래쪽을 흐리게 지워 상자에 녹이고, 지은 초상은 바탕 없는 흉상으로 그린다.
  * 알려지지 않은 인물(척후·병사)은 undefined — 부르는 쪽이 무대 그림으로 대신한다.
  */
-export function bustFace(name:string):string|undefined{
+export type BustExpression='neutral'|'angry'|'smile';
+export function bustFace(name:string,expression:BustExpression='neutral'):string|undefined{
+  name=name.replace(/의?\s*환영$/,'').trim();
+  const entry=officerEntry({id:'portrait',name});
+  if(entry?.bust){
+    const x=expression==='angry'?50:expression==='smile'?100:0;
+    return `<div class="talk-bust officer-bust" role="img" aria-label="${esc(name)} ${expression==='angry'?'격앙':expression==='smile'?'미소':'평상'} 흉상" style="background-image:url('officers/${entry.bust}');background-size:300% 100%;background-position:${x}% 0"></div>`;
+  }
   const img=portraitImage(name);
   if(img)return `<div class="talk-bust image" role="img" aria-label="${esc(name)} 초상" style="background-image:url('${img}')"></div>`;
   if(officerLook(name))return `<div class="talk-bust painted">${officerPortrait(name)}</div>`;

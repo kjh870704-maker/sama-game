@@ -1,38 +1,39 @@
 import {describe,expect,it} from 'vitest';
-import {officerBattleModel,officerModelSheets,officerModelStyle} from '../src/officer-models.ts';
+import {officerBattleSheet,officerDuelModel,officerDuelModelStyle,officerEntry,officerManifest,officerModelSheets} from '../src/officer-models.ts';
 
-describe('장수별 전신 모델과 보행',()=>{
-  const story=[
-    ['sima_yi','사마의'],['sima_yi_young','소년 사마의'],['sima_lang','사마랑'],['sima_fang','사마방'],
-    ['cao_zhen','조진'],['cao_cao','조조'],['cao_pi','조비'],['xu_chu','허저'],
-  ] as const;
-  const elite=[['ma_chao','마초'],['lu_bu','여포'],['chen_gong','진궁'],['zhou_yu','주유']] as const;
+describe('장수별 전투 SD와 대결 모델',()=>{
+  const players=[['sima_yi','사마의'],['cao_zhen','조진'],['sima_lang','사마랑'],['sima_fang','사마방'],['sima_shi','사마사'],['sima_zhao','사마소']] as const;
 
-  it('주요 장수 12명을 id와 이름 모두로 찾는다',()=>{
-    for(const [id,name] of [...story,...elite]){
-      expect(officerBattleModel({id,name}),id).toBeDefined();
-      expect(officerBattleModel({id:'story_enemy',name}),name).toBeDefined();
-      expect(officerModelStyle({id,name}),name).toContain('background-image');
-    }
-    expect(officerBattleModel({id:'unknown',name:'무명 장수'})).toBeUndefined();
-  });
-
-  it('모든 장수가 행동·앞뒤 보행·좌우 보행 시트를 갖는다',()=>{
+  it('대상 38명과 모든 공개 시트를 색인한다',()=>{
+    expect(officerManifest).toHaveLength(38);
     const sheets=new Set(officerModelSheets.map(s=>s.id));
-    for(const [id,name] of [...story,...elite]){
-      const model=officerBattleModel({id,name})!;
-      expect(sheets.has(model.action.sheet),id).toBe(true);
-      expect(sheets.has(model.walk.sheet),id).toBe(true);
-      expect(sheets.has(model.sideWalk.sheet),id).toBe(true);
-      expect(model.walk.row).toBeGreaterThanOrEqual(0);
-      expect(model.sideWalk.row).toBe(model.walk.row);
-      expect(model.action.sheet).toBe(model.walk.sheet);
-      expect(model.action.sheet).toBe(model.sideWalk.sheet);
+    for(const entry of officerManifest)for(const battle of Object.values(entry.battle))expect(sheets.has(battle.sheet),battle.sheet).toBe(true);
+  });
+
+  it('플레이어 장수 6명은 전투 SD 4줄이며 정확한 셀 규격을 쓴다',()=>{
+    for(const [id,name] of players){
+      const model=officerBattleSheet({id,name})!;
+      expect(model.action.rows,id).toBe(4);
+      expect(model.action.cell?.[0],id).toBe(id==='cao_zhen'||id==='sima_zhao'?350:280);
+      expect(model.action.cell?.[1],id).toBe(id==='cao_zhen'||id==='sima_zhao'?280:224);
+      expect(model.action.sheet,id).toMatch(/^officers\//);
     }
   });
 
-  it('전투 전용 시트 세 장은 각 네 장수의 대기·보행·공격·방어 4프레임이다',()=>{
-    expect(officerModelSheets).toHaveLength(3);
-    expect(officerModelSheets.every(s=>s.rows===4&&s.strictGrid)).toBe(true);
+  it('id, 환영, wooden_zhuge, boss의 연의 이름 순서로 찾는다',()=>{
+    expect(officerEntry({id:'chen_gong',name:'무명'})?.name).toBe('진궁');
+    expect(officerEntry({id:'story_enemy',name:'진궁의 환영'})?.id).toBe('chen_gong');
+    expect(officerEntry({id:'wooden_zhuge',name:'목우 제갈'})?.name).toBe('제갈량');
+    expect(officerEntry({id:'boss',name:'관우'})?.id).toBe('guan_yu');
+    expect(officerBattleSheet({id:'wooden_zhuge',name:'제갈량',unitClass:'strategist'})?.action.sheet).toContain('zhuge_liang-battle-cart');
+  });
+
+  it('전투 SD와 대결 모델은 다른 파일을 쓴다',()=>{
+    for(const [id,name] of [...players,['lu_bu','여포'] as const]){
+      const battle=officerBattleSheet({id,name})!;
+      const duel=officerDuelModel({id,name});
+      if(duel)expect(duel.sheet,id).not.toBe(battle.action.sheet);
+    }
+    expect(officerDuelModelStyle({id:'lu_bu',name:'여포'})).toContain('--officer-x');
   });
 });

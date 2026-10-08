@@ -580,6 +580,7 @@ body.nightmare .map-vignette {box-shadow:inset 0 0 85px #11162baa}
 .talk-bust{width:100%;aspect-ratio:1/1.08;background-repeat:no-repeat;background-position:50% 8%;background-size:cover;filter:drop-shadow(0 4px 10px rgba(0,0,0,.55));
   -webkit-mask-image:linear-gradient(180deg,#000 74%,transparent 99%);mask-image:linear-gradient(180deg,#000 74%,transparent 99%)}
 .talk-bust.drawn{background-size:118%;background-position:46% 0%}
+.talk-bust.officer-bust{-webkit-mask-image:linear-gradient(#000 0 82%,transparent 100%);mask-image:linear-gradient(#000 0 82%,transparent 100%);background-repeat:no-repeat}
 .talk-bust.painted,.talk-bust.sprite{-webkit-mask-image:radial-gradient(ellipse 72% 78% at 50% 40%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 72% 78% at 50% 40%,#000 62%,transparent 100%)}
 .talk-bust .officer-face{width:100%!important;height:100%;max-width:none;border:0!important;box-shadow:none!important;background-color:transparent;margin:0}
 .ss-talk-body b{font:700 calc(17px*var(--fs,1))/1.4 'Noto Serif KR','Batang',serif!important;letter-spacing:1px;padding-bottom:6px;margin-bottom:8px;border-bottom:1px solid currentColor;min-width:min(64%,360px);display:inline-block}
@@ -1533,6 +1534,23 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 .duel-stage.live-models .duel-fighter.hit .duel-model{animation:card-hit .5s ease-out .2s both}
 .duel-stage.live-models .duel-fighter.motion-special .duel-model{filter:drop-shadow(0 0 18px #ffd060) drop-shadow(0 14px 6px rgba(0,0,0,.45))}
 @media (max-height:500px){.duel-stage.live-models .duel-fighter .damage-number{font-size:28px}}
+/* 장수 대결 시트의 네 칸을 실제 합의 동작에 연결한다. 배경 위치만 바꾸므로 칸 밖 그림은 요소 안에서 잘린다. */
+.duel-stage.live-models .duel-fighter .officer-battle-model{--officer-x:0%;overflow:hidden}
+.duel-stage.live-models .duel-fighter.motion-rally .officer-battle-model{--officer-x:33.333333%}
+.duel-stage.live-models .duel-fighter.motion-attack .officer-battle-model,
+.duel-stage.live-models .duel-fighter.motion-feint .officer-battle-model,
+.duel-stage.live-models .duel-fighter.motion-special .officer-battle-model{--officer-x:66.666667%}
+.duel-stage.live-models .duel-fighter.motion-guard .officer-battle-model,
+.duel-stage.live-models .duel-fighter.hit .officer-battle-model{--officer-x:100%}
+/* 설전은 무기 공격 칸 대신 한 걸음/지휘 자세만 사용한다. */
+.duel-stage.live-models.debate .duel-fighter.motion-attack .officer-battle-model,
+.duel-stage.live-models.debate .duel-fighter.motion-feint .officer-battle-model,
+.duel-stage.live-models.debate .duel-fighter.motion-special .officer-battle-model{--officer-x:33.333333%}
+.duel-stage.live-models .duel-fighter.motion-attack .officer-battle-model,
+.duel-stage.live-models .duel-fighter.motion-special .officer-battle-model{animation:none}
+.duel-stage.live-models .duel-fighter .officer-battle-model{background-position:var(--officer-x) var(--officer-y)!important}
+.duel-stage.live-models .duel-fighter.motion-attack .officer-battle-model[style*="sima_shi-duel"]{animation:mounted-duel-bob .42s ease-out}
+@keyframes mounted-duel-bob{0%,100%{translate:0 0}45%{translate:0 -4%}}
 
 /* 극한 출진 코스트 */
 .sortie-picker legend b.over,.prep-cost.over{color:#ff6a50}
