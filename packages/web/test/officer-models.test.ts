@@ -35,5 +35,6 @@ describe('장수별 전투 SD와 대결 모델',()=>{
       if(duel)expect(duel.sheet,id).not.toBe(battle.action.sheet);
     }
     expect(officerDuelModelStyle({id:'lu_bu',name:'여포'})).toContain('--officer-x');
+    expect(officerDuelModel({id:'lu_bu',name:'여포'})?.sheet).toBe('officers/lu_bu-duel-v2.webp');
   });
 });

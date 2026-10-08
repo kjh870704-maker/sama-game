@@ -25,7 +25,7 @@ export const officerManifest:OfficerEntry[]=[
   E('cao_pi','조비',c('cao_pi','strategist'),{story:'cao_pi-story-v1.webp',bust:'cao_pi-bust-v1.webp',duel:'officer-battle-wei-v2.webp'}),
   E('xu_chu','허저',c('xu_chu','infantry'),{story:'xu_chu-story-v1.webp',bust:'xu_chu-bust-v1.webp',duel:'officer-battle-wei-v2.webp'}),
   E('ma_chao','마초',{...c('ma_chao','cavalry'),...c('ma_chao','heavyCav',1,350,280)},{story:'ma_chao-story-v1.webp',bust:'ma_chao-bust-v1.webp',duel:'officer-battle-rivals-v2.webp'}),
-  E('lu_bu','여포',{...c('lu_bu','cavalry'),...c('lu_bu','heavyCav',1,350,280)},{story:'lu_bu-story-v1.webp',bust:'lu_bu-bust-v1.webp',duel:'officer-battle-rivals-v2.webp'}),
+  E('lu_bu','여포',{...c('lu_bu','cavalry'),...c('lu_bu','heavyCav',1,350,280)},{story:'lu_bu-story-v1.webp',bust:'lu_bu-bust-v1.webp',duel:'officers/lu_bu-duel-v2.webp'}),
   E('chen_gong','진궁',c('chen_gong','strategist'),{story:'chen_gong-story-v1.webp',bust:'chen_gong-bust-v1.webp',duel:'officer-battle-rivals-v2.webp'}),
   E('zhou_yu','주유',{...c('zhou_yu','strategist'),...c('zhou_yu','archer',1,350,280)},{story:'zhou_yu-story-v1.webp',bust:'zhou_yu-bust-v1.webp',duel:'officer-battle-rivals-v2.webp'}),
   E('liu_bei','유비',c('liu_bei','infantry')),E('guan_yu','관우',c('guan_yu','cavalry')),E('zhang_fei','장비',c('zhang_fei','spearman')),
@@ -71,7 +71,7 @@ export const officerBattleModel=officerBattleSheet;
 const duelRows:Record<string,{sheet:string;row:number;rows:number}>={
   sima_yi:{sheet:'officer-battle-sima',row:0,rows:4},sima_yi_young:{sheet:'officer-battle-sima',row:1,rows:4},sima_lang:{sheet:'officer-battle-sima',row:2,rows:4},sima_fang:{sheet:'officer-battle-sima',row:3,rows:4},
   cao_zhen:{sheet:'officer-battle-wei',row:0,rows:4},cao_cao:{sheet:'officer-battle-wei',row:1,rows:4},cao_pi:{sheet:'officer-battle-wei',row:2,rows:4},xu_chu:{sheet:'officer-battle-wei',row:3,rows:4},
-  ma_chao:{sheet:'officer-battle-rivals',row:0,rows:4},lu_bu:{sheet:'officer-battle-rivals',row:1,rows:4},chen_gong:{sheet:'officer-battle-rivals',row:2,rows:4},zhou_yu:{sheet:'officer-battle-rivals',row:3,rows:4},
+  ma_chao:{sheet:'officer-battle-rivals',row:0,rows:4},lu_bu:{sheet:'officers/lu_bu-duel-v2.webp',row:0,rows:1},chen_gong:{sheet:'officer-battle-rivals',row:2,rows:4},zhou_yu:{sheet:'officer-battle-rivals',row:3,rows:4},
   sima_shi:{sheet:'officers/sima_shi-duel-v1.webp',row:0,rows:1},sima_zhao:{sheet:'officers/sima_zhao-duel-v1.webp',row:0,rows:1},
 };
 export function officerDuelModel(u:OfficerLike){const e=officerEntry(u);return e?duelRows[e.id]:undefined;}

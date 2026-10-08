@@ -1549,7 +1549,7 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 .duel-stage.live-models .duel-fighter.motion-attack .officer-battle-model,
 .duel-stage.live-models .duel-fighter.motion-special .officer-battle-model{animation:none}
 .duel-stage.live-models .duel-fighter .officer-battle-model{background-position:var(--officer-x) var(--officer-y)!important}
-.duel-stage.live-models .duel-fighter.motion-attack .officer-battle-model[style*="sima_shi-duel"]{animation:mounted-duel-bob .42s ease-out}
+.duel-stage.live-models .duel-fighter.motion-attack .officer-battle-model:is([style*="sima_shi-duel"],[style*="lu_bu-duel"]){animation:mounted-duel-bob .42s ease-out}
 @keyframes mounted-duel-bob{0%,100%{translate:0 0}45%{translate:0 -4%}}
 
 /* 극한 출진 코스트 */
