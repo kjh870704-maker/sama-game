@@ -36,7 +36,7 @@ describe('연구 나무',()=>{
  });
  it('turns ranks into battle perks and rule numbers',()=>{
   const m=rich();for(let i=0;i<3;i++){buyResearch(m,'drill');buyResearch(m,'training');buyResearch(m,'guard');}buyResearch(m,'granary');
-  const g=researchGrants(m);expect(g.all).toContainEqual(['physicalPower',9]);expect(g.byName['사마의']).toContainEqual(['defenseBoost',12]);
+  const g=researchGrants(m);expect(g.all).toContainEqual(['physicalPower',6]);expect(g.byName['사마의']).toContainEqual(['defenseBoost',9]);
   expect(xpMult(m)).toBeCloseTo(1.3);expect(mandateBonus(m)).toBe(1);expect(perkSlots(m)).toBe(2);
  });
  it('cleans saved research and officer progress',()=>{

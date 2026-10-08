@@ -48,7 +48,7 @@ describe("병종 계통과 진화", () => {
   });
   it("gives rattan armour its physical resistance at the cost of a fire weakness", () => {
     const r = makeUnit({ id: "r", side: "enemy", unitClass: "rattan", level: 5, pos: { x: 0, y: 0 } });
-    expect(r.traitParams.physicalDamageReduction).toBe(25);
+    expect(r.traitParams.physicalDamageReduction).toBe(20);
     expect(r.traits).toContain("fireWeakness");
   });
 });

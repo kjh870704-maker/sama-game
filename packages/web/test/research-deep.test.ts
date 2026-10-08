@@ -20,12 +20,12 @@ describe('잘게 쪼갠 연구(10단계·강화 구간·병종별)',()=>{
  it('applies family research only to that family, and stat research as percent',()=>{
   const m=freshMeta();m.research={c_inf_atk:4,s_hp:5,s_mastery:2,s_thrift:3};
   const g=researchGrants(m);expect(validGrants(g)).toBe(true);
-  expect(g.byFamily?.infantry).toEqual([['physicalPower',6]]);
+  expect(g.byFamily?.infantry).toEqual([['physicalPower',4]]);
   const s=new Session(2,'normal',215,'survival',4,{levels:{sima_yi:6,sima_lang:1,sima_fang:1,cao_zhen:1},equipped:{}});
   const units=s.state.living('player'),inf=units.find(u=>u.unitClass==='infantry'),other=units.find(u=>u.unitClass!=='infantry')!;
   const hp=other.stats.maxHp;applyPerkGrants(s.state,g);
-  expect(other.stats.maxHp).toBe(Math.round(hp*1.1));expect(other.traitParams.physicalPower??0).toBe(0);
-  if(inf)expect(inf.traitParams.physicalPower).toBe(6);
+  expect(other.stats.maxHp).toBe(Math.round(hp*1.075));expect(other.traitParams.physicalPower??0).toBe(0);
+  if(inf)expect(inf.traitParams.physicalPower).toBe(4);
   const sima=s.state.get('sima_yi');expect(sima.traitParams.strategyMastery).toBe(2);
   expect(s.state.strategyFor(sima,'fire')!.tier).toBe(2);// Lv.6 + 숙달 2 → 화계 숙련
  });

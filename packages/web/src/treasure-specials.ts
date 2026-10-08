@@ -9,10 +9,10 @@ import {grantPerk} from './perks.ts';
 
 export interface TreasureSpecial {name:string;text:string;strategies?:string[];mp?:number;traits?:Array<[string,number]>}
 export const TREASURE_SPECIALS:Record<string,TreasureSpecial>={
-  dunjia:{name:'기문둔갑',text:'책략 「돌풍·풍룡·허보」를 쓸 수 있다 · 최대 MP +20 · 차례마다 MP +3',strategies:['gust','windDragon','feint'],mp:20,traits:[['manaRegen',3]]},
-  taiping:{name:'태평요술',text:'책략 「소회복·정화·낙뢰」를 쓸 수 있다 · 최대 MP +18 · 차례마다 체력 4% 회복',strategies:['mend','purify','thunder'],mp:18,traits:[['regen',4]]},
+  dunjia:{name:'기문둔갑',text:'책략 「돌풍·풍룡·허보」를 쓸 수 있다 · 최대 MP +20 · 차례마다 MP +2',strategies:['gust','windDragon','feint'],mp:20,traits:[['manaRegen',2]]},
+  taiping:{name:'태평요술',text:'책략 「소회복·정화·낙뢰」를 쓸 수 있다 · 최대 MP +18 · 차례마다 체력 3% 회복',strategies:['mend','purify','thunder'],mp:18,traits:[['regen',3]]},
   mengde:{name:'맹덕의 병법',text:'책략 「화계·교란·매복」을 쓸 수 있다 · 최대 MP +15 · 책략 피해 +5%',strategies:['fire','confuse','ambush'],mp:15,traits:[['strategyPower',5]]},
-  fan:{name:'와룡의 부채',text:'책략 「화계·풍룡·수계」를 쓸 수 있다 · 최대 MP +20 · 책략 피해 +10%',strategies:['fire','windDragon','flood'],mp:20,traits:[['strategyPower',10]]},
+  fan:{name:'와룡의 부채',text:'책략 「화계·풍룡·수계」를 쓸 수 있다 · 최대 MP +20 · 책략 피해 +8%',strategies:['fire','windDragon','flood'],mp:20,traits:[['strategyPower',8]]},
   sunzi:{name:'허실',text:'책략 「허보·포위계」를 쓸 수 있다 · 최대 MP +12 · 명중 +5%p',strategies:['feint','encircle'],mp:12,traits:[['accuracyBoost',5]]},
   sixTeachings:{name:'육도의 진',text:'책략 「고무·견고」를 쓸 수 있다 · 최대 MP +12',strategies:['inspire','fortify'],mp:12},
   threeStrategies:{name:'삼략의 행군',text:'책략 「강행·명상」을 쓸 수 있다 · 최대 MP +12',strategies:['march','focus'],mp:12},
@@ -21,10 +21,10 @@ export const TREASURE_SPECIALS:Record<string,TreasureSpecial>={
   craneRobe:{name:'학창 명상',text:'책략 「명상·정화」를 쓸 수 있다 · 최대 MP +10',strategies:['focus','purify'],mp:10},
   jadeSword:{name:'영검',text:'책략 「낙뢰」를 쓸 수 있다 · 최대 MP +10 · 간파 +5%p',strategies:['thunder'],mp:10,traits:[['strategyEvasion',5]]},
   yitian:{name:'의천의 위엄',text:'입힌 피해의 8%만큼 체력 회복 · 회심 +5%',traits:[['lifesteal',8],['critical',5]]},
-  qinggang:{name:'청강의 날',text:'적 방어 10% 추가 무시 · 회심 +8%',traits:[['penetrate',10],['critical',8]]},
-  greenDragon:{name:'청룡언월',text:'움직인 뒤 물리 공격 +15% · 회심 +8%',traits:[['chargePower',15],['critical',8]]},
+  qinggang:{name:'청강의 날',text:'적 방어 8% 추가 무시 · 회심 +6%',traits:[['penetrate',8],['critical',6]]},
+  greenDragon:{name:'청룡언월',text:'움직인 뒤 물리 공격 +12% · 회심 +6%',traits:[['chargePower',12],['critical',6]]},
   serpentSpear:{name:'장판교의 호통',text:'반격 위력 +25% · 체력이 낮을수록 공격력 상승(최대 20%)',traits:[['counterBoost',25],['lastStand',20]]},
-  halberd:{name:'방천화극 무쌍',text:'물리 공격 피해 +10% · 적 방어 10% 무시',traits:[['physicalPower',10],['penetrate',10]]},
+  halberd:{name:'방천화극 무쌍',text:'물리 공격 피해 +8% · 적 방어 8% 무시',traits:[['physicalPower',8],['penetrate',8]]},
   sevenstar:{name:'칠성 자객',text:'회심 +12%',traits:[['critical',12]]},
   redHare:{name:'적토마',text:'움직인 뒤 물리 공격 +12% · 적 명중 -8%p',traits:[['chargePower',12],['evasionBoost',8]]},
   dilu:{name:'적로의 도약',text:'적 명중 -10%p · 체력 절반 이하에서 받는 피해 -15%',traits:[['evasionBoost',10],['veteran',15]]},

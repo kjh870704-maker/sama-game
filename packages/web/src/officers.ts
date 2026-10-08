@@ -31,7 +31,7 @@ export type SupportEffect='heal'|'cleanse'|'guard'|'haste'|'rally'|'mana'|'valor
 export type LearnedStrategy=StrategyDef&{level:number;support?:SupportEffect};
 export const learnedStrategies:LearnedStrategy[]=[
   {id:'fire',name:'화계',level:1,element:'fire',shape:'single',range:3,radius:0,mpCost:6,power:100,inflicts:['burn'],targetSides:['enemy']},
-  {id:'windDragon',name:'풍룡',level:3,element:'wind',shape:'spread',range:4,radius:1,mpCost:9,power:120,targetSides:['enemy']},
+  {id:'windDragon',name:'풍룡',level:3,element:'wind',shape:'spread',range:4,radius:1,mpCost:10,power:105,targetSides:['enemy']},
   {id:'bind',name:'속박',level:5,element:'earth',shape:'single',range:4,radius:0,mpCost:8,power:65,inflicts:['immobile'],targetSides:['enemy']},
   {id:'confuse',name:'교란',level:7,element:'support',shape:'single',range:3,radius:0,mpCost:12,power:45,inflicts:['confusion'],targetSides:['enemy']},
   {id:'flood',name:'수계',level:10,element:'water',shape:'cross',range:4,radius:1,mpCost:15,power:135,targetSides:['enemy']},
@@ -91,15 +91,15 @@ const signature:LearnedStrategy[]=[
  * [id,이름,모양,사거리,반경,MP,위력,상태]
  */
 const skills:LearnedStrategy[]=([
- ['shieldBash','방패 강타','single',1,0,4,115,'slow'],['pierce','관통 찌르기','line',1,1,4,105,undefined],['breakthrough','돌파','line',1,1,4,120,undefined],
- ['trample','짓밟기','single',1,0,4,140,'immobile'],['aimedShot','조준 사격','single',3,0,4,135,undefined],['volley','연발 사격','cross',3,1,5,70,undefined],
- ['skirmish','기사 난사','single',3,0,4,115,'slow'],['stoneRain','돌팔매 비','spread',3,1,5,65,undefined],['assassinate','암살','single',1,0,5,150,'bleed'],
- ['rattanRush','등패 돌진','single',1,0,4,110,'weaken'],['tuskCharge','상아 돌격','cross',1,1,5,85,undefined],['plunder','약탈','single',1,0,4,115,'weaken'],
- ['westernCharge','서량 돌격','line',1,2,5,110,undefined],['gateCrash','성문 파쇄','single',1,0,4,165,'breach'],['deckVolley','갑판 화살비','spread',3,1,5,70,undefined],
- ['flashCut','일섬','single',1,0,4,150,undefined],['mountainRaid','산악 기습','single',2,0,4,120,undefined],['lanceRush','질주 창격','line',1,1,4,115,undefined],
- ['scytheWheels','바퀴날','cross',1,1,5,80,'bleed'],['towerShot','망루 사격','single',4,0,4,115,undefined],['beastRoar','맹수 포효','spread',1,1,5,60,'weaken'],
- ['ironCharge','철갑 돌격','single',1,0,4,140,'breach'],['halberdSweep','회전 극','cross',1,1,5,85,undefined],['snare','올무 함정','single',2,0,4,75,'immobile'],
- ['thunderShot','벽력탄','spread',4,1,5,90,'burn'],['chainFist','연환권','single',1,0,4,130,undefined],['royalStrike','왕의 일격','single',1,0,5,135,undefined],
+ ['shieldBash','방패 강타','single',1,0,4,115,'slow'],['pierce','관통 찌르기','line',1,1,4,105,undefined],['breakthrough','돌파','line',1,1,5,105,undefined],
+ ['trample','짓밟기','single',1,0,4,140,'immobile'],['aimedShot','조준 사격','single',3,0,4,135,undefined],['volley','연발 사격','cross',3,1,6,60,undefined],
+ ['skirmish','기사 난사','single',3,0,4,115,'slow'],['stoneRain','돌팔매 비','cross',3,1,6,60,undefined],['assassinate','암살','single',1,0,5,150,'bleed'],
+ ['rattanRush','등패 돌진','single',1,0,4,110,'weaken'],['tuskCharge','상아 돌격','cross',1,1,6,75,undefined],['plunder','약탈','single',1,0,4,115,'weaken'],
+ ['westernCharge','서량 돌격','line',1,2,5,95,undefined],['gateCrash','성문 파쇄','single',1,0,4,165,'breach'],['deckVolley','갑판 화살비','cross',3,1,6,60,undefined],
+ ['flashCut','일섬','single',1,0,4,150,undefined],['mountainRaid','산악 기습','single',2,0,4,120,undefined],['lanceRush','질주 창격','line',1,1,5,100,undefined],
+ ['scytheWheels','바퀴날','cross',1,1,6,70,'bleed'],['towerShot','망루 사격','single',4,0,4,115,undefined],['beastRoar','맹수 포효','spread',1,1,7,45,'weaken'],
+ ['ironCharge','철갑 돌격','single',1,0,4,140,'breach'],['halberdSweep','회전 극','cross',1,1,6,75,undefined],['snare','올무 함정','single',2,0,4,75,'immobile'],
+ ['thunderShot','벽력탄','spread',4,1,8,65,'burn'],['chainFist','연환권','single',1,0,4,130,undefined],['royalStrike','왕의 일격','single',1,0,5,135,undefined],
  ['commandStrike','지휘 일섬','single',1,0,5,125,'breach'],
  ['yellowSlash','황천 곡도','single',1,0,4,125,'weaken'],['boardingSlash','도선 참격','single',1,0,4,130,'bleed'],
 ] as const).map(([id,name,shape,range,radius,mpCost,power,status])=>({id,name,level:1,element:'physical' as const,physical:true,shape,range,radius,mpCost,power,targetSides:['enemy' as const],...(status?{inflicts:[status]}:{})} as LearnedStrategy));

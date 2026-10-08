@@ -24,7 +24,7 @@ export interface OfficerPerk {
   /** 무엇에서 왔나(능력·병종·성격) */
   source:string;
 }
-const LEVELS=[5,10,15,20,28],COSTS=[3,4,6,8,12],SCALE=[1,1.15,1.3,1.5,1.75];
+const LEVELS=[5,10,15,20,28],COSTS=[3,4,6,8,12],SCALE=[1,1.1,1.2,1.35,1.5];
 
 /** 장수가 주로 쓰는 병종(신장수·영입 명단·이야기 동료, 없으면 능력으로 어림). */
 const COMPANION_CLASS:Record<string,UnitClass>={조진:'cavalry',장합:'spearman',곽회:'archer',사마랑:'fengshui',사마의:'strategist',사마부:'fengshui',사마방:'spearman'};
