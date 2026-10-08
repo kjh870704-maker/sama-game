@@ -81,6 +81,9 @@ const duelRows:Record<string,{sheet:string;row:number;rows:number}>={
   sima_shi:{sheet:'officers/sima_shi-duel-v1.webp',row:0,rows:1},sima_zhao:{sheet:'officers/sima_zhao-duel-v1.webp',row:0,rows:1},
 };
 export function officerDuelModel(u:OfficerLike){const e=officerEntry(u);return e?duelRows[e.id]:undefined;}
+/** 말을 탄 대결 모델(일기토에서 말 탄 크기·말 흔들림). 나머지 대결 모델은 걸어서 싸운다. */
+const MOUNTED_DUEL=new Set(['ma_chao','lu_bu','sima_shi','cao_cao','cao_pi']);
+export function officerDuelMounted(u:OfficerLike){const e=officerEntry(u);return !!e&&!!duelRows[e.id]&&MOUNTED_DUEL.has(e.id);}
 export function officerDuelModelStyle(u:OfficerLike,frame=0){const set=officerDuelModel(u);if(!set)return undefined;const def=officerModelSheets.find(s=>s.id===set.sheet);const url=def?.url??set.sheet,x=Math.max(0,Math.min(3,frame))/3*100,y=set.rows>1?set.row/(set.rows-1)*100:0;return `--officer-x:${x}%;--officer-y:${y}%;background-image:url(${url});background-size:400% ${set.rows*100}%;background-position:var(--officer-x) var(--officer-y)`;}
 /** 이전 호출부 호환: 대결용 상세 모델의 첫 자세. */
 export const officerModelStyle=(u:OfficerLike)=>officerDuelModelStyle(u,0);

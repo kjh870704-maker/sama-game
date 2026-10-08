@@ -16,7 +16,8 @@ import {watchCssAtlases} from './css-atlas.ts';
 import {actionNames,duelActionNames,duelLine,temperNames,type DuelAction} from './duel.ts';
 import {spriteAtlas} from './sprite-atlas.ts';
 import {paintedTroopArt} from './painted-troops.ts';
-import {officerDuelModelStyle} from './officer-models.ts';
+import {officerDuelModelStyle,officerDuelMounted,officerBattleSheet} from './officer-models.ts';
+import {MOUNTED_FAMILIES} from './armor.ts';
 import {coachStep,COACH_KEY} from './tutorial.ts';
 import {dueLines} from './battle-lines.ts';
 import {loadSettings,saveSettings} from './settings.ts';
@@ -325,9 +326,13 @@ function describe(e:LogEntry){const name=(id:string)=>session.state.find(id)?.na
 function consumeLog(){const logs=session.state.log.slice(lastLog);lastLog=session.state.log.length;if(logs.some(e=>e.t==='terrain'))field.repaintTerrain();field.play(logs);hudFight(logs);for(const e of logs){const line=describe(e);if(line)$('#latest-log').textContent=line;if(e.t==='turnStart'){const banner=$('#phase-banner');banner.textContent=`${sideNames[e.side]}의 차례`;banner.classList.add('show');setTimeout(()=>banner.classList.remove('show'),1300);sound.event({kind:'turn',side:e.side});if(e.side!=='player')sound.focus=undefined;}}}
 function portraitFor(u:Unit,reaction=false):string{
   const officer=officerDuelModelStyle(u);
-  if(officer)return `<span class="battle-model officer-battle-model" role="img" aria-label="${unitName(u)} 전신" style="${officer}"></span>`;
+  if(officer)return `<span class="battle-model officer-battle-model" role="img" aria-label="${unitName(u)} 전신"${officerDuelMounted(u)?' data-mounted':''} style="${officer}"></span>`;
+  // 전용 대결 그림이 없는 장수(유비·손권·조예 등)는 병종 그림 대신 자기 전투 그림 첫 칸(대기)을 세운다. 칸이 가로로 길어 폭에 맞추고 발끝을 아래에 붙인다.
+  const sd=officerBattleSheet(u)?.action;
+  if(sd&&sd.rows===1)return `<span class="battle-model" role="img" aria-label="${unitName(u)}"${MOUNTED_FAMILIES.has(familyOf(u.unitClass))||u.unitClass.startsWith('mounted')?' data-mounted':''} style="background-image:url(${sd.sheet});background-size:400% auto;background-repeat:no-repeat;background-position:${reaction?100:0}% 100%"></span>`;
   const painted=paintedTroopArt[u.unitClass];
-  if(painted)return `<span class="battle-model" role="img" aria-label="${unitName(u)}" style="background-image:var(--${painted.sheet}-atlas);background-size:400% ${painted.rows*100}%;background-position:${reaction?100:0}% ${painted.rows>1?painted.row/(painted.rows-1)*100:0}%"></span>`;
+  // 말·전차를 탄 병종 그림은 일기토에서 말 탄 크기로 세운다(duelModel이 data-mounted를 본다).
+  if(painted)return `<span class="battle-model" role="img" aria-label="${unitName(u)}"${MOUNTED_FAMILIES.has(familyOf(u.unitClass))||u.unitClass.startsWith('mounted')?' data-mounted':''} style="background-image:var(--${painted.sheet}-atlas);background-size:400% ${painted.rows*100}%;background-position:${reaction?100:0}% ${painted.rows>1?painted.row/(painted.rows-1)*100:0}%"></span>`;
   // 신장수: 직접 만든 초상
   {const url=customFace(u.name);if(url&&u.side==='player')return `<span class="battle-model custom-portrait" role="img" aria-label="${unitName(u)}" style="background-image:url(${url});background-size:cover"></span>`;}
   const art=troopArt[u.unitClass];if(art)return `<span class="battle-model" role="img" aria-label="${unitName(u)}" style="background-image:var(--${art.sheet}${reaction?'-reaction':''}-atlas);background-size:400% ${art.rows*100}%;background-position:${reaction?33.333333:0}% ${art.row/(art.rows-1)*100}%"></span>`;

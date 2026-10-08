@@ -50,7 +50,9 @@ export function duelBackdrop(kind:'duel'|'debate',seed:string,indoor=false){
 const face=(name:string)=>bustFace(name)??`<div class="talk-bust sprite">${officerPortrait(name)}</div>`;
 /** 겨루기 화면 중앙에 크게 세우는 전신 전투 모델. */
 export function duelModel(model:string,side:'player'|'enemy',name:string){
-  const mounted=/마초|여포|사마사|관우|조운|장료|장합|하후돈|하후연|조조|조비/.test(displayName(name));
+  // 말 탄 크기는 이름이 아니라 실제로 세운 그림으로 정한다(그림을 만드는 쪽이 data-mounted를 붙인다).
+  // 이름으로 정하면 걸어서 싸우는 검객 그림의 장합도 말 탄 크기로 커지고, 말 탄 군주 병사 그림의 유비는 작게 섰다.
+  const mounted=model.includes('data-mounted');
   return `<div class="duel-model ${side==='enemy'?'face-left':'face-right'}${mounted?' mounted':''}" aria-label="${esc(displayName(name))}">${model}</div>`;
 }
 /** 전투 밖 대결에서 병종을 모르는 쪽: 일기토는 검객, 설전은 책사 전신 모델을 쓴다. */
