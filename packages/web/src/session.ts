@@ -6,7 +6,7 @@ import {applyPerkGrants,validGrants} from './perks.ts';
 import {stretchMap,stretchStage,canStretch,wideCoord} from './stretch.ts';
 import {applyTreasureSpecial} from './treasure-specials.ts';
 import './scenario.ts';
-import {pickExtras} from './sortie.ts';
+import {pickExtras,fitForcedToCap,storyCostCap,storyClassAt,STORY_BASE_CLASS} from './sortie.ts';
 import {applyRomance,temperOf} from './romance.ts';
 import {applyCC} from './cc-apply.ts';
 import {expeditionBattle,expeditions,missionEnemyScale} from './expeditions.ts';
@@ -174,8 +174,11 @@ export class Session {
     else if(this.deployment?.mission)entry={...entry,...expeditionBattle(this.deployment.mission.id,this.seed,this.deployment.mission.version??1,this.deployment.mission.supportClasses)};
     else if(this.deployment)entry={...entry,stage:campaignStage(entry.stage)};
     // 연의 장: 필수 장수에 더해 고른 장수를 데려간다(시기·출진 칸·난이도 인원 안에서).
+    // 극한 출진 코스트: 연의 장의 필수 장수가 상한을 넘으면 한 단계 낮은 병종으로 나선다(sortie.ts).
+    const costCapped=this.difficulty==='extreme'&&this.revision>=4&&!!this.deployment&&!this.deployment.run&&!this.deployment.mission
+      ?fitForcedToCap(entry.stage.deployment.forced.filter(id=>STORY_BASE_CLASS[id]).map(id=>({id,unitClass:storyClassAt(id,this.deployment!.levels[id]??1)})),storyCostCap(entry.stage.id)):undefined;
     if(this.deployment?.extraOfficers?.length&&!this.deployment.run&&!this.deployment.mission){
-      const extra=pickExtras(entry.stage,entry.map,this.deployment.extraOfficers,this.difficulty);
+      const extra=pickExtras(entry.stage,entry.map,this.deployment.extraOfficers,this.difficulty,this.deployment.levels);
       if(extra.length)entry={...entry,stage:{...entry.stage,deployment:{...entry.stage.deployment,forced:[...entry.stage.deployment.forced,...extra]}}};
     }
     // 넓은 전장: 연의 지도를 1.5배로(지형·영역·등장 위치), 이동력은 +2로 걸음을 맞춘다.
@@ -191,7 +194,7 @@ export class Session {
     ]});
     if(this.deployment)for(const u of state.living('player')){const l=this.deployment.levels[u.id];if(l){const adjusted=makeUnit({id:u.id,unitClass:u.unitClass,level:l,side:u.side,pos:u.pos});u.level=l;u.stats=adjusted.stats;u.hp=u.stats.maxHp;u.mp=u.stats.maxMp;
       // 장수도 레벨이 기준에 닿으면 병종이 진화한다(사마의: 책사→군사 Lv8→귀모 Lv16). 원정 부대는 원정 규칙이 따로 정한다.
-      const evolved=this.revision>=4&&!this.deployment.run?evolvedClass(u.unitClass,l):u.unitClass;if(evolved!==u.unitClass){evolveUnit(u,evolved);u.hp=u.stats.maxHp;u.mp=u.stats.maxMp;}}
+      const evolved=this.revision>=4&&!this.deployment.run?(costCapped?.get(u.id)??evolvedClass(u.unitClass,l)):u.unitClass;if(evolved!==u.unitClass){evolveUnit(u,evolved);u.hp=u.stats.maxHp;u.mp=u.stats.maxMp;}}
       // 연의 능력은 보물보다 먼저 입혀, 보물의 고정 보너스가 배율에 섞이지 않게 한다.
       if(this.revision>=4&&!this.deployment.run&&!this.romanced.has(u.id)){this.romanced.add(u.id);if(this.revision===5){applyRomance(u,false);applyCC(u);}else applyRomance(u);}if(this.revision>=4){for(const item of equippedItems(this.deployment,u.id))applyTreasure(u,item,this.deployment.treasureRules===1);}else applyTreasure(u,this.deployment.equipped[u.id],this.deployment.treasureRules===1);}
     if(this.deployment?.mission?.balance===1)for(const u of state.living('ally')){

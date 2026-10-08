@@ -26,7 +26,7 @@ import {storyBeats,storyLocations,storyBackdrop,storyAftermath,acts,stories,epil
 import {showHub,showQuests,finishRunBattle,finishRunStory,RUN_CHAPTER,type RunHost} from './run-ui.ts';
 import {showScenario,campOf,finishIfBattle,finishStoryBattle,type ScenarioHost} from './scenario-ui.ts';
 import {scriptOf} from './scenario.ts';
-import {optionalOfficers,pickExtras,storySortieLimit} from './sortie.ts';
+import {optionalOfficers,pickExtras,storySortieLimit,storyCostSheet,unitCost,storyClassAt} from './sortie.ts';
 import {isoBackdrop,loadIsoArt,loadPaintedScenes} from './story-iso.ts';
 import {loadFigures} from './story-figure.ts';
 import {registerCustoms} from './custom.ts';
@@ -211,15 +211,19 @@ function briefing(chapter:number,expeditionId?:string,scenario?:ScenarioDeployme
   let extras:string[]=[];
   const dispatch=(preview=false)=>{const d=deployment(campaign,true);if(!expedition)d.wide=1;if(scenario)d.trial=1;if(scenario)d.scenario=structuredClone(scenario);
     // 연구(로그라이크의 영구 강화)는 연의·회상·수련 어디서든 함께 간다.
-    if(!preview){const m=loadMeta(),p=deploymentPerks(m,['사마의',...Object.keys(m.officerPerks??{})]);if(p)d.perks=p;}if(!expedition&&extras.length)d.extraOfficers=pickExtras(c.stage,c.map,extras,difficulty);if(expedition)d.mission={id:expedition.id,runId:preview?'preview':crypto.randomUUID(),version:4,balance:1,supportClasses:[...supports]};return d;};
+    if(!preview){const m=loadMeta(),p=deploymentPerks(m,['사마의',...Object.keys(m.officerPerks??{})]);if(p)d.perks=p;}if(!expedition&&extras.length)d.extraOfficers=pickExtras(c.stage,c.map,extras,difficulty,d.levels);if(expedition)d.mission={id:expedition.id,runId:preview?'preview':crypto.randomUUID(),version:4,balance:1,supportClasses:[...supports]};return d;};
   const mission=chapter===7?'사마의와 조진을 생존시키고 양앙을 포함한 전초 수비대 7부대를 모두 격퇴하십시오. 수비대장만 쓰러뜨려서는 끝나지 않습니다.':chapter===6?'조조를 보호하며 마초를 격퇴한 뒤, 사마의 또는 조진으로 관문 안 금빛 구역을 점령하십시오. 조조·사마의·조진 퇴각 시 패배합니다.':chapter===5?'수송대 두 부대 중 최소 한 부대를 선택한 동쪽 출구로 호위하십시오. 두 수송대가 모두 소실되거나 사마의·조진이 퇴각하면 실패합니다.':chapter===4?'진궁·여포·주유를 차례로 격파한 다음, 전차의 방해를 뚫고 황제 옆 금빛 칸에 도달하십시오.':chapter===3?'길잡이와 대화해 탈출로를 정하고, 추격 압박이 한계에 닿기 전에 형제 모두 선택한 출구에 도착하십시오.':intro?'사마의로 창고에 도달한 뒤 민중에게 인접해 무장시키고 습격대를 격퇴하십시오.':escape?'두 형제 모두 남문에 도착하고 통행료 1,000전을 지불하십시오.':'수비대장을 격퇴한 뒤 본대로 중앙 성채를 점령하십시오. 경쟁 우군 선점 시 패배합니다.';
   const rule=chapter===7?'26×20 산길 전장. 굽은 큰길은 기병이, 숲길은 보병이 접근하기 좋습니다. 본대 2명 뒤 편입 아군 4부대를 직접 지휘합니다. 노병은 2~3칸에서 사격하고 풍수사는 3칸 안의 아군을 치유합니다. 일반 18턴 / 극한 16턴 안에 완료하면 신속 인장을 얻습니다.':chapter===6?'28×20 관문 전장. 허저를 전방 또는 후방에 배치합니다. 3턴 적 차례에 서쪽 복병 2기가 출현합니다. 성문 HP 95, 감시탑 HP 110 / 사거리 1~5. 포차로 문을 열고 풍수사의 치유로 호위 병력을 유지하십시오. 마초 격퇴 시 감시탑이 철수하고 관문 수비대가 2턴 혼란에 빠집니다.':chapter===5?'24×18 강변 전장. 수송대는 우군 차례에 최대 3칸 자동 이동하며 공격하지 않습니다. 교량길은 짧지만 사격대가 지키고, 남쪽 길은 길지만 전방을 우회합니다. 3턴 적 차례에 후방 기병 2부대가 나타납니다. 노병과 방패병으로 길을 열고 후방을 지키십시오.':chapter===4?'대결을 넘길 때 체력·책략·상태이상을 회복하고 시작 지점으로 돌아옵니다. 구급약은 보충되지 않습니다. 마지막 구간은 전멸전이 아닙니다. 무르기와 목표 전환 직전 복원이 가능합니다.':chapter===3?'일반 압박 한계 12, 극한 9. 매 턴 압박이 1씩 오릅니다. 거짓 군령 강행은 압박 +2와 궁병 매복을 부릅니다. 3턴 적 차례에 추격 기병 2부대가 서쪽에서 등장합니다.':intro?'소년 사마의와 민중은 공격할 수 없습니다. 사마의가 창고를 열면 인접한 민중이 보병으로 전환됩니다. 사마방·형제의 생존이 필수이며, 민중 전멸도 패배입니다.':escape?'지참금 3,000전. 첫 매수 1,000전, 이후 1,500전. 살피기는 행동 1회를 소비해 순찰 경로를 공개합니다.':'48×36 전장. 성문 각 칸 HP 95 · 감시탑 HP 110 / 사거리 1~5. 문을 파괴하면 통로가 열립니다. 중앙 석교와 남쪽 목교로 진격하며, 미니맵 클릭으로 먼 지점을 확인합니다. 본대 다음 편입 아군 8기를 직접 지휘합니다. 편입 아군도 손실에 포함됩니다. 경쟁 우군은 지시를 받지 않습니다.';
   let officer=c.stage.deployment.forced[0]!,filter='weapon',inspect=campaign.treasures[0]??treasures[0]!.id,prep:Preparation='survival',difficulty:'normal'|'extreme'='normal';
   /** 출진 장수: 필수(잠김) + 선택(난이도별 인원 제한). */
   const sortieMarkup=()=>{const {allowed,capacity}=optionalOfficers(c.stage,c.map),limit=Math.min(capacity,storySortieLimit(difficulty));
-    return `<fieldset class="sortie-picker"><legend>출진 장수 · 필수 ${c.stage.deployment.forced.length}명${allowed.length?` + 선택 최대 ${limit}명(${difficulty==='extreme'?'극한':'일반'})`:''}</legend>
-    ${c.stage.deployment.forced.map(id=>`<span class="sortie-chip forced">🔒 ${officerNames[id]??id}</span>`).join('')}
-    ${allowed.map(id=>`<label class="sortie-chip"><input type="checkbox" data-extra="${id}" ${extras.includes(id)?'checked':''}> ${officerNames[id]??id} · Lv.${levelInfo(campaign.xp[id]??0).level}</label>`).join('')}
+    const lv=deployment(campaign,true).levels,ext=difficulty==='extreme',sheet=ext?storyCostSheet(c.stage,pickExtras(c.stage,c.map,extras,difficulty,lv),lv):undefined;
+    const costOf=(id:string)=>{const r=sheet?.rows.find(x=>x.id===id);return r?r.cost:unitCost(storyClassAt(id,lv[id]??1));};
+    const tag=(id:string)=>{if(!ext)return '';const r=sheet?.rows.find(x=>x.id===id);return ` · 코스트 ${costOf(id)}${r&&r.unitClass!==r.natural?` (${classNames[r.unitClass]??r.unitClass}로 낮춰 출진)`:''}`;};
+    return `<fieldset class="sortie-picker"><legend>출진 장수 · 필수 ${c.stage.deployment.forced.length}명${allowed.length?` + 선택 최대 ${limit}명`:''}${ext?` · 극한 출진 코스트 <b class="${sheet!.used>sheet!.cap?'over':''}">${sheet!.used}/${sheet!.cap}</b>`:''}</legend>
+    ${c.stage.deployment.forced.map(id=>`<span class="sortie-chip forced">🔒 ${officerNames[id]??id}${tag(id)}</span>`).join('')}
+    ${allowed.map(id=>`<label class="sortie-chip"><input type="checkbox" data-extra="${id}" ${extras.includes(id)?'checked':''}> ${officerNames[id]??id} · Lv.${levelInfo(campaign.xp[id]??0).level}${ext?` · 코스트 ${costOf(id)}`:''}</label>`).join('')}
+    ${ext?'<small>극한은 출진 코스트 합이 상한을 넘으면 더 데려갈 수 없다. 병종 코스트: 1단 2 · 2단 3 · 3단 4 · 4단 6, 기마·코끼리 +1. 필수 장수만으로 넘으면 한 단계 낮은 병종으로 나선다.</small>':''}
     ${allowed.length?'':'<small>이 장은 이야기상 정해진 장수만 출진한다.</small>'}</fieldset>`;};
   const draw=()=>{
     const previousScroll=$('#modal-content .camp-screen')?$<HTMLDialogElement>('#modal').scrollTop:0;
@@ -233,8 +237,8 @@ function briefing(chapter:number,expeditionId?:string,scenario?:ScenarioDeployme
     document.querySelectorAll<HTMLButtonElement>('[data-equip-id]').forEach(b=>b.onclick=()=>{const id=b.dataset.equipId!;inspect=id;if(equipSlot(campaign,officer,treasureInfo(id).slot,id)){saveCampaign();toast(`${treasures.find(t=>t.id===id)?.name??'보물'} 장착`);}draw();});
     document.querySelectorAll<HTMLButtonElement>('[data-unequip]').forEach(b=>b.onclick=()=>{if(equipSlot(campaign,officer,b.dataset.unequip as GearSlot,'')){saveCampaign();draw();}});
     document.querySelectorAll<HTMLInputElement>('[name=preparation]').forEach(el=>el.onchange=()=>{prep=el.value as Preparation;draw();});
-    document.querySelectorAll<HTMLInputElement>('[name=difficulty]').forEach(el=>el.onchange=()=>{difficulty=el.value as 'normal'|'extreme';extras=pickExtras(c.stage,c.map,extras,difficulty);draw();});
-    document.querySelectorAll<HTMLInputElement>('[data-extra]').forEach(el=>el.onchange=()=>{const id=el.dataset.extra!;const next=el.checked?[...extras,id]:extras.filter(x=>x!==id);const ok=pickExtras(c.stage,c.map,next,difficulty);if(el.checked&&!ok.includes(id)){el.checked=false;toast(`이 장에는 ${storySortieLimit(difficulty)}명까지(남은 출진 칸 ${optionalOfficers(c.stage,c.map).capacity})만 더 데려갈 수 있습니다.`);return;}extras=ok;draw();});
+    document.querySelectorAll<HTMLInputElement>('[name=difficulty]').forEach(el=>el.onchange=()=>{difficulty=el.value as 'normal'|'extreme';extras=pickExtras(c.stage,c.map,extras,difficulty,deployment(campaign,true).levels);draw();});
+    document.querySelectorAll<HTMLInputElement>('[data-extra]').forEach(el=>el.onchange=()=>{const id=el.dataset.extra!;const next=el.checked?[...extras,id]:extras.filter(x=>x!==id);const ok=pickExtras(c.stage,c.map,next,difficulty,deployment(campaign,true).levels);if(el.checked&&!ok.includes(id)){el.checked=false;toast(difficulty==='extreme'?'극한 출진 코스트 상한을 넘어 더 데려갈 수 없습니다.':`이 장에는 ${storySortieLimit(difficulty)}명까지(남은 출진 칸 ${optionalOfficers(c.stage,c.map).capacity})만 더 데려갈 수 있습니다.`);return;}extras=ok;draw();});
     $('#brief-back').onclick=scenario?()=>showScenario(scenarioHost,scenario.chapter):expedition?()=>showExpeditions(expedition.kind):showChronicle;
     if(scenario)$('#brief-camp').onclick=()=>campOf(scenarioHost,scenario.chapter);
     document.querySelectorAll<HTMLSelectElement>('[data-support]').forEach(el=>el.onchange=()=>{const k=supportOptions.find(k=>k===el.value);if(k){supports[Number(el.dataset.support)]=k;draw();}});

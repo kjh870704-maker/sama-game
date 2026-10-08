@@ -21,7 +21,7 @@ import {temperNames} from './duel.ts';
 import {playContest} from './duel-ui.ts';
 import {cardFace} from './faces.ts';
 import {portraitImage} from './portrait-images.ts';
-import {taleSortieLimit} from './sortie.ts';
+import {taleSortieLimit,taleCostCap,unitCost} from './sortie.ts';
 import {classNames} from './troops.ts';
 import {classSprite} from './codex-ui.ts';
 import {nextEvolutionText,XP_PER_LEVEL,RELICS,survivorsOf,type BattleMods,type RunBattleRef,type RunUnit} from './roguelike.ts';
@@ -260,16 +260,21 @@ export function showIfPrep(host:ScenarioHost,state:ScenarioState,step:ScenarioSt
   // 필수 장수: 대본이 정한 사람 중 지금 부대에 있는 사람. 선택 장수: 난이도에 맞춘 인원 안에서.
   const required=(scriptOf(step.id)?.required??[]).filter(n=>state.officers[n]).slice(0,3);
   const optional=names.filter(n=>!required.includes(n)),limit=Math.min(6-required.length,taleSortieLimit(step.act,step.kind==='boss',difficulty));
-  const sel=(picked??optional.slice(0,limit)).filter(n=>optional.includes(n)).slice(0,limit),route=routeById(step.route)!,foe=step.kind==='boss'?route.region.boss:step.tale!.target;
+  const unitAt=(name:string)=>name==='사마의'?{unitClass:evolvedClass('strategist',hero.level),level:hero.level}:state.officers[name]!;
+  // 극한: 인원 대신 출진 코스트(필수 장수 + 고른 장수의 병종 코스트 합)가 상한을 넘지 않게 고른다.
+  const ext=difficulty==='extreme',cap=taleCostCap(step.act,step.kind==='boss'),costOf=(name:string)=>{const u=unitAt(name);return unitCost(evolvedClass(u.unitClass,u.level));};
+  const fitCost=(list:string[])=>{let used=['사마의',...required].reduce((n,x)=>n+costOf(x),0);return list.filter(n=>{if(!ext)return true;const c=costOf(n);if(used+c>cap)return false;used+=c;return true;});};
+  const sel=fitCost((picked??optional.slice(0,limit)).filter(n=>optional.includes(n)).slice(0,limit)),route=routeById(step.route)!,foe=step.kind==='boss'?route.region.boss:step.tale!.target;
+  const costUsed=['사마의',...required,...sel].reduce((n,x)=>n+costOf(x),0);
   const f=focus??'사마의',mods=modsOf(state,step),base=enemyBase(state,hero.level,step)+(difficulty==='extreme'?2:0);
   const unitOf=(name:string)=>name==='사마의'?{name,unitClass:evolvedClass('strategist',hero.level),level:hero.level,xp:hero.xp}:state.officers[name]!;
   const card=(name:string)=>{const u=unitOf(name),c=evolvedClass(u.unitClass,u.level),must=name==='사마의'||required.includes(name),on=must||sel.includes(name);
-    return `<button class="prep-officer ${on?'on':''} ${must?'must':''} ${f===name?'focus':''}" data-officer="${esc(name)}">${portraitImage(name)?`<span class="prep-sprite prep-face">${cardFace(name)}</span>`:`<span class="prep-sprite prep-troop">${classSprite(c)}</span>`}<span><strong>${esc(name)}</strong><small>${esc(classNames[c]??c)} · Lv.${u.level} ${'◆'.repeat(tierOf(c))}</small><i class="prep-xp"><i style="width:${Math.round(u.xp/XP_PER_LEVEL*100)}%"></i></i></span>${name==='사마의'?'<em>총대장</em>':must?'<em>🔒 필수</em>':`<label class="prep-toggle"><input type="checkbox" data-sortie="${esc(name)}" ${on?'checked':''}> 출진</label>`}</button>`;};
+    return `<button class="prep-officer ${on?'on':''} ${must?'must':''} ${f===name?'focus':''}" data-officer="${esc(name)}">${portraitImage(name)?`<span class="prep-sprite prep-face">${cardFace(name)}</span>`:`<span class="prep-sprite prep-troop">${classSprite(c)}</span>`}<span><strong>${esc(name)}</strong><small>${esc(classNames[c]??c)} · Lv.${u.level} ${'◆'.repeat(tierOf(c))}${ext?` · 코스트 ${unitCost(c)}`:''}</small><i class="prep-xp"><i style="width:${Math.round(u.xp/XP_PER_LEVEL*100)}%"></i></i></span>${name==='사마의'?'<em>총대장</em>':must?'<em>🔒 필수</em>':`<label class="prep-toggle"><input type="checkbox" data-sortie="${esc(name)}" ${on?'checked':''}> 출진</label>`}</button>`;};
   const u=unitOf(f),c=evolvedClass(u.unitClass,u.level),r=romanceByName(f),temper=temperOf(f),t=classTactics(c);
   host.modal(`<div class="briefing prep-screen" style="--prep-art:url('story-backgrounds-2.webp')"><div class="prep-backdrop" style="${isoBackdrop(14)}"></div><div class="eyebrow">출진 전 정비 · ${esc(kindTag[step.kind])} · ${esc(stepTitle(step,state))}</div><h2>누구를 데리고 갈 것인가</h2>
   <p class="camp-mission">승리: ${esc(foe.name)} 격퇴 · 패배: 사마의 퇴각. 지역 ${esc(route.region.name)} · 적 수준 Lv.${base} 안팎.</p>
-  <div class="prep-rules"><span>필수 ${1+required.length}명(사마의${required.length?' · '+esc(required.join(' · ')):''})</span><span>선택 ${sel.length}/${limit}명</span>
-  <span class="prep-diff"><label><input type="radio" name="if-diff" value="normal" ${difficulty==='normal'?'checked':''}> 일반</label><label><input type="radio" name="if-diff" value="extreme" ${difficulty==='extreme'?'checked':''}> 극한 · 적 +2레벨 · 동행 −1 · 경험치 ×1.3</label></span></div>
+  <div class="prep-rules"><span>필수 ${1+required.length}명(사마의${required.length?' · '+esc(required.join(' · ')):''})</span><span>선택 ${sel.length}/${limit}명</span>${ext?`<span class="prep-cost${costUsed>cap?' over':''}">출진 코스트 ${costUsed}/${cap}</span>`:''}
+  <span class="prep-diff"><label><input type="radio" name="if-diff" value="normal" ${difficulty==='normal'?'checked':''}> 일반</label><label><input type="radio" name="if-diff" value="extreme" ${difficulty==='extreme'?'checked':''}> 극한 · 적 +2레벨 · 출진 코스트 제한 · 경험치 ×1.3</label></span></div>
   ${state.run?.relics.length?`<div class="run-relic-strip"><b class="muted">회차 보물 · 전원 적용</b>${state.run.relics.map(id=>RELICS.find(r=>r.id===id)).filter(Boolean).map(r=>`<span class="run-relic-card"><b>${esc(r!.name)}</b><small>${esc(r!.effect)}</small></span>`).join('')}</div>`:''}
   ${romanceByName(foe.name)?(()=>{const c=contestOf(state,step),team=['사마의',...required,...sel],best=(k:'war'|'int')=>team.slice().sort((a,b)=>(romanceByName(b)?.[k]??0)-(romanceByName(a)?.[k]??0))[0]!;
     return `<div class="prep-contest"><span class="prep-contest-face">${cardFace(foe.name)}</span><div><b>적장 ${esc(foe.name)}과(와) 마주했다</b><small>${c?`${c.kind==='duel'?'일기토':'설전'} ${c.result==='win'?'승리 — 이번 전투 사기 상승'+(c.kind==='duel'?' · 적 기세 꺾임(체력 80%)':' · 책략 MP +15'):c.result==='lose'?'패배':'무승부'}`:'싸우기 전에 겨뤄 볼 수 있다. 이기면 이번 전투가 유리해진다(한 장에 한 번).'}</small></div>${c?'':`<button data-contest="duel" data-by="${esc(best('war'))}">⚔ 일기토 · ${esc(best('war'))}</button><button data-contest="debate" data-by="${esc(best('int'))}">✒ 설전 · ${esc(best('int'))}</button>`}</div>`;})():''}
@@ -282,13 +287,13 @@ export function showIfPrep(host:ScenarioHost,state:ScenarioState,step:ScenarioSt
   <div class="run-actions"><button class="primary" id="prep-go">출진 ▶</button>${host.showSlots?'<button id="prep-save">💾 저장</button>':''}<button id="prep-camp">← 진영으로</button><button id="prep-back">장 목록</button></div></div>`,false);
   const get=()=>[...document.querySelectorAll<HTMLInputElement>('[data-sortie]')].filter(x=>x.checked).map(x=>x.dataset.sortie!);
   document.querySelectorAll<HTMLButtonElement>('[data-officer]').forEach(b=>b.onclick=e=>{if((e.target as HTMLElement).closest('.prep-toggle'))return;showIfPrep(host,state,step,get(),b.dataset.officer!,difficulty);});
-  document.querySelectorAll<HTMLInputElement>('[data-sortie]').forEach(x=>x.onchange=()=>{const now=get();if(now.length>limit){x.checked=false;host.toast(`이 장에는 필수 장수 밖으로 ${limit}명까지 데려갈 수 있습니다(${difficulty==='extreme'?'극한':'일반'}).`);return;}showIfPrep(host,state,step,now,f,difficulty);});
+  document.querySelectorAll<HTMLInputElement>('[data-sortie]').forEach(x=>x.onchange=()=>{const now=get();if(now.length>limit){x.checked=false;host.toast(`이 장에는 필수 장수 밖으로 ${limit}명까지 데려갈 수 있습니다.`);return;}if(fitCost(now).length<now.length){x.checked=false;host.toast(`극한 출진 코스트 상한(${cap})을 넘어 더 데려갈 수 없습니다.`);return;}showIfPrep(host,state,step,now,f,difficulty);});
   document.querySelectorAll<HTMLInputElement>('[name=if-diff]').forEach(x=>x.onchange=()=>showIfPrep(host,state,step,get(),f,x.value==='extreme'?'extreme':'normal'));
   document.querySelectorAll<HTMLButtonElement>('[data-contest]').forEach(b=>b.onclick=async()=>{const kind=b.dataset.contest as 'duel'|'debate';await runContest(host,state,step,kind,foe.name,b.dataset.by);showIfPrep(host,loadScenario(),step,get(),f,difficulty);});
   document.getElementById('prep-back')!.onclick=()=>showScenario(host,step.id);
   document.getElementById('prep-save')?.addEventListener('click',()=>host.showSlots!());
   document.getElementById('prep-camp')!.onclick=()=>showCampFor(host,step);
-  document.getElementById('prep-go')!.onclick=()=>launch(host,state,step,[...required,...get()],difficulty);
+  document.getElementById('prep-go')!.onclick=()=>launch(host,state,step,[...required,...fitCost(get())],difficulty);
 }
 /** 연구·장수 효과를 배치에 적는다(출진 순간의 값). */
 function perksFor(party:ReadonlyArray<{name:string;unitClass:UnitClass}>){const p=deploymentPerks(loadMeta(),party.map(u=>({name:u.name,unitClass:u.unitClass})));return p?{perks:p}:{};}

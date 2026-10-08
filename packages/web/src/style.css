@@ -1532,3 +1532,7 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 .duel-stage.live-models .duel-fighter.hit .duel-model{animation:card-hit .5s ease-out .2s both}
 .duel-stage.live-models .duel-fighter.motion-special .duel-model{filter:drop-shadow(0 0 18px #ffd060) drop-shadow(0 14px 6px rgba(0,0,0,.45))}
 @media (max-height:500px){.duel-stage.live-models .duel-fighter .damage-number{font-size:28px}}
+
+/* 극한 출진 코스트 */
+.sortie-picker legend b.over,.prep-cost.over{color:#ff6a50}
+.prep-cost{color:#f0d79c}
