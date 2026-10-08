@@ -44,12 +44,12 @@ function classArt(c:UnitClass){
   const p=paintedTroopArt[c];if(!p)return classSprite(c);
   return `<div class="cx-sprite" role="img" aria-label="${esc(classNames[c]??c)}" style="background-image:var(--${p.sheet}-atlas);background-size:400% ${p.rows*100}%;background-position:0 ${p.rows>1?p.row/(p.rows-1)*100:0}%">${fitCanvas(p.sheet,p.row)}</div>`;
 }
-const officerArt=(name:string,b:OfficerEntry['battle'][string])=>`<div class="cx-sprite" role="img" aria-label="${esc(name)}">${fitCanvas(b.sheet,0)}</div>`;
+const officerArt=(name:string,b:OfficerEntry['battle'][string])=>`<div class="cx-sprite" role="img" aria-label="${esc(name)}" style="background-image:url(${esc(b.sheet)});background-size:400% ${b.rows*100}%;background-position:0 0"></div>`;
 const rangeLine=(c:UnitClass)=>{const p=profileOf(c);return `<div class="evo-range">${reachMini(c)}<p><b>${esc(classNames[c]??c)} · ${esc(reachLabel(c))}</b><span>사거리 ${p.range[0]===p.range[1]?p.range[0]:p.range[0]+'~'+p.range[1]} · 이동 ${p.movement}</span></p></div>`;};
 const personCard=(art:string,small:string,name:string,c:UnitClass,extra='')=>`<article class="evo-card evo-person-card"><div class="evo-top">${art}<div><small>${small}</small><h4>${esc(name)}</h4></div></div>${rangeLine(c)}${extra}</article>`;
 /** 장수의 병종: 군주 9명은 군주, 나머지는 전용 전투 그림의 첫 병종(제갈량 수레 제외). */
 const officerClass=(e:OfficerEntry):UnitClass=>(LORD_NAMES.includes(e.name)?'lord':Object.keys(e.battle).find(k=>k!=='cart')) as UnitClass;
-const officerSheet=(e:OfficerEntry,c:string)=>e.battle[c]??Object.entries(e.battle).find(([k])=>k!=='cart')?.[1];
+const officerSheet=(e:OfficerEntry,c:string)=>e.battle[c]??e.battle.lord??Object.entries(e.battle).find(([k])=>k!=='cart')?.[1];
 function officerCards(){
   return OFFICER_FACTIONS.map(f=>{
     const list=officerManifest.filter(e=>(OFFICER_FACTION[e.id]??'군웅')===f);if(!list.length)return '';

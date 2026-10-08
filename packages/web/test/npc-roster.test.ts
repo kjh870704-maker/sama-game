@@ -52,8 +52,8 @@ describe('NPC 목록', ()=>{
   });
   it('진화표 그림은 모두 같은 상자에 맞춰 다시 그린다', ()=>{
     for(const g of ['all','officer','npc'] as const){
-      const html=evolutionChart(g),cards=html.match(/<article class="evo-card/g)?.length??0,fits=html.match(/class="evo-fit"/g)?.length??0;
-      expect(fits).toBe(cards);
+      const html=evolutionChart(g),cards=html.match(/<article class="evo-card/g)?.length??0,fits=html.match(/class="evo-fit"/g)?.length??0,officers=html.match(/background-image:url\(officers\//g)?.length??0;
+      expect(fits+officers).toBe(cards);
     }
   });
 });

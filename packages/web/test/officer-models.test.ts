@@ -1,11 +1,20 @@
 import {describe,expect,it} from 'vitest';
+import {readFileSync} from 'node:fs';
 import {officerBattleSheet,officerDuelModel,officerDuelModelStyle,officerEntry,officerManifest,officerModelSheets} from '../src/officer-models.ts';
+
+const lordIds=['cao_cao','cao_pi','cao_rui','liu_bei','sun_quan','gongsun_yuan','yuan_tan','yuan_shang','liu_bang'] as const;
+function webpSize(file:URL){
+  const b=readFileSync(file),vp8x=b.indexOf(Buffer.from('VP8X'));
+  expect(vp8x).toBeGreaterThanOrEqual(0);
+  const n=(i:number)=>b[i]!|(b[i+1]!<<8)|(b[i+2]!<<16);
+  return [n(vp8x+12)+1,n(vp8x+15)+1] as const;
+}
 
 describe('장수별 전투 SD와 대결 모델',()=>{
   const players=[['sima_yi','사마의'],['cao_zhen','조진'],['sima_lang','사마랑'],['sima_fang','사마방'],['sima_shi','사마사'],['sima_zhao','사마소']] as const;
 
-  it('대상 38명과 모든 공개 시트를 색인한다',()=>{
-    expect(officerManifest).toHaveLength(38);
+  it('대상 43명과 모든 공개 시트를 색인한다',()=>{
+    expect(officerManifest).toHaveLength(43);
     const sheets=new Set(officerModelSheets.map(s=>s.id));
     for(const entry of officerManifest)for(const battle of Object.values(entry.battle))expect(sheets.has(battle.sheet),battle.sheet).toBe(true);
   });
@@ -29,6 +38,18 @@ describe('장수별 전투 SD와 대결 모델',()=>{
     expect(infantry.action.row).toBe(3);
   });
 
+  it('군주 9명은 군주 전 계통에서 전용 기마 시트를 찾는다',()=>{
+    for(const id of lordIds)for(const unitClass of ['lord','hegemon','sovereign','sonOfHeaven'] as const){
+      const model=officerBattleSheet({id,name:id,unitClass})!;
+      expect(model.action.sheet,`${id}/${unitClass}`).toBe(`officers/${id}-battle-lord-v1.webp`);
+      expect(model.action.cell,`${id}/${unitClass}`).toEqual([350,280]);
+    }
+  });
+
+  it('군주 9명의 전투 시트는 1400×280이다',()=>{
+    for(const id of lordIds)expect(webpSize(new URL(`../public/officers/${id}-battle-lord-v1.webp`,import.meta.url)),id).toEqual([1400,280]);
+  });
+
   it('id, 환영, wooden_zhuge, boss의 연의 이름 순서로 찾는다',()=>{
     expect(officerEntry({id:'chen_gong',name:'무명'})?.name).toBe('진궁');
     expect(officerEntry({id:'story_enemy',name:'진궁의 환영'})?.id).toBe('chen_gong');
@@ -45,5 +66,7 @@ describe('장수별 전투 SD와 대결 모델',()=>{
     }
     expect(officerDuelModelStyle({id:'lu_bu',name:'여포'})).toContain('--officer-x');
     expect(officerDuelModel({id:'lu_bu',name:'여포'})?.sheet).toBe('officers/lu_bu-duel-v2.webp');
+    expect(officerDuelModel({id:'cao_cao',name:'조조'})?.sheet).toBe('officers/cao_cao-duel-v1.webp');
+    expect(officerDuelModel({id:'cao_pi',name:'조비'})?.sheet).toBe('officers/cao_pi-duel-v1.webp');
   });
 });
