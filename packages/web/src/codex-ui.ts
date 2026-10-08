@@ -41,7 +41,7 @@ export type Side='wei'|'shu'|'wu'|'other'|'chu'|'han'|'custom';
 const SIDE_NAMES:Record<Side,string>={wei:'위',shu:'촉',wu:'오',other:'군웅',chu:'초',han:'한',custom:'신장수'};
 const SHU=new Set('마초 황충 조운 마속 왕평 위연 고상 맹염 강유 제갈량 방통 유비 관우 장비 서서 관평 유봉 마대 관색 황권 하후패 이엄'.split(' '));
 const WU=new Set('주유 손권 장소 제갈근 여몽 여범 손소 육손 주연 제갈각 고수 황개 감녕 노숙 정봉 전종 서성'.split(' '));
-const OTHER=new Set('여포 진궁 양앙 공손연 비연 안량 원담 고람 맹획 축융 올돌골 봉기 원상 심배 고간 답돈 문추 저수 채모 전풍 타사대왕 원희'.split(' '));
+const OTHER=new Set('여포 진궁 양앙 공손연 비연 안량 원담 고람 맹획 축융 올돌골 봉기 원상 심배 고간 답돈 문추 저수 채모 전풍 타사대왕 목록대왕 원희'.split(' '));
 export function sideOf(name:string):Side{if(customNames().includes(name))return 'custom';if((CHU as readonly string[]).includes(name))return 'chu';if((HAN as readonly string[]).includes(name))return 'han';return SHU.has(name)?'shu':WU.has(name)?'wu':OTHER.has(name)?'other':'wei';}
 /** 열전에 오르는 모든 장수(위·촉·오·군웅·신장수 순, 같은 세력 안에서는 장수록 순). */
 export function codexNames(){const order:Side[]=['wei','shu','wu','other','chu','han','custom'];const names=allRomanceNames();return order.flatMap(s=>names.filter(n=>sideOf(n)===s));}

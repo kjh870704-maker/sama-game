@@ -42,7 +42,7 @@ describe('운명의 갈림길 · 시나리오 나무',()=>{
    const run=at((r.act-1)*6+2,chain(r));
    expect(nextStory(run),r.id).toBeUndefined();expect(nextTale(run)?.id,r.id).toBe(r.tales[0]!.id);
    expect(regionFor(run,run.floor).boss.name).toBe(r.region.boss.name);
-   expect(r.tales.length,r.id).toBeGreaterThanOrEqual(2);
+   expect(r.tales.length,r.id).toBeGreaterThanOrEqual(3);
    for(const t of r.tales)expect(romanceOf({id:'target',name:t.target.name}),`${r.id}:${t.target.name}`).toBeDefined();
    expect(romanceOf({id:'boss',name:r.region.boss.name}),`${r.id} boss ${r.region.boss.name}`).toBeDefined();
   }

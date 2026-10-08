@@ -86,6 +86,7 @@ export const ROUTES:Route[]=[
     tales:[
       {id:'IF3-coup-1',title:'무기고 장악',intro:'"지낭"이라 불린 환범이 조상에게 달려가기 전에 무기고를 쥐어야 한다. 사마사가 사병 삼천을 이끌고 어둠 속에 섰다.',target:{name:'환범',unitClass:'strategist'}},
       {id:'IF3-coup-2',title:'낙수 부교',intro:'조상의 아우 조희가 낙수 부교를 끊으려 한다. 다리가 끊기면 황제를 모신 조상의 본대가 낙양으로 돌아온다.',target:{name:'조희',unitClass:'cavalry'}},
+      {id:'IF3-coup-3',title:'사마문의 기병',intro:'조상이 돌아오기 전, 그의 심복 문흠이 여강 기병을 몰고 사마문으로 달려온다. 성문을 빼앗기면 조상은 싸우지 않고 낙양에 들어온다.',target:{name:'문흠',unitClass:'cavalry'}},
     ]},
   {id:'unify',act:3,history:false,after:['wei'],ending:{title:'천하통일',lines:['위의 노신은 남은 생을 강동에 걸었다. 건업이 무너진 날, 백 년 만에 천하가 한 사람의 이름 아래 모였다.','제갈량을 막아 낸 손으로 손권을 꺾은 사람 — 그가 사마의였다.']},choice:'천하통일에 건다',detail:'조정 다툼은 아들들에게 맡기고, 남은 생을 오를 치는 데 쓴다. 강동의 물길이 마지막 전장이다.',name:'가상 · 천하통일',
     region:{name:'강동 수향',arc:'하편',terrain:2,boss:{name:'육손',unitClass:'strategist'},pool:['infantry','spearman','rattan','crossbow','taoist','shaman','elephant','cavalry']},
@@ -131,6 +132,7 @@ export const ROUTES:Route[]=[
     tales:[
       {id:'IF3-zu-1',title:'합비의 문',intro:'조식의 재상 사마의가 합비를 넘는다. 강가 요새는 주연이 지킨다.',target:{name:'주연',unitClass:'infantry'}},
       {id:'IF3-zu-2',title:'건업 앞바다',intro:'건업 앞바다에 손권이 몸소 함대를 이끌고 나왔다. 강동의 주인과 마주할 때다.',target:{name:'손권',unitClass:'strategist'}},
+      {id:'IF3-zu-3',title:'석두성',intro:'손권이 성 안으로 물러나자 전종이 건업 서쪽 강가의 돌 성, 석두성에 올랐다. 육손이 진을 칠 시간을 벌려는 것이다.',target:{name:'전종',unitClass:'infantry'}},
     ]},
   {id:'zhi_throne',act:3,history:false,after:['cao_zhi'],choice:'조식에게서 선양받는다',detail:'정사를 모두 쥔 지 오래다. 왕은 시를 짓고, 천하는 사마씨를 본다. 이제 그 자리를 넘겨받는다.',name:'가상 · 선양의 날',
     ending:{title:'선양의 날',lines:['조식은 웃으며 옥새를 내려놓았다. "그대가 더 잘 다스릴 것이오." 사마씨의 나라가 열렸다.','역사보다 한 세대 이른 진 — 시인 왕의 양보로 시작된 왕조였다.']},
@@ -138,6 +140,7 @@ export const ROUTES:Route[]=[
     tales:[
       {id:'IF3-zt-1',title:'종친의 반발',intro:'선양의 소문에 조씨 종친 조휴가 군을 일으켰다. 낙양으로 오는 길목을 끊어라.',target:{name:'조휴',unitClass:'cavalry'}},
       {id:'IF3-zt-2',title:'금군의 칼끝',intro:'금군을 쥔 조진이 궁문을 닫았다. 한때의 벗이 마지막 벽이다.',target:{name:'조진',unitClass:'heavyCav'}},
+      {id:'IF3-zt-3',title:'조홍의 사병',intro:'조씨 가문에서 가장 부유한 조홍이 곳간을 털어 모은 사병을 이끌고 낙양 동문에 섰다.',target:{name:'조홍',unitClass:'cavalry'}},
     ]},
   // ── 하편: 촉의 사마의
   {id:'shu_north',act:3,history:false,after:['shu'],choice:'북벌을 완수한다',detail:'제갈량과 함께 기산을 넘는다. 이번에는 위의 지략을 아는 자가 촉에 있다.',name:'가상 · 한실 부흥',
@@ -146,6 +149,7 @@ export const ROUTES:Route[]=[
     tales:[
       {id:'IF3-sn-1',title:'진창',intro:'진창성을 학소가 지킨다. 제갈량을 스무 날 붙잡았던 성을, 사마의는 사흘 안에 넘으려 한다.',target:{name:'학소',unitClass:'spearman'}},
       {id:'IF3-sn-2',title:'가정 너머',intro:'가정을 지나 장안으로. 위의 명장 장합이 마지막 길을 막는다.',target:{name:'장합',unitClass:'cavalry'}},
+      {id:'IF3-sn-3',title:'동관의 활',intro:'장안을 잃은 위는 동관에 마지막 둑을 쌓았다. 곽회가 관문 위에 활을 세웠다.',target:{name:'곽회',unitClass:'crossbow'}},
     ]},
   {id:'shu_south',act:3,history:false,after:['shu'],choice:'남중을 평정하고 촉의 승상이 된다',detail:'제갈량의 뒤를 이어 남중의 맹획을 꺾고, 촉의 안쪽부터 다진다.',name:'가상 · 촉의 승상',
     ending:{title:'촉의 승상',lines:['남중의 맹획이 일곱 번째로 머리를 숙였다. 사마의는 제갈량의 뒤를 이어 촉의 승상이 되었다.','위에서 태어나 촉에서 늙은 책사 — 그는 끝내 고향 하내로 돌아가지 않았다.']},
@@ -153,6 +157,7 @@ export const ROUTES:Route[]=[
     tales:[
       {id:'IF3-ss-1',title:'등갑병의 숲',intro:'기름 먹인 등갑을 두른 올돌골의 군대가 숲을 메웠다. 칼도 화살도 듣지 않는다 — 불만이 답이다.',target:{name:'올돌골',unitClass:'rattan'}},
       {id:'IF3-ss-2',title:'독룡동',intro:'맹획의 아내 축융이 독룡동 앞에서 비도를 겨눈다.',target:{name:'축융',unitClass:'assassin'}},
+      {id:'IF3-ss-3',title:'목록대왕의 맹수',intro:'은갱동으로 가는 길목, 팔납동의 목록대왕이 범과 표범을 몰고 나왔다. 바람을 부르고 맹수를 부리는 남만의 술사다.',target:{name:'목록대왕',unitClass:'shaman'}},
     ]},
   // ── 하편: 적벽을 넘은 위
   {id:'chibi_shu',act:3,history:false,after:['chibi'],choice:'익주를 쳐 천하통일',detail:'강동을 얻은 위군이 서쪽 익주로 향한다. 남은 것은 유비와 제갈량뿐이다.',name:'가상 · 이른 통일',
@@ -161,6 +166,7 @@ export const ROUTES:Route[]=[
     tales:[
       {id:'IF3-cs-1',title:'검각',intro:'검각의 잔도를 강유가 지킨다. 한 사람이 관을 막으면 만 명도 넘지 못한다는 곳이다.',target:{name:'강유',unitClass:'cavalry'}},
       {id:'IF3-cs-2',title:'성도의 문',intro:'성도 앞에 늙은 조운이 홀로 창을 세웠다.',target:{name:'조운',unitClass:'heavyCav'}},
+      {id:'IF3-cs-3',title:'서량의 마지막 기병',intro:'제갈량이 팔진을 펴는 동안 마대가 서량 기병을 이끌고 성도 북쪽 들판을 휘젓는다.',target:{name:'마대',unitClass:'cavalry'}},
     ]},
   {id:'chibi_throne',act:3,history:false,after:['chibi'],choice:'조씨에게서 천하를 넘겨받는다',detail:'천하의 둘을 얻은 조씨는 이제 그대의 지모 없이는 서지 못한다. 늙은 조조가 숨을 거두는 날, 움직인다.',name:'가상 · 조조의 그늘을 넘어',
     ending:{title:'조조의 그늘을 넘어',lines:['조조를 도와 천하의 둘을 얻은 손이, 그 천하를 조씨에게서 거두었다.','간웅의 참모는 간웅이 되었다. 역사는 이 왕조를 사마씨의 위라 불렀다.']},
@@ -168,6 +174,7 @@ export const ROUTES:Route[]=[
     tales:[
       {id:'IF3-ct-1',title:'업성의 호위',intro:'조조의 호위 대장 허저가 업성 궁문을 지킨다.',target:{name:'허저',unitClass:'infantry'}},
       {id:'IF3-ct-2',title:'종실의 대들보',intro:'조씨 종실의 조진이 마지막까지 조비 곁에 섰다.',target:{name:'조진',unitClass:'heavyCav'}},
+      {id:'IF3-ct-3',title:'외눈의 나루지기',intro:'낙양으로 가는 맹진 나루를 하후돈이 막았다. 조조와 평생을 함께한 외눈의 장수가 마지막으로 조비를 위해 섰다.',target:{name:'하후돈',unitClass:'cavalry'}},
     ]},
   // ── 하편: 세자의 스승
   {id:'heir_wu',act:3,history:false,after:['heir'],choice:'오를 쳐 천하통일',detail:'황제가 된 제자를 위해 남은 강동을 친다.',name:'가상 · 대장군의 천하',
@@ -176,6 +183,7 @@ export const ROUTES:Route[]=[
     tales:[
       {id:'IF3-hw-1',title:'합비의 밤',intro:'감녕이 백 기로 위의 진영을 기습해 온다. 이번에는 사마의가 그 밤을 기다리고 있었다.',target:{name:'감녕',unitClass:'cavalry'}},
       {id:'IF3-hw-2',title:'백의도강',intro:'상인으로 변장한 여몽의 군이 강을 건넌다. 이번에는 속지 않는다.',target:{name:'여몽',unitClass:'cavalry'}},
+      {id:'IF3-hw-3',title:'눈 속의 단병',intro:'강을 건넌 위군 앞에 정봉이 갑옷을 벗은 결사대를 이끌고 눈 내린 둑에 섰다.',target:{name:'정봉',unitClass:'infantry'}},
     ]},
   {id:'heir_regent',act:3,history:false,after:['heir'],choice:'어린 황제의 섭정이 된다',detail:'병약한 황제가 세상을 떠나고 어린 황제가 섰다. 조정을 쥐려는 종친과 맞서 섭정이 된다.',name:'가상 · 섭정의 시대',
     ending:{title:'섭정의 시대',lines:['어린 황제의 손을 잡은 노신이 천하를 다스렸다.','칼을 들지 않고 권력을 쥔 섭정 — 사마의는 찬탈 대신 섭정을 택했다.']},
@@ -183,6 +191,7 @@ export const ROUTES:Route[]=[
     tales:[
       {id:'IF3-hrg-1',title:'종친의 견제',intro:'조진이 종친의 이름으로 섭정을 막아선다.',target:{name:'조진',unitClass:'heavyCav'}},
       {id:'IF3-hrg-2',title:'조상의 칼',intro:'젊은 조상이 금군을 이끌고 궁을 에워쌌다. 정사보다 이십 년 이른 고평릉이다.',target:{name:'조상',unitClass:'cavalry'}},
+      {id:'IF3-hrg-3',title:'지낭의 조서',intro:'조상의 책사 환범이 남궁 문을 닫고 거짓 조서를 내걸었다. 조서가 퍼지기 전에 남궁을 열어야 한다.',target:{name:'환범',unitClass:'strategist'}},
     ]},
   // ── 하편: 원씨의 천하
   {id:'hebei_south',act:3,history:false,after:['hebei'],choice:'강동까지 남정한다',detail:'허창을 얻은 원씨의 승상으로, 남쪽 끝 강동까지 군을 몬다.',name:'가상 · 하북의 천하',
@@ -191,6 +200,7 @@ export const ROUTES:Route[]=[
     tales:[
       {id:'IF3-hs-1',title:'노숙의 맹약',intro:'노숙이 유비와 맺은 맹약으로 강동의 문을 막는다.',target:{name:'노숙',unitClass:'strategist'}},
       {id:'IF3-hs-2',title:'파양호 수군',intro:'파양호의 수군을 감녕이 이끈다.',target:{name:'감녕',unitClass:'cavalry'}},
+      {id:'IF3-hs-3',title:'오하의 아몽',intro:'시상으로 들어가는 강어귀를 젊은 여몽이 막았다. 글을 몰라 놀림받던 장수가 이제는 주유의 병법으로 진을 쳤다.',target:{name:'여몽',unitClass:'infantry'}},
     ]},
   {id:'hebei_throne',act:3,history:false,after:['hebei'],choice:'원상을 폐하고 즉위한다',detail:'원상은 그릇이 아니다. 하북의 신하들은 이미 그대를 본다.',name:'가상 · 원씨를 넘어선 자',
     ending:{title:'원씨를 넘어선 자',lines:['원씨의 책사가 원씨의 옥좌에 앉았다. 하북에서 사마씨의 나라가 일어났다.','관도를 뒤집은 지략은 끝내 주인을 삼켰다.']},
@@ -198,6 +208,7 @@ export const ROUTES:Route[]=[
     tales:[
       {id:'IF3-ht-1',title:'봉기의 간언',intro:'원씨의 충신 봉기가 업성 백관을 모아 그대를 탄핵한다.',target:{name:'봉기',unitClass:'strategist'}},
       {id:'IF3-ht-2',title:'업성 금위',intro:'심배가 업성 금위를 이끌고 마지막 충성을 바친다.',target:{name:'심배',unitClass:'strategist'}},
+      {id:'IF3-ht-3',title:'저수의 마지막 간언',intro:'관도에서 원씨를 이기게 한 책사 저수가 업성 서쪽 성채에 원상의 마지막 병사를 모았다.',target:{name:'저수',unitClass:'strategist'}},
     ]},
   // ── 하편: 사마씨의 나라
   {id:'ind_alliance',act:3,history:false,after:['independent'],choice:'조조와 손잡고 원씨를 멸한다',detail:'남쪽의 조조와 동맹을 맺고 북쪽의 원씨부터 친다. 하북을 사마씨의 것으로 만든다.',name:'가상 · 하북의 주인',
@@ -206,6 +217,7 @@ export const ROUTES:Route[]=[
     tales:[
       {id:'IF3-ia-1',title:'업성 포위',intro:'원상의 충신 심배가 업성을 지킨다.',target:{name:'심배',unitClass:'strategist'}},
       {id:'IF3-ia-2',title:'원씨의 친위',intro:'원소의 조카 고간이 원상을 지키러 병주에서 내려왔다.',target:{name:'고간',unitClass:'infantry'}},
+      {id:'IF3-ia-3',title:'하북의 철기',intro:'원상의 마지막 진 앞에 문추가 하북 철기를 이끌고 나왔다. 안량과 함께 하북의 두 기둥이라 불린 장수다.',target:{name:'문추',unitClass:'cavalry'}},
     ]},
   {id:'ind_empire',act:3,history:false,after:['independent'],choice:'하내에서 제업을 연다',detail:'원씨와 조조 모두를 친다. 하내의 깃발로 중원을 차지한다.',name:'가상 · 하내의 제국',
     ending:{title:'하내의 제국',lines:['조조마저 꺾은 하내의 사마씨가 중원의 주인이 되었다.','원소도 조조도 아닌 제3의 영웅 — 그것이 사마의였다.']},
@@ -213,6 +225,7 @@ export const ROUTES:Route[]=[
     tales:[
       {id:'IF3-ie-1',title:'허창 북문',intro:'외눈의 하후돈이 허창 북문을 지킨다.',target:{name:'하후돈',unitClass:'cavalry'}},
       {id:'IF3-ie-2',title:'호치',intro:'허저가 웃통을 벗고 조조의 본진 앞을 막았다.',target:{name:'허저',unitClass:'infantry'}},
+      {id:'IF3-ie-3',title:'팔문금쇄',intro:'조조가 몸소 나오기 전, 조인이 허창 앞 평원에 팔문금쇄진을 펼쳤다. 살아 나오는 문은 하나뿐이다.',target:{name:'조인',unitClass:'infantry'}},
     ]},
   // ── 신세력: 사마의가 스스로 새 깃발을 든다(신세력으로 시작한 회차에서만)
   {id:'np1',act:1,history:false,custom:true,choice:'스스로 기치를 든다 — {세력}을 세운다',detail:'누구의 신하도 되지 않는다. 하내에서 {세력}의 깃발을 올리고, 조조와 원소 사이에서 살아남는다.',name:'신세력 · {세력}의 깃발',
@@ -301,6 +314,6 @@ export function endingFor(route?:{1?:string;2?:string;3?:string}):Ending{
 }
 export const ALL_ENDINGS=ROUTES.filter(r=>r.act===3).map(r=>r.id);
 
-/** 가상 길 한 편의 가상 전장 수 범위(우두머리 제외). 안내 문구에 쓴다(길마다 2~3장). */
+/** 가상 길 한 편의 가상 전장 수 범위(우두머리 제외). 안내 문구에 쓴다(지금은 모든 길이 3장). */
 export function whatIfTaleRange(){const n=ROUTES.filter(r=>!r.history&&r.tales.length).map(r=>r.tales.length);return {min:Math.min(...n),max:Math.max(...n)};}
 export const taleRangeText=()=>{const {min,max}=whatIfTaleRange();return min===max?`${min}장`:`${min}~${max}장`;};
