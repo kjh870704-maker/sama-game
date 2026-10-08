@@ -1628,7 +1628,7 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 .evo-top{flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:2px}
 .evo-top>div{order:-1;display:flex;align-items:baseline;gap:4px 8px;flex-wrap:wrap;min-width:0}.evo-top>div>h4{order:-1;margin:0}
 .evo-top .cx-sprite{position:relative;width:160px;height:128px;flex:0 0 128px;align-self:center;border-radius:6px}
-@media (max-height:500px){.troop-evolution .evo-top .cx-sprite{width:80px;height:64px;flex:0 0 64px}}
+@media (max-height:500px){.troop-evolution .evo-top .cx-sprite{width:120px;height:96px;flex:0 0 96px}}
 .evo-fit{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none;image-rendering:auto}.evo-fit.on{opacity:1}
 .evo-top .cx-sprite:has(.evo-fit.on){background-image:none!important}
 .evo-person-card .evo-range b{font-size:calc(14px*var(--fs,1))}

@@ -13,6 +13,9 @@ export const officerLooks=[
  {id:'lu_bu',name:'여포',title:'봉선 · 비장',slot:9},
  {id:'chen_gong',name:'진궁',title:'공대 · 냉철한 책사',slot:10},
  {id:'zhou_yu',name:'주유',title:'공근 · 강동의 지략',slot:11},
+ // 스토리 SD·흉상만 있는 장수(옛 초상 묶음 그림 4×3칸에는 없다): 12번 이후 칸은 그 그림을 쓰지 않는다.
+ {id:'sima_shi',name:'사마사',title:'자원 · 사마의의 맏아들',slot:12},
+ {id:'sima_zhao',name:'사마소',title:'자상 · 사마의의 둘째 아들',slot:13},
 ] as const;
 const escape=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 export function officerLook(name:string){return officerLooks.find(p=>p.id===name||p.name===name);}
@@ -37,14 +40,14 @@ export function customFace(name:string){const img=portraitImage(name);if(img)ret
 export function officerPortrait(name:string){
   // 원화 id(cao_zhen)로 불러도 넣은 초상(이름 「조진」으로 저장)을 먼저 찾는다.
   const img=portraitImage(name)??portraitImage(officerLook(name)?.name??'');if(img)return `<div class="officer-face image-face" role="img" aria-label="${escape(name)} 초상" style="background-image:url('${img}');background-size:cover;background-position:50% 12%"></div>`;
-  const cf=customFaces.get(name);if(cf){const url=cf();if(url)return `<div class="officer-face custom-face" role="img" aria-label="${escape(name)} 초상" style="background-image:url(${url});background-size:cover;background-position:center"></div>`;}const p=officerLook(name),row=p?undefined:troopFaceRow(name);if(row!==undefined){
+  const cf=customFaces.get(name);if(cf){const url=cf();if(url)return `<div class="officer-face custom-face" role="img" aria-label="${escape(name)} 초상" style="background-image:url(${url});background-size:cover;background-position:center"></div>`;}const p=officerLook(name),atlas=!!p&&p.slot<12,row=atlas?undefined:troopFaceRow(name);if(row!==undefined){
   // A named officer without painted art: the troop face, nudged in hue per person and marked with
   // the first syllable of the name on a seal in the colour of their side.
   const f=factions[name],named=name in troopFaces&&f!==undefined,h=nameHash(name);
   const tint=named?`;filter:hue-rotate(${(h%7-3)*14}deg) saturate(${(0.85+(h%5)*0.08).toFixed(2)})`:'';
   const y=((2*row+.62)/11*100).toFixed(2);
   if(!named)return `<div class="officer-face troop-face" role="img" aria-label="${escape(name)} 병종 초상" style="background-position:9% ${y}%"></div>`;
-  return `<div class="officer-face troop-face named-face faction-${f}" role="img" aria-label="${escape(name)} 병종 초상"><i class="face-img" style="background-position:9% ${y}%${tint}"></i><span class="face-mark">${escape([...name][0]!)}</span></div>`;}return p?`<div class="officer-face" role="img" aria-label="${p.name} 초상" data-officer="${p.id}" style="background-position:${p.slot%4/3*100}% ${Math.floor(p.slot/4)/2*100}%"></div>`:`<div class="officer-face unknown-face" role="img" aria-label="${escape(name)} · 전용 초상 미등록"><span>${name==='꿈속의 목소리'?'꿈':'말'}</span></div>`;}
+  return `<div class="officer-face troop-face named-face faction-${f}" role="img" aria-label="${escape(name)} 병종 초상"><i class="face-img" style="background-position:9% ${y}%${tint}"></i><span class="face-mark">${escape([...name][0]!)}</span></div>`;}return atlas?`<div class="officer-face" role="img" aria-label="${p!.name} 초상" data-officer="${p!.id}" style="background-position:${p!.slot%4/3*100}% ${Math.floor(p!.slot/4)/2*100}%"></div>`:`<div class="officer-face unknown-face" role="img" aria-label="${escape(name)} · 전용 초상 미등록"><span>${name==='꿈속의 목소리'?'꿈':'말'}</span></div>`;}
 function dialogueBust(name:string){const p=officerLook(name);return p?`<div class="story-caption-bust"><div class="talk-bust officer-bust" role="img" aria-label="${p.name} 흉상" style="background-image:url('officers/${p.id}-bust-v1.webp');background-size:300% 100%;background-position:0 0"></div></div>`:`<div class="story-caption-bust">${officerPortrait(name)}</div>`;}
 export function dialogueCaption(speaker:string,line:string){const p=officerLook(speaker);return `<div class="story-caption with-officer" aria-live="polite">${dialogueBust(speaker)}<div class="dialogue-copy"><small>${p?.title??'이야기'}</small><strong>${escape(displayName(p?.name??speaker))}</strong><p>${escape(line)}</p></div></div>`;}
 export function splitSpokenLine(line:string){const at=line.indexOf(':');return at>0&&at<20?{speaker:line.slice(0,at).trim(),line:line.slice(at+1).trim()}:{speaker:'해설',line};}

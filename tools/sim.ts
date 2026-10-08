@@ -245,6 +245,12 @@ function play(chapter: number, difficulty: Difficulty, seed: number) {
 
   for (let step = 0; step < 6000 && session.state.outcome === "ongoing"; step++) {
     const state = session.state;
+    // 이동만으로도 연의 조우 일기토·설전이 열린다(예: S1-06 허저가 마초 옆으로 가면). 공격 뒤에만 대결을
+    // 끝내면 열린 대결 때문에 대기·턴 넘김이 모두 거절되어 같은 자리에서 6000번 돌다 "진행 중"으로 집계됐다.
+    if (session.activeDuel) {
+      resolveDuel(session);
+      continue;
+    }
     // 대화가 열려 있으면 먼저 응답한다. 방치하면 대화로 분기하는 스테이지의
     // 난이도를 전혀 측정하지 못한다. 정답 선택지를 최적 플레이 근사치로 쓰고,
     // 지참금이 부족해 거절되면 다음 선택지로 넘어간다.
