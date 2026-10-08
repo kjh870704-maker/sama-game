@@ -20,6 +20,15 @@ describe('장수별 전투 SD와 대결 모델',()=>{
     }
   });
 
+  it('진화 병종은 원래 계통 시트에서 해당 단계 줄을 고른다',()=>{
+    const strategist=officerBattleSheet({id:'sima_yi',name:'사마의',unitClass:'mastermind'})!;
+    expect(strategist.action.sheet).toContain('battle-strategist');
+    expect(strategist.action.row).toBe(2);
+    const infantry=officerBattleSheet({id:'sima_lang',name:'사마랑',unitClass:'ironInfantry'})!;
+    expect(infantry.action.sheet).toContain('battle-infantry');
+    expect(infantry.action.row).toBe(3);
+  });
+
   it('id, 환영, wooden_zhuge, boss의 연의 이름 순서로 찾는다',()=>{
     expect(officerEntry({id:'chen_gong',name:'무명'})?.name).toBe('진궁');
     expect(officerEntry({id:'story_enemy',name:'진궁의 환영'})?.id).toBe('chen_gong');

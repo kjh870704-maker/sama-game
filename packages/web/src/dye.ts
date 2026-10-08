@@ -14,6 +14,7 @@ export function dyeOfSide(side:string):Dye{return side==='enemy'?'red':side==='a
 export function clothBand(sheet:string):[number,number]{
   if(sheet.startsWith('base'))return [185,258];
   if(sheet.startsWith('extra'))return [140,200];
+  if(sheet.startsWith('officers/'))return [200,235];
   return [338,16];
 }
 const inBand=(h:number,[a,b]:[number,number])=>a<=b?h>=a&&h<=b:h>=a||h<=b;

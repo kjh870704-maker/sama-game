@@ -1,4 +1,4 @@
-import type {Unit} from '../../core/src/index.ts';
+import {familyOf,tierOf,type Unit} from '../../core/src/index.ts';
 import {romanceOf} from './romance.ts';
 
 export interface OfficerFrameSet {sheet:string;row:number;rows:number;cell?:readonly [number,number]}
@@ -60,10 +60,11 @@ export function officerEntry(u:OfficerLike):OfficerEntry|undefined{
   const direct=byKey.get(u.id)??byKey.get(u.name)??byKey.get(plain(u.name));if(direct)return direct;
   const r=romanceOf(u);return r?byKey.get(r.name):undefined;
 }
-const classKey=(u:OfficerLike,e:OfficerEntry)=>{if(u.id==='wooden_zhuge'&&e.battle.cart)return 'cart';const cls=u.unitClass;if(cls&&e.battle[cls])return cls;return Object.keys(e.battle)[0]!;};
+const classKey=(u:OfficerLike,e:OfficerEntry)=>{if(u.id==='wooden_zhuge'&&e.battle.cart)return 'cart';const cls=u.unitClass;if(cls&&e.battle[cls])return cls;if(cls){const family=familyOf(cls);if(e.battle[family])return family;}return Object.keys(e.battle)[0]!;};
 export function officerBattleSheet(u:OfficerLike):OfficerBattleModel|undefined{
   const e=officerEntry(u);if(!e)return undefined;const b=e.battle[classKey(u,e)];if(!b)return undefined;
-  const set={sheet:b.sheet,row:0,rows:b.rows,cell:b.cell};const fallback=legacy.get(e.id);
+  const row=b.rows>1&&u.unitClass?Math.min(b.rows-1,tierOf(u.unitClass)-1):0;
+  const set={sheet:b.sheet,row,rows:b.rows,cell:b.cell};const fallback=legacy.get(e.id);
   return {action:set,walk:set,sideWalk:set,...(fallback?{fallback}:{})};
 }
 export const officerBattleModel=officerBattleSheet;
