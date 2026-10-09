@@ -59,9 +59,9 @@ describe('NPC 목록', ()=>{
 });
 
 describe('군주', ()=>{
-  it('조조·조비·조예·유비·손권·공손연·원담·원상·유방은 군주 계통에 선다', async ()=>{
+  it('군주 9명과 서초패왕 항우는 군주 계통에 선다', async ()=>{
     const {officerClass}=await import('../src/officer-perks.ts');
-    for(const n of ['조조','조비','조예','유비','손권','공손연','원담','원상','유방'])expect(officerClass(n)).toBe('lord');
+    for(const n of ['조조','조비','조예','유비','손권','공손연','원담','원상','유방','항우'])expect(officerClass(n)).toBe('lord');
     const {ROUTES}=await import('../src/fate.ts');
     const bosses=ROUTES.map(r=>r.region.boss).filter(b=>['조조','조비','조예','유비','손권','공손연','원담','원상'].includes(b.name));
     expect(bosses.length).toBeGreaterThan(0);
