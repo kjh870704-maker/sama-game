@@ -16,7 +16,7 @@ import {watchCssAtlases} from './css-atlas.ts';
 import {actionNames,duelActionNames,duelLine,temperNames,type DuelAction} from './duel.ts';
 import {spriteAtlas} from './sprite-atlas.ts';
 import {paintedTroopArt} from './painted-troops.ts';
-import {officerDuelModelStyle,officerDuelMounted,officerBattleSheet} from './officer-models.ts';
+import {officerDuelModelStyle,officerDuelMounted,officerBattleSheet,officerDuelSheetUrl} from './officer-models.ts';
 import {MOUNTED_FAMILIES} from './armor.ts';
 import {coachStep,COACH_KEY} from './tutorial.ts';
 import {dueLines} from './battle-lines.ts';
@@ -38,7 +38,7 @@ import {loadPortraitImages,portraitImage} from './portrait-images.ts';
 import {cardFace} from './faces.ts';
 import {renderHud,type CardOpts} from './unit-hud.ts';
 import {inkChoice} from './ink-choice.ts';
-import {duelSplash,duelArena,duelBackdrop,duelModel} from './duel-ui.ts';
+import {duelSplash,duelArena,duelBackdrop,duelModel,preloadDuelArt} from './duel-ui.ts';
 // 플레이어가 만든 신장수를 장수록에 올린다(전투 능력·성격·무대 그림).
 registerCustoms(loadMetaForCustoms().customOfficers??[]);
 // 직접 넣은 초상 그림(저장소 public/portraits와 이 브라우저에 올린 것)을 먼저 읽어 둔다.
@@ -307,6 +307,7 @@ function activate(){
   if(!fieldReady){startRest();modal(waitPanel('전장 준비 중','전장 그림을 마저 받고 있습니다. 끝나면 바로 시작합니다.'),false);void fieldInit?.then(activate,error=>{console.error(error);modal(`<div class="briefing"><h2>전장 그래픽 오류</h2><p class="render-error">전장 그래픽을 준비하지 못했습니다. 브라우저를 최신으로 올리거나, 다른 탭을 닫고 다시 시도해 주세요.</p><p class="muted">원인: ${String((error as Error)?.message??error).replace(/[<>&]/g,'').slice(0,160)}</p><div class="modal-actions"><button class="primary" id="field-retry">다시 시도</button></div></div>`,false);$('#field-retry').onclick=()=>location.reload();});return;}
   hasStarted=true;menuOpen=false;resultShown=false;duelPresented=false;mode='move';
   selected=session.state.living(session.state.currentSide).find(u=>!u.hasActed)?.id??'sima_yi';
+  preloadDuelArt([...session.state.units.values()].map(u=>officerDuelSheetUrl(u)));
   lastLog=session.state.log.length;field.load(session.state);const u=session.state.find(selected);if(u)field.focusUnit(u.pos);
   const m=session.state.map,terrain:TerrainKind[]=[];for(let y=0;y<m.height;y++)for(let x=0;x<m.width;x++)terrain.push(m.tileAt({x,y}).terrain);
   sound.scene='battle';sound.place=placeFor(session.state.stage.id,terrain);sound.focus=undefined;sound.combat=session.chapter!==0;void sound.start().then(()=>{updateSound();if(!session.journal.length)sound.event({kind:'battle-start'});});

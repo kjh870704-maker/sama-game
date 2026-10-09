@@ -36,6 +36,11 @@ const HELP:Record<'duel'|'debate',Record<DuelAction,string>>={
 };
 const DUEL_BACKDROPS=['duel-arena-field-v2.webp','duel-arena-river-v2.webp','duel-arena-gate-v2.webp'] as const;
 const DEBATE_BACKDROPS=['debate-arena-palace-v2.webp','debate-arena-tent-v2.webp'] as const;
+const preloaded=new Set<string>();
+/** 전투를 시작할 때 대결 배경과 전장 장수들의 대결 그림을 미리 받아 둔다(대결 화면이 몇 초 비어 보이지 않게). */
+export function preloadDuelArt(urls:readonly (string|undefined)[]){
+  for(const url of [...DUEL_BACKDROPS,...DEBATE_BACKDROPS,...urls]){if(!url||preloaded.has(url))continue;preloaded.add(url);const im=new Image();im.decoding='async';im.src=url;}
+}
 const backdropIndex=(seed:string,length:number)=>{
   let hash=2166136261;
   for(const ch of seed)hash=Math.imul(hash^ch.charCodeAt(0),16777619);

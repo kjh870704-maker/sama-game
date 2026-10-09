@@ -109,5 +109,7 @@ function duelFitStyle(id:string){
   return `;transform-origin:50% ${(foot/256*100).toFixed(1)}%;translate:0 ${((DUEL_FOOT-foot)/256*100).toFixed(2)}%;scale:${k.toFixed(3)}`;
 }
 export function officerDuelModelStyle(u:OfficerLike,frame=0){const set=officerDuelModel(u);if(!set)return undefined;const def=officerModelSheets.find(s=>s.id===set.sheet);const url=def?.url??set.sheet,x=Math.max(0,Math.min(3,frame))/3*100,y=set.rows>1?set.row/(set.rows-1)*100:0;return `--officer-x:${x}%;--officer-y:${y}%;background-image:url(${url});background-size:400% ${set.rows*100}%;background-position:var(--officer-x) var(--officer-y)${duelFitStyle(officerEntry(u)!.id)}`;}
+/** 대결 그림 시트 주소(미리 받기용). */
+export function officerDuelSheetUrl(u:OfficerLike){const set=officerDuelModel(u);if(!set)return undefined;return officerModelSheets.find(s=>s.id===set.sheet)?.url??set.sheet;}
 /** 이전 호출부 호환: 대결용 상세 모델의 첫 자세. */
 export const officerModelStyle=(u:OfficerLike)=>officerDuelModelStyle(u,0);
