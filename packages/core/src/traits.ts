@@ -38,6 +38,8 @@ export interface DamageContext {
   lifesteal: number;
   /** 즉사 판정 확률 */
   instantKillChance: number;
+  /** 물리 공격에 더하는 고정 추가 피해(부대효과·장수 특성의 정신력 비례 피해) */
+  bonusDamage?: number;
 }
 
 export interface TraitHooks {

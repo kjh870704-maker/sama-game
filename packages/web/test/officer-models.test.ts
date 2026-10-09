@@ -34,13 +34,13 @@ describe('장수별 전투 SD와 대결 모델',()=>{
     }
   });
 
-  it('진화 병종은 원래 계통 시트에서 해당 단계 줄을 고른다',()=>{
+  it('진화 병종도 원래 계통 시트의 같은 모습(첫 줄)을 쓴다',()=>{
     const strategist=officerBattleSheet({id:'sima_yi',name:'사마의',unitClass:'mastermind'})!;
     expect(strategist.action.sheet).toContain('battle-strategist');
-    expect(strategist.action.row).toBe(2);
+    expect(strategist.action.row).toBe(0);
     const infantry=officerBattleSheet({id:'sima_lang',name:'사마랑',unitClass:'ironInfantry'})!;
     expect(infantry.action.sheet).toContain('battle-infantry');
-    expect(infantry.action.row).toBe(3);
+    expect(infantry.action.row).toBe(0);
   });
 
   it('군주 10명은 군주 전 계통에서 전용 기마 시트를 찾는다',()=>{

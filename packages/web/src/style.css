@@ -1655,3 +1655,6 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 .map-objective p{margin:0}.map-objective b{display:inline-block;min-width:2.4em;font-weight:700}
 .map-objective .mo-win b{color:#9fd4ff}.map-objective .mo-lose{color:#c9b8a0;font-size:calc(12px*var(--fs,1));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.map-objective .mo-lose b{color:#f0a090}
 @media (max-height:520px){.map-objective{top:56px;max-width:52%;padding:4px 8px;font-size:calc(12px*var(--fs,1))}.map-objective .mo-lose{display:none}}
+/* 부대효과·장수 특성(규칙판 7): 단계별 수치 줄, 지금 단계 강조 */
+.evo-skill.evo-troop{white-space:normal;display:flex;flex-direction:column;gap:1px;color:#e8dcc0}
+.evo-troop .evo-steps{color:#bfae8a;font-size:calc(12px*var(--fs,1))}.evo-troop .evo-steps b{color:#ffd77a}

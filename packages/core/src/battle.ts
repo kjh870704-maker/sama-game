@@ -8,11 +8,12 @@ import { ccRecoverChance } from "./cc-rules.ts";
 import type { StatusKind } from "./types.ts";
 import { computePhysical, computeStrategy, createDamageContext, doubleAttackChance } from "./formulas.ts";
 import { applyTraitHooks, capHit, counterLimitOf, ignoresRough, hasTrait, guardsAdjacent, getTrait, traitParam } from "./traits.ts";
+import { troopLifesteal } from "./troop-effects.ts";
 import { DialogueScript } from "./dialogue.ts";
 import { runEvents } from "./events.ts";
 import { advanceVictory, evaluateGroup } from "./conditions.ts";
 import { manhattan, key, sameCoord, adjacent, isHostile } from "./grid.ts";
-import { inReach, reachLabel } from "./reach.ts";
+import { inReach, reachLabel, unitReachLabel } from "./reach.ts";
 import { CONTROLLABLE } from "./types.ts";
 import type { Unit, Coord, StrategyDef } from "./types.ts";
 import { decide } from "./ai.ts";
@@ -136,7 +137,7 @@ export class Battle {
     if (a.hasActed) return fail("이미 행동함");
 
     const dist = manhattan(a.pos, d.pos);
-    if (!inReach(a, a.pos, d.pos)) return fail(`사거리 밖 (거리 ${dist}, 사거리 ${a.range[0]}~${a.range[1]} · ${reachLabel(a.unitClass)})`);
+    if (!inReach(a, a.pos, d.pos)) return fail(`사거리 밖 (거리 ${dist}, 사거리 ${a.range[0]}~${a.range[1]} · ${unitReachLabel(a)})`);
 
     this.strike(a, d, false);
 
@@ -295,6 +296,8 @@ export class Battle {
       const pct = source.traitParams["lifesteal"] ?? 0;
       source.hp = Math.min(source.stats.maxHp, source.hp + Math.round(amount * (pct / 100)));
     }
+    const plunder = troopLifesteal(source);
+    if (plunder > 0 && source.alive) source.hp = Math.min(source.stats.maxHp, source.hp + Math.round(amount * (plunder / 100)));
     if (recipient.hp <= 0) this.state.retreat(recipient);
   }
 

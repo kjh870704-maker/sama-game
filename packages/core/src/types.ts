@@ -188,6 +188,8 @@ export interface Unit {
   strategies: string[];
   /** 공격 사거리 [최소, 최대] */
   range: readonly [number, number];
+  /** 이름난 장수: 공격 모양이 그 계통 마지막 진화 병종과 같다(그보다 넓어지지 않는다). */
+  famedReach?: boolean;
   hasMoved: boolean;
   movedThisTurn?: boolean;
   /** 이번 차례에 움직인 거리(칸). 기병 돌격 같은 병종 전법이 읽는다. */

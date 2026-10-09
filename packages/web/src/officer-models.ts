@@ -73,7 +73,8 @@ export function officerEntry(u:OfficerLike):OfficerEntry|undefined{
 const classKey=(u:OfficerLike,e:OfficerEntry)=>{if(u.id==='wooden_zhuge'&&e.battle.cart)return 'cart';const cls=u.unitClass;if(cls&&e.battle[cls])return cls;if(cls){const family=familyOf(cls);if(family==='lord'&&e.battle.lord)return 'lord';if(e.battle[family])return family;}return e.battle.lord?'lord':Object.keys(e.battle)[0]!;};
 export function officerBattleSheet(u:OfficerLike):OfficerBattleModel|undefined{
   const e=officerEntry(u);if(!e)return undefined;const b=e.battle[classKey(u,e)];if(!b)return undefined;
-  const row=b.rows>1&&u.unitClass?Math.min(b.rows-1,tierOf(u.unitClass)-1):0;
+  // 장수는 병종이 진화해도 모습은 그대로다(능력치·책략·부대효과만 진화를 따른다). 단계별 줄이 있는 시트도 첫 줄만 쓴다.
+  const row=0;
   const set={sheet:b.sheet,row,rows:b.rows,cell:b.cell};const fallback=legacy.get(e.id);
   return {action:set,walk:set,sideWalk:set,...(fallback?{fallback}:{})};
 }

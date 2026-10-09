@@ -11,7 +11,7 @@
  * 대각선으로 붙은 칸은 '붙어 있다'(거리 1)로 치며, 대각선으로 친 평타는 정면보다 약하다(EXTENDED_REACH_MUL).
  */
 import type { Coord, Unit, UnitClass } from "./types.ts";
-import { familyOf, tierOf } from "./classes.ts";
+import { familyOf, tierOf, finalClassOf } from "./classes.ts";
 import { profileOf } from "./units.ts";
 
 export type ReachShape = "cross" | "square";
@@ -50,6 +50,14 @@ export function reachSpec(unitClass: UnitClass): ReachSpec {
   return tier >= 2 ? EIGHT : CROSS;
 }
 
+/** 부대 하나의 공격 모양: 이름난 장수는 그 계통 마지막 진화 병종의 모양(그보다 넓지 않다). */
+export function unitReachSpec(unit: Pick<Unit, "unitClass"> & { famedReach?: boolean }): ReachSpec {
+  const own = reachSpec(unit.unitClass);
+  if (!unit.famedReach) return own;
+  const top = reachSpec(finalClassOf(unit.unitClass));
+  return { sq: Math.max(own.sq, top.sq), line: Math.max(own.line, top.line) };
+}
+
 export function reachShape(unitClass: UnitClass): ReachShape {
   return reachSpec(unitClass).sq > 0 ? "square" : "cross";
 }
@@ -62,15 +70,21 @@ export function reachLabel(unitClass: UnitClass): string {
   return (r.sq > 0 ? "팔방" : "십자") + (r.line ? ` · 일직선 ${profileOf(unitClass).range[1] + r.line}칸` : "");
 }
 
+/** 부대 하나의 공격 범위 이름(이름난 장수의 넓어진 모양 포함). */
+export function unitReachLabel(unit: Pick<Unit, "unitClass" | "range"> & { famedReach?: boolean }): string {
+  const r = unitReachSpec(unit);
+  return (r.sq > 0 ? "팔방" : "십자") + (r.line ? ` · 일직선 ${unit.range[1] + r.line}칸` : "");
+}
+
 /** `from`에 선 `unit`의 평타가 `to`에 닿는가. */
-export function inReach(unit: Pick<Unit, "unitClass" | "range">, from: Coord, to: Coord): boolean {
+export function inReach(unit: Pick<Unit, "unitClass" | "range"> & { famedReach?: boolean }, from: Coord, to: Coord): boolean {
   const [min, max] = unit.range;
   if (max <= 0) return false;
   const dx = Math.abs(from.x - to.x), dy = Math.abs(from.y - to.y);
   if (dx === 0 && dy === 0) return false;
   const man = dx + dy, cheb = Math.max(dx, dy);
   if (man >= min && man <= max) return true;
-  const r = reachSpec(unit.unitClass);
+  const r = unitReachSpec(unit);
   if (r.sq > 0 && dx > 0 && dy > 0 && cheb >= Math.max(1, min) && cheb <= r.sq) return true;
   return r.line > 0 && (dx === 0 || dy === 0) && man > max && man <= max + r.line;
 }

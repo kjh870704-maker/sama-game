@@ -283,6 +283,12 @@ export function familyOf(unitClass: UnitClass): UnitClass {
   return VARIANTS[unitClass]?.family ?? unitClass;
 }
 
+/** 이 병종이 속한 계통의 마지막(4단계) 병종. 계통이 없으면 자기 자신. */
+export function finalClassOf(unitClass: UnitClass): UnitClass {
+  const line = FOUR_STAGE_LINES.find((l) => l.includes(unitClass)) ?? FOUR_STAGE_LINES.find((l) => l.includes(familyOf(unitClass)));
+  return line ? line[3] : unitClass;
+}
+
 /** 1 = 기본 병종, 2·3 = 진화 단계. */
 export function tierOf(unitClass: UnitClass): ClassTier {
   if (SINGLE_STAGE_CLASSES.has(unitClass)) return 1;

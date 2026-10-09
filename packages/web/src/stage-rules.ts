@@ -20,6 +20,8 @@ export interface StageRules {
   tough?:Array<{unit:string;hpScale:number;defense?:number}>;
   /** 규칙판 6(비율 피해)에서만 더하는 단단함: 옛 저장 재생은 그대로 둔다. */
   tough6?:Array<{unit:string;hpScale:number;defense?:number}>;
+  /** 규칙판 7(부대효과·장수 특성)에서만 더하는 단단함. */
+  tough7?:Array<{unit:string;hpScale:number;defense?:number}>;
   /** Units that hold their ground for the whole battle (fixed support). */
   anchored?:string[];
   /** Enemy barricades standing at the start. */
@@ -391,6 +393,11 @@ export const foeEdges6:Record<string,{normal?:number;extreme?:number}>={
   'S1-02':{normal:-38,extreme:-24},'S1-03':{normal:-20},'S1-06':{normal:-8,extreme:-16},'S1-10':{normal:-20},
   'S2-02':{normal:-32,extreme:-12},'S2-04':{normal:-4},'S2-05':{normal:-52,extreme:-45},'S2-06':{extreme:-16},'S2-08':{normal:-24,extreme:-28},
   'S2-09':{normal:-32},'S2-11':{normal:-32,extreme:-20},'S3-02':{normal:-38,extreme:-4},'S2-14':{normal:-18,extreme:-24},'S3-07':{normal:-20,extreme:-15},
+};
+
+/** 규칙판 7(부대효과·장수 특성·이름난 장수의 넓은 공격 범위)에서 foeEdges6에 더하는 적 보정. */
+export const foeEdges7:Record<string,{normal?:number;extreme?:number}>={
+  'S1-02':{normal:-6,extreme:-6},'S1-03':{extreme:-6},'S2-08':{normal:-16},'S2-14':{extreme:-6},
 };
 
 /** Korean subject particle: 이 after a final consonant, 가 otherwise. */

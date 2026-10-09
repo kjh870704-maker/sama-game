@@ -9,7 +9,7 @@ import type { BattleState } from "./state.ts";
 import type { Unit, Coord } from "./types.ts";
 import type { Command } from "./commands.ts";
 import { manhattan, key, sameCoord, isHostile } from "./grid.ts";
-import { inReach, reachSpec, reachOffsets } from "./reach.ts";
+import { inReach, reachSpec, reachOffsets, unitReachSpec } from "./reach.ts";
 import { ignoresRough } from "./traits.ts";
 import { estimatePhysical, estimateStrategy } from "./formulas.ts";
 import { evaluate } from "./conditions.ts";
@@ -274,7 +274,7 @@ function bestAction(
     let incoming = 0;
     for (const h of hostiles) {
       if (h === target || !h.alive || h.range[1] <= 0) continue;
-      if (manhattan(h.pos, from) <= h.stats.movement + h.range[1] + reachSpec(h.unitClass).line + 1) incoming += estimatePhysical(h, unit, state.map);
+      if (manhattan(h.pos, from) <= h.stats.movement + h.range[1] + unitReachSpec(h).line + 1) incoming += estimatePhysical(h, unit, state.map);
     }
     unit.pos = original;
     const v = incoming * 1.25 >= unit.hp ? 400 : 0;

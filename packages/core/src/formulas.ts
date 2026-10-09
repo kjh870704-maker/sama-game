@@ -179,7 +179,7 @@ export function computePhysical(
   if (critical) dmg *= CRITICAL_MULTIPLIER;
   if (opts.isCounter) dmg *= counterMultiplier(attacker);
 
-  const damage = Math.max(MIN_DAMAGE, Math.round(dmg));
+  const damage = Math.max(MIN_DAMAGE, Math.round(dmg)) + Math.round(ctx.bonusDamage ?? 0);
   return {
     attacker: attacker.id,
     defender: defender.id,

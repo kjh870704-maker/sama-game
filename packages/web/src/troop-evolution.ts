@@ -4,7 +4,8 @@
  * 그림은 도감과 같은 완성 병종 원화다.
  */
 import type {UnitClass} from '../../core/src/index.ts';
-import {VARIANTS,tierOf,familyOf,profileOf,classTactics,reachOffsets,reachLabel} from '../../core/src/index.ts';
+import {VARIANTS,tierOf,familyOf,profileOf,classTactics,reachOffsets,reachLabel,troopEffectOf,troopEffectText,OFFICER_EFFECTS,FAMED_OFFICERS,topAbility,finalClassOf,unitReachLabel} from '../../core/src/index.ts';
+import {romanceByName} from './romance.ts';
 import {classNames,evolutionLines,troopSheets} from './troops.ts';
 import {classSprite,paintArmor} from './codex-ui.ts';
 import {classTraitSummary} from './perks.ts';
@@ -24,18 +25,26 @@ export const EVO_GROUPS:Array<[EvoGroup,string,string[]]>=[
 ];
 const TIER_NAME=['','기본','정예','최정예','전설','신화'];
 /** 평타가 닿는 칸을 작은 격자로(가운데 = 자기). 진화할수록 넓어지는 모양이 한눈에 보인다. */
-function reachMini(c:UnitClass){
-  const p=profileOf(c),cells=new Set(reachOffsets({unitClass:c,range:p.range}).map(o=>o.x+','+o.y)),r=Math.max(2,...[...cells].map(k=>Math.max(...k.split(',').map(n=>Math.abs(+n)))));
+function reachMini(c:UnitClass,famed=false){
+  const p=profileOf(c),cells=new Set(reachOffsets({unitClass:c,range:famed?famedRange(c):p.range,...(famed?{famedReach:true}:{})}).map(o=>o.x+','+o.y)),r=Math.max(2,...[...cells].map(k=>Math.max(...k.split(',').map(n=>Math.abs(+n)))));
   let g='';for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++)g+=`<i class="${x===0&&y===0?'me':cells.has(x+','+y)?'on':''}"></i>`;
-  return `<div class="evo-reach" style="--n:${2*r+1}" role="img" aria-label="공격 범위 ${esc(reachLabel(c))}">${g}</div>`;
+  return `<div class="evo-reach" style="--n:${2*r+1}" role="img" aria-label="공격 범위 ${esc(famed?unitReachLabel({unitClass:c,range:famedRange(c),famedReach:true}):reachLabel(c))}">${g}</div>`;
 }
+/** 이름난 장수의 사거리: 그 계통 마지막 진화 병종을 넘지 않는다. */
+const famedRange=(c:UnitClass):readonly [number,number]=>{const p=profileOf(c).range,top=profileOf(finalClassOf(c)).range;return [p[0],Math.max(p[1],top[1])];};
 function card(c:UnitClass,lv:number,prev?:UnitClass){
   const p=profileOf(c),q=prev?profileOf(prev):undefined,v=VARIANTS[c],t=tierOf(c);
   const grew=!!prev&&(reachLabel(prev)!==reachLabel(c)||p.range[1]>q!.range[1]);
   const tactic=v?.bloom?{name:v.bloom.name,description:classTraitSummary(v.traits)||v.bloom.description}:classTactics(c)[0];
   return `<article class="evo-card t${t}"><div class="evo-top">${classArt(c)}<div><small>${'◆'.repeat(t)} ${TIER_NAME[t]}${lv?` · Lv.${lv}`:''}</small><h4>${esc(classNames[c]??c)}</h4></div></div>
     <div class="evo-range">${reachMini(c)}<p><b class="${grew?'up':''}">${esc(reachLabel(c))}${grew?' ▲':''}</b><span>사거리 ${p.range[0]===p.range[1]?p.range[0]:p.range[0]+'~'+p.range[1]} · 이동 ${p.movement}</span></p></div>
-    ${tactic?`<p class="evo-skill" title="${esc(tactic.description)}"><b>${v?.bloom?'개화':'전법'} 「${esc(tactic.name)}」</b>${v?.bloom&&tactic.description?`<span>${esc(tactic.description)}</span>`:''}</p>`:''}</article>`;
+    ${tactic?`<p class="evo-skill" title="${esc(tactic.description)}"><b>${v?.bloom?'개화':'전법'} 「${esc(tactic.name)}」</b>${v?.bloom&&tactic.description?`<span>${esc(tactic.description)}</span>`:''}</p>`:''}${troopNote(c)}</article>`;
+}
+/** 부대효과: 이 단계의 수치와 1~4단계 수치 줄(지금 단계 강조). */
+function troopNote(c:UnitClass){
+  const fx=troopEffectOf(c);if(!fx)return '';
+  const steps=fx.effect.values.map((v,i)=>i+1===fx.tier?`<b>${v}</b>`:String(v)).join(' / ');
+  return `<p class="evo-skill evo-troop" title="${esc(troopEffectText(fx.effect))}"><b>부대효과 「${esc(fx.effect.name)}」</b><span>${esc(troopEffectText(fx.effect,fx.tier))}</span>${fx.effect.values.length>1?`<span class="evo-steps">단계별 ${steps}</span>`:''}</p>`;
 }
 /** 그림 칸마다 여백이 달라 병종끼리 크기가 들쭉날쭉하다(민중은 작고 기병·배는 크다).
  * 진화표에서는 대기 자세의 실제 그림 둘레를 재서 같은 상자에 꽉 차게 다시 그린다(fitEvoSprites). 그 전에는 원래 그림을 보인다. */
@@ -46,15 +55,21 @@ function classArt(c:UnitClass){
 }
 // 시트 칸을 그대로 잘라 보이면 칸을 넘는 창끝이 잘리고 이웃 행의 조각이 끼어든다: 전장과 같은 분리 아틀라스(실루엣을 제 칸에 모은 것)에서 대기 자세를 그린다.
 const officerArt=(name:string,b:OfficerEntry["battle"][string])=>`<div class="cx-sprite" role="img" aria-label="${esc(name)}"><canvas class="evo-fit" data-fit="${esc(b.sheet)}" data-row="0" data-rows="${b.rows}" data-uniform="1"></canvas></div>`;
-const rangeLine=(c:UnitClass)=>{const p=profileOf(c);return `<div class="evo-range">${reachMini(c)}<p><b>${esc(classNames[c]??c)} · ${esc(reachLabel(c))}</b><span>사거리 ${p.range[0]===p.range[1]?p.range[0]:p.range[0]+'~'+p.range[1]} · 이동 ${p.movement}</span></p></div>`;};
-const personCard=(art:string,small:string,name:string,c:UnitClass,extra='')=>`<article class="evo-card evo-person-card"><div class="evo-top">${art}<div><small>${small}</small><h4>${esc(name)}</h4></div></div>${rangeLine(c)}${extra}</article>`;
+const rangeLine=(c:UnitClass,famed=false)=>{const p=profileOf(c),rg=famed?famedRange(c):p.range;return `<div class="evo-range">${reachMini(c,famed)}<p><b>${esc(classNames[c]??c)} · ${esc(famed?unitReachLabel({unitClass:c,range:rg,famedReach:true}):reachLabel(c))}</b><span>사거리 ${rg[0]===rg[1]?rg[0]:rg[0]+'~'+rg[1]} · 이동 ${p.movement}</span></p></div>`;};
+const personCard=(art:string,small:string,name:string,c:UnitClass,extra='',famed=false)=>`<article class="evo-card evo-person-card"><div class="evo-top">${art}<div><small>${small}</small><h4>${esc(name)}</h4></div></div>${rangeLine(c,famed)}${extra}</article>`;
 /** 장수의 병종: 군주 9명과 서초패왕 항우는 군주, 나머지는 전용 전투 그림의 첫 병종(제갈량 수레 제외). */
 const officerClass=(e:OfficerEntry):UnitClass=>(LORD_NAMES.includes(e.name)?'lord':Object.keys(e.battle).find(k=>k!=='cart')) as UnitClass;
 const officerSheet=(e:OfficerEntry,c:string)=>e.battle[c]??e.battle.lord??Object.entries(e.battle).find(([k])=>k!=='cart')?.[1];
+/** 장수 특성(가장 높은 연의 능력)·이름난 장수 표시. 수치는 병종 단계를 따라 오른다. */
+function officerNote(name:string,c:UnitClass){
+  const r=romanceByName(name);if(!r)return '';
+  const e=OFFICER_EFFECTS[topAbility(r,profileOf(c).canUseStrategy?'int':'war')];
+  return `<p class="evo-skill evo-troop" title="${esc(troopEffectText(e))}"><b>장수 특성 「${esc(e.name)}」</b><span>${esc(troopEffectText(e))} (병종 1~4단계)</span></p>${FAMED_OFFICERS.includes(name)?'<p class="evo-skill evo-troop"><b>이름난 장수</b><span>공격 범위가 이 병종 계통의 마지막 진화와 같다(근접은 팔방). 그보다 넓어지지 않는다.</span></p>':''}`;
+}
 function officerCards(){
   return OFFICER_FACTIONS.map(f=>{
     const list=officerManifest.filter(e=>(OFFICER_FACTION[e.id]??'군웅')===f);if(!list.length)return '';
-    return `<section class="evo-line"><h3>${f} <small>${list.length}명</small></h3><div class="evo-grid">${list.map(e=>{const c=officerClass(e),b=officerSheet(e,c);return personCard(b?officerArt(e.name,b):classArt(c),'장수',e.name,c);}).join('')}</div></section>`;
+    return `<section class="evo-line"><h3>${f} <small>${list.length}명</small></h3><div class="evo-grid">${list.map(e=>{const c=officerClass(e),b=officerSheet(e,c);return personCard(b?officerArt(e.name,b):classArt(c),'장수',e.name,c,officerNote(e.name,c),FAMED_OFFICERS.includes(e.name));}).join('')}</div></section>`;
   }).join('');
 }
 /** 본편 전장의 NPC(아군 AI). 한 사람은 카드 한 장·병종 하나다.

@@ -47,7 +47,7 @@ function step(s:Session){
  wait();
 }
 function mission(id:string,level:number,seed:number,revision=4){const d=deployment(freshCampaign(),true);for(const who of Object.keys(d.levels))d.levels[who]=Math.max(d.levels[who]!,level);
- d.mission={id,runId:'objective-'+id,version:4,balance:1,supportClasses:['infantry','fengshui']};return new Session(7,'normal',seed,'survival',revision as 4|6,d);}
+ d.mission={id,runId:'objective-'+id,version:4,balance:1,supportClasses:['infantry','fengshui']};return new Session(7,'normal',seed,'survival',revision as 4|6|7,d);}
 const winsAt=(id:string,level:number,revision=4)=>[215,7].some(seed=>{const s=mission(id,level,seed,revision);for(let i=0;i<5000&&s.state.outcome==='ongoing';i++)step(s);return s.state.outcome==='victory';});
 
 describe('목표 임무는 실제로 깰 수 있다(버전 4 목표·지도)',()=>{
@@ -69,5 +69,11 @@ describe('규칙판 6(비율 피해)에서도 모든 외전을 권장 레벨에�
  // 보물·연구 없이 권장 레벨 그대로. 도전 단계와 약한 외전은 missionEdges6으로 맞췄다(시험 봇 20판 기준 수련·퀘스트·사냥 90%, 도전 80% 이상).
  it.each(expeditions.map(m=>[m.id,m.kind,m.level] as const))('%s (%s) Lv.%i',(id,_kind,level)=>{
   expect(winsAt(id,level,6),id).toBe(true);
+ });
+});
+
+describe('규칙판 7(부대효과·장수 특성·이름난 장수 범위)에서도 모든 외전을 권장 레벨에서 깬다',()=>{
+ it.each(expeditions.map(m=>[m.id,m.kind,m.level] as const))('%s (%s) Lv.%i',(id,_kind,level)=>{
+  expect(winsAt(id,level,7),id).toBe(true);
  });
 });
