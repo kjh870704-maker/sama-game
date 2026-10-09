@@ -93,7 +93,7 @@ export function hitFx(kind:DuelKind,incoming:DuelAction,own:DuelAction,dmg:numbe
     else fx.push(`<i class="fx fx-ink${big?' big':''}"></i>`,'<i class="fx fx-ring"></i>',`<b class="fx-word${big?' big':''}">${big?'논파!':'논박!'}</b>`);
     if(big&&kind==='duel')fx.push('<b class="fx-word duel big">필살!</b>');
     if(guarded)fx.push(`<b class="fx-guard">${kind==='duel'?'막았다':'반론'}</b>`);
-    fx.push(`<b class="damage-number${big?' crit':''}${guarded?' guarded':''}">−${dmg}<small>${kind==='duel'?'무력':'지력'} ${stat}${big?' ×1.5':''}${guarded?' · 방어':''}</small></b>`);
+    fx.push(`<b class="damage-number${big?' crit':''}${guarded?' guarded':''}">−${dmg}<small>${kind==='duel'?'대결 무력':'설전 지력'} ${stat}${big?' ×1.5':''}${guarded?' · 방어':''}</small></b>`);
   }else if(own==='guard'&&(incoming==='attack'||incoming==='special')){
     if(kind==='duel')fx.push('<i class="fx fx-spark block"></i>');
     fx.push(`<b class="fx-guard">${kind==='duel'?'막았다':'반론'}</b>`);
@@ -106,7 +106,7 @@ export function duelArena(d:DuelState,o:{models:{player:string;enemy:string};bac
   const pLine=last?duelExchangeLine(d.kind,last.action,last.enemyAction):d.kind==='duel'?'내가 상대해 주마!':'그 말, 내가 받아 주겠소.';
   const eLine=last?duelExchangeLine(d.kind,last.enemyAction,last.action):o.openingLine??'덤벼라!';
   /** 머리 위 작은 막대: 이름·체력(남은 만큼 초록→노랑→빨강)·기합(논거) 구슬. */
-  const hp=(u:DuelState['player'],side:string)=>{const k=u.hp/Math.max(1,u.maxHp);return `<div class="duel-mini ${side}${k<=.3?' low':k<=.6?' mid':''}"><b>${esc(displayName(u.name))} <span>${d.kind==='duel'?'무력':'지력'} ${u.stat}</span></b><div class="duel-hp"><i style="width:${(k*100).toFixed(1)}%"></i></div><small>${u.hp}/${u.maxHp}</small><em title="${energy}">${'●'.repeat(u.energy)}${'○'.repeat(Math.max(0,3-u.energy))}</em></div>`;};
+  const hp=(u:DuelState['player'],side:string)=>{const k=u.hp/Math.max(1,u.maxHp);return `<div class="duel-mini ${side}${k<=.3?' low':k<=.6?' mid':''}"><b>${esc(displayName(u.name))} <span title="연의 능력 + 레벨(대결에 쓰는 값)">${d.kind==='duel'?'무력':'지력'} ${u.stat}</span></b><div class="duel-hp"><i style="width:${(k*100).toFixed(1)}%"></i></div><small>${u.hp}/${u.maxHp}</small><em title="${energy}">${'●'.repeat(u.energy)}${'○'.repeat(Math.max(0,3-u.energy))}</em></div>`;};
   const track=NUM.map((n,i)=>{const h=d.history[i];const cls=!h?'':h.dealt>h.taken?'won':h.dealt<h.taken?'lost':'even';
     return `<div class="duel-round ${cls}${i===d.round&&!d.result?' now':''}"><span class="duel-round-no">${n}</span><div class="duel-round-tile">${h?icon(d.kind,h.action):''}</div>${h?`<small>${h.dealt}:${h.taken}</small>`:''}</div>${i<4?'<i class="duel-arrow">➜</i>':''}`;}).join('');
   const actions=(Object.keys(labels) as DuelAction[]).map(a=>{const off=a==='special'&&d.player.energy<2;

@@ -14,6 +14,7 @@ import {classNames,troopStrategies} from './troops.ts';
 import {availableStrategies,allStrategies} from './officers.ts';
 import {ROUTES,routeById,routesFor,fatePoint,type Tale} from './fate.ts';
 import {romanceOf,romanceStats} from './romance.ts';
+import {을를} from './josa.ts';
 
 export const FLOORS_PER_ACT=6;
 export const RUN_FLOORS=18;
@@ -310,7 +311,7 @@ export function finishStory(run:Run,stage:string,victory:boolean,heroHp:number,t
   if(!victory){if(spendSecondChance(run))return;run.news.push(`연의 전장 「${title}」에서 패했다. 원정은 여기서 끝난다.`);run.status='lost';return;}
   const hero=run.party.find(u=>u.hero);if(hero)hero.hp=Math.max(.05,Math.min(1,heroHp));
   run.chronicle=[...new Set([...(run.chronicle??[]),stage])];run.storyDone=[...new Set([...(run.storyDone??[]),stage])];
-  run.news.push(`연의 전장 「${title}」을 이겨 천명 기록에 남겼다.`);
+  run.news.push(`연의 전장 ${을를(`「${title}」`)} 이겨 천명 기록에 남겼다.`);
   if(run.relics.includes('herbs'))for(const u of run.party)u.hp=Math.min(1,u.hp+.2);
   grantXp(run,100);const hero2=run.party.find(u=>u.hero);if(hero2&&heroEarned>0)grantXp(run,heroEarned,[hero2]);
   const r=rngFor(run,run.floor*71+3);run.offer=relicOffer(run,r);if(!run.offer.length)run.offer=[{kind:'xp',amount:100}];
@@ -327,7 +328,7 @@ export function takeReward(run:Run,i:number){
   const o=run.offer?.[i];if(!o)return;run.news=[];
   if(o.kind==='recruit'){const ok=o.officer?recruitOfficer(run,{name:o.officer,unitClass:o.unitClass},o.level):recruit(run,o.unitClass,o.level);if(!ok)grantXp(run,60);else run.news.push(`${ga(run.party.at(-1)!.name)} 부대에 들어왔다.`);}
   if(o.kind==='heal')for(const u of run.party)u.hp=Math.min(1,u.hp+o.amount);
-  if(o.kind==='relic'){run.relics.push(o.relic);run.news.push(`보물 「${RELICS.find(x=>x.id===o.relic)!.name}」을 얻었다.`);}
+  if(o.kind==='relic'){run.relics.push(o.relic);run.news.push(`보물 ${을를(`「${RELICS.find(x=>x.id===o.relic)!.name}」`)} 얻었다.`);}
   if(o.kind==='xp')grantXp(run,o.amount);
   delete run.offer;advance(run);
 }
@@ -371,12 +372,15 @@ export function runMap(run:{seed:number;route?:Run['route']},floor:number,kind:N
 export const landClass=(c:UnitClass):UnitClass=>familyOf(c)==='navy'?'crossbow':c;
 /** 시나리오 모드의 대사 선택이 전투에 남기는 것(scenario-types.ts의 ChoiceEffect). */
 export interface BattleMods {reinforce?:Array<{name:string;unitClass:UnitClass;side:'npc'|'ally'}>;scout?:boolean;ambush?:boolean;bold?:boolean;rally?:boolean;guard?:boolean;insight?:boolean}
+/** 우두머리 전의 호위 수·우두머리 레벨 차(규칙 7판에서 100% 깨지던 것을 85~90%로). */
+export const BOSS_TUNE={escort:3,lag:0,guard:30};
+const BOSS_ESCORT_OF=()=>BOSS_TUNE.escort,BOSS_LAG_OF=()=>BOSS_TUNE.lag;
 export function runStage(run:Run,kind:NodeKind,map:MapFile,taleId?:string,opts:{mods?:BattleMods;enemyBase?:number}={}):StageDef{
   const f=run.floor,r=rngFor(run,f*613+kind.length),region=regionFor(run,f),tale=kind==='tale'?taleById(taleId):undefined,mods=opts.mods??{};
   const base=opts.enemyBase??2+Math.round(f*1.05)+(f>FLOORS_PER_ACT*2&&kind!=='tale'?1:0)+(kind==='boss'?1:0);
   // 넓은 전장에는 적도 조금 더 많다. 우두머리 전은 호위를 예전 수준으로(우두머리 자체가 강하다).
   // 동료를 잃어 넷 이하로 나선 부대에는 적도 한 부대 적게.
-  const count=Math.max(1,Math.min(12,(kind==='boss'?2+Math.floor(f/4.5):4+Math.floor(f/5)+(kind==='elite'?1:kind==='tale'?-1:0))+(mods.bold?1:0)-(mods.scout?1:0)-(run.party.length<=4?1:0)));
+  const count=Math.max(1,Math.min(12,(kind==='boss'?BOSS_ESCORT_OF()+Math.floor(f/4.5):4+Math.floor(f/5)+(kind==='elite'?1:kind==='tale'?-1:0))+(mods.bold?1:0)-(mods.scout?1:0)-(run.party.length<=4?1:0)));
   const camp=(map.regions!.enemy_camp as Array<{x:number;y:number}>).slice();
   const enemies:UnitSpawnSpec[]=[];
   for(let i=0;i<count&&camp.length;i++){
@@ -384,7 +388,7 @@ export function runStage(run:Run,kind:NodeKind,map:MapFile,taleId?:string,opts:{
     const elite=(kind==='elite'&&i<2)||(!!mods.bold&&i===0);const evolved=evolvedClass(cls,elite?level+5:level);
     enemies.push({id:`foe_${i}`,name:unitName(evolved),template:evolved,level,at,behavior:i%3===2?'hold':'advance'});
   }
-  if(kind==='boss'){const b=region.boss,mid=Math.floor(H/2),bi=camp.reduce((best,c,i)=>Math.abs(c.y-mid)*2+(W-1-c.x)<Math.abs(camp[best]!.y-mid)*2+(W-1-camp[best]!.x)?i:best,0),at=camp.splice(bi,1)[0]??{x:W-1,y:mid};enemies.push({id:'boss',name:b.name,template:evolvedClass(landClass(b.unitClass),base+3),level:base-2,at,behavior:'hold'});}
+  if(kind==='boss'){const b=region.boss,mid=Math.floor(H/2),bi=camp.reduce((best,c,i)=>Math.abs(c.y-mid)*2+(W-1-c.x)<Math.abs(camp[best]!.y-mid)*2+(W-1-camp[best]!.x)?i:best,0),at=camp.splice(bi,1)[0]??{x:W-1,y:mid};enemies.push({id:'boss',name:b.name,template:evolvedClass(landClass(b.unitClass),base+3),level:base-BOSS_LAG_OF(),...(BOSS_TUNE.guard?{traits:['physicalDamageReduction','strategyDamageReduction'],traitParams:{physicalDamageReduction:BOSS_TUNE.guard,strategyDamageReduction:BOSS_TUNE.guard}}:{}),at,behavior:'hold'});}
   if(tale){const mid=Math.floor(H/2),bi=camp.reduce((best,c,i)=>Math.abs(c.y-mid)*2+(W-1-c.x)<Math.abs(camp[best]!.y-mid)*2+(W-1-camp[best]!.x)?i:best,0),at=camp.splice(bi,1)[0]??{x:W-1,y:mid};// 연의의 맹장은 능력치로 이미 강하다: 무력 75를 넘는 8마다 레벨을 하나 낮춰 균형을 맞춘다.
     const war=romanceOf({id:'target',name:tale.target.name})?.war??70,level=Math.max(1,base-1-Math.max(0,Math.round((war-75)/8)));
     enemies.push({id:'target',name:tale.target.name,template:evolvedClass(landClass(tale.target.unitClass),level),level,at,behavior:'hold'});}

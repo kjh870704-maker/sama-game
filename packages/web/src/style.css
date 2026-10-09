@@ -1658,3 +1658,23 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 /* 부대효과·장수 특성(규칙판 7): 단계별 수치 줄, 지금 단계 강조 */
 .evo-skill.evo-troop{white-space:normal;display:flex;flex-direction:column;gap:1px;color:#e8dcc0}
 .evo-troop .evo-steps{color:#bfae8a;font-size:calc(12px*var(--fs,1))}.evo-troop .evo-steps b{color:#ffd77a}
+
+.ink-extra .funds-warn{color:#ff9a7a;font-weight:700}
+/* 전수 점검 수정: 설명 말줄임 없애기 · 진화표 4단 카드 화면 안에 · 전투 오른쪽 패널 잘림 · 선택지 줄바꿈 */
+.tc-card .tc-effect,.tc-card .tc-power{display:block;-webkit-line-clamp:unset;overflow:visible}
+.evo-skill span{display:block;-webkit-line-clamp:unset;overflow:visible}
+.evo-row>.evo-card{flex:1 1 0;min-width:0}
+.right-panel{overflow-y:auto!important;overflow-x:hidden!important}
+.uc-traits{max-height:none;overflow:visible;flex:0 0 auto!important;flex-shrink:0!important}
+.uc-strats{overflow:visible;flex:0 0 auto!important}
+.uc-strat b{white-space:normal;overflow:visible;text-overflow:clip;word-break:keep-all;line-height:1.15}
+.ink-choice button,.dialogue-options button{word-break:keep-all;overflow-wrap:break-word}
+.defeat-reason{color:#ffb39a;font-weight:700}
+.map-objective .mo-lose{white-space:normal;overflow:visible;text-overflow:clip}
+/* 진화표: 그림을 자르는 동안 빈칸 대신 불러오는 중 표시 */
+.evo-person-card canvas.evo-fit:not(.on){opacity:1;background:linear-gradient(100deg,#ffffff00 30%,#ffffff14 50%,#ffffff00 70%) #1a2224;background-size:200% 100%;animation:evo-loading 1.2s linear infinite;border-radius:6px}
+@keyframes evo-loading{from{background-position:100% 0}to{background-position:-100% 0}}
+@media (prefers-reduced-motion:reduce){.evo-person-card canvas.evo-fit:not(.on){animation:none}}
+.ink-choice *,.ss-choices button,.ss-choices strong{word-break:keep-all;overflow-wrap:break-word;text-wrap:pretty}
+.right-panel #unit-detail,body.unit-open .right-panel #unit-detail{overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin}
+.right-panel .uc{height:auto;min-height:100%}

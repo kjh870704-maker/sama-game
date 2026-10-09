@@ -113,6 +113,7 @@ const byName:Record<string,RomanceOfficer>={
   노숙:o('노숙','동오의 대국을 본 자',[56,92,84,90,88]),
   봉기:o('봉기','원씨의 직언가',[40,80,60,72,58]),
   순욱:o('순욱','왕좌지재 · 조조의 장자방',[24,96,64,98,90],{name:'왕좌지재',description:'받는 책략 피해 15% 감소',trait:'strategicGuard'}),
+  장비:o('장비','연인 장익덕 · 장판교의 일갈',[97,40,82,30,48],{name:'장판교의 일갈',description:'물리 공격 피해 15% 증가',trait:'physicalPower',param:15}),
   관우:o('관우','미염공 · 청룡언월도의 무성',[97,75,95,62,93],{name:'청룡언월도',description:'물리 공격 피해 15% 증가',trait:'physicalPower',param:15}),
   장료:o('장료','합비의 귀신 · 요래요래',[92,78,91,58,78],{name:'요래요래',description:'적 방어 15% 무시',trait:'penetrate',param:15}),
   원상:o('원상','원소의 셋째 아들 · 하북의 후계',[72,58,70,52,74]),

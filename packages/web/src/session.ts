@@ -90,7 +90,7 @@ import { makeUnit, awardedSeals } from '../../core/src/index.ts';
 export const chapters = [
   {stage: escapeStage as StageDef, map: escapeMap as MapFile, year:'초평 원년 · 190년', label:'잠입과 선택', quote:'칼을 숨겨라. 살아남는 자만이 다음 수를 둘 수 있다.'},
   {stage: fortStage as StageDef, map: fortMap as MapFile, year:'건안 이십년 · 215년', label:'진격과 점령', quote:'승패는 칼끝에서 정해지지 않는다. 누가 먼저 판을 읽는가.'},
-  {stage: introStage as StageDef, map: introMap as MapFile, year:'중평 원년 · 184년', label:'보호와 무장', quote:'칼을 들 수 없다면, 칼을 들어 줄 사람을 지켜라.'},
+  {stage: introStage as StageDef, map: introMap as MapFile, year:'중평 육년 · 189년', label:'보호와 무장', quote:'칼을 들 수 없다면, 칼을 들어 줄 사람을 지켜라.'},
   {stage: flightStage as StageDef, map: flightMap as MapFile, year:'초평 원년 · 190년', label:'설득과 추격', quote:'길을 아는 이에게 묻는 것도, 살아남는 자의 지혜다.'},
   {stage: dreamStage as StageDef, map: dreamMap as MapFile, year:'건안 연간 · 출사 전야', label:'세 대결과 흉몽', quote:'꿈에서조차, 나는 누구의 신하인가.'},
   {stage:retreatStage as StageDef,map:retreatMap as MapFile,year:'건안 십삼년 · 208년',label:'수송대 호위',quote:'한 번의 승리보다, 다음 싸움에 돌아올 사람이 먼저다.'},
@@ -103,7 +103,7 @@ export const chapters = [
   {stage:dongkouStage as StageDef,map:dongkouMap as MapFile,year:'황초 삼년 · 222년',label:'폭풍 속 철수',quote:'하늘의 칼은 피할 수 있다. 미리 보았다면.'},
   {stage:guanglingStage as StageDef,map:guanglingMap as MapFile,year:'황초 육년 · 225년',label:'야습과 황제 탈출',quote:'곁에 없다 해도, 길러 둔 손발이 대신 싸운다.'},
   {stage:xiangyangStage as StageDef,map:xiangyangMap as MapFile,year:'황초 칠년 · 226년',label:'세 길목 방어',quote:'모든 문을 같은 칼로 지킬 수는 없다.'},
-  {stage:xinchengStage as StageDef,map:xinchengMap as MapFile,year:'태화 이년 · 228년',label:'강행군과 공성',quote:'여드레에 천이백 리. 적이 준비를 마치기 전에 성 아래에 선다.'},
+  {stage:xinchengStage as StageDef,map:xinchengMap as MapFile,year:'태화 원년 · 227년',label:'강행군과 공성',quote:'여드레에 천이백 리. 적이 준비를 마치기 전에 성 아래에 선다.'},
   {stage:jietingStage as StageDef,map:jietingMap as MapFile,year:'태화 이년 · 228년',label:'수원 차단과 도주 저지',quote:'산 위의 진은 물이 없으면 사흘을 못 간다.'},
   {stage:yangpingStage as StageDef,map:yangpingMap as MapFile,year:'태화 사년 · 230년',label:'추격과 구원',quote:'쫓는 자도 길을 고르고, 쫓기는 자도 길을 고른다.'},
   {stage:shitingStage as StageDef,map:shitingMap as MapFile,year:'태화 이년 · 228년',label:'협석 돌파',quote:'아버지는 능선에 서고, 아들들은 골짜기를 달린다.'},
@@ -526,7 +526,9 @@ export class Session {
     const plain=(x:Unit)=>x.name.replace(/의?\s*환영$/,''),fighter=(x:Unit)=>!['civilian','ram','catapult'].includes(x.unitClass)&&!/^(gate|tower)_/.test(x.id);
     for(const u of s.living()){if(!CONTROLLABLE.has(u.side)||!fighter(u))continue;
       for(const e of s.living('enemy')){if(!fighter(e)||Math.max(Math.abs(u.pos.x-e.pos.x),Math.abs(u.pos.y-e.pos.y))>1)continue;
-        const h=historicPair(plain(u),plain(e));if(!h||this.challenged.has(h.kind+':'+u.id+':'+e.id))continue;
+        const h=historicPair(plain(u),plain(e));
+        // 이미 일기토든 설전이든 한 번 겨룬 맞수는 다시 자동으로 붙지 않는다(직접 건 대결이 끝나자마자 또 열리던 문제).
+        if(!h||this.challenged.has('duel:'+u.id+':'+e.id)||this.challenged.has('debate:'+u.id+':'+e.id))continue;
         this.challenged.add(h.kind+':'+u.id+':'+e.id);
         const stat=(x:Unit)=>h.kind==='duel'?martialPower(x):debatePower(x);
         this.lastRefusal=null;this.lastAccept={kind:h.kind,line:h.kind==='duel'?`${plain(e)}! ${h.note} — 오늘 결판을 내자!`:`${plain(e)}, ${h.note} — 그대의 말을 들어 보리다.`,historic:true};

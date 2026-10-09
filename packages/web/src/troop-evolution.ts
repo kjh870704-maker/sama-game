@@ -62,7 +62,7 @@ const officerClass=(e:OfficerEntry):UnitClass=>(LORD_NAMES.includes(e.name)?'lor
 const officerSheet=(e:OfficerEntry,c:string)=>e.battle[c]??e.battle.lord??Object.entries(e.battle).find(([k])=>k!=='cart')?.[1];
 /** 장수 특성(가장 높은 연의 능력)·이름난 장수 표시. 수치는 병종 단계를 따라 오른다. */
 function officerNote(name:string,c:UnitClass){
-  const r=romanceByName(name);if(!r)return '';
+  const r=romanceByName(name)??romanceByName(name.replace(/^소년 /,''));if(!r)return '';
   const e=OFFICER_EFFECTS[topAbility(r,profileOf(c).canUseStrategy?'int':'war')];
   return `<p class="evo-skill evo-troop" title="${esc(troopEffectText(e))}"><b>장수 특성 「${esc(e.name)}」</b><span>${esc(troopEffectText(e))} (병종 1~4단계)</span></p>${FAMED_OFFICERS.includes(name)?'<p class="evo-skill evo-troop"><b>이름난 장수</b><span>공격 범위가 이 병종 계통의 마지막 진화와 같다(근접은 팔방). 그보다 넓어지지 않는다.</span></p>':''}`;
 }

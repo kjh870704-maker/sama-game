@@ -192,9 +192,11 @@ export class Battlefield {
     // Boats ride the swell while idle; tweens own the sprite during playback.
     this.app.ticker.add(()=>{if(this.reduced)return;const t=performance.now()/1000;
       // 장수의 기운은 전투 연출 중에도 맥동한다.
-      for(const [id,a] of this.actors)if(a.officer){const aura=a.piece.children.find(c=>c.label==='aura');if(aura){aura.alpha=.55+Math.sin(t*3+id.length)*.35;aura.scale.set(1+Math.sin(t*3+id.length)*.05);}}
+      for(const [id,a] of this.actors)if(a.officer&&!a.piece.destroyed){const aura=a.piece.children.find(c=>c.label==='aura');if(aura){aura.alpha=.55+Math.sin(t*3+id.length)*.35;aura.scale.set(1+Math.sin(t*3+id.length)*.05);}}
       if(this.busy)return;
       for(const [id,a] of this.actors){const phase=id.length*.7;
+        // 지워진 그림(퇴각·그림 교체 직후)은 건드리지 않는다 — 'Cannot set properties of null' 방지.
+        if(a.sprite.destroyed||a.piece.destroyed)continue;
         if(familyOf(a.unit.unitClass)==='navy'){a.sprite.y=8+Math.sin(t*1.6+phase)*1.8;a.sprite.rotation=Math.sin(t*1.1+phase)*.035;continue;}
         if(structureKind(a.unit.id)||a.unit.id.startsWith('convoy_')||['ram','catapult'].includes(artClass(a.unit.unitClass)))continue;
         // 서 있어도 숨을 쉰다(발은 땅에 붙이고 몸만 살짝 오르내림), 사람마다 박자가 다르다.

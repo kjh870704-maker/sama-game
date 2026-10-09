@@ -12,10 +12,10 @@ import { resolve } from "node:path";
 /** 운명의 갈림길 장 id → 고를 수 있는 루트 id */
 export function fateOptions(): Record<string, string[]> {
   const out: Record<string, string[]> = { "fate:1": routesFor(1).map((r) => r.id) };
-  for (const parent of ROUTES.filter((r) => r.act === 1)) out[`fate:2:${parent.id}`] = routesFor(2, { 1: parent.id }).map((r) => r.id);
+  for (const parent of ROUTES.filter((r) => r.act === 1)) out[`fate:2:${parent.id}`] = routesFor(2, { 1: parent.id }, true).map((r) => r.id);
   for (const parent of ROUTES.filter((r) => r.act === 2)) {
     const first = routeById(parent.after?.[0])?.id ?? "refuse";
-    out[`fate:3:${parent.id}`] = routesFor(3, { 1: first, 2: parent.id }).map((r) => r.id);
+    out[`fate:3:${parent.id}`] = routesFor(3, { 1: first, 2: parent.id }, true).map((r) => r.id);
   }
   return out;
 }

@@ -273,7 +273,14 @@ export function routesFor(act:1|2|3,route?:{1?:string;2?:string;3?:string},custo
   return ROUTES.filter(r=>r.act===act&&mine(r)&&(parent?r.after?.includes(parent):r.after?.includes(act===2?'refuse':'wei')));
 }
 /** 신세력의 글: '{세력}'을 세력 이름으로. */
-export const factionText=(text:string,faction='신세력')=>text.replaceAll('{세력}',faction);
+export const factionText=(text:string,faction='신세력')=>text.replace(/\{세력\}(을|를|은|는|이|가|으로|로|과|와)?/g,(_,p?:string)=>p?withJosa(faction,p):faction);
+/** 세력 이름은 플레이어가 짓는다 — 받침에 맞춰 조사를 고른다('위나라를', '진을', '한으로'). */
+function withJosa(name:string,p:string){
+  const c=name.trim().slice(-1).charCodeAt(0),t=c>=0xac00&&c<=0xd7a3?(c-0xac00)%28:0;
+  const pick:Record<string,[string,string]>={을:['을','를'],를:['을','를'],은:['은','는'],는:['은','는'],이:['이','가'],가:['이','가'],과:['과','와'],와:['과','와']};
+  if(p==='으로'||p==='로')return name+(t&&t!==8?'으로':'로');
+  const [a,b]=pick[p]!;return name+(t?a:b);
+}
 
 /** 저장된 선택의 사슬이 실제로 갈 수 있는 길인지: 각 편의 길이 그 편 것이고, 앞선 선택에 이어지는가. */
 export function validRoute(route:Record<string,unknown>):boolean{

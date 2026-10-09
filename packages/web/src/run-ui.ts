@@ -51,7 +51,7 @@ function clearRun(){try{localStorage.removeItem(KEY);}catch{/* storage optional 
 
 const esc=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 const name=(c:UnitClass)=>classNames[c]??c;
-const pips=(c:UnitClass)=>'◆'.repeat(tierOf(c))+'◇'.repeat(3-tierOf(c));
+const pips=(c:UnitClass)=>{const t=Math.max(1,Math.min(4,tierOf(c)));return '◆'.repeat(t)+'◇'.repeat(4-t);};
 const stageTitle=(id:string)=>{const c=chapters.find(x=>x.stage.id===id);return c?`${c.stage.subtitle??c.stage.title}`:id;};
 const ongoing=(run:Run|null):run is Run=>!!run&&(run.status==='map'||run.status==='reward');
 

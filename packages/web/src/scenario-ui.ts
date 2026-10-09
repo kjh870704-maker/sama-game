@@ -31,6 +31,7 @@ import {deploymentPerks} from './officer-perks.ts';
 import {showResearch} from './research-ui.ts';
 import {classTactics,evolvedClass,tierOf,familyOf,type BattleState,type UnitClass} from '../../core/src/index.ts';
 import type {ChapterScript,ChoiceEffect,Look,Scene,Camp} from './scenario-types.ts';
+import {을를,으로} from './josa.ts';
 
 export interface ScenarioHost {
   modal(html:string,closable?:boolean):void;
@@ -391,8 +392,12 @@ async function afterVictory(host:ScenarioHost,sc:ScenarioState,step:ScenarioStep
   document.getElementById('res-list')!.onclick=()=>showScenario(host,next?.id);
   document.getElementById('res-next')?.addEventListener('click',()=>goNext(host));
 }
+/** 마지막 패배 이유(통행료 부족·보호 대상 퇴각 등). 회차 종료·가호 화면이 그대로 보여 준다. */
+let lastDefeatReason='';
+export function noteDefeatReason(reason:string){lastDefeatReason=reason.trim();}
+const defeatLine=()=>lastDefeatReason?`<p class="defeat-reason">패배 이유 · ${esc(lastDefeatReason)}</p>`:'';
 function showDefeat(host:ScenarioHost,step:ScenarioStep){
-  host.modal(`<div class="result scenario-result"><div class="result-character">패</div><h2>천명의 가호</h2><p>${esc(stepTitle(step,loadScenario()))} — 졌지만 하늘이 한 번 사마의를 지켰다. 체력 30%로 물러났다. 가호는 회차마다 한 번뿐이다.</p>
+  host.modal(`<div class="result scenario-result"><div class="result-character">패</div><h2>천명의 가호</h2><p>${esc(stepTitle(step,loadScenario()))} — 졌지만 하늘이 한 번 사마의를 지켰다. 체력 30%로 물러났다. 가호는 회차마다 한 번뿐이다.</p>${defeatLine()}
   <div class="modal-actions"><button id="def-list">장 목록</button><button class="primary" id="def-retry">출진 전 정비로</button></div></div>`,false);
   document.getElementById('def-list')!.onclick=()=>showScenario(host,step.id);
   document.getElementById('def-retry')!.onclick=()=>prepare(host,step);
@@ -416,7 +421,7 @@ export function showMarch(host:ScenarioHost):void{
   const state=loadScenario(),after=pendingMarch(state);if(!after)return goNext(host);
   const run=state.run!,meta=loadMeta(),nodes=marchNodes(state,after,meta.unlocks.includes('scout_map')?4:3),next=currentStep(state)!;
   if(run.march)return launchMarch(host,state,after,run.march);
-  host.modal(`<div class="briefing run-screen march-screen"><div class="eyebrow">천명의 길 제${run.no}회차 · 행군로</div><h2>다음 장 「${esc(stepTitle(next,state))}」으로 가는 길</h2>
+  host.modal(`<div class="briefing run-screen march-screen"><div class="eyebrow">천명의 길 제${run.no}회차 · 행군로</div><h2>다음 장 ${esc(으로(`「${stepTitle(next,state)}」`))} 가는 길</h2>
   <p class="muted">세 갈래 중 하나를 고른다. 같은 회차에서는 같은 길이 나온다.</p>${runBar(state)}
   <div class="run-choices">${nodes.map((n,i)=>`<button data-march="${i}" class="march-${n.kind}"><strong>${esc(n.label)}</strong><small>${esc(n.detail)}</small></button>`).join('')}</div>
   <div class="run-actions"><button id="march-list">장 목록</button></div></div>`,false);
@@ -433,7 +438,7 @@ function pickMarch(host:ScenarioHost,after:string,node:MarchNode){
       if(!inWhatIf(state)){recruitOfficer(state,o.name,hero.level+recruitBonus(meta),meta.unlocks.includes('elite_recruits'));return done([`${o.name}이(가) 사마의의 부대에 들어왔다.`]);}
       void persuadeOfficer(host,o.name,o.unitClass,run.seed^hashSeed(after)).then(ok=>{if(ok){recruitOfficer(state,o.name,hero.level+recruitBonus(meta),meta.unlocks.includes('elite_recruits'));done([`${o.name}이(가) 설득에 응해 사마의의 부대에 들어왔다.`]);}else done([`${o.name}은(는) 이번엔 거절하고 떠났다. 다른 길목에서 다시 만날 수 있다.`]);});});}
   if(node.kind==='treasure'){const offer=relicOffer(state,after);if(!offer.length)return done(['보물고는 비어 있었다.']);
-    return choiceScreen(host,'보물고 · 무엇을 들고 갈까',offer.map(r=>({title:r.name,detail:r.effect})),i=>{run.relics.push(offer[i]!.id);done([`보물 「${offer[i]!.name}」을 얻었다.`]);});}
+    return choiceScreen(host,'보물고 · 무엇을 들고 갈까',offer.map(r=>({title:r.name,detail:r.effect})),i=>{run.relics.push(offer[i]!.id);done([`보물 ${을를(`「${offer[i]!.name}」`)} 얻었다.`]);});}
   run.march=node.kind;saveScenario(state);launchMarch(host,state,after,node.kind);
 }
 /** 이긴 뒤: 전황 도전의 결과를 정산하고, 전공 보상 셋 중 하나를 고른다(천명·보물·치료/수련). */
@@ -480,7 +485,7 @@ async function finishMarchBattle(host:ScenarioHost,battle:BattleState,deployment
   if(lost.length)news.unshift(`중상: ${lost.join(' · ')} — 물러나 치료받고 체력 25%로 다시 나선다.`);
   delete state.run!.march;saveScenario(state);
   const relics=relicOffer(state,after+'#win',kind==='elite'?3:1),recruits=kind==='elite'?[]:recruitOffer(state,after+'#win',1);
-  const items=[...relics.map(r=>({title:`보물 · ${r.name}`,detail:r.effect,take:()=>{state.run!.relics.push(r.id);return `보물 「${r.name}」을 얻었다.`;}})),
+  const items=[...relics.map(r=>({title:`보물 · ${r.name}`,detail:r.effect,take:()=>{state.run!.relics.push(r.id);return `보물 ${을를(`「${r.name}」`)} 얻었다.`;}})),
     ...recruits.map(o=>({title:`${inWhatIf(state)?'장수 설득':'장수 영입'} · ${o.name} (${classNames[o.unitClass]??o.unitClass})`,detail:`${romanceStats(o.name)??''}${inWhatIf(state)?' · 설득에 성공하면 합류':''}`,take:async()=>{const ok=!inWhatIf(state)||await persuadeOfficer(host,o.name,o.unitClass,state.run!.seed^hashSeed(after+'#win'));if(!ok)return `${o.name}은(는) 이번엔 거절하고 떠났다.`;recruitOfficer(state,o.name,host.hero().level+recruitBonus(loadMeta()),loadMeta().unlocks.includes('elite_recruits'));return `${o.name}이(가) 부대에 들어왔다.`;}})),
     ...(kind==='elite'?[]:[{title:'휴식',detail:'사마의와 장수들의 체력 40% 회복',take:()=>{healAll(state,.4*restMult(loadMeta()));return '잠시 쉬며 숨을 골랐다.';}}])];
   if(!items.length){finishMarch(state,after);saveScenario(state);return marchResult(host,'행군 전투 승리',news);}
@@ -532,7 +537,7 @@ export function showRunOver(host:ScenarioHost){
   const won=run.status==='complete';
   const unlocks=UNLOCKS.map(u=>`<button data-unlock="${u.id}" ${meta.unlocks.includes(u.id)||meta.mandate<u.cost?'disabled':''}><strong>${esc(u.name)} ${meta.unlocks.includes(u.id)?'✓':`· 천명 ${u.cost}`}</strong><small>${esc(u.effect)}</small></button>`).join('');
   host.modal(`<div class="briefing run-screen"><div class="eyebrow">천명의 길 제${run.no}회차 · ${won?'완주':'끝'}</div><h2>${won?'한 생을 끝까지 걸었다':'천명이 다했다'}</h2>
-  <p>${won?'결말까지 이르렀다.':'사마의는 여기서 쓰러졌다. 그러나 남긴 것은 다음 생으로 이어진다.'} 마친 장 ${cleared} · 행군 ${run.nodes}</p>
+  <p>${won?'결말까지 이르렀다.':`${lastDefeatReason?'회차가 여기서 끝났다.':'사마의는 여기서 쓰러졌다.'} 그러나 남긴 것은 다음 생으로 이어진다.`} 마친 장 ${cleared} · 행군 ${run.nodes}</p>${won?'':defeatLine()}
   <p class="route-result history"><b>천명 +${gain}</b> 지금 천명 ${meta.mandate} · 누적 ${meta.earned} · 회차 ${meta.runs}</p>
   <h3>천명 해금 — 다음 회차부터</h3><div class="run-choices unlock-list">${unlocks}</div>
   <p class="muted">천명은 아래 해금 말고도 <b>연구</b>(전투·내정·편성 나무)와 <b>장수 효과</b>(인물열전)에 쓸 수 있다.</p><div class="run-actions"><button class="primary" id="run-new">새 회차 · 연의 첫 장부터 ▶</button><button id="run-research">연구 ▸</button><button id="run-menu">← 본영</button></div></div>`,false);
