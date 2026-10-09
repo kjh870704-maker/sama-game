@@ -20,7 +20,7 @@ export const FORMS:Array<{id:TreasureForm;name:string;slot:GearSlot}>=[
 const FORM_OF:Record<string,TreasureForm>={
   yitian:'sword',qinggang:'sword',doubleSwords:'sword',moonSword:'sword',jadeSword:'sword',
   bronzeSword:'sword',snakeBlade:'sword',peerlessSword:'sword',zhansheSword:'sword',baipiDao:'blade',
-  sevenstar:'blade',ringBlade:'blade',cavalrySaber:'blade',greenDragon:'blade',ancientBlade:'blade',phoenixSpear:'blade',threePointBlade:'blade',zhanmaDao:'blade',
+  sevenstar:'sword',ringBlade:'blade',cavalrySaber:'blade',greenDragon:'blade',ancientBlade:'blade',phoenixSpear:'blade',threePointBlade:'blade',zhanmaDao:'blade',
   serpentSpear:'spear',sharpSpearhead:'spear',tuskSpear:'spear',ironSpear:'spear',dragonSpear:'spear',tigerSpear:'spear',hookSpear:'spear',
   halberd:'polearm',gatekeeperHalberd:'polearm',crescentBlade:'polearm',twinHalberds:'polearm',ironAxe:'polearm',
   bow:'bow',hornBowSmall:'bow',boltQuiver:'bow',wuhuanBow:'bow',hundredPaceBow:'bow',ironBow:'bow',repeatingCrossbow:'bow',longbow:'bow',
@@ -34,6 +34,9 @@ const FORM_OF:Record<string,TreasureForm>={
   dunjia:'book',bambooSlips:'book',taiping:'book',mengde:'book',sunzi:'book',sixTeachings:'book',threeStrategies:'book',qingshu:'book',formationScroll:'book',springAutumn:'book',
   seal:'seal',beaconToken:'seal',initiateBadge:'seal',courtSeal:'seal',militarySeal:'seal',tigerTally:'seal',tortoiseToken:'seal',
   fan:'relicItem',copperBell:'relicItem',bronzeDrum:'relicItem',summitBanner:'relicItem',warDrum:'relicItem',sevenStarFlag:'relicItem',hujia:'relicItem',baguaMirror:'relicItem',purpleGourd:'relicItem',
+  ironHelm:'shield',silverShield:'shield',windGodShield:'shield',twinWhips:'hidden',noFeatherDart:'hidden',lubuBow:'bow',goldFireCannon:'bow',sageSword:'sword',
+  mirrorArmor:'armor',linkedArmor:'armor',dragonGi:'robe',darkRobe:'robe',phoenixRobe:'robe',plantainFan:'relicItem',fiveFireFan:'relicItem',windWheel:'mount',
+  beanBag:'ornament',zhugeTurban:'ornament',azureJewel:'ornament',vermilionJewel:'ornament',blackTortoiseJewel:'ornament',whiteTigerJewel:'ornament',
   jadePendant:'ornament',travelPouch:'ornament',eagleFeather:'ornament',spiritBead:'ornament',cliffSandals:'ornament',phoenixHairpin:'ornament',swiftBoots:'ornament',
 };
 /** 보물의 형태(따로 적지 않은 방어구는 갑옷, 무기는 검, 보조구는 기물). */
@@ -73,6 +76,12 @@ export const UNIQUE_TREASURE_SHEETS=[
   ['shanhaijing','xishuMap'],
 ] as const;
 const UNIQUE_ART=new Map<string,ExtraArt>(UNIQUE_TREASURE_SHEETS.flatMap((items,sheet)=>items.map((id,cell)=>[id,{sheet,cell}] as const)));
+/**
+ * 조조전 보물 도감에서 더한 22점: 아직 그림이 없어 형태 글자 패로 보인다.
+ * 그림판 treasures-koei-01~02-v1.webp(3×4)가 들어오면 이 순서대로 등록하고 이 목록에서 뺀다.
+ */
+export const ART_PENDING:readonly string[]=['ironHelm','beanBag','twinWhips','plantainFan','mirrorArmor','dragonGi','silverShield','lubuBow','linkedArmor','windGodShield','noFeatherDart','goldFireCannon',
+  'fiveFireFan','sageSword','darkRobe','phoenixRobe','windWheel','zhugeTurban','azureJewel','vermilionJewel','blackTortoiseJewel','whiteTigerJewel'];
 /** 실제 그림이 등록된 추가 보물·회차 보물 id. */
 export const TREASURE_ART:ReadonlySet<string>=new Set([...EXTRA_ART.keys(),...UNIQUE_ART.keys()]);
 

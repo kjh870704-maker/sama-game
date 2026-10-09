@@ -21,7 +21,7 @@ export const TREASURE_SPECIALS:Record<string,TreasureSpecial>={
   craneRobe:{name:'학창 명상',text:'책략 「명상·정화」를 쓸 수 있다 · 최대 MP +10',strategies:['focus','purify'],mp:10},
   jadeSword:{name:'영검',text:'책략 「낙뢰」를 쓸 수 있다 · 최대 MP +10 · 간파 +5%p',strategies:['thunder'],mp:10,traits:[['strategyEvasion',5]]},
   yitian:{name:'의천의 위엄',text:'입힌 피해의 8%만큼 체력 회복 · 회심 +5%',traits:[['lifesteal',8],['critical',5]]},
-  qinggang:{name:'청강의 날',text:'적 방어 8% 추가 무시 · 회심 +6%',traits:[['penetrate',8],['critical',6]]},
+  qinggang:{name:'청공의 날',text:'적 방어 8% 추가 무시 · 회심 +6%',traits:[['penetrate',8],['critical',6]]},
   greenDragon:{name:'청룡언월',text:'움직인 뒤 물리 공격 +12% · 회심 +6%',traits:[['chargePower',12],['critical',6]]},
   serpentSpear:{name:'장판교의 호통',text:'반격 위력 +25% · 체력이 낮을수록 공격력 상승(최대 20%)',traits:[['counterBoost',25],['lastStand',20]]},
   halberd:{name:'방천화극 무쌍',text:'물리 공격 피해 +8% · 적 방어 8% 무시',traits:[['physicalPower',8],['penetrate',8]]},
@@ -35,6 +35,11 @@ export const TREASURE_SPECIALS:Record<string,TreasureSpecial>={
   taipingYaoshu:{name:'남화의 비술',text:'책략 「낙뢰·속박」을 쓸 수 있다 · 최대 MP +15 · 책략 피해 +5%',strategies:['thunder','bind'],mp:15,traits:[['strategyPower',5]]},
   xishuMap:{name:'촉의 길',text:'적 명중 -6%p',traits:[['evasionBoost',6]]},
   zhansheSword:{name:'한 고조의 검',text:'회심 +8% · 입힌 피해의 5%만큼 체력 회복',traits:[['critical',8],['lifesteal',5]]},
+  plantainFan:{name:'파초선',text:'책략 「돌풍·풍룡」을 쓸 수 있다 · 최대 MP +12',strategies:['gust','windDragon'],mp:12},
+  fiveFireFan:{name:'오화신염',text:'책략 「화계」를 쓸 수 있다 · 최대 MP +12 · 책략 피해 +6%',strategies:['fire'],mp:12,traits:[['strategyPower',6]]},
+  zhugeTurban:{name:'와룡의 계책',text:'책략 「허보·매복」을 쓸 수 있다 · 최대 MP +10',strategies:['feint','ambush'],mp:10},
+  lubuBow:{name:'원문사극',text:'두 칸 이상 물리 공격 +10% · 회심 +5%',traits:[['rangedPower',10],['critical',5]]},
+  phoenixRobe:{name:'봉황의 깃',text:'차례마다 체력 3% 회복',traits:[['regen',3]]},
   blackArmor:{name:'현철갑',text:'체력이 낮을수록 공격력 상승(최대 15%)',traits:[['lastStand',15]]},
 };
 export const specialOf=(id:string)=>TREASURE_SPECIALS[id];

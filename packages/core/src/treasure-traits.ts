@@ -13,7 +13,7 @@ export const treasurePowers:Array<{id:string;name:string;rules:Rule[]}>=([
  ['sevenstar','칠성 관통',[['pierce',18,'physical']]],
  ['dilu','위기 탈출',[['evade',15,'wounded']]],
  ['mengde','용병의 지혜',[['mp',2],['power',5,'strategy']]],
- ['qinggang','청강 파갑',[['pierce',18,'physical']]],
+ ['qinggang','청공 파갑',[['pierce',18,'physical']]],
  ['greenDragon','청룡 참격',[['power',15,'mounted']]],
  ['serpentSpear','장판의 기세',[['power',16,'wounded']]],
  ['halberd','무쌍의 예봉',[['critical',15,'physical']]],
@@ -150,7 +150,30 @@ export const treasurePowers:Array<{id:string;name:string;rules:Rule[]}>=([
  ['baihu','백곡의 날개',[['evade',8,'moving']]],
  ['fourWheelCart','사륜 지휘',[['reduction',6,'stationary'],['mp',1]]],
  ['zhansheSword','참사의 위광',[['power',12,'healthy'],['critical',6,'physical']]],
- ['baipiDao','백 번 담금질',[['critical',8,'melee']]]
+ ['baipiDao','백 번 담금질',[['critical',8,'melee']]],
+ // 조조전 보물
+ ['ironHelm','철투구',[['reduction',8,'melee']]],
+ ['beanBag','콩주머니',[['hp',3]]],
+ ['twinWhips','쌍편 연타',[['power',12,'armored'],['accuracy',4,'melee']]],
+ ['plantainFan','파초의 큰바람',[['power',10,'strategy'],['mp',1]]],
+ ['mirrorArmor','거울의 눈부심',[['evade',8,'physical'],['reduction',6,'strategy']]],
+ ['dragonGi','비룡의 몸놀림',[['evade',10,'melee']]],
+ ['silverShield','백은 방벽',[['reduction',12,'physical']]],
+ ['lubuBow','원문사극',[['power',12,'ranged'],['accuracy',8,'ranged']]],
+ ['linkedArmor','연환의 고리',[['reduction',12,'melee']]],
+ ['windGodShield','풍신의 바람막이',[['reduction',16,'ranged']]],
+ ['noFeatherDart','몰우의 돌팔매',[['accuracy',10,'ranged'],['safe',1,'ranged']]],
+ ['goldFireCannon','금화의 불길',[['power',14,'ranged'],['pierce',10,'ranged']]],
+ ['fiveFireFan','오화의 불꽃',[['power',14,'strategy']]],
+ ['sageSword','성자의 벽사',[['power',12,'caster'],['reduction',8,'strategy']]],
+ ['darkRobe','칠흑의 술기',[['power',8,'strategy'],['reduction',10,'strategy']]],
+ ['phoenixRobe','봉황의 재생',[['hp',5]]],
+ ['windWheel','바람의 바퀴',[['rough',1],['power',8,'moving']]],
+ ['zhugeTurban','와룡의 두건',[['accuracy',8,'strategy'],['mp',1]]],
+ ['azureJewel','청룡의 기운',[['power',10]]],
+ ['vermilionJewel','주작의 기운',[['power',10,'strategy'],['mp',1]]],
+ ['blackTortoiseJewel','현무의 기운',[['reduction',10]]],
+ ['whiteTigerJewel','백호의 기운',[['critical',10,'physical']]]
 ] as Array<[string,string,Rule[]]>).map(([id,name,rules])=>({id,name,rules}));
 const conditionText:Record<Condition,string>={always:'',physical:'물리 공격 시 ',strategy:'책략 공격 시 ',melee:'인접 교전 시 ',ranged:'거리 2칸 이상 교전 시 ',wounded:'자신의 HP 50% 이하 시 ',healthy:'자신의 HP 80% 이상 시 ',mounted:'기병 계열 상대 시 ',armored:'보병·창병·중기병·충차 상대 시 ',caster:'책략 병종 상대 시 ',stationary:'이번 차례 이동 전 ',moving:'이번 차례 이동 후 '};
 function matches(c:Condition,ctx:DamageContext,self:Unit){switch(c){

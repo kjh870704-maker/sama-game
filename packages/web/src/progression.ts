@@ -12,14 +12,14 @@ export interface Deployment {scenario?:ScenarioDeployment;/** 연구·장수 효
 export type GearSlot="weapon"|"armor"|"accessory";
 export interface Treasure {id:string;name:string;stage:string;glyph:string;effect:string;description:string;bonus:Partial<Unit['stats']>;slot?:GearSlot;grade?:number;icon?:number;quest?:string}
 export const treasures:Treasure[]=[
-  {id:'silverarmor',name:'백은갑',stage:'S1-07',glyph:'백',effect:'방어 +4 · 최대 체력 +8',description:'연의 속 장수들의 갑주 묘사에서 착안한 창작 보상. 사마의의 실제 소유 이력을 뜻하지 않습니다.',bonus:{defense:4,maxHp:8}},
+  {id:'silverarmor',name:'백은갑옷',stage:'S1-07',glyph:'백',effect:'방어 +4 · 최대 체력 +8',description:'연의 속 장수들의 갑주 묘사에서 착안한 창작 보상. 사마의의 실제 소유 이력을 뜻하지 않습니다.',bonus:{defense:4,maxHp:8}},
   {id:'yitian',name:'의천검',stage:'S1-06',glyph:'의',effect:'공격 +5 · 최대 체력 +8',description:'조조의 위엄을 상징하는 명검. 동관의 위기를 넘긴 공로로 인연을 맺습니다.',bonus:{attack:5,maxHp:8}},
   {id:'dunjia',name:'둔갑천서',stage:'S1-05',glyph:'둔',effect:'민첩 +4 · 최대 체력 +8',description:'기문과 도술의 이치를 전하는 서책. 장강에서 지켜 낸 수송대의 물자 속에서 발견합니다.',bonus:{agility:4,maxHp:8}},
-  {id:'taiping',name:'태평청령도',stage:'S1-01',glyph:'태',effect:'최대 체력 +12',description:'백성을 구제하는 가르침을 담은 도술서. 사마가를 지킨 이들에게 전해집니다.',bonus:{maxHp:12}},
-  {id:'sevenstar',name:'칠성보도',stage:'S1-02',glyph:'칠',effect:'공격 +4',description:'동탁 암살에 쓰려 했던 일곱 별의 보도. 낙양 탈출의 증표로 얻습니다.',bonus:{attack:4}},
+  {id:'taiping',name:'태평청령서',stage:'S1-01',glyph:'태',effect:'최대 체력 +12',description:'백성을 구제하는 가르침을 담은 도술서. 사마가를 지킨 이들에게 전해집니다.',bonus:{maxHp:12}},
+  {id:'sevenstar',name:'칠성검',stage:'S1-02',glyph:'칠',effect:'공격 +4',description:'동탁 암살에 쓰려 했던 일곱 별의 보검. 낙양 탈출의 증표로 얻습니다.',bonus:{attack:4}},
   {id:'dilu',name:'적로',stage:'S1-03',glyph:'적',effect:'이동 +1',description:'유비와 적로의 탈출 일화에서 착안한 게임 창작 장구입니다.',bonus:{movement:1}},
   {id:'mengde',name:'맹덕신서',stage:'S1-04',glyph:'맹',effect:'최대 MP +10 · 지력 +3',description:'조조의 병법과 용병술을 담은 병서. 흉몽을 이겨 낸 깨달음으로 그 뜻을 읽습니다.',bonus:{maxMp:10,intellect:3}},
-  {id:'qinggang',name:'청강검',stage:'S1-08',glyph:'청',effect:'공격 +7 · 방어 +2',description:'갑옷을 가르는 명검. 한중의 성채를 돌파한 보상으로 인연을 맺습니다.',bonus:{attack:7,defense:2}},
+  {id:'qinggang',name:'청공검',stage:'S1-08',glyph:'청',effect:'공격 +7 · 방어 +2',description:'갑옷을 가르는 명검. 한중의 성채를 돌파한 보상으로 인연을 맺습니다.',bonus:{attack:7,defense:2}},
 ];
 const extraItems=[
  ['greenDragon','청룡언월도','S1-06','청','공격 +8',{attack:8},'관우의 청룡언월도'],

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { filterTreasures, defaultFilter } from "../src/treasure-codex.ts";
-import { EXTRA_TREASURE_SHEETS, UNIQUE_TREASURE_SHEETS, TREASURE_ART, formOf, FORMS, relicIcon, treasureIcon } from "../src/treasure-art.ts";
+import { EXTRA_TREASURE_SHEETS, UNIQUE_TREASURE_SHEETS, TREASURE_ART, ART_PENDING, formOf, FORMS, relicIcon, treasureIcon } from "../src/treasure-art.ts";
 import { treasures } from "../src/progression.ts";
 import { RELICS } from "../src/roguelike.ts";
 
@@ -12,8 +12,8 @@ describe("보물 도감 필터", () => {
   });
   it("종류·형태·등급·보유로 거른다", () => {
     const shields = filterTreasures({ kind: "armor", form: "shield", grade: 0, own: "all" }, h).map((e) => e.id);
-    expect(shields).toEqual(expect.arrayContaining(["rattanShield", "phoenixHelm", "tigerShield", "lionHelm", "hideShield", "wolfHelm", "riverShield", "rattanHelm"]));
-    expect(shields).toHaveLength(8);
+    expect(shields).toEqual(expect.arrayContaining(["rattanShield", "phoenixHelm", "tigerShield", "lionHelm", "hideShield", "wolfHelm", "riverShield", "rattanHelm", "ironHelm", "silverShield", "windGodShield"]));
+    expect(shields).toHaveLength(11);
     const legend = filterTreasures({ kind: "weapon", form: "all", grade: 4, own: "all" }, h);
     expect(legend.length).toBeGreaterThan(0);
     expect(legend.every((e) => e.kind === "weapon" && e.grade === 4)).toBe(true);
@@ -27,7 +27,10 @@ describe("보물 도감 필터", () => {
     expect(EXTRA_TREASURE_SHEETS.flat()).toHaveLength(66);
     expect(UNIQUE_TREASURE_SHEETS.flat()).toHaveLength(26);
     expect(TREASURE_ART.size).toBe(92);
-    for(const t of treasures)expect(treasureIcon(t.id),t.id).not.toContain("pending");
+    for(const t of treasures)if(!ART_PENDING.includes(t.id))expect(treasureIcon(t.id),t.id).not.toContain("pending");
+    // 그림을 기다리는 조조전 보물 22점: 그림이 들어오면 ART_PENDING에서 빼야 이 검사가 통과한다.
+    expect(ART_PENDING).toHaveLength(22);
+    for(const id of ART_PENDING){expect(treasures.some((t)=>t.id===id),id).toBe(true);expect(treasureIcon(id),id).toContain("pending");}
     for(const r of RELICS)expect(relicIcon(r.id,r.name),r.id).not.toContain("pending");
     expect(treasureIcon("lionHelm")).toContain("treasures-extra-02-v1.webp");
     expect(relicIcon("whetstone", "숫돌")).toContain("treasures-extra-05-v1.webp");

@@ -4,13 +4,13 @@ const entries:Array<[string,string,GearSlot,number,number,string]>=[
  ['doubleSwords','자웅일대검','weapon',3,1,'Q01'],['ancientBlade','고정도','weapon',3,4,'Q01'],['leatherArmor','피갑','armor',1,15,'Q01'],['warDrum','진군고','accessory',1,14,'Q01'],
  ['ironSpear','철척사모','weapon',2,9,'Q02'],['flyingBlade','비도','weapon',2,7,'Q02'],['chainArmor','쇄자갑','armor',2,0,'Q02'],['militarySeal','장군인','accessory',2,14,'Q02'],
  ['phoenixSpear','봉취도','weapon',3,9,'Q03'],['crescentBlade','월아극','weapon',3,10,'Q03'],['scaleArmor','어린갑','armor',2,15,'Q03'],['swiftSaddle','비운안','accessory',2,5,'Q03'],
- ['ironBow','철태궁','weapon',3,11,'Q04'],['repeatingCrossbow','원융노','weapon',3,11,'Q04'],['rattanArmor','등갑','armor',3,15,'Q04'],['sunzi','손자병법','accessory',3,6,'Q04'],
+ ['ironBow','철태궁','weapon',3,11,'Q04'],['repeatingCrossbow','원융노','weapon',3,11,'Q04'],['rattanArmor','등갑','armor',3,15,'Q04'],['sunzi','손자병법서','accessory',3,6,'Q04'],
  ['threePointBlade','삼첨도','weapon',3,8,'Q05'],['steelWhip','강편','weapon',2,9,'Q05'],['brightArmor','명광개','armor',3,0,'Q05'],['sixTeachings','육도','accessory',3,3,'Q05'],
  ['longbow','양유궁','weapon',3,11,'Q06'],['ironAxe','개산부','weapon',2,10,'Q06'],['blackArmor','현철갑','armor',3,15,'Q06'],['threeStrategies','삼략','accessory',3,2,'Q06'],
  ['dragonSpear','용담창','weapon',4,9,'Q07'],['twinHalberds','쌍철극','weapon',3,10,'Q07'],['tigerArmor','호위갑','armor',3,0,'Q07'],['shadowHorse','절영','accessory',4,12,'Q07'],
- ['goldHammer','유금추','weapon',3,10,'Q08'],['moonSword','월광검','weapon',3,7,'Q08'],['craneRobe','학창의','armor',3,0,'Q08'],['yellowHorse','조황비전','accessory',4,5,'Q08'],
+ ['goldHammer','유금추','weapon',3,10,'Q08'],['moonSword','월광검','weapon',3,7,'Q08'],['craneRobe','학창','armor',3,0,'Q08'],['yellowHorse','조황비전','accessory',4,5,'Q08'],
  ['jadeSword','백옥검','weapon',4,1,'Q09'],['tigerSpear','호두창','weapon',3,9,'Q09'],['cloudRobe','운금포','armor',3,0,'Q09'],['qingshu','청낭서','accessory',4,3,'Q09'],
- ['sevenStarFlag','칠성기','accessory',4,13,'Q10'],['formationScroll','팔진도','accessory',4,2,'Q10'],['dragonArmor','용린갑','armor',4,15,'Q10'],['goldArmor','황금갑','armor',4,0,'Q10'],
+ ['sevenStarFlag','칠성기','accessory',4,13,'Q10'],['formationScroll','팔진도','accessory',4,2,'Q10'],['dragonArmor','용린갑옷','armor',4,15,'Q10'],['goldArmor','황금갑옷','armor',4,0,'Q10'],
  ['springAutumn','춘추좌씨전','accessory',4,6,'Q11'],['jadePendant','백옥환','accessory',3,14,'Q11'],['tigerTally','호부','accessory',4,14,'Q11'],['strategistRobe','군사포','armor',4,0,'Q11'],
 ];
 export const extraTreasures:Treasure[]=entries.map(([id,name,slot,grade,icon,quest],i)=>{
@@ -41,7 +41,7 @@ const trainingEntries:Array<[string,string,GearSlot,number,string,Treasure['bonu
 ];
 /**
  * 반복 퀘스트(보물 사냥 R01~R05)의 보물 꾸러미와 도전 퀘스트(C01~C10) 돌파 보물.
- * 보물 사냥은 이길 때마다 꾸러미에서 아직 없는 보물 하나, 도전은 단계를 처음 넘을 때 받는다(5·10단계는 둘).
+ * 보물 사냥은 이길 때마다 꾸러미에서 아직 없는 보물 하나, 도전은 단계를 처음 넘을 때 받는다(5·10단계와 사신보옥이 붙은 6~9단계는 둘).
  */
 const questEntries:Array<[string,string,GearSlot,number,string,Treasure['bonus'],string]>=[
  ['bronzeSword','백리검','weapon',1,'R01',{attack:3,agility:1},'손권이 지녔다는 여섯 명검(백홍·자전·벽사·유성·청명·백리) 가운데 하나.'],
@@ -113,6 +113,29 @@ const questEntries:Array<[string,string,GearSlot,number,string,Treasure['bonus']
  ['hundredPaceBow','백보 신궁','weapon',4,'C09',{attack:9,agility:3},'백 걸음 밖의 버들잎을 맞혔다는 활.'],
  ['peerlessSword','백홍검','weapon',4,'C10',{attack:11,agility:3,maxHp:6},'손권의 여섯 명검 가운데 으뜸. 칼을 뽑으면 흰 무지개가 선다 했다. 도전 10단계를 모두 넘은 증표.'],
  ['overlordArmor','패왕갑','armor',4,'C10',{defense:8,maxHp:18},'천하를 다투던 패왕의 갑옷. 마지막 수문장을 꺾은 증표.'],
+ // 조조전 보물 도감에서 가져온 보물: 보물 사냥 꾸러미(R02~R05)와 도전 6~9단계(사신보옥)에 더한다.
+ ['ironHelm','철투구','armor',2,'R02',{defense:3,maxHp:5},'쇠를 두들겨 만든 병사의 투구. 머리 위로 떨어지는 칼을 받아 낸다.'],
+ ['beanBag','콩주머니','accessory',2,'R02',{maxHp:8,spirit:1},'말먹이 콩을 담아 허리에 차는 주머니. 행군이 길어도 지치지 않는다.'],
+ ['twinWhips','쌍편','weapon',3,'R03',{attack:6,maxHp:4},'양손에 하나씩 쥐는 쇠채찍. 마디진 쇠가 갑옷 위로 뼈를 울린다.'],
+ ['plantainFan','파초선','accessory',3,'R03',{intellect:4,maxMp:4},'커다란 파초 잎으로 만든 부채. 한 번 부치면 큰바람이 인다고 한다.'],
+ ['mirrorArmor','거울갑옷','armor',3,'R03',{defense:4,maxHp:6,spirit:2},'가슴과 등에 둥근 동경을 단 갑옷. 햇빛을 되쏘아 적의 눈을 어지럽힌다.'],
+ ['dragonGi','비룡도복','armor',3,'R03',{defense:2,maxHp:6,agility:3},'날아오르는 용을 수놓은 무도가의 옷. 몸놀림을 가볍게 한다.'],
+ ['silverShield','백은방패','armor',3,'R03',{defense:5,maxHp:6},'은으로 테를 두른 방패. 정면에서 오는 칼과 창을 흘려 낸다.'],
+ ['lubuBow','여포궁','weapon',4,'R04',{attack:8,agility:2},'원문에서 화살 한 대로 화극의 곁가지를 맞혀 싸움을 말렸다는 여포의 활.'],
+ ['linkedArmor','연환갑옷','armor',3,'R04',{defense:5,maxHp:8},'쇠고리를 촘촘히 이어 엮은 갑옷. 칼날이 미끄러져 들어오지 못한다.'],
+ ['windGodShield','풍신방패','armor',4,'R04',{defense:6,maxHp:8},'바람신을 새긴 큰 방패. 쏟아지는 화살을 바람처럼 흘려 보낸다.'],
+ ['noFeatherDart','몰우전','weapon',3,'R04',{attack:5,agility:3},'깃 없는 화살이라는 뜻의 돌팔매. 던지는 족족 장수의 얼굴을 맞힌다.'],
+ ['goldFireCannon','금화관포','weapon',4,'R05',{attack:8,maxHp:4},'불붙인 쇠단지를 쏘아 올리는 포. 성벽 너머까지 불길을 퍼뜨린다.'],
+ ['fiveFireFan','오화신염선','accessory',4,'R05',{intellect:5,maxMp:8},'다섯 빛깔 불꽃을 수놓은 부채. 부치면 불길이 일어난다는 남방의 보물.'],
+ ['sageSword','성자보검','weapon',4,'R05',{attack:7,intellect:3},'성인이 지녔다는 보검. 요사스러운 술수를 벤다.'],
+ ['darkRobe','칠흑도복','armor',4,'R05',{defense:3,maxHp:8,maxMp:6},'칠흑빛 도사의 옷. 술법의 기운을 품어 책략을 받아 낸다.'],
+ ['phoenixRobe','봉황깃옷','armor',4,'R05',{defense:4,maxHp:12,spirit:3},'봉황의 깃으로 지었다는 옷. 입은 이의 상처를 아물게 한다.'],
+ ['windWheel','바람바퀴','accessory',4,'R05',{agility:4,maxHp:4},'바람처럼 구른다는 수레바퀴. 수레와 포차를 험한 길에서도 굴린다.'],
+ ['zhugeTurban','제갈건','accessory',4,'R05',{intellect:4,maxMp:6},'제갈량이 즐겨 썼다는 비단 두건. 군막에서 계책을 다듬는다.'],
+ ['azureJewel','청룡보옥','accessory',4,'C06',{attack:3,agility:3},'동방을 지키는 청룡의 보옥. 사신보옥 넷 가운데 하나.'],
+ ['vermilionJewel','주작보옥','accessory',4,'C07',{intellect:3,maxMp:6},'남방을 지키는 주작의 보옥. 사신보옥 넷 가운데 하나.'],
+ ['blackTortoiseJewel','현무보옥','accessory',4,'C08',{defense:3,maxHp:10},'북방을 지키는 현무의 보옥. 사신보옥 넷 가운데 하나.'],
+ ['whiteTigerJewel','백호보옥','accessory',4,'C09',{agility:4,maxHp:6},'서방을 지키는 백호의 보옥. 사신보옥 넷 가운데 하나.'],
 ];
 const STAT_KO:Record<string,string>={attack:'공격',defense:'방어',maxHp:'최대 체력',maxMp:'최대 MP',intellect:'지력',spirit:'정신',agility:'민첩'};
 export const trainingTreasures:Treasure[]=trainingEntries.map(([id,name,slot,grade,quest,bonus,description])=>({id,name,slot,grade,quest,stage:quest,glyph:name.slice(0,1),bonus,description,

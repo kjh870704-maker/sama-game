@@ -66,7 +66,7 @@ export const RELICS:Relic[]=[
   {id:'drum',name:'진군고',effect:'보병·창병 계열 이동 +1'},
   {id:'banner',name:'군기',effect:'전투 시작 2턴 동안 사기 상승'},
   {id:'herbs',name:'약초 꾸러미',effect:'전투 뒤 체력 20% 추가 회복'},
-  {id:'sunzi',name:'손자병법',effect:'책략 MP +12, 지력 +3'},
+  {id:'sunzi',name:'손자병법서',effect:'책략 MP +12, 지력 +3'},
   {id:'quiver',name:'화살통',effect:'궁·노 계열 공격 +5'},
   // 초한 영웅의 유물
   {id:'bawangJi',name:'패왕의 극',effect:'보병·기병 계열 공격 +5'},
