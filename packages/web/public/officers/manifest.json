@@ -56,6 +56,14 @@
     {"id":"bi_yan","name":"비연","aliases":["비연의 환영"],"battle":{"cavalry":{"sheet":"bi_yan-battle-cavalry-v1.webp","cell":[350,280],"rows":1}},"duel":"bi_yan-duel-v1.webp"},
     {"id":"zhu_ran","name":"주연","aliases":["주연의 환영"],"battle":{"infantry":{"sheet":"zhu_ran-battle-infantry-v1.webp","cell":[280,224],"rows":1}},"duel":"zhu_ran-duel-v1.webp"},
     {"id":"zhuge_ke","name":"제갈각","aliases":["제갈각의 환영"],"battle":{"strategist":{"sheet":"zhuge_ke-battle-strategist-v1.webp","cell":[280,224],"rows":1}},"duel":"zhuge_ke-duel-v1.webp"},
-    {"id":"wang_ling","name":"왕릉","aliases":["왕릉의 환영"],"battle":{"infantry":{"sheet":"wang_ling-battle-infantry-v1.webp","cell":[280,224],"rows":1}},"duel":"wang_ling-duel-v1.webp"}
+    {"id":"wang_ling","name":"왕릉","aliases":["왕릉의 환영"],"battle":{"infantry":{"sheet":"wang_ling-battle-infantry-v1.webp","cell":[280,224],"rows":1}},"duel":"wang_ling-duel-v1.webp"},
+    {"id":"gao_shou","name":"고수","aliases":["고수의 환영"],"battle":{"bandit":{"sheet":"gao_shou-battle-bandit-v1.webp","cell":[350,280],"rows":1}},"duel":"gao_shou-duel-v1.webp"},
+    {"id":"guo_huai","name":"곽회","aliases":["곽회의 환영"],"battle":{"archer":{"sheet":"guo_huai-battle-archer-v1.webp","cell":[350,280],"rows":1}},"duel":"guo_huai-duel-v1.webp"},
+    {"id":"dai_ling","name":"대릉","aliases":["대릉의 환영"],"battle":{"infantry":{"sheet":"dai_ling-battle-infantry-v1.webp","cell":[280,224],"rows":1}},"duel":"dai_ling-duel-v1.webp"},
+    {"id":"zhang_zhao","name":"장소","aliases":["장소의 환영"],"battle":{"strategist":{"sheet":"zhang_zhao-battle-strategist-v1.webp","cell":[280,224],"rows":1}},"duel":"zhang_zhao-duel-v1.webp"},
+    {"id":"zhuge_jin","name":"제갈근","aliases":["제갈근의 환영"],"battle":{"strategist":{"sheet":"zhuge_jin-battle-strategist-v1.webp","cell":[280,224],"rows":1}},"duel":"zhuge_jin-duel-v1.webp"},
+    {"id":"zhang_ba","name":"장패","aliases":["장패의 환영"],"battle":{"cavalry":{"sheet":"zhang_ba-battle-cavalry-v1.webp","cell":[350,280],"rows":1}},"duel":"zhang_ba-duel-v1.webp"},
+    {"id":"cao_xiu","name":"조휴","aliases":["조휴의 환영"],"battle":{"cavalry":{"sheet":"cao_xiu-battle-cavalry-v1.webp","cell":[350,280],"rows":1}},"duel":"cao_xiu-duel-v1.webp"},
+    {"id":"cao_shuang","name":"조상","aliases":["조상의 환영"],"battle":{"cavalry":{"sheet":"cao_shuang-battle-cavalry-v1.webp","cell":[350,280],"rows":1}},"duel":"cao_shuang-duel-v1.webp"}
   ]
 }
