@@ -101,8 +101,8 @@ export function officerDuelMounted(u:OfficerLike){const e=officerEntry(u);return
  * 기마 조운 135 ~ 여포 230) 같은 무대에서 발이 뜨거나 키가 들쭉날쭉했다. 발끝을 230에 맞추고, 도보는 키 182·기마는 205에
  * 가깝게(0.8~1.3배 안에서) 늘이거나 줄인다. 값은 원본 시트를 잰 것이다.
  */
-const DUEL_FIT:Record<string,readonly [number,number]>={sima_yi:[248,228],sima_yi_young:[256,238],sima_lang:[256,256],sima_fang:[237,237],cao_zhen:[256,231],xu_chu:[242,242],ma_chao:[236,216],chen_gong:[235,180],zhou_yu:[222,180],lu_bu:[243,230],zhuge_ke:[229,182],cao_pi:[248,206],lu_fan:[229,183],sun_quan:[230,184],huang_zhong:[230,184],sima_shi:[246,236],sun_shao:[229,183],meng_yan:[229,183],bi_yan:[230,174],zhu_ran:[229,177],sima_zhao:[246,236],wang_ling:[229,163],cao_cao:[248,203],yang_ang:[229,184],meng_da:[229,187],wang_ping:[229,183],gao_xiang:[229,177],zhao_yun:[230,135],lu_meng:[230,158],gongsun_yuan:[230,175],xiang_yu:[248,221],lu_xun:[230,169],wei_yan:[230,176],ma_su:[229,174]};
-const DUEL_FOOT=230,DUEL_FOOT_H=182,DUEL_MOUNT_H=205;
+const DUEL_FIT:Record<string,readonly [number,number]>={sima_yi:[248,228],sima_yi_young:[256,238],sima_lang:[256,256],sima_fang:[237,237],cao_zhen:[256,231],xu_chu:[242,242],ma_chao:[236,216],chen_gong:[235,180],zhou_yu:[222,180],lu_bu:[243,230],zhuge_ke:[229,182],cao_pi:[248,206],lu_fan:[229,183],sun_quan:[230,184],huang_zhong:[230,184],sima_shi:[246,236],sun_shao:[229,183],meng_yan:[229,179],bi_yan:[229,179],zhu_ran:[229,177],sima_zhao:[246,236],wang_ling:[229,163],cao_cao:[248,203],yang_ang:[229,184],meng_da:[229,187],wang_ping:[229,183],gao_xiang:[229,177],zhao_yun:[230,175],lu_meng:[230,176],gongsun_yuan:[230,175],xiang_yu:[248,221],lu_xun:[230,169],wei_yan:[230,176],ma_su:[229,174]};
+const DUEL_FOOT=230,DUEL_FOOT_H=182,DUEL_MOUNT_H=180;
 function duelFitStyle(id:string){
   const f=DUEL_FIT[id];if(!f)return '';
   const [foot,h]=f,k=Math.max(.8,Math.min(1.3,(MOUNTED_DUEL.has(id)?DUEL_MOUNT_H:DUEL_FOOT_H)/h));
