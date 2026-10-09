@@ -32,6 +32,7 @@ import {showResearch} from './research-ui.ts';
 import {classTactics,evolvedClass,tierOf,familyOf,type BattleState,type UnitClass} from '../../core/src/index.ts';
 import type {ChapterScript,ChoiceEffect,Look,Scene,Camp} from './scenario-types.ts';
 import {과와,으로,은는,을를,이가} from './josa.ts';
+import {setStoryEra} from './youth.ts';
 
 export interface ScenarioHost {
   modal(html:string,closable?:boolean):void;
@@ -187,6 +188,7 @@ function enemyBase(state:ScenarioState,heroLevel:number,step:ScenarioStep){
 // ─────────────────────────────────────────────── 이야기 → 정비 → 전투
 
 async function stage(host:ScenarioHost,state:ScenarioState,step:ScenarioStep,scenes:Scene[],heading:string,choosing:boolean,narration?:{year:string;title:string;lines:readonly string[]}){
+  setStoryEra(step.stage??step.id);
   host.modal('<div class="ss-host"></div>',false);
   const root=document.querySelector<HTMLElement>('.ss-host')!;
   // 장을 여는 해설(역사·시나리오 배경)

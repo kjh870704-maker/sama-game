@@ -1,3 +1,4 @@
+import {artKey} from './youth.ts';
 import {familyOf,tierOf,type Unit} from '../../core/src/index.ts';
 import {romanceOf} from './romance.ts';
 
@@ -67,7 +68,8 @@ const byKey=new Map<string,OfficerEntry>();
 for(const e of officerManifest)for(const k of [e.id,e.name,...e.aliases])byKey.set(k,e);
 
 export function officerEntry(u:OfficerLike):OfficerEntry|undefined{
-  const direct=byKey.get(u.id)??byKey.get(u.name)??byKey.get(plain(u.name));if(direct)return direct;
+  // 상편 앞 세 장에서는 사마의 그림을 소년 사마의 그림으로(youth.ts).
+  const direct=byKey.get(artKey(u.id))??byKey.get(artKey(u.name))??byKey.get(artKey(plain(u.name)));if(direct)return direct;
   const r=romanceOf(u);return r?byKey.get(r.name):undefined;
 }
 const classKey=(u:OfficerLike,e:OfficerEntry)=>{if(u.id==='wooden_zhuge'&&e.battle.cart)return 'cart';const cls=u.unitClass;if(cls&&e.battle[cls])return cls;if(cls){const family=familyOf(cls);if(family==='lord'&&e.battle.lord)return 'lord';if(e.battle[family])return family;}return e.battle.lord?'lord':Object.keys(e.battle)[0]!;};

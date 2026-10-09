@@ -50,3 +50,19 @@ describe('전수 점검 수정',()=>{
   expect(chapters.find(c=>c.stage.id==='S1-01')!.year).toContain('189');
  });
 });
+
+describe('상편 앞 세 장은 소년 사마의 그림',()=>{
+ it('S1-01~S1-03과 그 사이 행군 전투는 소년, S1-04부터와 본영은 성인',async()=>{
+  const {setStoryEra,resetStoryEra}=await import('../src/youth.ts');
+  const {officerEntry}=await import('../src/officer-models.ts');
+  const {officerLook}=await import('../src/officer-art.ts');
+  const who=()=>officerEntry({id:'sima_yi',name:'사마의'})?.id;
+  resetStoryEra();expect(who()).toBe('sima_yi');
+  setStoryEra('S1-01');expect(who()).toBe('sima_yi_young');expect(officerLook('사마의')?.id).toBe('sima_yi_young');
+  setStoryEra('R-02');expect(who()).toBe('sima_yi_young');
+  setStoryEra('S1-03');expect(who()).toBe('sima_yi_young');
+  expect(officerEntry({id:'sima_lang',name:'사마랑'})?.id).toBe('sima_lang');
+  setStoryEra('S1-04');expect(who()).toBe('sima_yi');
+  setStoryEra('S1-02');resetStoryEra();expect(who()).toBe('sima_yi');
+ });
+});

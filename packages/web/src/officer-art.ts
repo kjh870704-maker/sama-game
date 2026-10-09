@@ -1,3 +1,4 @@
+import {artKey} from './youth.ts';
 import {displayName} from './courtesy.ts';
 import {portraitImage} from './portrait-images.ts';
 export const officerLooks=[
@@ -18,7 +19,7 @@ export const officerLooks=[
  {id:'sima_zhao',name:'사마소',title:'자상 · 사마의의 둘째 아들',slot:13},
 ] as const;
 const escape=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
-export function officerLook(name:string){return officerLooks.find(p=>p.id===name||p.name===name);}
+export function officerLook(name:string){name=artKey(name);return officerLooks.find(p=>p.id===name||p.name===name);}
 /** Named speakers without a painted portrait show the upper body of their troop art
  * (rows of units-v3: 0 infantry, 1 spear, 2 bow, 3 horse, 4 robe, 5 siege). */
 const troopFaces:Record<string,number>={'양앙':0,'성채 수비대장':0,'교관':0,'노장':0,'학자':4,'의원':4,'상인':4,'장인':4,'꿈속의 황제':4,'장소':4,'제갈근':4,'손권':4,'여몽':3,'사마사':3,'사마소':2,'맹달':0,'이엄':4,'장합':3,'곽회':0,'제갈량':4,'마속':4,'왕평':0,'위연':0,'조상':3,'비연':3,'공손연':0,'주연':0,'제갈각':4,'강유':3,'맹염':3,'대릉':0,'고상':0,'공병':0};
@@ -38,6 +39,8 @@ export function registerFace(name:string,url:()=>string){customFaces.set(name,ur
 export function clearFaces(){customFaces.clear();}
 export function customFace(name:string){const img=portraitImage(name);if(img)return img;const f=customFaces.get(name);return f?f():undefined;}
 export function officerPortrait(name:string){
+  // 상편 앞 세 장: 사마의 초상 대신 소년 사마의 흉상의 첫 표정을 초상으로 쓴다(youth.ts).
+  const youth=artKey(name);if(youth!==name&&(youth==='소년 사마의'||youth==='sima_yi_young'))return `<div class="officer-face image-face" role="img" aria-label="소년 사마의 초상" style="background-image:url('officers/sima_yi_young-bust-v1.webp');background-size:300% 100%;background-position:0 12%"></div>`;
   // 원화 id(cao_zhen)로 불러도 넣은 초상(이름 「조진」으로 저장)을 먼저 찾는다.
   const img=portraitImage(name)??portraitImage(officerLook(name)?.name??'');if(img)return `<div class="officer-face image-face" role="img" aria-label="${escape(name)} 초상" style="background-image:url('${img}');background-size:cover;background-position:50% 12%"></div>`;
   const cf=customFaces.get(name);if(cf){const url=cf();if(url)return `<div class="officer-face custom-face" role="img" aria-label="${escape(name)} 초상" style="background-image:url(${url});background-size:cover;background-position:center"></div>`;}const p=officerLook(name),atlas=!!p&&p.slot<12,row=atlas?undefined:troopFaceRow(name);if(row!==undefined){
