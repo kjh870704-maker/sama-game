@@ -15,6 +15,18 @@ export const troopRoles:Partial<Record<UnitClass,{name:string;role:string;base:U
  pirate:{name:'해적',role:'이동 6 · 곡도로 파고드는 수상 근접 병종',base:'navy',tint:0x72c8c7,spells:[]},
  horseArcher:{name:'궁기병',role:'이동 6 · 사거리 2~3, 기동 사격에 특화',base:'cavalry',tint:0xc7e6ae,spells:[]},
  bandit:{name:'산적',role:'숲·산지에서 강하지만 평지 방어가 약한 병종',base:'infantry',tint:0xd8b58e,spells:[]},
+ javelin:{name:'투창병',role:'사거리 1~2 · 여러 자루의 짧은 투창으로 중거리 공격',base:'spearman',tint:0x9fc8e8,spells:[]},
+ eliteJavelin:{name:'정예투창병',role:'투창병 2단계 · 정확한 투척으로 회심을 노린다',base:'spearman',tint:0x86b7df,spells:[]},
+ flyingSpear:{name:'비창병',role:'투창병 3단계 · 날아드는 창으로 방어를 꿰뚫는다',base:'spearman',tint:0xe5b36b,spells:[]},
+ divineJavelin:{name:'신투창병',role:'투창병 4단계 · 사거리 3의 투창술을 완성한다',base:'spearman',tint:0xf0d36f,spells:[]},
+ qiang:{name:'강족병',role:'이동 7 · 털옷과 방패, 짧은 창을 갖춘 고원 기병',base:'cavalry',tint:0xb99b78,spells:[]},
+ qiangRider:{name:'강족기병',role:'강족병 2단계 · 거친 지형을 누비는 기마 전사',base:'cavalry',tint:0xc7ab82,spells:[]},
+ qiangVeteran:{name:'강족용사',role:'강족병 3단계 · 회심 돌격을 익힌 고원 용사',base:'cavalry',tint:0xd4b778,spells:[]},
+ qiangKingGuard:{name:'강왕친위',role:'강족병 4단계 · 강왕을 호위하는 중갑 기병',base:'cavalry',tint:0xe0c56c,spells:[]},
+ sniper:{name:'저격병',role:'사거리 3~4 · 중노로 먼 적 하나를 노리는 장거리 병종',base:'crossbow',tint:0x8ca9c8,spells:[]},
+ eliteSniper:{name:'정예저격병',role:'저격병 2단계 · 회심과 관통을 겸한 정밀 사격',base:'crossbow',tint:0x789bc0,spells:[]},
+ deadeye:{name:'필중노병',role:'저격병 3단계 · 사거리 5의 필중 저격수',base:'crossbow',tint:0xd2a65d,spells:[]},
+ divineSniper:{name:'천리신사',role:'저격병 4단계 · 중노 저격술을 완성한 전설 병종',base:'crossbow',tint:0xe2c566,spells:[]},
  // 확장 병종과 진화 단계: 그림은 계열의 것을 쓰고 색조·등급 표식으로 구분한다.
  shieldGuard:{name:'방패병',role:'보병 2단계 · 곁의 아군이 받을 피해를 대신 받는 호위 전열',base:'infantry',tint:0xbfd2ff,spells:[]},
  royalGuard:{name:'금위군',role:'보병 3단계 · 호위와 배수진, 무너지지 않는 최정예 전열',base:'infantry',tint:0xffe08a,spells:[]},
@@ -68,7 +80,7 @@ export const troopRoles:Partial<Record<UnitClass,{name:string;role:string;base:U
  xiliang:{name:'서량기병',role:'이동 7 · 거친 서쪽 말의 돌격 기병',base:'cavalry',tint:0xe8c890,spells:[]},
  ...CHART_ROLES,
 };
-export const supportOptions:UnitClass[]=['infantry','fengshui','strategist','shaman','maiden','taoist','monk','horseArcher','bandit','spearman','crossbow','archer','cavalry','heavyCav','catapult','ram','engineer'];
+export const supportOptions:UnitClass[]=['infantry','fengshui','strategist','shaman','maiden','taoist','monk','horseArcher','bandit','spearman','javelin','crossbow','sniper','archer','cavalry','qiang','heavyCav','catapult','ram','engineer'];
 /** 병종이 쓰는 책략·특수기(계통별, class-spells.ts). 쓸 것이 없는 병종(민중)은 undefined. */
 export function troopStrategies(kind:UnitClass,level:number){const l=classSpells(kind,level);return l.length?l:undefined;}
 export function visualClass(kind:UnitClass){return troopRoles[kind]?.base??kind;}
@@ -76,7 +88,7 @@ export const classNames:Record<string,string>={infantry:'보병',spearman:'창�
 /** The class whose sprite a unit is drawn with: extended classes borrow their lineage's art. */
 export function artClass(kind:UnitClass):UnitClass{return VARIANTS[kind]?(troopRoles[kind]?.base??familyOf(kind)):kind;}
 /** Every class a player can field, by tier: for codex and recruiting. */
-export const recruitPool:UnitClass[]=['infantry','spearman','cavalry','archer','crossbow','strategist','fengshui','horseArcher','heavyCav','assassin','rattan','elephant','monk','taoist','bandit','xiliang','yellowTurban','mountedStrategist','pirate',
+export const recruitPool:UnitClass[]=['infantry','spearman','javelin','cavalry','qiang','archer','crossbow','sniper','strategist','fengshui','horseArcher','heavyCav','assassin','rattan','elephant','monk','taoist','bandit','xiliang','yellowTurban','mountedStrategist','pirate',
  // 병종 차트로 늘린 계통과 모병 특수 병과
  'swordsman','lord','commander','dancer','mountainCav','valiantCav','lightChariot','crownPrince','transport','nanmanRider','gaemaWarrior','halberdCav','wheelSage',
  'ytArcher','ytSpear','ytBrawler','nanmanFoot','northFoot','northRider','palanquin','baguaChariot','flyingBlade','bashuRepeater'];

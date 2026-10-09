@@ -35,6 +35,9 @@ export const fourStageCorrectionRows = {
   'four-stage-nanman':['nanmanRider','nanmanBeast','nanmanFoot','ytBrawler'],
   'four-stage-halberd-cavalry':['halberdCav','heavyHalberdCav','ytSpear','swordArtist'],
   'four-stage-catapult':['catapult','thunderCart','greatTrebuchet','divineCatapult'],
+  'four-stage-javelin':['javelin','eliteJavelin','flyingSpear','divineJavelin'],
+  'four-stage-qiang':['qiang','qiangRider','qiangVeteran','qiangKingGuard'],
+  'four-stage-sniper':['sniper','eliteSniper','deadeye','divineSniper'],
 } as const satisfies Readonly<Record<string,readonly [UnitClass,UnitClass,UnitClass,UnitClass]>>;
 
 /** 진화하지 않는 독립 병종. 옛 저장 ID는 core의 currentClass에서 이 ID로 먼저 정규화한다. */
@@ -74,6 +77,9 @@ export const lineageWeapons = {
   'four-stage-bandit':'curved-cleaver',
   'four-stage-swordsman':'straight-jian',
   'four-stage-assassin':'twin-daggers',
+  'four-stage-javelin':'throwing-javelin',
+  'four-stage-qiang':'short-spear-and-hide-shield',
+  'four-stage-sniper':'heavy-crossbow',
 } as const;
 
 export const singleStageWeapons = {

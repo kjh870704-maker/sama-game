@@ -176,6 +176,18 @@ Object.assign(VARIANTS, {
   pirateRaider: { family: "navy", tier: 2, profile: p(1.1, 0.43, 1.22, 0.95, 0.62, 0.86, 1.26, 6, [1, 1]), traits: { critical: 10 }, bloom: { name: "선상 습격", description: "곡도 회심 공격을 익힌다" } },
   pirateCaptain: { family: "navy", tier: 3, profile: p(1.22, 0.46, 1.36, 1.05, 0.68, 0.92, 1.34, 6, [1, 1]), traits: { critical: 15, lifesteal: 8 }, bloom: { name: "약탈의 곡도", description: "회심과 흡혈로 난전을 지배한다" } },
   pirateAdmiral: { family: "navy", tier: 4, profile: p(1.36, 0.5, 1.52, 1.17, 0.74, 1.0, 1.42, 6, [1, 1]), traits: { critical: 20, lifesteal: 12 }, bloom: { name: "해왕의 칼날", description: "해적의 곡도술을 완성한다" } },
+  javelin: { family: "spearman", tier: 1, profile: p(0.95, 0.4, 1.1, 0.85, 0.6, 0.8, 1.1, 5, [1, 2]) },
+  eliteJavelin: { family: "spearman", tier: 2, profile: p(1.05, 0.44, 1.22, 0.94, 0.66, 0.88, 1.22, 5, [1, 2]), traits: { critical: 8 }, bloom: { name: "투창 숙련", description: "짧은 투창을 빠르고 정확하게 던져 회심 확률이 오른다" } },
+  flyingSpear: { family: "spearman", tier: 3, profile: p(1.16, 0.49, 1.35, 1.04, 0.73, 0.98, 1.35, 5, [1, 2]), traits: { critical: 12, penetrate: 12 }, bloom: { name: "비창", description: "날아드는 투창으로 회심을 노리고 방어를 꿰뚫는다" } },
+  divineJavelin: { family: "spearman", tier: 4, profile: p(1.28, 0.54, 1.49, 1.15, 0.81, 1.08, 1.49, 5, [1, 3]), traits: { critical: 16, penetrate: 20, attackBoost: 4 }, bloom: { name: "신투창", description: "같은 투창을 끝까지 단련해 더 먼 적의 갑옷까지 꿰뚫는다" } },
+  qiang: { family: "cavalry", tier: 1, profile: p(1.05, 0.4, 1.12, 0.9, 0.58, 0.78, 1.15, 7, [1, 1]), traits: { roughTerrainMove: 0 } },
+  qiangRider: { family: "cavalry", tier: 2, profile: p(1.16, 0.44, 1.24, 0.99, 0.64, 0.86, 1.27, 7, [1, 1]), traits: { roughTerrainMove: 0, attackBoost: 4 }, bloom: { name: "고원 기동", description: "거친 지형을 누비며 짧은 창의 돌격 위력을 높인다" } },
+  qiangVeteran: { family: "cavalry", tier: 3, profile: p(1.28, 0.49, 1.37, 1.1, 0.71, 0.95, 1.4, 7, [1, 1]), traits: { roughTerrainMove: 0, attackBoost: 6, critical: 10 }, bloom: { name: "강족 용맹", description: "고원 기동에 회심 돌격을 더한다" } },
+  qiangKingGuard: { family: "cavalry", tier: 4, profile: p(1.42, 0.54, 1.52, 1.22, 0.79, 1.06, 1.55, 7, [1, 1]), traits: { roughTerrainMove: 0, attackBoost: 8, critical: 15, veteran: 10 }, bloom: { name: "강왕 친위", description: "강족의 기동과 창술을 완성한 왕의 친위대가 된다" } },
+  sniper: { family: "crossbow", tier: 1, profile: p(0.78, 0.45, 1.15, 0.72, 0.75, 0.82, 1.0, 4, [3, 4]), traits: { critical: 8 } },
+  eliteSniper: { family: "crossbow", tier: 2, profile: p(0.86, 0.5, 1.27, 0.8, 0.83, 0.91, 1.11, 4, [3, 4]), traits: { critical: 12, penetrate: 10 }, bloom: { name: "침착한 조준", description: "먼 거리에서 회심을 노리고 방어를 꿰뚫는다" } },
+  deadeye: { family: "crossbow", tier: 3, profile: p(0.95, 0.56, 1.41, 0.89, 0.92, 1.01, 1.23, 4, [3, 5]), traits: { critical: 16, penetrate: 18 }, bloom: { name: "필중 저격", description: "중노의 유효 사거리와 관통력이 크게 오른다" } },
+  divineSniper: { family: "crossbow", tier: 4, profile: p(1.05, 0.62, 1.56, 0.99, 1.02, 1.12, 1.36, 4, [3, 5]), traits: { critical: 22, penetrate: 28, attackBoost: 4 }, bloom: { name: "천리신사", description: "같은 중노로 천리 밖 표적을 꿰뚫는 경지에 오른다" } },
 } satisfies Partial<Record<UnitClass, ClassVariant>>);
 
 /**
@@ -213,6 +225,9 @@ export const FOUR_STAGE_LINES: readonly (readonly [UnitClass, UnitClass, UnitCla
   ["nanmanRider", "nanmanBeast", "nanmanFoot", "ytBrawler"],
   ["halberdCav", "heavyHalberdCav", "ytSpear", "swordArtist"],
   ["catapult", "thunderCart", "greatTrebuchet", "divineCatapult"],
+  ["javelin", "eliteJavelin", "flyingSpear", "divineJavelin"],
+  ["qiang", "qiangRider", "qiangVeteran", "qiangKingGuard"],
+  ["sniper", "eliteSniper", "deadeye", "divineSniper"],
 ];
 
 const reassigned = new Set<UnitClass>([
@@ -314,13 +329,12 @@ export function nextEvolution(unitClass: UnitClass): { to: UnitClass; level: num
 
 /**
  * 지운 병종 → 이어받는 병종. 예전 저장(원정 부대·신장수·시나리오 장수)에 남은 병종을 읽을 때 바꾼다.
- * 의술사·투창병·도부수·산악병·청주병·극사·방패노병·고취수·기마책사·강동자제·낭중기 계통과
+ * 의술사·도부수·산악병·청주병·극사·방패노병·고취수·기마책사·강동자제·낭중기 계통과
  * 공병·포차의 2·3단계(축성병·공성 장인·벽력거·천균거)는 병종 차트 계통과 겹쳐 지웠다.
  */
 export const RETIRED_CLASSES: Readonly<Record<string, UnitClass>> = {
   slinger: "archer", hurler: "longbow", boulderCorps: "sharpshooter", meteorSlinger: "ytArcher",
   physician: "fengshui", divineDoctor: "sage", medicineSaint: "immortal",
-  javelin: "spearman", eliteJavelin: "pikeman", flyingSpear: "halberdier",
   axeman: "swordsman", greatBlade: "knightErrant", xianzhen: "swordArtist",
   mountaineer: "bandit", wudang: "outlaw", cliffWalker: "greenwoodKing",
   qingzhou: "infantry", danyang: "shieldGuard", baier: "royalGuard",

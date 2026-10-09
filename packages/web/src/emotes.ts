@@ -25,6 +25,9 @@ export const classCries:Record<string,Emote>={
   taoist:{text:'도술!',color:BLUE,shape:'balloon'},
   monk:{text:'권격!',color:RED,shape:'balloon'},
   bandit:{text:'급습!',color:BROWN,shape:'balloon'},
+  javelin:{text:'비창 투척!',color:RED,shape:'balloon'},
+  qiang:{text:'고원 돌격!',color:BROWN,shape:'burst'},
+  sniper:{text:'표적 포착!',color:GOLD,shape:'balloon'},
   civilian:{text:'으악!',color:GREY,shape:'balloon'},
 };
 export const reactions:Record<string,Emote>={

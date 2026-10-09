@@ -78,7 +78,11 @@ export type UnitClass =
   | "heavenPriestess"
   | "yellowTurbanVeteran" | "yellowTurbanCaptain" | "yellowTurbanMarshal"
   | "mountedStrategist" | "mountedTactician" | "mountedMastermind" | "mountedSage"
-  | "pirate" | "pirateRaider" | "pirateCaptain" | "pirateAdmiral";
+  | "pirate" | "pirateRaider" | "pirateCaptain" | "pirateAdmiral"
+  // 투척·이민족 기마·장거리 저격 신규 4단계 계통
+  | "javelin" | "eliteJavelin" | "flyingSpear" | "divineJavelin"
+  | "qiang" | "qiangRider" | "qiangVeteran" | "qiangKingGuard"
+  | "sniper" | "eliteSniper" | "deadeye" | "divineSniper";
 
 // ─────────────────────────────────────────────────────────── 진영
 

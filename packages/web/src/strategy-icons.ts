@@ -119,6 +119,7 @@ const MOTIF:Record<string,()=>string>={
   beastRoar:()=>`<path d="M16 30 L25 20 L32 27 L39 20 L48 30 L44 46 H20Z" fill="#b26a32" ${O}/><path d="M24 34 H28 M36 34 H40 M27 42 Q32 46 37 42" stroke="#fff0c0" stroke-width="2" fill="none"/>`+burst(50,25,.35),
   ironCharge:()=>shield(25,37,.8,'#66717c','#dfe7ef')+spear(44,32,.75,55),halberdSweep:()=>spear(32,34,1.15,70)+swirl(32,35,.65,'#f0e2d0'),snare:()=>trap(32,37,1)+boot(32,22,.5),thunderShot:()=>bow(23,35,.75)+bolt(45,33,.75),
   chainFist:()=>fist(22,36,.8)+fist(42,34,.8)+chain(32,48,.5,'#d8b070'),royalStrike:()=>sword(32,35,1.15)+burst(32,20,.5,'#ffe48a'),commandStrike:()=>sword(40,36,.95,35)+flag(20,31,.7,'#c0342a'),yellowSlash:()=>sword(32,35,1.15,50)+`<path d="M13 43 Q32 13 53 28" fill="none" stroke="#ffd84a" stroke-width="4"/>`,boardingSlash:()=>boat(26,45,.65)+sword(43,29,.85,40),
+  javelinCast:()=>spear(34,34,1.05,70)+burst(50,24,.35),qiangCharge:()=>shield(20,39,.55,'#79552f','#d6b274')+spear(39,32,.8,65),sniperShot:()=>bow(28,35,.85)+eye(49,22,.45,'#ffd56a'),
 };
 const fallback=(s:LearnedStrategy)=>{const k=paletteKey(s);return k==='fire'?flame(32,34):k==='wind'?swirl(32,32):k==='water'?wave(32,36):k==='thunder'?bolt(32,34):k==='earth'?rock(32,34,1.2):k==='curse'?spiral(32,32):k==='heal'?cross(32,34):drum(32,36);};
 
