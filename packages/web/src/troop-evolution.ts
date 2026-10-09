@@ -44,7 +44,8 @@ function classArt(c:UnitClass){
   const p=paintedTroopArt[c];if(!p)return classSprite(c);
   return `<div class="cx-sprite" role="img" aria-label="${esc(classNames[c]??c)}" style="background-image:var(--${p.sheet}-atlas);background-size:400% ${p.rows*100}%;background-position:0 ${p.rows>1?p.row/(p.rows-1)*100:0}%">${fitCanvas(p.sheet,p.row)}</div>`;
 }
-const officerArt=(name:string,b:OfficerEntry['battle'][string])=>`<div class="cx-sprite" role="img" aria-label="${esc(name)}" style="background-image:url(${esc(b.sheet)});background-size:400% ${b.rows*100}%;background-position:0 0"></div>`;
+// 시트 칸을 그대로 잘라 보이면 칸을 넘는 창끝이 잘리고 이웃 행의 조각이 끼어든다: 전장과 같은 분리 아틀라스(실루엣을 제 칸에 모은 것)에서 대기 자세를 그린다.
+const officerArt=(name:string,b:OfficerEntry["battle"][string])=>`<div class="cx-sprite" role="img" aria-label="${esc(name)}"><canvas class="evo-fit" data-fit="${esc(b.sheet)}" data-row="0" data-rows="${b.rows}" data-uniform="1"></canvas></div>`;
 const rangeLine=(c:UnitClass)=>{const p=profileOf(c);return `<div class="evo-range">${reachMini(c)}<p><b>${esc(classNames[c]??c)} · ${esc(reachLabel(c))}</b><span>사거리 ${p.range[0]===p.range[1]?p.range[0]:p.range[0]+'~'+p.range[1]} · 이동 ${p.movement}</span></p></div>`;};
 const personCard=(art:string,small:string,name:string,c:UnitClass,extra='')=>`<article class="evo-card evo-person-card"><div class="evo-top">${art}<div><small>${small}</small><h4>${esc(name)}</h4></div></div>${rangeLine(c)}${extra}</article>`;
 /** 장수의 병종: 군주 9명은 군주, 나머지는 전용 전투 그림의 첫 병종(제갈량 수레 제외). */
@@ -84,7 +85,7 @@ export function evolutionChart(group:EvoGroup='all'){
     <div class="evo-grid">${singles.map(c=>card(c,0)).join('')}</div></section>`:''}</div>`;
 }
 type SheetDef={id:string;url:string;rows:number;union?:boolean;alphaCutoff?:number;strictGrid?:boolean;fit?:AtlasFit};
-const boxes=new Map<string,Promise<{atlas:HTMLCanvasElement;x:number;y:number;w:number;h:number}|undefined>>();
+const boxes=new Map<string,Promise<{atlas:HTMLCanvasElement;x:number;y:number;w:number;h:number;ch:number}|undefined>>();
 /** 시트 한 줄의 대기 자세(첫 칸)에서 실제 그림이 차지하는 둘레. */
 function idleBox(sheet:string,row:number){
   const key=sheet+'#'+row;if(boxes.has(key))return boxes.get(key)!;
@@ -93,7 +94,7 @@ function idleBox(sheet:string,row:number){
     const cw=Math.floor(atlas.width/4),ch=Math.floor(atlas.height/def.rows),top=row*ch,d=atlas.getContext('2d',{willReadFrequently:true})!.getImageData(0,top,cw,ch).data;
     let l=cw,t=ch,r=-1,b=-1;
     for(let y=0;y<ch;y++)for(let x=0;x<cw;x++)if(d[(y*cw+x)*4+3]!>24){if(x<l)l=x;if(x>r)r=x;if(y<t)t=y;if(y>b)b=y;}
-    return r<0?undefined:{atlas,x:l,y:top+t,w:r-l+1,h:b-t+1};
+    return r<0?undefined:{atlas,x:l,y:top+t,w:r-l+1,h:b-t+1,ch};
   }).catch(()=>undefined);
   boxes.set(key,p);return p;
 }
@@ -101,7 +102,10 @@ function idleBox(sheet:string,row:number){
 export async function fitEvoSprites(root:ParentNode=document){
   await Promise.all([...root.querySelectorAll<HTMLCanvasElement>('canvas.evo-fit:not(.on)')].map(async el=>{
     const box=await idleBox(el.dataset.fit!,Number(el.dataset.row??0));if(!box||!el.isConnected)return;
-    const W=320,H=256,k=Math.min(W*.96/box.w,H*.9/box.h),w=box.w*k,h=box.h*k,g=el.getContext('2d')!;
+    const W=320,H=256,g=el.getContext('2d')!;
+    // 병종·장수·NPC 모두 한 축척: 아틀라스가 이미 모든 병사·장수의 서 있는 키를 칸 높이에 맞춰 두었으므로 칸 높이 기준으로 그린다
+    // (그림마다 둘레에 맞추면 기병·긴 창은 작아지고 책사·민중은 커진다). 그래도 넓어 상자를 넘는 그림만 그만큼 줄인다.
+    const k=Math.min(H*1.35/box.ch,W*.96/box.w,H*.94/box.h),w=box.w*k,h=box.h*k;
     el.width=W;el.height=H;g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';
     g.drawImage(box.atlas,box.x,box.y,box.w,box.h,(W-w)/2,H*.96-h,w,h);el.classList.add('on');
   }));

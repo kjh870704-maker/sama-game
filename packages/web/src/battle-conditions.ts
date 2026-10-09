@@ -20,8 +20,8 @@ const REGION_NAMES:Record<string,string>={
 };
 /** 끝내야 하는 대화·사건의 이름. */
 const DIALOGUE_NAMES:Record<string,string>={
-  gate_payment:'남문 통행료 협상',mountain_choice:'산길 선택',dream_3:'마지막 꿈을 깨는 대화',accord:'맹약 체결',envoy:'사신 응대',
-  mumen_turn:'목문도 반격',hulu_rain:'호로곡 비',banner:'군기 세우기',luogu_turn:'낙곡 반전',
+  gate_payment:'남문 통행료 협상(사마의·사마랑이 함께 남문에 서면 열림 · 1,000전)',mountain_choice:'산길 선택(전투 시작 때 고름)',dream_3:'마지막 꿈을 깨는 대화(주유의 환영을 물리치면 열림)',accord:'맹약 체결(설전)',envoy:'사신 응대(성고 성채를 점령하면 옴)',
+  mumen_turn:'목문도 반격(합류 뒤 적 차례에 벌어짐)',hulu_rain:'호로곡 비(호로곡에서 7턴 버티면 내림)',banner:'군기 사건(적 4부대를 물리치거나 6턴이 되면 일어남)',luogu_turn:'낙곡 반전(흥세 앞 요새를 점령하고 3턴쯤 지나면 벌어짐)',
 };
 /** 전투 중에 나타나는 장수(시작할 때는 맵에 없다). */
 const LATE_NAMES:Record<string,string>={lu_bu:'여포의 환영',zhou_yu:'주유의 환영',chen_gong:'진궁의 환영'};
@@ -33,11 +33,11 @@ function regionName(stage:StageDef,id:string|undefined){
 }
 function line(state:BattleState,c:VictoryCondition,lose:boolean){
   // 병종 id로 적힌 조건(예: navy)은 그 병종의 아무 부대나.
-  const name=(id?:string)=>{if(!id)return '';const u=state.find(id);if(u)return classNames[u.name]?`${classNames[u.name]} 부대`:u.name;return LATE_NAMES[id]??(classNames[id]?`${classNames[id]} 부대`:id);};
+  const name=(id?:string)=>{if(!id)return '';const u=state.find(id);if(u)return classNames[u.name]?`${classNames[u.name]} 부대`:u.name;return LATE_NAMES[id]??(classNames[id]?`${classNames[id]} 아무 부대`:id);};
   switch(c.type){
     case 'annihilate':return lose?`${SIDE_NAMES[c.side??'player']} 전멸`:`${SIDE_NAMES[c.side??'enemy']} 전멸`;
     case 'reach':return `${subject(name(c.unit))} ${regionName(state.stage,c.target)}에 도달`;
-    case 'capture':return c.by&&c.by!=='player'?`${subject(SIDE_NAMES[c.by]??'적')} ${regionName(state.stage,c.target)} 점령`:`${regionName(state.stage,c.target)} 점령`;
+    case 'capture':return c.by&&c.by!=='player'?`${subject(SIDE_NAMES[c.by]??'적')} ${regionName(state.stage,c.target)} 점령`:`${regionName(state.stage,c.target)} 점령(아군이 그 칸에 서서 '거점 확보')`;
     case 'retreat':return lose?`${name(c.unit)} 퇴각`:`${name(c.unit)} 격퇴`;
     case 'survive_turns':return `${c.n??0}턴 동안 버티기`;
     case 'enemy_retreat_count':return `적 ${c.n??0}부대 격퇴`;
@@ -62,8 +62,9 @@ function group(state:BattleState,conds:readonly VictoryCondition[],lose:boolean)
   if(lose)conds=conds.filter(c=>!((c.type==='retreat'||c.type==='escort_survive')&&c.unit&&!state.find(c.unit)&&!LATE_NAMES[c.unit]&&!classNames[c.unit]));
   const say=(c:VictoryCondition)=>lose?line(state,c,true):winLine(state,c);
   const any=conds.filter(c=>c.order===undefined).map(say);
+  // 차례 목표를 붙잡아 두는 규칙(stickyGoals)이면 이룬 단계에는 그때 상태와 상관없이 ✓를 붙인다.
   const steps=[...new Set(conds.filter(c=>c.order!==undefined).map(c=>c.order!))].sort((a,b)=>a-b)
-    .map(o=>conds.filter(c=>c.order===o).map(say).join(' 또는 '));
+    .map((o,i)=>{const t=conds.filter(c=>c.order===o).map(say).join(' 또는 ');return !lose&&state.stickyGoals&&conds===state.victory&&i<state.goalProgress&&!t.endsWith(' ✓')?t.replace(/ \(\d+\/\d+[^)]*\)$/,'')+' ✓':t;});
   const seq=steps.length<2?steps:[lose?`${steps.join('·')} 모두`:`${steps.join(' → ')} (차례로)`];
   return [...any,...seq];
 }
@@ -82,6 +83,9 @@ export function battleConditions(state:BattleState,o:{guarded?:readonly string[]
   if(limit)lose.push(`${limit}턴 안에 끝내지 못함`);
   // 패배 조건의 '모두'는 이름만 모아 짧게: '동문 피난민 퇴각·북문 피난민 퇴각 모두' → '동문 피난민·북문 피난민 모두 퇴각'
   for(let i=0;i<lose.length;i++){const m=/^(.+) 모두$/.exec(lose[i]!);if(m&&m[1]!.split('·').every(x=>x.endsWith(' 퇴각')))lose[i]=`${m[1]!.split('·').map(x=>x.slice(0,-3)).join('·')} 모두 퇴각`;}
+  // 피난민·민중을 지키는 장: 데려갈 곳이 승리 조건에 없으면 "지키기만 하면 된다"고 밝힌다.
+  const civ=state.living().filter(u=>u.unitClass==='civilian'&&u.side!=='enemy');
+  if(civ.length&&!state.victory.some(c=>civ.some(u=>u.id===c.unit))){const i=lose.findIndex(l=>civ.some(u=>l.includes(u.name)));if(i>=0)lose[i]+=' (피난민은 데려갈 곳 없이 지키기만 하면 된다)';}
   return {win:win.length?win:['적 전멸'],lose};
 }
 /** 화면용 한 덩어리 HTML(이스케이프는 부르는 쪽이 이미 안전한 이름만 넣는다는 전제로 최소 처리). */

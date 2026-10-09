@@ -52,6 +52,11 @@ export function matchupMultiplier(attacker: UnitClass, defender: UnitClass): num
   const row = MATCHUP[attacker] ?? MATCHUP[familyOf(attacker)] ?? {};
   return row[defender] ?? row[familyOf(defender)] ?? 1.0;
 }
+/** 균형 규칙 6은 상성을 절반만 살린다(1.5→1.25, 0.5→0.75): 가위바위보는 남기되 한 번의 상성으로 승부가 끝나지 않게. */
+export function effectiveMatchup(attacker: Unit, defender: Unit): number {
+  const m = matchupMultiplier(attacker.unitClass, defender.unitClass);
+  return attacker.ratioRules ? 1 + (m - 1) * 0.5 : m;
+}
 
 /** 사기 보정. 사기 0 → 0.8배, 50 → 1.0배, 100 → 1.2배 */
 export function moraleMultiplier(morale: number): number {
@@ -107,7 +112,7 @@ export function accuracy(ctx: DamageContext, map: BattleMap): number {
 
 /** 물리 피해의 분산 전 값과 지형 배율(내역 표시용). 실제 계산·AI 추정·공격 미리보기가 같은 계수를 쓴다. */
 function physicalRaw(attacker: Unit, defender: Unit, map: BattleMap, ctx: DamageContext, counter: boolean): { base: number; matchup: number; terrain: number; elevation: number; morale: number; tactic: ReturnType<typeof tacticMultiplier> } {
-  const matchup = matchupMultiplier(attacker.unitClass, defender.unitClass);
+  const matchup = effectiveMatchup(attacker, defender);
   const elevation = elevationMultiplier(map.heightAt(attacker.pos), map.heightAt(defender.pos));
   const tactic = tacticMultiplier(attacker, defender, map, counter);
   if (attacker.ccRules) {
@@ -255,7 +260,8 @@ export function strategyBase(caster: Unit, target: Unit, strategy: StrategyDef, 
     const atk = Math.max(1, caster.stats.attack), def = Math.max(1, target.stats.defense);
     return Math.max(MIN_DAMAGE, atk * (strategy.power / 100) * attackMul * 1.2 * atk / (atk + def));
   }
-  if (caster.ccRules) return ccStrategyBase(caster, target, strategy.power, attackMul);
+  // 균형 규칙 6: 맵 전체를 치는 책략은 한 대상에게 절반만(모든 적을 한꺼번에 치므로).
+  if (caster.ccRules) return ccStrategyBase(caster, target, strategy.power, attackMul) * (caster.ratioRules && strategy.shape === "global" ? 0.5 : 1);
   // 옛 규칙 전투(저장 재생)는 예전 빼기식 그대로.
   if (!caster.classTactics) return Math.max(MIN_DAMAGE, caster.stats.intellect * (strategy.power / 100) * attackMul - target.stats.spirit * 0.5);
   const int = Math.max(1, caster.stats.intellect), spirit = Math.max(1, target.stats.spirit);

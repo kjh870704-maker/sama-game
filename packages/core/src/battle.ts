@@ -10,7 +10,7 @@ import { computePhysical, computeStrategy, createDamageContext, doubleAttackChan
 import { applyTraitHooks, capHit, counterLimitOf, ignoresRough, hasTrait, guardsAdjacent, getTrait, traitParam } from "./traits.ts";
 import { DialogueScript } from "./dialogue.ts";
 import { runEvents } from "./events.ts";
-import { evaluateGroup } from "./conditions.ts";
+import { advanceVictory, evaluateGroup } from "./conditions.ts";
 import { manhattan, key, sameCoord, adjacent, isHostile } from "./grid.ts";
 import { inReach, reachLabel } from "./reach.ts";
 import { CONTROLLABLE } from "./types.ts";
@@ -452,7 +452,7 @@ export class Battle {
       this.state.push({ t: "outcome", outcome: "defeat" });
       return;
     }
-    if (evaluateGroup(this.state, this.state.victory)) {
+    if (this.state.stickyGoals ? advanceVictory(this.state) : evaluateGroup(this.state, this.state.victory)) {
       this.state.outcome = "victory";
       this.state.push({ t: "outcome", outcome: "victory" });
     }

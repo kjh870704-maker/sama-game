@@ -2,6 +2,7 @@ import type { BattleState } from "./state.ts";
 import type { VictoryCondition } from "./stage.ts";
 import { sameCoord } from "./grid.ts";
 import type { Side } from "./types.ts";
+import { familyOf } from "./classes.ts";
 
 /**
  * 조건 평가. 승리 · 패배 · 인장이 모두 같은 술어 집합을 공유한다.
@@ -16,11 +17,11 @@ export function evaluate(state: BattleState, cond: VictoryCondition): boolean {
 
     case "reach": {
       if (!cond.unit || !cond.target) return false;
+      // 병종 이름으로 적힌 도달 조건(예: navy)은 그 병종의 아군 아무 부대나 닿으면 된다.
       const u = state.find(cond.unit);
-      if (!u || !u.alive) return false;
-      return state.map
-        .regionCoords(cond.target)
-        .some((c) => sameCoord(c, u.pos));
+      const who = u ? [u] : [...state.units.values()].filter((x) => (x.side === "player" || x.side === "ally") && (x.unitClass === cond.unit || familyOf(x.unitClass) === cond.unit));
+      const region = state.map.regionCoords(cond.target);
+      return who.some((x) => x.alive && region.some((c) => sameCoord(c, x.pos)));
     }
 
     case "capture": {
@@ -68,6 +69,22 @@ export function evaluate(state: BattleState, cond: VictoryCondition): boolean {
  * order가 없으면 OR, order가 있으면 낮은 단계부터 순차로 모두 충족해야 한다.
  * (예: "상용 도달 → 맹달 처치")
  */
+/**
+ * 승리 판정(차례 목표를 붙잡아 두는 규칙). order가 있는 목표는 한 번 이룬 단계가 그대로 남는다:
+ * "사마의가 남문에 도달 → 사마랑이 남문에 도달"이면 사마의가 먼저 닿은 뒤 자리를 떠도 된다.
+ * 단계는 앞 단계를 이룬 뒤에야 이룰 수 있다(차례로).
+ */
+export function advanceVictory(state: BattleState): boolean {
+  const conds = state.victory;
+  if (conds.length === 0) return false;
+  const ordered = conds.filter((c) => c.order !== undefined);
+  if (conds.some((c) => c.order === undefined && evaluate(state, c))) return true;
+  if (ordered.length === 0) return false;
+  const steps = [...new Set(ordered.map((c) => c.order!))].sort((a, b) => a - b);
+  while (state.goalProgress < steps.length && ordered.filter((c) => c.order === steps[state.goalProgress]).some((c) => evaluate(state, c))) state.goalProgress++;
+  return state.goalProgress >= steps.length;
+}
+
 export function evaluateGroup(state: BattleState, conds: VictoryCondition[]): boolean {
   if (conds.length === 0) return false;
   const ordered = conds.filter((c) => c.order !== undefined);

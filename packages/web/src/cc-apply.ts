@@ -32,7 +32,7 @@ export function officerCritOf(u:Unit):number{
 export function applyCC(u:Unit,keepHp=false):void{
   u.ccRules=true;u.ability=abilityOf(u);
   const oc=officerCritOf(u);if(oc>0)u.officerCrit=oc;
-  const s=u.stats,base=statsFor(u.unitClass,u.level),cc=ccStatsFor(u.unitClass,u.level,u.ability,u.side,s.movement);
+  const s=u.stats,base=statsFor(u.unitClass,u.level),cc=ccStatsFor(u.unitClass,u.level,u.ability,u.side,s.movement,!!u.ratioRules);
   const hp=u.hp/Math.max(1,s.maxHp),mp=s.maxMp>0?u.mp/s.maxMp:1;
   for(const k of KEYS)if(!keepHp||(k!=='maxHp'&&k!=='maxMp'))s[k]=Math.max(k==='maxMp'?0:1,Math.round(s[k]*cc[k]/Math.max(1,base[k])));
   s.morale=Math.max(1,Math.round(cc.morale*(s.morale||50)/50));
@@ -40,6 +40,6 @@ export function applyCC(u:Unit,keepHp=false):void{
 }
 /** 조조전 규칙 부대의 레벨 a→b 성장분. */
 export function ccLevelDelta(u:Unit,a:number,b:number):Omit<UnitStats,'movement'>{
-  const ab=u.ability??genericAbility(u.unitClass),x=ccStatsFor(u.unitClass,a,ab,u.side,u.stats.movement),y=ccStatsFor(u.unitClass,b,ab,u.side,u.stats.movement);
+  const ab=u.ability??genericAbility(u.unitClass),x=ccStatsFor(u.unitClass,a,ab,u.side,u.stats.movement,!!u.ratioRules),y=ccStatsFor(u.unitClass,b,ab,u.side,u.stats.movement,!!u.ratioRules);
   return {maxHp:y.maxHp-x.maxHp,maxMp:y.maxMp-x.maxMp,attack:y.attack-x.attack,defense:y.defense-x.defense,intellect:y.intellect-x.intellect,spirit:y.spirit-x.spirit,agility:y.agility-x.agility,morale:y.morale-x.morale};
 }

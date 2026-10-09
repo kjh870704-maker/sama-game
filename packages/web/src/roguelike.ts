@@ -454,8 +454,19 @@ export function applyBattleMods(state:BattleState,m:BattleMods){
 }
 
 /** 연의 전장에 회차에서 영입한 장수를 사마의 곁 빈 칸에 세운다(연의 장수록 능력은 이름으로 따라온다). */
+/** 출진 장수 id → 이름(연의 전장이 직접 세우는 장수). */
+const STAGE_OFFICER_NAMES:Record<string,string>={sima_yi:'사마의',sima_lang:'사마랑',sima_fang:'사마방',cao_zhen:'조진'};
+/** 연의 전장이 스스로 세우는 이름 있는 장수들(출진 필수 장수 + 사건으로 나오는 장수). 같은 사람을 영입 장수로 또 세우지 않는다. */
+export function stageOfficerNames(stage:StageDef):Set<string>{
+  const names=new Set<string>((stage.deployment.forced??[]).map(id=>STAGE_OFFICER_NAMES[id]??id));
+  for(const ev of stage.events??[])for(const a of ev.actions)if(a.type==='spawn_units')for(const u of a.units??[])if(u.name)names.add(u.name);
+  return names;
+}
 export function addRecruits(state:BattleState,recruits:RunUnit[]){
   const hero=state.find('sima_yi');if(!hero)return;
+  // 같은 장수가 둘 서지 않게: 이미 전장에 있거나 이 전장이 나중에 세우는 이름은 건너뛴다(예: 연의 장의 사마랑·조진).
+  const taken=new Set([...state.units.values()].map(u=>u.name));for(const n of stageOfficerNames(state.stage))taken.add(n);
+  recruits=recruits.filter(r=>!taken.has(r.name));
   const open=['plain','road','fort','forest','hill','grass','bridge'];
   const cells:Array<{x:number;y:number}>=[];for(let y=0;y<state.map.height;y++)for(let x=0;x<state.map.width;x++)cells.push({x,y});
   const free=cells.filter(p=>!state.unitAt(p)&&open.includes(state.map.tileAt(p).terrain)).sort((a,b)=>(Math.abs(a.x-hero.pos.x)+Math.abs(a.y-hero.pos.y))-(Math.abs(b.x-hero.pos.x)+Math.abs(b.y-hero.pos.y)));

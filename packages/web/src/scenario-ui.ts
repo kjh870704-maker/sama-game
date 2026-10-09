@@ -24,7 +24,7 @@ import {portraitImage} from './portrait-images.ts';
 import {taleSortieLimit,taleCostCap,unitCost,storyClassAt} from './sortie.ts';
 import {classNames} from './troops.ts';
 import {classSprite} from './codex-ui.ts';
-import {nextEvolutionText,XP_PER_LEVEL,RELICS,survivorsOf,type BattleMods,type RunBattleRef,type RunUnit} from './roguelike.ts';
+import {nextEvolutionText,XP_PER_LEVEL,RELICS,survivorsOf,stageOfficerNames,type BattleMods,type RunBattleRef,type RunUnit} from './roguelike.ts';
 import {loadMeta,saveMeta,recordStory,buyUnlock,UNLOCKS,recordOfficerLevels} from './meta.ts';
 import {xpMult,restMult,mandateBonus,recruitBonus,heroLevelBonus} from './research.ts';
 import {deploymentPerks} from './officer-perks.ts';
@@ -238,7 +238,7 @@ export function prepare(host:ScenarioHost,step:ScenarioStep){
     const offer=omenOffer(state,step.id);
     return choiceScreen(host,`전황 · ${stepTitle(step,state)} — 싸우기 전에 하늘을 읽는다`,offer.map(o=>({title:(o.goal?'⚑ 도전 · ':'')+o.name,detail:o.text})),i=>{const st=loadScenario();chooseOmen(st,step.id,offer[i]!.id);saveScenario(st);prepare(host,step);},'천명의 길 · 전황 카드');
   }
-  if(step.kind==='story'){const run=state.run,hp=run?.hp['사마의'],h=host.hero(),recruits=scenarioParty(state,h.level,h.xp).filter(u=>!u.hero).sort((a,b)=>b.level-a.level).slice(0,3).map(u=>({...u,id:'rc_'+u.id}));host.storyBriefing(chapterIndex(step.stage!),{chapter:step.id,mods:modsOf(state,step),...(run?.relics.length?{relics:[...run.relics]}:{}),...(hp!==undefined?{heroHp:hp}:{}),...(recruits.length?{recruits}:{})});return;}
+  if(step.kind==='story'){const run=state.run,hp=run?.hp['사마의'],h=host.hero(),taken=stageOfficerNames(chapters[chapterIndex(step.stage!)]!.stage),recruits=scenarioParty(state,h.level,h.xp).filter(u=>!u.hero&&!taken.has(u.name)).sort((a,b)=>b.level-a.level).slice(0,3).map(u=>({...u,id:'rc_'+u.id}));host.storyBriefing(chapterIndex(step.stage!),{chapter:step.id,mods:modsOf(state,step),...(run?.relics.length?{relics:[...run.relics]}:{}),...(hp!==undefined?{heroHp:hp}:{}),...(recruits.length?{recruits}:{})});return;}
   showIfPrep(host,state,step);
 }
 /** 대본에 갈림길 선택이 없을 때의 대비: 길 목록에서 고른다. */
@@ -322,8 +322,8 @@ function launch(host:ScenarioHost,state:ScenarioState,step:ScenarioStep,picked:s
   const hero=host.hero(),party=scenarioParty(state,hero.level,hero.xp,picked),mods=modsOf(state,step);
   const ref:RunBattleRef={seed:runSeed(state,step.id),floor:floorFor(step,state),kind:step.kind==='boss'?'boss':'tale',party,relics:[...(state.run?.relics??[])],route:{...state.route},
     ...(step.kind==='tale'?{tale:step.id}:{}),...(Object.keys(mods).length?{mods}:{}),enemyBase:enemyBase(state,hero.level,step),scenario:step.id};
-  const loadout=host.heroLoadout()?.sima_yi;
-  const deployment:Deployment={levels:{sima_yi:hero.level,sima_lang:1,sima_fang:1,cao_zhen:1},equipped:{},...(loadout?{loadouts:{sima_yi:loadout}}:{}),run:ref,trial:1,...perksFor(party),scenario:{chapter:step.id,...(difficulty==='extreme'?{difficulty:'extreme' as const}:{})}};
+  const loadouts=host.heroLoadout();
+  const deployment:Deployment={levels:{sima_yi:hero.level,sima_lang:1,sima_fang:1,cao_zhen:1},equipped:{},...(loadouts?{loadouts:structuredClone(loadouts)}:{}),run:ref,trial:1,...perksFor(party),scenario:{chapter:step.id,...(difficulty==='extreme'?{difficulty:'extreme' as const}:{})}};
   host.startBattle(deployment,runSeed(state,step.id),difficulty);
 }
 
@@ -466,8 +466,8 @@ function launchMarch(host:ScenarioHost,state:ScenarioState,after:string,kind:'ba
   const hero=host.hero(),next=currentStep(state)!,party=scenarioParty(state,hero.level,hero.xp);
   const levels=party.map(u=>u.level),base=Math.max(1,Math.round(levels.reduce((a,b)=>a+b,0)/levels.length)+(kind==='elite'?1:0));
   const ref:RunBattleRef={seed:runSeed(state,'march:'+after),floor:marchFloor(state,next.act),kind:kind==='elite'?'elite':'battle',party,relics:[...state.run!.relics],route:{...state.route},enemyBase:base,scenario:'march:'+after};
-  const loadout=host.heroLoadout()?.sima_yi;
-  const deployment:Deployment={levels:{sima_yi:hero.level,sima_lang:1,sima_fang:1,cao_zhen:1},equipped:{},...(loadout?{loadouts:{sima_yi:loadout}}:{}),run:ref,trial:1,...perksFor(party),scenario:{chapter:'march:'+after}};
+  const loadouts=host.heroLoadout();
+  const deployment:Deployment={levels:{sima_yi:hero.level,sima_lang:1,sima_fang:1,cao_zhen:1},equipped:{},...(loadouts?{loadouts:structuredClone(loadouts)}:{}),run:ref,trial:1,...perksFor(party),scenario:{chapter:'march:'+after}};
   host.startBattle(deployment,ref.seed);
 }
 async function finishMarchBattle(host:ScenarioHost,battle:BattleState,deployment:Deployment,earned:Record<string,number>,after:string){

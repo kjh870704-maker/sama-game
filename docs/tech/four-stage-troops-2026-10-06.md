@@ -24,7 +24,7 @@
 - `troops-four-stage-command-v1.png`: 신산, 군주, 패주, 제왕
 - `troops-four-stage-command-extra-v1.png`: 천자, 축성병, 공성장인, 신기장
 - `troops-four-stage-ranged-v1.png`: 천호기병, 천궁수, 신노, 천풍수사
-- `troops-four-stage-ranged-extra-v1.png`: 천궁기, 천석투병, 귀영살수, 천량철기
-- `troops-four-stage-special-v1.png`: 금강등갑병, 백상왕, 천요술사, 천녀
+- `troops-four-stage-ranged-extra-v1.png`: 천궁, 천석투병, 귀영살수, 천량철기
+- `troops-four-stage-special-v1.png`: 금강등갑병, 백상왕, 천요술사, 천녀(폐기 · 황건 계통으로 대체)
 - `troops-four-stage-special-extra-v1.png`: 남만맹호기, 남만수왕기, 신개마무사, 철극기병
 - `troops-four-stage-siege-v1.png`: 신극기병, 벽력거, 천균거, 신포차

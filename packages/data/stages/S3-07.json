@@ -35,7 +35,7 @@
   "victory": [
     {
       "type": "reach",
-      "unit": "granted_navy_0",
+      "unit": "navy",
       "target": "landing",
       "order": 1
     },

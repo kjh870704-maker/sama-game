@@ -48,7 +48,8 @@ function campaignAt(chapter: number, difficulty: Difficulty) {
     const stage = chapters[index].stage;
     award(campaign, stage.id, "normal", stage.deployment.forced, [1]);
   }
-  // 획득한 보물은 등급이 높은 것부터 장수에게 한 개씩 채운다.
+  // 난이도 기준은 보물·연구 없이 잰다(SIM_TREASURE=1이면 얻은 보물을 등급 순으로 장수에게 한 개씩 채운 상태).
+  if (!process.env.SIM_TREASURE) return campaign;
   const owned = treasures
     .filter((t: { id: string }) => campaign.treasures.includes(t.id))
     .sort((a: { grade: number }, b: { grade: number }) => b.grade - a.grade);
@@ -229,7 +230,7 @@ function withoutCaptureGoals(state: any) {
 }
 
 /** 측정할 규칙판(기본: 새 전투가 쓰는 규칙판). SIM_REVISION=4로 예전 규칙과 비교한다. */
-const SIM_REVISION = (Number(process.env.SIM_REVISION) || 5) as 4 | 5;
+const SIM_REVISION = (Number(process.env.SIM_REVISION) || 6) as 4 | 5 | 6;
 
 /** AI 자동 플레이 1회. 사람 실력의 하한선 근사치로 쓴다. */
 function play(chapter: number, difficulty: Difficulty, seed: number) {

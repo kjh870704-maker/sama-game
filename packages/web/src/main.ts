@@ -65,7 +65,7 @@ const sound=new Soundscape(), field=new Battlefield();
 /** Developer shortcuts (straight into a late battle) only appear with ?dev in the address. */
 const devMode=new URLSearchParams(location.search).has('dev');
 /** 새 전투가 쓰는 규칙판: 5 = 조조전 병과 체계(등급 성장·지형 효율·명중/2회 공격/회심 비율). 예전 저장은 저장된 규칙판 그대로. */
-const RULES=5 as const;
+const RULES=6 as const;
 let session=new Session(),selected='sima_yi',mode='move',threat=false,speed=1,menuOpen=true,aiTimer:ReturnType<typeof setTimeout>|undefined,lastLog=0,resultShown=false;
 let saveAvailable=false,hasStarted=false;
 try{saveAvailable=!!localStorage.getItem(SAVE_KEY);}catch{/* Private browsing may disable storage. */}

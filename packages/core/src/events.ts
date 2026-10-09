@@ -244,6 +244,7 @@ export function applyAction(state: BattleState, action: Action): void {
 
     case "change_victory":
       state.victory = structuredClone(action.conditions ?? []);
+      state.goalProgress = 0;
       state.push({ t: "objectiveChanged", victory: state.victory });
       break;
 

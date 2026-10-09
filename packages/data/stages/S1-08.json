@@ -123,7 +123,7 @@
     "extreme": {
       "minEnemyLevel": 63,
       "recommendedLevel": 80,
-      "targetClearRate": 0.3
+      "targetClearRate": 0.6
     }
   },
   "gimmicks": [

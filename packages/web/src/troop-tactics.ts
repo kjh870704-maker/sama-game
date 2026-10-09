@@ -44,7 +44,8 @@ export function supportWarnings(units:Unit[]){const warnings:string[]=[];
  if(!units.some(u=>u.range[1]>=2))warnings.push('원거리 물리 사격 부대가 없습니다. 적 사격대에 접근할 경로를 확보하세요.');
  return warnings;
 }
-export function physicalMatchup(a:UnitClass,d:UnitClass){const m=matchupMultiplier(a,d);return '물리 병종 상성 ×'+m.toFixed(2)+(m>1?' · 유리':m<1?' · 불리':' · 보통');}
+export function physicalMatchup(a:UnitClass,d:UnitClass){const m=1+(matchupMultiplier(a,d)-1)*.5;// 균형 규칙 6(새 전투)의 상성: 절반만 반영
+  return '물리 병종 상성 ×'+m.toFixed(2)+(m>1?' · 유리':m<1?' · 불리':' · 보통');}
 
 /** 확장 병종은 계열의 운용법에 개화 스킬(또는 고유 특성) 한 줄을 붙인다. */
 export function adviceFor(c:UnitClass):string{

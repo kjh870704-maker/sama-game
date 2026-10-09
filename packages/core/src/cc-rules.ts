@@ -101,6 +101,12 @@ function lineRoot(c: UnitClass): UnitClass {
   return cur;
 }
 
+/** 균형 규칙 6: NPC(민중·물자대·어가)도 일반 병사만큼 버틴다 — 체력은 보병, 방어는 한 단계 아래. 공격은 그대로 약하다. */
+const NPC_GRADES: Partial<Record<UnitClass, GradeProfile>> = {
+  civilian:  g("민중", "CBABB", [110, 6], [5, 1], "civilian"),
+  transport: g("물자대", "CBABB", [110, 6], [20, 1], "civilian"),
+  palanquin: g("어가", "CAABA", [110, 6], [40, 2], "civilian"),
+};
 export function gradeProfileOf(c: UnitClass): GradeProfile {
   return LINE_GRADES[c] ?? LINE_GRADES[lineRoot(c)] ?? LINE_GRADES[familyOf(c)] ?? LINE_GRADES.infantry!;
 }
@@ -129,15 +135,17 @@ export function specialization(grade: Grade, ability: number): -1 | 0 | 1 {
 }
 
 /** 조조전 규칙의 부대 능력치. 우군·적군(side가 player가 아니면)은 한 레벨 낮은 값을 쓴다. */
-export function ccStatsFor(unitClass: UnitClass, level: number, ability: Ability, side: string, movement: number): UnitStats {
-  const p = gradeProfileOf(unitClass), tier = tierOf(unitClass);
+export function ccStatsFor(unitClass: UnitClass, level: number, ability: Ability, side: string, movement: number, ratio = false): UnitStats {
+  const npc = ratio ? NPC_GRADES[unitClass] ?? NPC_GRADES[lineRoot(unitClass)] : undefined;
+  const p = npc ?? gradeProfileOf(unitClass), tier = tierOf(unitClass);
   const L = Math.max(0, side === "player" ? level : level - 1);
   const stat = (gr: Grade, a: number) => Math.floor(a / 2) + gainOf(gr, a) * L;
   const [atk, spi, def, agi, mor] = p.grades;
   const hpBonus = Math.max(0, Math.round((ability.lead - 66) / 2)), mpBonus = Math.max(0, Math.round((ability.int - 60) / 8));
   const up = Math.max(0, tier - 1) * 2;
   return {
-    maxHp: p.hp[0] + p.hp[1] * Math.max(0, L - 1) + p.hp[1] * up + hpBonus,
+    // 균형 규칙 6의 체력 바닥(기본 95·레벨당 5): 책사·풍수사·궁병도 보병 체력의 8할은 넘게 — 약한 병종이 한두 대에 녹지 않게.
+    maxHp: ratio ? Math.max(95, p.hp[0]) + Math.max(5, p.hp[1]) * (Math.max(0, L - 1) + up) + hpBonus : p.hp[0] + p.hp[1] * Math.max(0, L - 1) + p.hp[1] * up + hpBonus,
     maxMp: p.mp[0] + p.mp[1] * Math.max(0, L - 1) + p.mp[1] * up + mpBonus,
     attack: stat(atk, ability.war),
     intellect: stat(spi, ability.int),
@@ -207,8 +215,9 @@ export function ccRecoverChance(u: Unit): number {
 }
 
 /**
- * 물리 피해(조조전 계산을 이 게임 체력 규모에 맞춘 것):
- *  레벨 1당 +1, 공격력 2당 +1, 방어력 2당 −1. 공격·방어에는 각자 서 있는 지형 효율을 곱한다.
+ * 물리 피해(조조전 능력치를 이 게임 체력 규모에 맞춘 것):
+ *  (레벨+20) × 공격/(공격+방어). 빼기식(공격−방어)은 상성에 따라 1%에서 체력의 150%까지 튀어서 비율식으로 바꿨다.
+ *  공격·방어에는 각자 서 있는 지형 효율을 곱한다.
  *  병사들의 기본 장비(무기 공격 +20+2×레벨, 갑옷 방어 +10+레벨)를 더해 초반 피해가 0에 붙지 않게 한다.
  */
 const envScale = (k: string) => Number((globalThis as { process?: { env?: Record<string, string> } }).process?.env?.[k]) || 0;
@@ -221,10 +230,19 @@ export function ccPhysicalBase(attacker: Unit, defender: Unit, atkEff: number, d
   const weapon = 20 + 2 * L, armor = 10 + Math.max(1, defender.level);
   const atk = (attacker.stats.attack + weapon) * atkEff * attackMul;
   const def = (defender.stats.defense + armor) * defEff * (1 - defenseIgnore);
+  // 비율식(균형 규칙 6): 공격과 방어가 같으면 (받는 쪽 레벨+20)×1.1 — 받는 쪽 체력의 약 22%. 차이가 커도 0이나 몇 배로 튀지 않는다.
+  // 레벨 항은 받는 쪽 것을 쓴다: 체력이 받는 쪽 레벨로 자라므로, 피해도 그 체력에 비례해야 높은 레벨의 약졸(정찰병 등)이 한 방에 큰 피해를 주지 않는다.
+  // 때리는 쪽의 레벨은 무기(20+2×레벨)를 통해 공격력에 이미 들어 있다.
+  if (attacker.ratioRules) return Math.max(1, CC_DAMAGE_SCALE * 1.1 * (Math.max(1, defender.level) + 20) * atk / Math.max(1, atk + def));
   return Math.max(1, (L + atk / 2 - def / 2) * CC_DAMAGE_SCALE);
 }
-/** 책략 피해: 레벨 1당 +1, 정신력 3당 +1, 상대 정신력 3당 −1, 그 값에 책략 위력(100 = 1배)을 곱한다. */
+/** 책략 피해(균형 규칙 6): (레벨+20) × 지력/(지력+상대 정신력) × 책략 위력(100 = 1배). 옛 규칙: 레벨+12+지력/3−정신/3. */
 export function ccStrategyBase(caster: Unit, target: Unit, power: number, attackMul = 1): number {
   const L = Math.max(1, caster.side === "player" ? caster.level : caster.level - 1);
+  // 비율식(균형 규칙 6): 지력과 상대 정신력이 같으면 위력 100 책략이 같은 레벨 병사 체력의 약 25%. MP를 쓰므로 물리보다 조금 세다.
+  if (caster.ratioRules) {
+    const int = Math.max(1, caster.stats.intellect * attackMul), spi = Math.max(1, target.stats.spirit);
+    return Math.max(1, CC_STRATEGY_SCALE * 1.25 * (Math.max(1, target.level) + 20) * int / (int + spi) * (power / 100));
+  }
   return Math.max(1, (L + 12 + (caster.stats.intellect * attackMul) / 3 - target.stats.spirit / 3) * (power / 100) * CC_STRATEGY_SCALE);
 }

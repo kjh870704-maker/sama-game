@@ -126,9 +126,15 @@ defineTrait({
   hooks: {},
 });
 /** 버팀 특성의 피해 상한을 적용한 피해. */
+/** 누구든 한 번의 공격·책략으로 최대 체력의 이만큼(%)보다 많이 잃지 않는다(회심·전법 포함). */
+export const MAX_HIT_SHARE = 50;
 export function capHit(defender: Unit, damage: number): number {
-  const cap = defender.traits.includes("steadfast") ? defender.traitParams["steadfast"] ?? 0 : 0;
-  return cap > 0 ? Math.min(damage, Math.ceil(defender.stats.maxHp * cap / 100)) : damage;
+  const steady = defender.traits.includes("steadfast") ? defender.traitParams["steadfast"] ?? 0 : 0;
+  // 성문·망루는 충차가 몇 번에 부술 수 있어야 하므로 상한을 두지 않는다(버팀만 적용).
+  if (/^(gate|tower)_/.test(defender.id)) return steady > 0 ? Math.min(damage, Math.ceil(defender.stats.maxHp * steady / 100)) : damage;
+  const cap = defender.ratioRules ? (steady > 0 ? Math.min(steady, MAX_HIT_SHARE) : MAX_HIT_SHARE) : steady;
+  if (cap <= 0) return damage;
+  return Math.min(damage, Math.max(1, Math.ceil(defender.stats.maxHp * cap / 100)));
 }
 
 // 피해 감소 계열

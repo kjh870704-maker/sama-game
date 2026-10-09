@@ -77,6 +77,10 @@ export class BattleState {
   captured: Map<string, Side> = new Map();
   /** M-14 SURVIVE_N_TURNS 카운터: 라벨 → 시작 턴 */
   survivalClocks: Map<string, number> = new Map();
+  /** 차례 목표(order)를 몇 단계까지 이뤘는가. stickyGoals일 때만 쓴다. */
+  goalProgress = 0;
+  /** 균형 규칙 6: 이룬 차례 목표를 붙잡아 둔다(advanceVictory). */
+  stickyGoals = false;
   /** 대화/선택지 진행 기록 */
   choices: Array<{ nodeId: string; optionId: string }> = [];
   /** 현재 표시 중인 대화 노드. null이면 대화 중이 아니다. */
@@ -195,6 +199,7 @@ export class BattleState {
       losses: { ...this.losses },
       captured: [...this.captured.entries()],
       survivalClocks: [...this.survivalClocks.entries()],
+      goalProgress: this.goalProgress,
       choices: structuredClone(this.choices),
       activeDialogue: this.activeDialogue,
       regionHolds: [...this.regionHolds.entries()],
@@ -216,6 +221,7 @@ export class BattleState {
     this.losses = { ...snap.losses };
     this.captured = new Map(snap.captured);
     this.survivalClocks = new Map(snap.survivalClocks);
+    this.goalProgress = snap.goalProgress ?? 0;
     this.choices = structuredClone(snap.choices);
     this.activeDialogue = snap.activeDialogue;
     this.regionHolds = new Map(snap.regionHolds.map(([k, v]) => [k, { ...v }]));
@@ -265,6 +271,7 @@ export interface BattleSnapshot {
   losses: Record<Side, number>;
   captured: Array<[string, Side]>;
   survivalClocks: Array<[string, number]>;
+  goalProgress?: number;
   choices: Array<{ nodeId: string; optionId: string }>;
   activeDialogue: string | null;
   regionHolds: Array<[string, { side: Side; since: number }]>;

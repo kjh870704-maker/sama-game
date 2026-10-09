@@ -24,7 +24,7 @@ describe("전투 루프", () => {
       if (state.currentSide === "player" && !hero.hasActed && hero.alive) {
         battle.execute({ kind: "strategy", unit: "hero", strategy: "windDragon", at: state.get("foe").pos });
         battle.execute({ kind: "endPhase" });
-      } else if (state.currentSide === "player") {
+      } else if (state.currentSide === "player" || state.currentSide === "ally") {
         battle.execute({ kind: "endPhase" });
       } else {
         battle.runAiPhase();
@@ -180,26 +180,29 @@ describe("편입 아군과 점령 목표", () => {
   });
 });
 
-describe("한 방 보호", () => {
-  it("체력이 가득한 아군은 한 번의 공격으로 쓰러지지 않는다", () => {
+describe("한 방 보호(균형 규칙 6)", () => {
+  it("누구도 한 번의 공격으로 최대 체력의 절반보다 많이 잃지 않는다", () => {
     const state = duelState(1, 1, 40);
     const hero = state.get("hero"), foe = state.get("foe");
+    hero.ratioRules = foe.ratioRules = true;
     foe.stats.attack = 9999;
     const battle = new Battle(state, { seed: 1, strategies });
     battle.start();
     state.phaseIndex = PHASE_ORDER.indexOf("enemy");
     expect(battle.execute({ kind: "attack", unit: "foe", target: "hero" }).ok).toBe(true);
     expect(hero.alive).toBe(true);
-    expect(hero.hp).toBe(1);
+    expect(hero.hp).toBeGreaterThanOrEqual(Math.floor(hero.stats.maxHp / 2));
   });
 
-  it("다친 아군과 적은 한 번에 쓰러질 수 있다", () => {
+  it("적도 한 번에는 절반까지만 — 두 번 맞으면 쓰러진다", () => {
     const state = duelState(1, 40, 1);
-    const hero = state.get("hero"), foe = state.get("foe");
-    hero.stats.attack = 9999;
+    const foe = state.get("foe");
+    foe.ratioRules = state.get("hero").ratioRules = true;
+    state.get("hero").stats.attack = 9999;
     const battle = new Battle(state, { seed: 1, strategies });
     battle.start();
     expect(battle.execute({ kind: "attack", unit: "hero", target: "foe" }).ok).toBe(true);
-    expect(foe.alive).toBe(false);
+    expect(foe.alive).toBe(true);
+    expect(foe.hp).toBeLessThanOrEqual(Math.ceil(foe.stats.maxHp / 2));
   });
 });

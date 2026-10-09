@@ -372,6 +372,17 @@ for(let f=1;f<=18;f++)stageRules[`R-${String(f).padStart(2,'0')}`]={
 /** 규칙표 항목이 없는 초기 전장의 적 전력 보정(%) — 항목을 새로 만들면 장별 기본 동작이 바뀌므로 따로 둔다. */
 // 병종 전법(돌격·선제 사격 등)이 적에게도 붙으면서 어려워진 전장은 적 공격·체력을 조금 낮춰 예전 승률에 맞춘다.
 export const foeEdges:Record<string,{normal?:number;extreme?:number}>={'S1-01':{extreme:-6},'S1-02':{normal:-45},'S1-04':{normal:-6},'S2-08':{normal:-3},'S2-12':{normal:-15,extreme:-9},'S1-10':{normal:-6},'S2-01':{normal:-21},'S3-03':{normal:-12,extreme:-12},'S3-05':{extreme:-3},'S3-07':{normal:-3}};
+/**
+ * 균형 규칙 6(비율식 피해·보물 없이 맞춘 클리어율)의 적 세기 보정(%) — foeEdge에 더한다.
+ * 보물·연구 없이 자동 플레이 20회로 보통 90%·극한 70%가 되게 장마다 찾은 값. 예전 규칙의 저장 전투는 쓰지 않는다.
+ */
+/** 균형 규칙 6: 적 레벨 상한 = 아군 최고 레벨 + 이 값. 잠입 장(정찰병 레벨이 높아 싸우면 안 되는 장)의 순찰병이 비율식 피해에서 한 번에 크게 때리지 않게. */
+export const foeLevelCap6:Record<string,{normal:number;extreme:number}>={'S1-02':{normal:2,extreme:4},'S1-03':{normal:2,extreme:4}};
+export const foeEdges6:Record<string,{normal?:number;extreme?:number}>={
+  'S1-02':{normal:-38,extreme:-24},'S1-03':{normal:-20},'S1-06':{normal:-8,extreme:-16},'S1-10':{normal:-20},
+  'S2-02':{normal:-32,extreme:-12},'S2-04':{normal:-4},'S2-05':{normal:-52,extreme:-45},'S2-06':{extreme:-16},'S2-08':{normal:-24,extreme:-28},
+  'S2-09':{normal:-32},'S2-11':{normal:-32,extreme:-20},'S3-02':{normal:-38,extreme:-4},'S3-07':{normal:-20,extreme:-15},
+};
 
 /** Korean subject particle: 이 after a final consonant, 가 otherwise. */
 export function subject(name:string){const c=name.charCodeAt(name.length-1);return name+(c>=0xac00&&c<=0xd7a3&&(c-0xac00)%28!==0?'이':'가');}

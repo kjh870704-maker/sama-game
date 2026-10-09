@@ -39,8 +39,12 @@ export function treasureInfo(id:string){const i=treasures.findIndex(t=>t.id===id
 export const ATLAS_CELLS=60;
 function atlasCell(id:string){const k=treasurePowers.findIndex(t=>t.id===id);return k>=0&&k<ATLAS_CELLS?k:-1;}
 export function equippedItems(c:Pick<Campaign,'equipped'|'loadouts'>,id:string){return c.loadouts?.[id]?Object.values(c.loadouts[id]!):c.equipped[id]?[c.equipped[id]!]:[];}
+/** 보물을 다는 자리: 연의 장수는 id, 영입 장수·편입 장수 등 그 밖의 사람은 이름. 누구든 보물을 달 수 있다. */
+const OFFICER_BY_NAME:Record<string,string>={사마의:'sima_yi',사마랑:'sima_lang',사마방:'sima_fang',조진:'cao_zhen'};
+export const gearKey=(u:{id:string;name:string})=>(OFFICERS as readonly string[]).includes(u.id)?u.id:OFFICER_BY_NAME[u.name]??u.name;
+export const validGearKey=(k:unknown):k is string=>typeof k==='string'&&((OFFICERS as readonly string[]).includes(k)||k.length>0&&k.length<=24&&!/[<>"'&]/.test(k));
 export function equipSlot(c:Campaign,officer:string,slot:GearSlot,id:string){
- if(!OFFICERS.includes(officer as typeof OFFICERS[number])||!Object.hasOwn(gearNames,slot))return false;
+ if(!validGearKey(officer)||!Object.hasOwn(gearNames,slot))return false;
  if(id&&(!c.treasures.includes(id)||treasureInfo(id).slot!==slot))return false;
  if(!c.loadouts){c.loadouts={};for(const [who,item] of Object.entries(c.equipped))c.loadouts[who]={[treasureInfo(item).slot]:item};}
  for(const gear of Object.values(c.loadouts))for(const key of Object.keys(gear) as GearSlot[])if(gear[key]===id&&id)delete gear[key];
@@ -83,7 +87,7 @@ export function readCampaign():Campaign{
     clean.completedRuns=Array.isArray(value.completedRuns)?[...new Set(value.completedRuns.filter(x=>typeof x==='string'&&x.length<100))]:[];clean.trainingWins=Number.isSafeInteger(value.trainingWins)?Math.max(0,value.trainingWins!):0;clean.quests=Array.isArray(value.quests)?[...new Set(value.quests.filter(x=>typeof x==='string'&&/^Q\d{2}$/.test(x)))]:[];clean.challenges=Array.isArray(value.challenges)?[...new Set(value.challenges.filter(x=>typeof x==='string'&&/^C\d{2}$/.test(x)))]:[];clean.bountyWins=Number.isSafeInteger(value.bountyWins)?Math.max(0,value.bountyWins!):0;
     for(const item of treasures)if(!item.quest&&clean.rewards.some(r=>r.startsWith(item.stage+':'))&&!clean.treasures.includes(item.id))clean.treasures.push(item.id);
     for(const id of OFFICERS)if(typeof value.equipped[id]==='string')equip(clean,id,value.equipped[id]!);
-    if(value.loadouts&&typeof value.loadouts==='object')for(const id of OFFICERS){const gear=value.loadouts[id];if(!gear||typeof gear!=='object')continue;for(const slot of Object.keys(gearNames) as GearSlot[])equipSlot(clean,id,slot,typeof gear[slot]==='string'?gear[slot]!:'');}
+    if(value.loadouts&&typeof value.loadouts==='object')for(const id of Object.keys(value.loadouts).filter(validGearKey)){const gear=value.loadouts[id];if(!gear||typeof gear!=='object')continue;for(const slot of Object.keys(gearNames) as GearSlot[])equipSlot(clean,id,slot,typeof gear[slot]==='string'?gear[slot]!:'');}
     return clean;
   }catch{return freshCampaign();}
 }

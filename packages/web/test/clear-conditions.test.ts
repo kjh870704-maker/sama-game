@@ -1,4 +1,5 @@
 import {describe,expect,it} from 'vitest';
+import {familyOf} from '../../core/src/index.ts';
 import {Session,chapters,campaignOrder} from '../src/session.ts';
 import {deployment,freshCampaign} from '../src/progression.ts';
 import type {VictoryCondition} from '../../core/src/index.ts';
@@ -21,7 +22,7 @@ function satisfy(s:Session):string[]{
     switch(c.type){
       case 'annihilate':for(const u of st.living(c.side??'enemy'))st.retreat(u);break;
       case 'retreat':{const u=st.find(c.unit!);if(!u){missing.push(`없는 부대 ${c.unit}`);break;}st.retreat(u);break;}
-      case 'reach':{const u=st.find(c.unit!),at=st.map.regionCoords(c.target!);if(!u||!u.alive){missing.push(`없는 부대 ${c.unit}`);break;}if(!at.length){missing.push(`없는 지점 ${c.target}`);break;}
+      case 'reach':{const u=st.find(c.unit!)??st.living().find(x=>(x.side==='player'||x.side==='ally')&&(x.unitClass===c.unit||familyOf(x.unitClass)===c.unit)),at=st.map.regionCoords(c.target!);if(!u||!u.alive){missing.push(`없는 부대 ${c.unit}`);break;}if(!at.length){missing.push(`없는 지점 ${c.target}`);break;}
         const free=at.find(p=>!st.living().some(o=>o!==u&&o.pos.x===p.x&&o.pos.y===p.y))??at[0]!;u.pos={...free};break;}
       case 'capture':if(!st.map.regionCoords(c.target!).length)missing.push(`없는 지점 ${c.target}`);st.captured.set(c.target!,c.by??'player');break;
       case 'dialogue_complete':st.choices.push({nodeId:c.target!,optionId:'test'} as never);break;
@@ -42,10 +43,10 @@ function nudge(s:Session){
 }
 
 describe('승리 조건을 채우면 클리어된다',()=>{
-  for(const ch of campaignOrder)for(const difficulty of ['normal','extreme'] as const){
+  for(const rev of [5,6] as const)for(const ch of campaignOrder)for(const difficulty of ['normal','extreme'] as const){
     const id=chapters[ch]!.stage.id;
-    it(`${id} ${difficulty}`,()=>{
-      const s=new Session(ch,difficulty,7,'strategy',5,deployment(freshCampaign(),true));
+    it(`${id} ${difficulty} · 규칙 ${rev}`,()=>{
+      const s=new Session(ch,difficulty,7,'strategy',rev,deployment(freshCampaign(),true));
       answerDialogues(s);
       // 조건이 이어지는 장(조건을 채우면 다음 목표로 바뀌는 장)은 바뀐 목표도 채워 본다.
       // 나중에 나타나는 적장(S1-04 여포·주유의 환영)은 앞 단계를 채워야 나온다 — 단계마다 다시 채운다.
@@ -54,4 +55,20 @@ describe('승리 조건을 채우면 클리어된다',()=>{
       expect(s.state.outcome,`${id} 남은 목표 ${JSON.stringify(s.state.victory)} · 채우지 못함 ${missing.join(', ')} · 실패 ${s.failure??''}`).toBe('victory');
     });
   }
+});
+
+describe('차례 목표는 이룬 단계가 남는다(규칙 6)',()=>{
+  it('S1-02: 사마의가 남문에 닿은 뒤 떠나도, 사마랑이 닿으면 다음 단계로 간다',()=>{
+    const ch=chapters.findIndex(c=>c.stage.id==='S1-02'),s=new Session(ch,'normal',7,'strategy',6,deployment(freshCampaign(),true)),st=s.state;
+    expect(st.victory.filter(c=>c.type==='reach').length).toBe(2);
+    const gate=st.map.regionCoords('south_gate'),free=(n:number)=>gate[n]!;
+    const yi=st.get('sima_yi'),lang=st.get('sima_lang'),away=yi.pos;
+    yi.pos={...free(0)};(s.battle as unknown as {checkOutcome():void}).checkOutcome();expect(st.goalProgress).toBe(1);
+    yi.pos=away;lang.pos={...free(0)};(s.battle as unknown as {checkOutcome():void}).checkOutcome();expect(st.goalProgress).toBe(2);
+  });
+  it('S3-07: 수군이면 어느 부대든 상륙 지점에 닿으면 된다',()=>{
+    const ch=chapters.findIndex(c=>c.stage.id==='S3-07'),s=new Session(ch,'normal',7,'strategy',6,deployment(freshCampaign(),true)),st=s.state;
+    const navies=st.living().filter(u=>u.side!=='enemy'&&familyOf(u.unitClass)==='navy');expect(navies.length).toBeGreaterThan(0);
+    const last=navies[navies.length-1]!;last.pos={...st.map.regionCoords('landing').find(c=>!st.unitAt(c))!};(s.battle as unknown as {checkOutcome():void}).checkOutcome();expect(st.goalProgress).toBeGreaterThanOrEqual(1);
+  });
 });

@@ -70,7 +70,7 @@
     "extreme": {
       "minEnemyLevel": 57,
       "recommendedLevel": 80,
-      "targetClearRate": 0.35
+      "targetClearRate": 0.6
     }
   },
   "gimmicks": [
