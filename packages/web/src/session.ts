@@ -137,6 +137,8 @@ export interface Save {version:2; revision?:2|3|4|5|6; deployment?:Deployment; c
 export const TRIAL={hp:1.2,attack:1.12,defense:1.1};
 /** 균형 규칙 6의 시련(보물·연구 없이 일반 90%·정예 80%가 되게 맞춘 값). 연구가 이 위에서 더 쉽게 만든다. */
 export const TRIAL6={hp:1,attack:1,defense:1};
+/** 규칙판 6: 적 수가 한 부대 느는 층(5층마다)에서 클리어율이 꺼지는 곳만 적 체력·공격을 덜어 준다(종류:층). */
+export const TRIAL6_FLOOR:Record<string,number>={'elite:10':.85,'elite:11':.9,'elite:12':.9,'elite:15':.9,'elite:17':.9,'battle:12':.92,'battle:15':.9,'tale:15':.9};
 /** 지켜야 할 대상의 한 번 피해 상한(최대 체력 대비 %). */
 export const STEADFAST_CAP=40;
 /** 극한 낙양 탈출(S1-02): 불길이 남문을 덮기 전에 빠져나가야 하는 턴. */
@@ -236,7 +238,7 @@ export class Session {
       for(const u of state.living('enemy'))if(u.goalRegion==='trial_defense')u.stats.movement=3;
     }
     if(this.deployment?.mission){
-      const scale=missionEnemyScale(this.deployment.mission.id);
+      const scale=missionEnemyScale(this.deployment.mission.id,this.revision);
       for(const enemy of state.living('enemy')){enemy.stats.attack=Math.round(enemy.stats.attack*scale.attack);if(scale.hp!==1){enemy.stats.maxHp=Math.round(enemy.stats.maxHp*scale.hp);enemy.hp=enemy.stats.maxHp;}this.balancedEnemies.add(enemy.id);}
     }
     if(this.chapter===6){const commander=state.get('cao_cao');commander.stats.maxHp=180;commander.hp=180;commander.stats.movement=0;for(const id of ['ma_chao','pass_bow'])state.get(id).stats.movement=0;}
@@ -273,8 +275,8 @@ export class Session {
     if(this.deployment?.runStory){const r=this.deployment.runStory,h=state.find('sima_yi');if(h)h.hp=Math.max(1,Math.round(h.stats.maxHp*r.heroHp));applyRelics(state,r.relics);}
     // 연구·장수 효과: 출진할 때 적어 둔 값 그대로(저장 재생도 같게).
     // 천명의 시련: 로그라이크(천명의 길·원정) 전투의 적은 처음부터 단단하다. 연구가 쌓일수록 상대적으로 쉬워진다.
-    if(this.deployment?.trial)for(const e of state.living('enemy')){const T=this.revision>=6?TRIAL6:TRIAL;if(/^(gate|tower)_/.test(e.id)||e.stats.movement===0)continue;
-      e.stats.maxHp=Math.round(e.stats.maxHp*T.hp);e.hp=e.stats.maxHp;e.stats.attack=Math.round(e.stats.attack*T.attack);e.stats.defense=Math.round(e.stats.defense*T.defense);}
+    if(this.deployment?.trial)for(const e of state.living('enemy')){const T=this.revision>=6?TRIAL6:TRIAL,fk=this.revision>=6&&this.deployment.run?TRIAL6_FLOOR[this.deployment.run.kind+':'+this.deployment.run.floor]??1:1;if(/^(gate|tower)_/.test(e.id)||e.stats.movement===0)continue;
+      e.stats.maxHp=Math.round(e.stats.maxHp*T.hp*fk);e.hp=e.stats.maxHp;e.stats.attack=Math.round(e.stats.attack*T.attack*fk);e.stats.defense=Math.round(e.stats.defense*T.defense);}
     if(this.deployment?.perks)applyPerkGrants(state,this.deployment.perks);
     this.applyRomanceToNew(state);this.applyGear(state);
     return battle;
@@ -528,7 +530,7 @@ export class Session {
     this.applyBattleXp();
     this.applyRomanceToNew(s);this.applyGear(s);
     if(this.deployment?.mission?.balance===1)for(const enemy of s.living('enemy'))if(!this.balancedEnemies.has(enemy.id)){
-      const scale=missionEnemyScale(this.deployment.mission.id);enemy.stats.attack=Math.round(enemy.stats.attack*scale.attack);if(scale.hp!==1&&enemy.hp===enemy.stats.maxHp){enemy.stats.maxHp=Math.round(enemy.stats.maxHp*scale.hp);enemy.hp=enemy.stats.maxHp;}this.balancedEnemies.add(enemy.id);
+      const scale=missionEnemyScale(this.deployment.mission.id,this.revision);enemy.stats.attack=Math.round(enemy.stats.attack*scale.attack);if(scale.hp!==1&&enemy.hp===enemy.stats.maxHp){enemy.stats.maxHp=Math.round(enemy.stats.maxHp*scale.hp);enemy.hp=enemy.stats.maxHp;}this.balancedEnemies.add(enemy.id);
     }
     if((this.deployment?.mission?.version??1)>=3)for(const u of s.living('enemy'))if(u.goalRegion==='trial_defense')u.stats.movement=3;
     if(this.revision>=4)applyOfficerFeatures(s.living(),this.deployment?.growth);

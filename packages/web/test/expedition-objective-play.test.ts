@@ -37,6 +37,8 @@ function step(s:Session){
   const foe=st.living('enemy').find(e=>e.id!=='rescue_target'&&manhattan(e.pos,u.pos)>=u.range[0]&&manhattan(e.pos,u.pos)<=u.range[1]);
   if(foe&&!u.hasActed)act({kind:'attack',unit:u.id,target:foe.id});return wait();
  }
+ // 구출 대상 곁은 사마의·조진의 자리다: 지원 부대가 그 칸을 막고 있으면 비켜 선다(사람이 하듯).
+ if(hostage?.side==='enemy'&&u.id!=='sima_yi'&&u.id!=='cao_zhen'&&manhattan(u.pos,hostage.pos)===1){const off=[...st.map.reachable(u,st.occupancy()).keys()].map(parse).filter(c=>manhattan(c,hostage.pos)>1).sort((a,b)=>manhattan(a,u.pos)-manhattan(b,u.pos))[0];if(off){act({kind:'move',unit:u.id,to:off});return wait();}}
  const vip=st.find('convoy_trial')??(hostage?.side==='ally'?hostage:undefined);
  if(vip&&vip.side!=='enemy'){const path=pathCells(s,vip);if(path.has(key(u.pos))){const off=[...st.map.reachable(u,st.occupancy()).keys()].filter(k=>!path.has(k)).map(parse).sort((a,b)=>manhattan(a,u.pos)-manhattan(b,u.pos))[0];if(off){act({kind:'move',unit:u.id,to:off});return wait();}}}
  if(u.hp<u.stats.maxHp*.5&&u.canUseItems&&s.medicine){act({kind:'item',unit:u.id,item:'medicine'});return;}
@@ -44,9 +46,9 @@ function step(s:Session){
  for(const cmd of decide(st,u)){if(cmd.kind==='move'&&key(cmd.to)===key(u.pos))continue;if(cmd.kind==='attack'&&cmd.target==='rescue_target')continue;if(!act(cmd).ok||st.outcome!=='ongoing')break;}
  wait();
 }
-function mission(id:string,level:number,seed:number){const d=deployment(freshCampaign(),true);for(const who of Object.keys(d.levels))d.levels[who]=Math.max(d.levels[who]!,level);
- d.mission={id,runId:'objective-'+id,version:4,balance:1,supportClasses:['infantry','fengshui']};return new Session(7,'normal',seed,'survival',4,d);}
-const winsAt=(id:string,level:number)=>[215,7].some(seed=>{const s=mission(id,level,seed);for(let i=0;i<5000&&s.state.outcome==='ongoing';i++)step(s);return s.state.outcome==='victory';});
+function mission(id:string,level:number,seed:number,revision=4){const d=deployment(freshCampaign(),true);for(const who of Object.keys(d.levels))d.levels[who]=Math.max(d.levels[who]!,level);
+ d.mission={id,runId:'objective-'+id,version:4,balance:1,supportClasses:['infantry','fengshui']};return new Session(7,'normal',seed,'survival',revision as 4|6,d);}
+const winsAt=(id:string,level:number,revision=4)=>[215,7].some(seed=>{const s=mission(id,level,seed,revision);for(let i=0;i<5000&&s.state.outcome==='ongoing';i++)step(s);return s.state.outcome==='victory';});
 
 describe('목표 임무는 실제로 깰 수 있다(버전 4 목표·지도)',()=>{
  // 수련·보물 인연·보물 사냥: 권장 레벨 +3 안에서 이긴다(시험 봇은 보물·연구 없이 사람보다 서툴다).
@@ -60,5 +62,12 @@ describe('도전 사다리에 절벽이 없다',()=>{
  // 시험 봇 기준: 보통 단계는 권장 +6, 수문장 단계(5·10)는 +12 안에서 깬다.
  it.each(expeditions.filter(m=>m.kind==='challenge').map(m=>[m.id,m.level,m.step!] as const))('%s Lv.%i',(id,level,step)=>{
   expect(winsAt(id,level+(challengePlan(step).boss?12:6)),id).toBe(true);
+ });
+});
+
+describe('규칙판 6(비율 피해)에서도 모든 외전을 권장 레벨에서 깬다',()=>{
+ // 보물·연구 없이 권장 레벨 그대로. 도전 단계와 약한 외전은 missionEdges6으로 맞췄다(시험 봇 20판 기준 수련·퀘스트·사냥 90%, 도전 80% 이상).
+ it.each(expeditions.map(m=>[m.id,m.kind,m.level] as const))('%s (%s) Lv.%i',(id,_kind,level)=>{
+  expect(winsAt(id,level,6),id).toBe(true);
  });
 });

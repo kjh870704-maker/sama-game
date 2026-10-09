@@ -53,10 +53,13 @@ export const expeditions:Expedition[]=[
  ...challengeSteps.map(([name,requires,level,art,...lines],i)=>({id:'C'+String(i+1).padStart(2,'0'),name,requires,level,art,lines,kind:'challenge' as const,step:i+1})),
 ];
 /** 외전 적의 공격·체력 배율: 수련은 약하게, 도전은 단계마다 세게. */
-export function missionEnemyScale(id:string){
- const m=expeditions.find(x=>x.id===id);if(m?.kind==='challenge'){const p=challengePlan(m.step!);return {attack:p.attack,hp:p.hp};}
- return {attack:id.startsWith('T')?.6:.75,hp:1};
+export function missionEnemyScale(id:string,revision=0){
+ const m=expeditions.find(x=>x.id===id),k=revision>=6?missionEdges6[id]??1:1;
+ if(m?.kind==='challenge'){const p=challengePlan(m.step!);return {attack:p.attack*k,hp:p.hp*k};}
+ return {attack:(id.startsWith('T')?.6:.75)*k,hp:k};
 }
+/** 규칙판 6(비율 피해)에서 외전마다 적 공격·체력에 더 곱하는 값 — 권장 레벨에서 수련·퀘스트·사냥 90%, 도전 80% 이상. */
+export const missionEdges6:Record<string,number>={T03:.85,T07:.8,Q06:.5,Q09:.75,C05:.7,C08:.5,C09:.55,C10:.42};
 /** 도전 단계의 세기: 처음부터 깔린 추가 적, 증원 물결(차례), 물결마다 적 수, 수문장. */
 export function challengePlan(step:number){
  return {extra:step<5?0:1,waves:step<3?[]:step<5?[3]:step<8?[3,5]:step<9?[3,5,7]:[4,7,10],waveSize:step<8?1:2,boss:step===5||step===10,attack:.76+step*.03,hp:1+step*.04};
