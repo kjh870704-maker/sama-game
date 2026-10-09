@@ -9,7 +9,7 @@ import type { BattleState } from "./state.ts";
 import type { Unit, Coord } from "./types.ts";
 import type { Command } from "./commands.ts";
 import { manhattan, key, sameCoord, isHostile } from "./grid.ts";
-import { inReach, reachSpec } from "./reach.ts";
+import { inReach, reachSpec, reachOffsets } from "./reach.ts";
 import { ignoresRough } from "./traits.ts";
 import { estimatePhysical, estimateStrategy } from "./formulas.ts";
 import { evaluate } from "./conditions.ts";
@@ -36,7 +36,22 @@ export function decide(state: BattleState, unit: Unit): Command[] {
   // M-05 ESCORT — 보호 대상은 교전하지 않고 목적지로만 전진한다.
   // 공격하게 두면 적진에 스스로 걸어 들어가 호위가 성립하지 않는다.
   if (behavior === "escortee") {
-    const goal = goalCoord(state, unit, unit.goalRegion ?? "escort_goal");
+    const goalRegion = unit.goalRegion ?? "escort_goal";
+    const goal = goalCoord(state, unit, goalRegion);
+    // 규칙판 6: 길목을 지키고 선 적(hold)이 한 번에 달려와 칠 수 있는 칸으로는 걸어 들어가지 않는다 —
+    // 호위가 길을 열 때까지 그 밖에서 기다린다. 목적지 칸은 예외다(닿는 순간 끝난다). 안전한 칸이 없으면 그대로 간다.
+    if (state.stickyGoals) {
+      const threat = new Set<string>();
+      for (const h of hostiles) {
+        if (h.behavior !== "hold") continue;
+        const offsets = reachOffsets(h);
+        for (const c of decodeAll(state.map.reachable(h, state.occupancy(), ignoresRough(h)))) {
+          for (const o of offsets) threat.add(key({ x: c.x + o.x, y: c.y + o.y }));
+        }
+      }
+      const unsafe = decodeAll(reach).filter((c) => threat.has(key(c)) && !onRegion(state, { ...unit, pos: c }, goalRegion));
+      if (unsafe.length < reach.size) for (const c of unsafe) reach.delete(key(c));
+    }
     const step = goal ? bestStepToward(state, unit, reach, goal) : null;
     return step
       ? [{ kind: "move", unit: unit.id, to: step }, { kind: "wait", unit: unit.id }]

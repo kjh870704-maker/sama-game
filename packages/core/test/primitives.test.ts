@@ -175,6 +175,28 @@ describe("M-05 escortee 행동", () => {
     if (move?.kind === "move") expect(move.to.x).toBeGreaterThan(convoy.pos.x);
   });
 
+  it("규칙판 6: 길목을 지키는 적(hold)이 달려와 칠 수 있는 칸으로는 들어가지 않는다", () => {
+    const regions = new Map<string, Coord[]>([["escort_goal", [{ x: 29, y: 1 }]]]);
+    const state = new BattleState(minimalStage(), mapWithWalls(30, 4, [], regions), 1);
+    const convoy = makeUnit({
+      id: "convoy", side: "allyAi", unitClass: "infantry", level: 20,
+      pos: { x: 1, y: 1 }, behavior: "escortee", goalRegion: "escort_goal",
+    });
+    state.add(convoy);
+    // 수비대가 달려와 칠 수 있는 칸(이동 + 사거리 1)이 호송대의 한 걸음 끝에 걸치도록 세운다.
+    const guard = makeUnit({ id: "guard", side: "enemy", unitClass: "infantry", level: 20, pos: { x: 1 + 2 * convoy.stats.movement, y: 1 }, behavior: "hold" });
+    state.add(guard);
+    const step = () => { const m = decide(state, convoy).find((c) => c.kind === "move"); return m?.kind === "move" ? m.to : convoy.pos; };
+
+    // 옛 규칙판은 끝까지 직진한다.
+    expect(step().x).toBe(1 + convoy.stats.movement);
+    state.stickyGoals = true;
+    const to = step();
+    expect(to.x).toBeGreaterThan(convoy.pos.x);
+    expect(to.x).toBeLessThan(1 + convoy.stats.movement);
+    expect(guard.pos.x - to.x).toBeGreaterThan(guard.stats.movement);
+  });
+
   it("목표 영역이 없으면 제자리에서 대기한다", () => {
     const state = new BattleState(minimalStage(), flatMap(8, 8), 1);
     const convoy = makeUnit({
