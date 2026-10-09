@@ -61,6 +61,7 @@ export const LINEAGE_SKILL:Partial<Record<Lineage,string>>={
   'single-stage-engineer':'snare','four-stage-catapult':'thunderShot','four-stage-monk':'chainFist','four-stage-lord':'royalStrike',
   'four-stage-commander':'commandStrike',
   'four-stage-yellow-turban':'yellowSlash','four-stage-pirate':'boardingSlash',
+  'four-stage-javelin':'javelinCast','four-stage-qiang':'qiangCharge','four-stage-sniper':'sniperShot',
 };
 
 const levelOf=new Map(allStrategies.map(s=>[s.id,s.level]));

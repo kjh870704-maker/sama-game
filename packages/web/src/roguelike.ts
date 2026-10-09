@@ -135,7 +135,7 @@ export function nextStory(run:Run):string|undefined{
 }
 
 /** 영입 가능한 기본 병종 */
-export const RECRUITS:UnitClass[]=['infantry','spearman','cavalry','archer','crossbow','fengshui','horseArcher','pirate','yellowTurban','mountedStrategist','assassin','rattan','elephant','monk','taoist','bandit','heavyCav'];
+export const RECRUITS:UnitClass[]=['infantry','spearman','javelin','cavalry','qiang','archer','crossbow','sniper','fengshui','horseArcher','pirate','yellowTurban','mountedStrategist','assassin','rattan','elephant','monk','taoist','bandit','heavyCav'];
 
 /** 이름 있는 장수: 연의 장수록(romance.ts)의 능력을 이름으로 받는다. */
 export interface OfficerSpec {name:string;unitClass:UnitClass}

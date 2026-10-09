@@ -1,14 +1,24 @@
 import {describe,it,expect} from 'vitest';
+import {readFileSync} from 'node:fs';
 import {allUnitClasses,currentClass,EVOLUTION,SINGLE_STAGE_CLASSES,VARIANTS} from '../../core/src/index.ts';
 import {completeTroopArt,completeTroopSheets,fourStageCorrectionRows,lineageWeapons,singleStageCorrectionRows,singleStageWeapons} from '../src/complete-troops.ts';
 import {paintedTroopArt,paintedTroopSheets,POSE} from '../src/painted-troops.ts';
 import {classSprite} from '../src/codex-ui.ts';
 import {classSheets} from '../src/troops.ts';
 
+function webpSize(file:URL){
+  const b=readFileSync(file),vp8x=b.indexOf(Buffer.from('VP8X'));
+  const n=(i:number)=>b[i]!|(b[i+1]!<<8)|(b[i+2]!<<16);
+  if(vp8x>=0)return [n(vp8x+12)+1,n(vp8x+15)+1] as const;
+  const vp8l=b.indexOf(Buffer.from('VP8L'));expect(vp8l).toBeGreaterThanOrEqual(0);
+  const bits=b.readUInt32LE(vp8l+9);
+  return [(bits&0x3fff)+1,((bits>>14)&0x3fff)+1] as const;
+}
+
 describe('새 화풍 전체 병종 원화',()=>{
   it('활성 유닛을 빠짐없이 매핑하고 폐기 ID는 로딩 때 단일 병종으로 정규화한다',()=>{
     const classes=allUnitClasses();
-    expect(classes).toHaveLength(132);
+    expect(classes).toHaveLength(144);
     expect(Object.keys(completeTroopArt).sort()).toEqual([...classes].sort());
     for(const c of classes)expect(paintedTroopArt[c],c).toEqual(completeTroopArt[c]);
     expect(currentClass('feixiong')).toBe('xiliang');
@@ -16,7 +26,7 @@ describe('새 화풍 전체 병종 원화',()=>{
   });
 
   it('진화 계통은 4행, 단일 병종은 실제 1행·4열 시트를 사용한다',()=>{
-    expect(completeTroopSheets).toHaveLength(42);
+    expect(completeTroopSheets).toHaveLength(45);
     for(const sheet of completeTroopSheets){
       const single=sheet.id.startsWith('single-stage-');
       expect(sheet.rows).toBe(single?1:4);
@@ -25,7 +35,7 @@ describe('새 화풍 전체 병종 원화',()=>{
       expect(loaded?.frames).toBe(POSE);
       expect(loaded).toHaveProperty('union',true);
     }
-    expect(Object.values(fourStageCorrectionRows)).toHaveLength(30);
+    expect(Object.values(fourStageCorrectionRows)).toHaveLength(33);
     expect(Object.values(singleStageCorrectionRows)).toHaveLength(12);
     expect(Object.values(fourStageCorrectionRows).every(line=>line.length===4)).toBe(true);
     expect(Object.values(fourStageCorrectionRows).flat()).toContain('divineStrategist');
@@ -45,12 +55,17 @@ describe('새 화풍 전체 병종 원화',()=>{
       'four-stage-dancer':'silk-ribbon','four-stage-halberd-cavalry':'crescent-halberd',
       'four-stage-archer':'bow','four-stage-crossbow':'crossbow','four-stage-bandit':'curved-cleaver',
       'four-stage-swordsman':'straight-jian','four-stage-assassin':'twin-daggers',
+      'four-stage-javelin':'throwing-javelin','four-stage-qiang':'short-spear-and-hide-shield','four-stage-sniper':'heavy-crossbow',
     });
     expect(singleStageWeapons).toMatchObject({'single-stage-crown-prince':'court-tablet','single-stage-xiliang':'curved-saber','single-stage-gaema-warrior':'spear','single-stage-engineer':'construction-hammer'});
     expect(VARIANTS.fanSage?.bloom?.name).toBe('천궁');
     expect(VARIANTS.fanSage?.bloom?.name).not.toBe('백우선');
     for(const id of ['four-stage-yellow-turban','four-stage-mounted-strategist','four-stage-pirate'] as const){
       expect(new Set(fourStageCorrectionRows[id]).size).toBe(4);
+    }
+    for(const id of ['javelin','qiang','sniper']){
+      expect(webpSize(new URL(`../public/troops-four-stage-${id}-v1.webp`,import.meta.url)),id).toEqual([1120,896]);
+      expect(new Set(fourStageCorrectionRows[`four-stage-${id}` as keyof typeof fourStageCorrectionRows]).size,id).toBe(4);
     }
   });
 

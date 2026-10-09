@@ -17,6 +17,9 @@ const NEW_CLASSES:Array<[UnitClass,UnitClass,1|2|3]>=[
  ['ironPagoda','heavyCav',3],['elephantKing','heavyCav',3],['sharpshooter','archer',3],['wraith','bandit',3],
  ['wuguoRattan','infantry',3],['greenwoodKing','bandit',3],['arhat','monk',3],['demonKing','shaman',3],
  ['celestial','maiden',3],['thunderGod','taoist',3],['mountedMastermind','strategist',3],['pirateCaptain','navy',3],
+ ['javelin','spearman',1],['eliteJavelin','spearman',2],['flyingSpear','spearman',3],['divineJavelin','spearman',4],
+ ['qiang','cavalry',1],['qiangRider','cavalry',2],['qiangVeteran','cavalry',3],['qiangKingGuard','cavalry',4],
+ ['sniper','crossbow',1],['eliteSniper','crossbow',2],['deadeye','crossbow',3],['divineSniper','crossbow',4],
 ];
 const STATS=['hp','mp','attack','defense','intellect','spirit','agility'] as const;
 describe('새 병종과 진화 계통',()=>{
@@ -65,7 +68,10 @@ describe('새 병종과 진화 계통',()=>{
   }
  });
  it('removes the overlapping lines and reads their old saves as the nearest surviving class',()=>{
-  for(const c of ['physician','javelin','axeman','mountaineer','qingzhou','jishi','shieldBow','drummer','riderSage','jiangdong','langzhong']){expect((VARIANTS as Record<string,unknown>)[c],c).toBeUndefined();expect(RECRUITS as string[]).not.toContain(c);expect(VARIANTS[currentClass(c)]??(['fengshui','spearman','bandit','infantry','crossbow'].includes(currentClass(c))||undefined),c).toBeTruthy();}
+  for(const c of ['physician','axeman','mountaineer','qingzhou','jishi','shieldBow','drummer','riderSage','jiangdong','langzhong']){expect((VARIANTS as Record<string,unknown>)[c],c).toBeUndefined();expect(RECRUITS as string[]).not.toContain(c);expect(VARIANTS[currentClass(c)]??(['fengshui','spearman','bandit','infantry','crossbow'].includes(currentClass(c))||undefined),c).toBeTruthy();}
+  expect(evolvedClass('javelin',30)).toBe('divineJavelin');
+  expect(evolvedClass('qiang',30)).toBe('qiangKingGuard');
+  expect(evolvedClass('sniper',30)).toBe('divineSniper');
   expect(evolvedClass('engineer',40)).toBe('engineer');expect(evolvedClass('catapult',40)).toBe('divineCatapult');
   expect(classFamily('arhat')).toBe(classFamily('monk'));
  });
