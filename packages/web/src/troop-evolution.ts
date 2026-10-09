@@ -48,7 +48,7 @@ function classArt(c:UnitClass){
 const officerArt=(name:string,b:OfficerEntry["battle"][string])=>`<div class="cx-sprite" role="img" aria-label="${esc(name)}"><canvas class="evo-fit" data-fit="${esc(b.sheet)}" data-row="0" data-rows="${b.rows}" data-uniform="1"></canvas></div>`;
 const rangeLine=(c:UnitClass)=>{const p=profileOf(c);return `<div class="evo-range">${reachMini(c)}<p><b>${esc(classNames[c]??c)} · ${esc(reachLabel(c))}</b><span>사거리 ${p.range[0]===p.range[1]?p.range[0]:p.range[0]+'~'+p.range[1]} · 이동 ${p.movement}</span></p></div>`;};
 const personCard=(art:string,small:string,name:string,c:UnitClass,extra='')=>`<article class="evo-card evo-person-card"><div class="evo-top">${art}<div><small>${small}</small><h4>${esc(name)}</h4></div></div>${rangeLine(c)}${extra}</article>`;
-/** 장수의 병종: 군주 9명은 군주, 나머지는 전용 전투 그림의 첫 병종(제갈량 수레 제외). */
+/** 장수의 병종: 군주 9명과 서초패왕 항우는 군주, 나머지는 전용 전투 그림의 첫 병종(제갈량 수레 제외). */
 const officerClass=(e:OfficerEntry):UnitClass=>(LORD_NAMES.includes(e.name)?'lord':Object.keys(e.battle).find(k=>k!=='cart')) as UnitClass;
 const officerSheet=(e:OfficerEntry,c:string)=>e.battle[c]??e.battle.lord??Object.entries(e.battle).find(([k])=>k!=='cart')?.[1];
 function officerCards(){
