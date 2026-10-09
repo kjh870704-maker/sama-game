@@ -1645,3 +1645,10 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 .duel-stage.live-models .duel-view:has(.duel-cutin) .duel-fighter .damage-number{animation-delay:1.45s}
 /* 전용 대결 그림이 없는 장수는 병종 그림으로 선다. 병종 그림은 칸 안에 여백(몸 키가 칸의 0.6)을 두어 대결 그림보다 작게 보이므로 발끝을 기준으로 키운다. */
 .duel-stage.live-models .duel-model>.battle-model:not(.officer-battle-model):not(.custom-portrait){transform:scale(1.3);transform-origin:50% 94%}
+
+/* 지도 위 목표 띠: 지금 걸린 승리·패배 조건을 늘 보인다(전투 중 목표가 바뀌면 함께 바뀐다). */
+.map-objective{position:absolute;z-index:6;left:12px;top:96px;max-width:min(46%,520px);padding:6px 10px;border-radius:6px;background:rgba(12,16,18,.78);border:1px solid rgba(216,184,110,.45);pointer-events:none;font-size:calc(13px*var(--fs,1));line-height:1.45;color:#efe6cf}
+.map-objective:empty{display:none}
+.map-objective p{margin:0}.map-objective b{display:inline-block;min-width:2.4em;font-weight:700}
+.map-objective .mo-win b{color:#9fd4ff}.map-objective .mo-lose{color:#c9b8a0;font-size:calc(12px*var(--fs,1));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.map-objective .mo-lose b{color:#f0a090}
+@media (max-height:520px){.map-objective{top:56px;max-width:52%;padding:4px 8px;font-size:calc(12px*var(--fs,1))}.map-objective .mo-lose{display:none}}

@@ -6,6 +6,7 @@
  * order가 있는 조건은 낮은 단계부터 차례로 모두 충족해야 한다(→).
  */
 import type {BattleState,StageDef,VictoryCondition} from '../../core/src/index.ts';
+import {evaluate} from '../../core/src/index.ts';
 import {stageRules,subject} from './stage-rules.ts';
 import {classNames} from './battlefield.ts';
 
@@ -14,6 +15,8 @@ const REGION_NAMES:Record<string,string>={
   exit:'탈출 지점',rally:'집결지',south_gate:'남문',east_pass:'동쪽 관문',escort_goal:'호송 목적지',central_fort:'중앙 성채',citadel:'본성',
   camp:'적 본진',warehouse:'군량 창고',militia:'민병 거점',emperor_approach:'황제의 길목',breakthrough:'돌파 지점',xiangyang:'양양성',
   join:'합류 지점',north_camp:'북쪽 진영',keep:'본채',bridge_site:'교량 부지',shu_fort:'촉군 요새',armory:'무기고',yongning:'영녕',landing:'상륙 지점',
+  // 전투 중 바뀌는 목표(change_victory)에 쓰는 지점.
+  ravine_exit:'골짜기 출구',south_exit:'남쪽 출구',retreat_exit:'회군로',east_exit:'동쪽 출구',
 };
 /** 끝내야 하는 대화·사건의 이름. */
 const DIALOGUE_NAMES:Record<string,string>={
@@ -44,11 +47,23 @@ function line(state:BattleState,c:VictoryCondition,lose:boolean){
     case 'escort_survive':return `${name(c.unit)} 생존`;
   }
 }
-/** 조건 묶음을 문장들로: 아무거나 하나(또는) / 차례로 모두(→). */
+/** 승리 조건 옆에 붙는 진행: 채운 조건은 ✓, 수를 세는 조건은 지금 몇인지. */
+function progress(state:BattleState,c:VictoryCondition){
+  if(evaluate(state,c))return ' ✓';
+  if(c.type==='enemy_retreat_count')return ` (${state.losses.enemy}/${c.n??0})`;
+  if(c.type==='annihilate')return ` (남은 ${state.living(c.side??'enemy').length})`;
+  if(c.type==='survive_turns'){const start=state.survivalClocks.get(c.target??'default');return start===undefined?'':` (${Math.max(0,state.turn-start)}/${c.n??0}턴)`;}
+  return '';
+}
+const winLine=(state:BattleState,c:VictoryCondition)=>line(state,c,false)+progress(state,c);
+/** 조건 묶음을 문장들로: 아무거나 하나(또는) / 차례로 모두(→). 승리 조건에는 진행(✓·수)을 붙인다. */
 function group(state:BattleState,conds:readonly VictoryCondition[],lose:boolean):string[]{
-  const any=conds.filter(c=>c.order===undefined).map(c=>line(state,c,lose));
+  // 이야기대로 전장을 떠난 장수(dismiss_units)의 퇴각은 더는 패배가 될 수 없으니 빼고 보인다.
+  if(lose)conds=conds.filter(c=>!((c.type==='retreat'||c.type==='escort_survive')&&c.unit&&!state.find(c.unit)&&!LATE_NAMES[c.unit]&&!classNames[c.unit]));
+  const say=(c:VictoryCondition)=>lose?line(state,c,true):winLine(state,c);
+  const any=conds.filter(c=>c.order===undefined).map(say);
   const steps=[...new Set(conds.filter(c=>c.order!==undefined).map(c=>c.order!))].sort((a,b)=>a-b)
-    .map(o=>conds.filter(c=>c.order===o).map(c=>line(state,c,lose)).join(' 또는 '));
+    .map(o=>conds.filter(c=>c.order===o).map(say).join(' 또는 '));
   const seq=steps.length<2?steps:[lose?`${steps.join('·')} 모두`:`${steps.join(' → ')} (차례로)`];
   return [...any,...seq];
 }
@@ -59,8 +74,9 @@ export interface BattleConditions {win:string[];lose:string[]}
  * extraLose: 규칙표 실패 조건처럼 스테이지 데이터 밖에 있는 패배(지켜야 할 장수 등) — 이름 목록.
  */
 export function battleConditions(state:BattleState,o:{guarded?:readonly string[];deadline?:number;maxTurns?:number}={}):BattleConditions{
-  const win=group(state,state.stage.victory,false);
-  const lose=group(state,state.stage.defeat,true);
+  // 지금 걸린 조건(state.victory)으로 만든다: 전투 중 목표가 바뀌는 장(change_victory)에서 처음 목표가 남아 있으면 안 된다.
+  const win=group(state,state.victory,false);
+  const lose=group(state,state.defeat,true);
   for(const n of o.guarded??[]){const t=`${n} 퇴각`;if(!lose.includes(t))lose.push(t);}
   const limit=o.deadline??o.maxTurns;
   if(limit)lose.push(`${limit}턴 안에 끝내지 못함`);
