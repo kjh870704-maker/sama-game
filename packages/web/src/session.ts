@@ -229,7 +229,7 @@ export class Session {
     for(const p of rules?.protect??[]){const u=state.find(p.unit);if(!u)continue;
       // 지켜야 할 대상도 같은 레벨 병사만큼의 체력은 갖는다(정해 둔 체력이 더 낮으면 병종 체력을 쓴다).
       u.stats.maxHp=this.revision>=6?Math.max(p.hp,u.stats.maxHp):p.hp;u.hp=u.stats.maxHp;u.range=[0,0];u.canUseItems=false;if(p.movement)u.stats.movement=p.movement;}
-    for(const t of rules?.tough??[]){const u=state.find(t.unit);if(!u)continue;u.stats.maxHp=Math.round(u.stats.maxHp*t.hpScale);u.hp=u.stats.maxHp;if(t.defense)u.stats.defense+=t.defense;}
+    for(const t of [...(rules?.tough??[]),...(this.revision>=6?rules?.tough6??[]:[])]){const u=state.find(t.unit);if(!u)continue;u.stats.maxHp=Math.round(u.stats.maxHp*t.hpScale);u.hp=u.stats.maxHp;if(t.defense)u.stats.defense+=t.defense;}
     for(const id of rules?.anchored??[]){const u=state.find(id);if(u)u.stats.movement=0;}
     for(const at0 of rules?.barricades??[]){const at=this.wide?wideCoord(at0):at0;if(!state.unitAt(at))placeBarricade(state,at,'enemy',(encounterLevels[state.stage.id]??5)+(state.difficulty==='extreme'?2:0));}
     if(this.wide)state.map.moveBonus=2;

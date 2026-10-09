@@ -18,6 +18,8 @@ export interface StageRules {
   protect?:Array<{unit:string;hp:number;movement?:number}>;
   /** Named foes that must be handled by the gimmick rather than worn down. */
   tough?:Array<{unit:string;hpScale:number;defense?:number}>;
+  /** 규칙판 6(비율 피해)에서만 더하는 단단함: 옛 저장 재생은 그대로 둔다. */
+  tough6?:Array<{unit:string;hpScale:number;defense?:number}>;
   /** Units that hold their ground for the whole battle (fixed support). */
   anchored?:string[];
   /** Enemy barricades standing at the start. */
@@ -203,11 +205,14 @@ export const stageRules:Record<string,StageRules>={
       // 보통: 매복 기병은 깃발이 돌아선 그 턴에는 숲에 숨어 있다가 다음 턴부터 덮친다(사마의가 먼저 물러날 틈).
       const wait=state.survivalClocks.get('ambush_wait');
       if(wait!==undefined&&state.turn>wait){for(const u of state.living('enemy'))if(u.id.startsWith('flank_')&&u.behavior==='passive')u.behavior='advance';state.survivalClocks.delete('ambush_wait');}
+      // 규칙판 6: 퇴각하는 촉군 종대는 짐을 끌고 있어 느리다(4칸). 5칸이면 둘째 턴에 모두 빠져나가 '추격 저지'를 얻을 길이 없었다.
+      if(state.stickyGoals&&!state.firedEvents.has('wuzhang/slow')){state.firedEvents.add('wuzhang/slow');for(const u of state.living('enemy'))if(u.id.startsWith('column'))u.stats.movement=Math.min(u.stats.movement,4);}
       if(!state.firedEvents.has('wuzhang/banner')){
         for(const u of state.living('enemy'))if(u.behavior==='flee'&&state.map.regionCoords('west_exit').some(c=>c.x===u.pos.x&&c.y===u.pos.y)){state.units.delete(u.id);state.survivalClocks.set('escaped',(state.survivalClocks.get('escaped')??0)+1);}
         if(state.losses.enemy>=4||state.turn>=6){
           // The chase ends the moment the army wavers: what is still fleeing is simply gone.
           for(const u of state.living('enemy'))if(u.behavior==='flee'){state.units.delete(u.id);}
+          state.survivalClocks.set('stopped',state.losses.enemy);
           fireScripted(state,'wuzhang/banner');
           if(difficulty==='normal'){for(const u of state.living('enemy'))if(u.id.startsWith('flank_'))u.behavior='passive';state.survivalClocks.set('ambush_wait',state.turn);}
           // Sima Yi alone keeps his head: he is the one who calms the others and leads the withdrawal.
@@ -220,7 +225,8 @@ export const stageRules:Record<string,StageRules>={
       if(p==='추격')return `추격 · 저지 ${state.losses.enemy}/4 · 빠져나간 촉군 ${state.survivalClocks.get('escaped')??0}`;
       return '동요 · 추격을 멈추고 사마의를 동쪽으로';},
     // 병력 보존: no one lost, and every unit brought back east of the plateau (x ≥ 17), not abandoned in the panic.
-    seals:({state})=>[1,...((state.survivalClocks.get('escaped')??0)<=1?[2]:[]),...(state.losses.player+state.losses.ally===0&&[...state.living('player'),...state.living('ally')].every(u=>u.pos.x>=17)?[3]:[])],
+    // 추격 저지(규칙판 6): 깃발이 돌기 전에 셋 이상을 물리치거나(후위 둘 + 종대 하나), 빠져나간 종대가 셋 이하. 옛 규칙판은 1 이하 그대로.
+    seals:({state})=>[1,...((state.survivalClocks.get('escaped')??0)<=(state.stickyGoals?3:1)||(state.stickyGoals&&(state.survivalClocks.get('stopped')??0)>=3)?[2]:[]),...(state.losses.player+state.losses.ally===0&&[...state.living('player'),...state.living('ally')].every(u=>u.pos.x>=17)?[3]:[])],
   },
   'S2-13':{
     sealNames:['호로곡 탈출','부대 보존','신속한 탈출'],
@@ -305,6 +311,9 @@ export const stageRules:Record<string,StageRules>={
     weather:'장맛비 · 길이 젖음',
     labels:[{region:'pass_exit',text:'양평관'},{region:'guo_camp',text:'곽회 진영'}],
     tough:[{unit:'guo_huai',hpScale:1.4,defense:2}],
+    // 곽회 진영은 위연·호위·습격대 다섯에 둘러싸여 시작한다. 비율식에서는 둘째 적 차례에 쓰러져 '곽회 생존'을 얻을 길이 없었다:
+    // 동쪽에서 달려오는 아군(3~4턴)이 닿을 때까지 버티게 한다.
+    tough6:[{unit:'guo_huai',hpScale:2,defense:14},{unit:'guo_spear',hpScale:1.8,defense:12}],
     deadline:15,
     tick:({state})=>{
       const route=state.choices.find(c=>c.nodeId==='route')?.optionId;
@@ -381,7 +390,7 @@ export const foeLevelCap6:Record<string,{normal:number;extreme:number}>={'S1-02'
 export const foeEdges6:Record<string,{normal?:number;extreme?:number}>={
   'S1-02':{normal:-38,extreme:-24},'S1-03':{normal:-20},'S1-06':{normal:-8,extreme:-16},'S1-10':{normal:-20},
   'S2-02':{normal:-32,extreme:-12},'S2-04':{normal:-4},'S2-05':{normal:-52,extreme:-45},'S2-06':{extreme:-16},'S2-08':{normal:-24,extreme:-28},
-  'S2-09':{normal:-32},'S2-11':{normal:-32,extreme:-20},'S3-02':{normal:-38,extreme:-4},'S3-07':{normal:-20,extreme:-15},
+  'S2-09':{normal:-32},'S2-11':{normal:-32,extreme:-20},'S3-02':{normal:-38,extreme:-4},'S2-14':{normal:-18,extreme:-24},'S3-07':{normal:-20,extreme:-15},
 };
 
 /** Korean subject particle: 이 after a final consonant, 가 otherwise. */
