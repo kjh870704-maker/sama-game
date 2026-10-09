@@ -13,7 +13,7 @@ import {campMarkup} from './camp.ts';
 import {officerFeatures,talentTree,strategyHint,martialPower,debatePower,STATUS_NAMES} from './officers.ts';
 import {deploymentPerks} from './officer-perks.ts';
 import {watchCssAtlases} from './css-atlas.ts';
-import {actionNames,duelActionNames,duelLine,temperNames,type DuelAction} from './duel.ts';
+import {actionNames,duelActionNames,duelLine,temperNames,type DuelAction,type DuelKind} from './duel.ts';
 import {spriteAtlas} from './sprite-atlas.ts';
 import {paintedTroopArt} from './painted-troops.ts';
 import {officerDuelModelStyle,officerDuelMounted,officerBattleSheet,officerDuelSheetUrl} from './officer-models.ts';
@@ -148,7 +148,7 @@ const runHost:RunHost={modal:(html,closable)=>modal(html,closable),showMenu:()=>
   backToBattle:()=>{const s=openRunSession();if(s&&s!==session){session=s;activate();return;}menuOpen=false;closeModal();}};
 
 /** 시나리오 모드(본편)가 쓰는 연결: 연의 장의 정비·전투와 가상 전장 출진, 사마의의 성장 기록. */
-const scenarioHost:ScenarioHost={modal:(html,closable)=>{menuOpen=true;clearTimeout(aiTimer);sound.scene='camp';modal(html,closable);},contestSound:(kind,critical)=>sound.event({kind:'duel',critical,debate:kind==='debate'}),unitModel:(unitClass,name,side)=>portraitFor({id:'contest',name,unitClass,side} as unknown as Unit),showSlots:()=>showSlots(()=>showScenario(scenarioHost)),showMenu:()=>showMenu(),toast:t=>toast(t),
+const scenarioHost:ScenarioHost={modal:(html,closable)=>{menuOpen=true;clearTimeout(aiTimer);sound.scene='camp';modal(html,closable);},contestSound:(kind,critical)=>sound.event({kind:'duel',critical,debate:kind==='debate'}),unitModel:(unitClass,name,side,kind)=>portraitFor({id:'contest',name,unitClass,side} as unknown as Unit,false,kind),showSlots:()=>showSlots(()=>showScenario(scenarioHost)),showMenu:()=>showMenu(),toast:t=>toast(t),
   storyBriefing:(chapter,sc)=>briefing(chapter,undefined,sc),
   startBattle:(dep,seed,difficulty='normal')=>{session=new Session(RUN_CHAPTER,difficulty,seed,'survival',RULES,dep);activate();persist();},
   hero:()=>{const l=levelInfo(campaign.xp.sima_yi??0);return {level:l.level,xp:l.next?Math.min(99,Math.floor(l.xp/l.next*100)):0};},
@@ -331,7 +331,10 @@ function describe(e:LogEntry){const name=(id:string)=>session.state.find(id)?.na
   default:return '';
 }}
 function consumeLog(){const logs=session.state.log.slice(lastLog);lastLog=session.state.log.length;if(logs.some(e=>e.t==='terrain'))field.repaintTerrain();field.play(logs);hudFight(logs);for(const e of logs){const line=describe(e);if(line)$('#latest-log').textContent=line;if(e.t==='turnStart'){const banner=$('#phase-banner');banner.textContent=`${sideNames[e.side]}의 차례`;banner.classList.add('show');setTimeout(()=>banner.classList.remove('show'),1300);sound.event({kind:'turn',side:e.side});if(e.side!=='player')sound.focus=undefined;}}}
-function portraitFor(u:Unit,reaction=false):string{
+function portraitFor(u:Unit,reaction=false,contestKind?:DuelKind):string{
+  // 설전은 궁정·군막에서 말없이 논하는 장면이다. 기마 장수의 전용 일기토 시트 대신
+  // 같은 비율의 도보 책사 모델을 세워 마초 같은 장수가 말을 탄 채 궁정에 들어오지 않게 한다.
+  if(contestKind==='debate'&&officerDuelMounted(u))return '<span class="battle-model" role="img" aria-label="설전 도보 모델" style="background-image:var(--four-stage-strategist-atlas);background-size:400% 400%;background-position:0 0"></span>';
   const officer=officerDuelModelStyle(u);
   if(officer)return `<span class="battle-model officer-battle-model" role="img" aria-label="${unitName(u)} 전신"${officerDuelMounted(u)?' data-mounted':''} style="${officer}"></span>`;
   // 전용 대결 그림이 없는 장수(유비·손권·조예 등)는 병종 그림 대신 자기 전투 그림 첫 칸(대기)을 세운다. 칸이 가로로 길어 폭에 맞추고 발끝을 아래에 붙인다.
@@ -577,7 +580,7 @@ function showDuel(){
   const a=session.state.get(d.player.id),b=session.state.get(d.enemy.id);
   // 겨루기는 초상 카드가 아니라 실제 병종 전신 모델을 1:1로 맞세운다.
   const nameOf=(u:Unit)=>romanceOf(u)?.name??(u.id==='sima_yi'?'사마의':u.name.replace(/의?\s*환영$/,''));
-  const models={player:duelModel(portraitFor(a),'player',nameOf(a)),enemy:duelModel(portraitFor(b),'enemy',nameOf(b))};
+  const models={player:duelModel(portraitFor(a,false,d.kind),'player',nameOf(a)),enemy:duelModel(portraitFor(b,false,d.kind),'enemy',nameOf(b))};
   if(d.round===0&&!d.history.length&&duelSplashSeen!==d){
     modal(duelSplash(d,session.lastAccept?.line,!!session.lastAccept?.historic),false);
     document.querySelectorAll<HTMLElement>('[data-vs-model]').forEach(el=>el.innerHTML=el.dataset.vsModel==='enemy'?models.enemy:models.player);

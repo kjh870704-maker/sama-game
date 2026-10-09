@@ -17,7 +17,7 @@ import {chapters} from './session.ts';
 import {encounterLevels} from './campaign-rules.ts';
 import {treasures,type Deployment,type ScenarioDeployment} from './progression.ts';
 import {romanceByName,romanceStats,temperOf} from './romance.ts';
-import {temperNames} from './duel.ts';
+import {temperNames,type DuelKind} from './duel.ts';
 import {playContest} from './duel-ui.ts';
 import {cardFace} from './faces.ts';
 import {portraitImage} from './portrait-images.ts';
@@ -43,7 +43,7 @@ export interface ScenarioHost {
   /** 이야기·출진 전 일기토/설전의 효과음 */
   contestSound?(kind:'duel'|'debate',critical:boolean):void;
   /** 이야기 밖 대결에 세울 병종 전신 모델(전투 화면과 같은 그림) */
-  unitModel?(unitClass:UnitClass,name:string,side:'player'|'enemy'):string;
+  unitModel?(unitClass:UnitClass,name:string,side:'player'|'enemy',kind:DuelKind):string;
   /** 연의 장의 출진 전 정비(장비·준비·난이도) → 전투 */
   storyBriefing(chapter:number,scenario:ScenarioDeployment):void;
   /** 가상 전장 출진 */
@@ -100,7 +100,7 @@ async function runContest(host:ScenarioHost,state:ScenarioState,step:ScenarioSte
   const myClass:UnitClass|undefined=by==='사마의'?storyClassAt('sima_yi',hero.level):state.officers[by]?.unitClass;
   const route=step.route?routeById(step.route):undefined;
   const foeClass:UnitClass|undefined=step.tale?.target.name===foe?step.tale.target.unitClass:step.kind==='boss'&&route?.region.boss.name===foe?route.region.boss.unitClass:foeClassOf(foe);
-  const model=(c:UnitClass|undefined,n:string,side:'player'|'enemy')=>c?host.unitModel?.(c,n,side):undefined;
+  const model=(c:UnitClass|undefined,n:string,side:'player'|'enemy')=>c?host.unitModel?.(c,n,side,kind):undefined;
   const mine=model(myClass,by,'player'),theirs=model(foeClass,foe,'enemy');
   const r=await playContest(kind,{name:by,stat:stat(by,lvOf(by))},{name:foe,stat:stat(foe,foeLv)},{...(line?{acceptLine:line}:{}),seed:step.id+foe,done:'돌아가기',sound:c=>host.contestSound?.(kind,c),models:{...(mine?{player:mine}:{}),...(theirs?{enemy:theirs}:{})}});
   state.flags=state.flags.filter(f=>!f.startsWith(`contest:${step.id}:`));state.flags.push(`contest:${step.id}:${kind}:${r}`);
