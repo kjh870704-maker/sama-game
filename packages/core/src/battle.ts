@@ -28,6 +28,15 @@ export interface BattleOptions {
 
 const NEGATIVE_STATUS = new Set<StatusKind>(["confusion", "immobile", "bound", "bleed", "burn", "shock", "seal", "weaken", "breach", "slow"]);
 
+/** 한 방에 쓰러지지 않는 대상: 적이 아닌 부대(아군·편입 아군·우군)가 체력이 가득할 때. */
+function sparesFullHp(u: Unit): boolean {
+  return u.side !== "enemy" && u.hp >= u.stats.maxHp && u.stats.maxHp > 1;
+}
+/** 한 방 보호 중이면 체력 1을 남긴다. */
+function survive(u: Unit, damage: number, full: boolean): number {
+  return full ? Math.min(damage, u.hp - 1) : damage;
+}
+
 export class Battle {
   readonly state: BattleState;
   readonly dialogue: DialogueScript;
@@ -144,9 +153,11 @@ export class Battle {
 
   /** 한 번의 물리 타격(조조전 규칙이면 순발력 비율로 한 번 더 친다). */
   private strike(a: Unit, d: Unit, isCounter: boolean): void {
+    // 체력이 가득한 아군은 한 번의 공격(연속 타격 포함)으로 쓰러지지 않는다.
+    const full = sparesFullHp(d);
     const once = (double: boolean): boolean => {
       const raw = computePhysical(a, d, this.state.map, this.state.rng, { isCounter });
-      const capped = raw.hit ? capHit(d, raw.damage) : raw.damage;
+      const capped = raw.hit ? survive(d, capHit(d, raw.damage), full) : raw.damage;
       const res = capped === raw.damage ? raw : { ...raw, damage: capped, lethal: capped >= d.hp };
       const extra = double ? { double: true } : {};
       if (isCounter) this.state.push({ t: "counter", attacker: a.id, defender: d.id, damage: res.damage, hit: res.hit, ...(res.hit && res.tactic ? { tactic: res.tactic } : {}), ...extra });
@@ -185,7 +196,7 @@ export class Battle {
       const t = this.state.unitAt(coord);
       if (!t || !def.targetSides.includes(t.side)) continue;
       const raw = computeStrategy(c, t, def, this.state.map, this.state.rng);
-      const capped = raw.hit ? capHit(t, raw.damage) : raw.damage;
+      const capped = raw.hit ? survive(t, capHit(t, raw.damage), sparesFullHp(t)) : raw.damage;
       const res = capped === raw.damage ? raw : { ...raw, damage: capped, lethal: capped >= t.hp };
       targets.push(t.id);
       damages.push(res.damage);

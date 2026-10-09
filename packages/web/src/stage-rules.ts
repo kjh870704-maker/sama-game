@@ -199,13 +199,17 @@ export const stageRules:Record<string,StageRules>={
     weather:'가을 하늘 · 큰 별이 떨어진 다음 날',
     // 깃발이 돌아서면 이 숲에서 매복 기병이 나온다: 철수로를 고를 단서.
     labels:[{region:'west_exit',text:'촉의 퇴로'},{region:'east_exit',text:'동쪽 철수로'},{region:'plateau',text:'오장원'},{region:'flank',text:'깊은 숲 · 매복 주의'}],
-    tick:({state})=>{
+    tick:({state,difficulty})=>{
+      // 보통: 매복 기병은 깃발이 돌아선 그 턴에는 숲에 숨어 있다가 다음 턴부터 덮친다(사마의가 먼저 물러날 틈).
+      const wait=state.survivalClocks.get('ambush_wait');
+      if(wait!==undefined&&state.turn>wait){for(const u of state.living('enemy'))if(u.id.startsWith('flank_')&&u.behavior==='passive')u.behavior='advance';state.survivalClocks.delete('ambush_wait');}
       if(!state.firedEvents.has('wuzhang/banner')){
         for(const u of state.living('enemy'))if(u.behavior==='flee'&&state.map.regionCoords('west_exit').some(c=>c.x===u.pos.x&&c.y===u.pos.y)){state.units.delete(u.id);state.survivalClocks.set('escaped',(state.survivalClocks.get('escaped')??0)+1);}
         if(state.losses.enemy>=4||state.turn>=6){
           // The chase ends the moment the army wavers: what is still fleeing is simply gone.
           for(const u of state.living('enemy'))if(u.behavior==='flee'){state.units.delete(u.id);}
           fireScripted(state,'wuzhang/banner');
+          if(difficulty==='normal'){for(const u of state.living('enemy'))if(u.id.startsWith('flank_'))u.behavior='passive';state.survivalClocks.set('ambush_wait',state.turn);}
           // Sima Yi alone keeps his head: he is the one who calms the others and leads the withdrawal.
           const yi=state.find('sima_yi');if(yi)yi.statuses=yi.statuses.filter(x=>x.kind!=='confusion');
         }

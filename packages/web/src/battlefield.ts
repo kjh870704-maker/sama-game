@@ -351,6 +351,15 @@ export class Battlefield {
     if(showThreat)for(let y=0;y<state.map.height;y++)for(let x=0;x<state.map.width;x++){
       const c={x,y};if(state.living('enemy').some(e=>manhattan(e.pos,c)<=(e.visionRange??e.range[1]))){const p=iso(c);diamond(this.ranges,p.x,p.y,0xd36a5e,.22);}
     }
+    // 적(또는 지휘할 수 없는 우군)을 고르면 그 부대가 움직일 수 있는 칸(진한 색)과, 거기서 칠 수 있는 칸(옅은 색)을 보인다.
+    if(u?.alive&&(u.side==='enemy'||u.side==='allyAi')&&!structureKind(u.id)){
+      const reach=state.map.reachable(u,state.occupancy(),ignoresRough(u)),foe=u.side==='enemy';
+      const fill=foe?0xc0392b:0x3aa864,edge=foe?0xff9a8a:0xa6e8b8,strike=new Set<string>();
+      for(const k of reach.keys()){const [x,y]=k.split(',').map(Number) as [number,number];const r=u.range[1];
+        for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){const c={x:x+dx,y:y+dy},ck=key(c);if(!reach.has(ck)&&!strike.has(ck)&&state.map.inBounds(c)&&inReach(u,{x,y},c))strike.add(ck);}}
+      for(const k of strike){const [x,y]=k.split(',').map(Number);const p=iso({x:x!,y:y!});diamond(this.ranges,p.x,p.y,fill,.16);}
+      for(const k of reach.keys()){const [x,y]=k.split(',').map(Number);const p=iso({x:x!,y:y!});tileMark(this.ranges,p.x,p.y,fill,edge,.34);}
+    }
     if(u?.alive&&u.side===state.currentSide&&!u.hasActed){
       if((mode==='repair'||mode==='fortify')&&familyOf(u.unitClass)==='engineer')for(const d of [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}]){const at={x:u.pos.x+d.x,y:u.pos.y+d.y};if(!state.map.inBounds(at))continue;const occupant=state.unitAt(at),ok=mode==='repair'?!!occupant&&occupant.side!=='enemy':!occupant;if(ok){const p=iso(at);diamond(this.ranges,p.x,p.y,mode==='repair'?0x9fe0a8:0xe0c27a,.28).stroke({color:mode==='repair'?0xb9f2c0:0xf2d79a,width:1.4});}}
       if(mode==='heal'&&familyOf(u.unitClass)==='fengshui')for(let y=0;y<state.map.height;y++)for(let x=0;x<state.map.width;x++){if(manhattan(u.pos,{x,y})<=3){const p=iso({x,y});diamond(this.ranges,p.x,p.y,0x83e8b2,.22);}}

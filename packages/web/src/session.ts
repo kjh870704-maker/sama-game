@@ -447,19 +447,34 @@ export class Session {
     const temper=/환영$/.test(enemy.name)?'reckless' as const:temperOf(plain(enemy));
     return duelResponse(kind,{name:plain(u),stat:stat(u)},{name:plain(enemy),stat:stat(enemy),...(temper?{temper}:{}),hp:enemy.hp/Math.max(1,enemy.stats.maxHp)});
   }
-  /** 원정 부대의 경험치 시작점: 원정 전투는 부대 전원, 원정 속 연의 전장은 사마의. */
-  xpBase():Record<string,{level:number;xp:number}>|undefined{
+  /**
+   * 경험치 시작점: 원정 전투는 부대 전원, 원정 속 연의 전장은 사마의,
+   * 연의 전장(본편·시나리오의 연의 장)은 출진한 장수(연의 성장 곡선 — curve)와 함께 나선 영입 장수.
+   */
+  xpBase():Record<string,{level:number;xp:number;curve?:true}>|undefined{
     const d=this.deployment;if(d?.run)return Object.fromEntries(d.run.party.map(u=>[u.id,{level:u.level,xp:u.xp}]));
     if(d?.runStory)return {sima_yi:{level:d.runStory.heroLevel,xp:d.runStory.heroXp??0}};
-    return undefined;
+    if(!d||d.mission)return undefined;
+    const base:Record<string,{level:number;xp:number;curve?:true}>={};
+    for(const id of OFFICERS)if(d.levels[id]!==undefined)base[id]={level:d.levels[id]!,xp:d.xp?.[id]??0,curve:true};
+    for(const r of d.scenario?.recruits??[])base[r.id]={level:r.level,xp:r.xp};
+    return base;
   }
-  /** 새 기록을 읽어 경험치를 쌓고, 원정 레벨이 오르면 전투 중에도 곧바로 레벨업한다. */
+  /** 시작점에 번 경험치를 더한 레벨·이번 레벨 안의 경험치·다음 레벨까지 필요한 양. */
+  xpProgress(id:string){
+    const b=this.xpBase()?.[id];if(!b)return undefined;
+    const gained=this.xpEarned[id]??0;let level=b.level,now=b.xp+gained;
+    const need=(l:number)=>b.curve?(l>=40?Infinity:100+(l-1)*20):XP_PER_LEVEL;
+    while(now>=need(level)){now-=need(level);level++;}
+    return {level,now,need:b.curve&&level>=40?0:need(level),gained};
+  }
+  /** 새 기록을 읽어 경험치를 쌓고, 레벨이 오르면 전투 중에도 곧바로 레벨업한다. */
   private applyBattleXp(){
     const base=this.xpBase(),s=this.state;if(!base){this.xpCursor=s.log.length;return;}
     const batch=s.log.slice(this.xpCursor);this.xpCursor=s.log.length;
     for(const {entry,gain} of xpFromLog(batch,id=>id in base,id=>s.find(id)?.level??1)){
-      const b=base[gain.unit]!,before=this.xpEarned[gain.unit]??0,after=before+gain.amount;this.xpEarned[gain.unit]=after;
-      const from=b.level+Math.floor((b.xp+before)/XP_PER_LEVEL),to=b.level+Math.floor((b.xp+after)/XP_PER_LEVEL),u=s.find(gain.unit);
+      const from=this.xpProgress(gain.unit)!.level;this.xpEarned[gain.unit]=(this.xpEarned[gain.unit]??0)+gain.amount;
+      const to=this.xpProgress(gain.unit)!.level,u=s.find(gain.unit);
       // 연의 전장에서 사마의의 전장 레벨이 원정 레벨과 다르면(연의 진행 레벨) 표시만 하고 능력치는 건드리지 않는다.
       const up=to>from&&!!u?.alive&&u.level===from;let learned:string[]=[];
       if(up){levelUpInBattle(u!,to);
@@ -603,7 +618,7 @@ export class Session {
     const data=raw as Save;
     if(!data || data.version!==2 || !chapters[data.chapter] || !['survival','strategy','command'].includes(data.preparation) || !['normal','extreme'].includes(data.difficulty) || !Number.isSafeInteger(data.seed) || !Array.isArray(data.journal) || data.journal.length>20000 || !Array.isArray(data.checkpoints) || !data.checkpoints.every((n,i,a)=>Number.isInteger(n)&&n>=0&&n<data.journal.length&&(i===0||n>a[i-1]!))) throw new Error('저장 파일을 읽을 수 없습니다.');
     if(data.revision!==undefined&&data.revision!==2&&data.revision!==3&&data.revision!==4&&data.revision!==5)throw new Error('지원하지 않는 전장 버전입니다.');
-    if(data.deployment){const d=data.deployment;if(!d.levels||!d.equipped||!OFFICERS.every(id=>Number.isInteger(d.levels[id])&&d.levels[id]!>=1&&d.levels[id]!<=40)||Object.entries(d.equipped).some(([id,item])=>!OFFICERS.includes(id as typeof OFFICERS[number])||!treasures.some(t=>t.id===item)))throw new Error('잘못된 출진 기록입니다.');}
+    if(data.deployment){const d=data.deployment;if(!d.levels||!d.equipped||!OFFICERS.every(id=>Number.isInteger(d.levels[id])&&d.levels[id]!>=1&&d.levels[id]!<=40)||Object.entries(d.equipped).some(([id,item])=>!OFFICERS.includes(id as typeof OFFICERS[number])||!treasures.some(t=>t.id===item))||(d.xp!==undefined&&(typeof d.xp!=='object'||Object.entries(d.xp).some(([id,n])=>!OFFICERS.includes(id as typeof OFFICERS[number])||!Number.isInteger(n)||n<0||n>=1000))))throw new Error('잘못된 출진 기록입니다.');}
     if(data.deployment?.run){const r=data.deployment.run;
       if(!Number.isInteger(r.floor)||r.floor<1||r.floor>RUN_FLOORS||!['battle','elite','boss','tale'].includes(r.kind)||(r.kind==='tale')!==!!taleById(r.tale)||(r.route!==undefined&&!validRoute(r.route))||!Number.isSafeInteger(r.seed)||!Array.isArray(r.party)||r.party.length<1||r.party.length>PARTY_LIMIT||!r.party.some(u=>u.hero)||!Array.isArray(r.relics)
         ||r.party.some(u=>typeof u.id!=='string'||!Number.isInteger(u.level)||u.level<1||u.level>60||!(u.hp>0&&u.hp<=1)))throw new Error('잘못된 원정 기록');

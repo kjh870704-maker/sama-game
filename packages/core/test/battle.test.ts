@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { Battle } from "../src/battle.ts";
-import { BattleState } from "../src/state.ts";
+import { BattleState, PHASE_ORDER } from "../src/state.ts";
 import { makeUnit } from "../src/units.ts";
 import { duelState, flatMap, minimalStage } from "./fixtures.ts";
 import type { StrategyDef } from "../src/types.ts";
@@ -177,5 +177,29 @@ describe("편입 아군과 점령 목표", () => {
     expect(moveOff.some((c) => c.kind === "capture")).toBe(false);
     const heroPlan = decide(state, hero);
     expect(heroPlan[0]?.kind).toBe("move");
+  });
+});
+
+describe("한 방 보호", () => {
+  it("체력이 가득한 아군은 한 번의 공격으로 쓰러지지 않는다", () => {
+    const state = duelState(1, 1, 40);
+    const hero = state.get("hero"), foe = state.get("foe");
+    foe.stats.attack = 9999;
+    const battle = new Battle(state, { seed: 1, strategies });
+    battle.start();
+    state.phaseIndex = PHASE_ORDER.indexOf("enemy");
+    expect(battle.execute({ kind: "attack", unit: "foe", target: "hero" }).ok).toBe(true);
+    expect(hero.alive).toBe(true);
+    expect(hero.hp).toBe(1);
+  });
+
+  it("다친 아군과 적은 한 번에 쓰러질 수 있다", () => {
+    const state = duelState(1, 40, 1);
+    const hero = state.get("hero"), foe = state.get("foe");
+    hero.stats.attack = 9999;
+    const battle = new Battle(state, { seed: 1, strategies });
+    battle.start();
+    expect(battle.execute({ kind: "attack", unit: "hero", target: "foe" }).ok).toBe(true);
+    expect(foe.alive).toBe(false);
   });
 });

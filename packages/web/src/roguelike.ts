@@ -373,15 +373,15 @@ export const landClass=(c:UnitClass):UnitClass=>familyOf(c)==='navy'?'crossbow':
 export interface BattleMods {reinforce?:Array<{name:string;unitClass:UnitClass;side:'npc'|'ally'}>;scout?:boolean;ambush?:boolean;bold?:boolean;rally?:boolean;guard?:boolean;insight?:boolean}
 export function runStage(run:Run,kind:NodeKind,map:MapFile,taleId?:string,opts:{mods?:BattleMods;enemyBase?:number}={}):StageDef{
   const f=run.floor,r=rngFor(run,f*613+kind.length),region=regionFor(run,f),tale=kind==='tale'?taleById(taleId):undefined,mods=opts.mods??{};
-  const base=opts.enemyBase??2+Math.round(f*1.05)+(f>FLOORS_PER_ACT*2?1:0)+(kind==='battle'||kind==='tale'?0:1);
+  const base=opts.enemyBase??2+Math.round(f*1.05)+(f>FLOORS_PER_ACT*2&&kind!=='tale'?1:0)+(kind==='boss'?1:0);
   // 넓은 전장에는 적도 조금 더 많다. 우두머리 전은 호위를 예전 수준으로(우두머리 자체가 강하다).
   // 동료를 잃어 넷 이하로 나선 부대에는 적도 한 부대 적게.
-  const count=Math.max(1,Math.min(12,(kind==='boss'?2+Math.floor(f/4.5):4+Math.floor(f/4)+(kind==='elite'?1:kind==='tale'?-1:0))+(mods.bold?1:0)-(mods.scout?1:0)-(run.party.length<=4?1:0)));
+  const count=Math.max(1,Math.min(12,(kind==='boss'?2+Math.floor(f/4.5):4+Math.floor(f/5)+(kind==='elite'?1:kind==='tale'?-1:0))+(mods.bold?1:0)-(mods.scout?1:0)-(run.party.length<=4?1:0)));
   const camp=(map.regions!.enemy_camp as Array<{x:number;y:number}>).slice();
   const enemies:UnitSpawnSpec[]=[];
   for(let i=0;i<count&&camp.length;i++){
     const at=camp.splice(r.int(0,camp.length-1),1)[0]!,cls=region.pool[r.int(0,region.pool.length-1)]!,level=base+r.int(-1,1)-(kind==='boss'?2:0);
-    const elite=(kind==='elite'&&i<2)||(!!mods.bold&&i===0);const evolved=evolvedClass(cls,elite?level+8:level);
+    const elite=(kind==='elite'&&i<2)||(!!mods.bold&&i===0);const evolved=evolvedClass(cls,elite?level+5:level);
     enemies.push({id:`foe_${i}`,name:unitName(evolved),template:evolved,level,at,behavior:i%3===2?'hold':'advance'});
   }
   if(kind==='boss'){const b=region.boss,mid=Math.floor(H/2),bi=camp.reduce((best,c,i)=>Math.abs(c.y-mid)*2+(W-1-c.x)<Math.abs(camp[best]!.y-mid)*2+(W-1-camp[best]!.x)?i:best,0),at=camp.splice(bi,1)[0]??{x:W-1,y:mid};enemies.push({id:'boss',name:b.name,template:evolvedClass(landClass(b.unitClass),base+3),level:base-2,at,behavior:'hold'});}
