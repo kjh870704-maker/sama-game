@@ -9,9 +9,7 @@ from pathlib import Path
 from PIL import Image
 
 
-COLS = ROWS = 4
-CELL_W, CELL_H = 280, 224
-MARGIN_X, MARGIN_Y = 28, 22
+COLS = 4
 
 
 def main_component(cell: Image.Image) -> Image.Image:
@@ -54,7 +52,7 @@ def main_component(cell: Image.Image) -> Image.Image:
     return sprite
 
 
-def normalize(source: Path, destination: Path) -> None:
+def normalize(source: Path, destination: Path, rows: int = 4, cell_w: int = 280, cell_h: int = 224) -> None:
     image = Image.open(source).convert("RGBA")
     # Image generation is most reliable on a flat chroma backdrop. When the
     # four corners are magenta, convert that backdrop (including antialiasing)
@@ -71,32 +69,36 @@ def normalize(source: Path, destination: Path) -> None:
                 target_pixels[x, y] = (r, g, b, 0 if is_magenta else alpha)
         image = cleaned
     x_edges = [round(index * image.width / COLS) for index in range(COLS + 1)]
-    y_edges = [round(index * image.height / ROWS) for index in range(ROWS + 1)]
+    y_edges = [round(index * image.height / rows) for index in range(rows + 1)]
     sprites: list[list[Image.Image]] = []
-    for row in range(ROWS):
+    for row in range(rows):
         current: list[Image.Image] = []
         for col in range(COLS):
             current.append(main_component(image.crop((x_edges[col], y_edges[row], x_edges[col + 1], y_edges[row + 1]))))
         sprites.append(current)
 
-    atlas = Image.new("RGBA", (CELL_W * COLS, CELL_H * ROWS))
+    margin_x, margin_y = round(cell_w * 0.08), round(cell_h * 0.08)
+    atlas = Image.new("RGBA", (cell_w * COLS, cell_h * rows))
     for row, current in enumerate(sprites):
         scale = min(
-            (CELL_W - MARGIN_X * 2) / max(sprite.width for sprite in current),
-            (CELL_H - MARGIN_Y * 2) / max(sprite.height for sprite in current),
+            (cell_w - margin_x * 2) / max(sprite.width for sprite in current),
+            (cell_h - margin_y * 2) / max(sprite.height for sprite in current),
         )
-        baseline = (row + 1) * CELL_H - MARGIN_Y
+        baseline = (row + 1) * cell_h - margin_y
         for col, sprite in enumerate(current):
             size = (max(1, round(sprite.width * scale)), max(1, round(sprite.height * scale)))
             sprite = sprite.resize(size, Image.Resampling.LANCZOS)
-            x = col * CELL_W + (CELL_W - sprite.width) // 2
+            x = col * cell_w + (cell_w - sprite.width) // 2
             y = baseline - sprite.height
             atlas.alpha_composite(sprite, (x, y))
     destination.parent.mkdir(parents=True, exist_ok=True)
-    atlas.save(destination, "WEBP", lossless=True, method=6)
+    # Lossy WebP with alpha uses the VP8X container expected by the asset
+    # validators, while quality 96 keeps sprite edges visually lossless.
+    atlas.save(destination, "WEBP", quality=96, method=6, exact=True)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        raise SystemExit("usage: normalize-troop-sheet.py SOURCE DESTINATION")
-    normalize(Path(sys.argv[1]), Path(sys.argv[2]))
+    if len(sys.argv) not in (3, 6):
+        raise SystemExit("usage: normalize-troop-sheet.py SOURCE DESTINATION [ROWS CELL_WIDTH CELL_HEIGHT]")
+    options = tuple(map(int, sys.argv[3:])) if len(sys.argv) == 6 else (4, 280, 224)
+    normalize(Path(sys.argv[1]), Path(sys.argv[2]), *options)
