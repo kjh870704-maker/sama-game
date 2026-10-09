@@ -4,6 +4,7 @@ import {officerBattleSheet,officerDuelModel,officerDuelModelStyle,officerDuelMou
 
 const lordIds=['cao_cao','cao_pi','cao_rui','liu_bei','sun_quan','gongsun_yuan','yuan_tan','yuan_shang','liu_bang','xiang_yu'] as const;
 const priorityDuelIds=['huang_zhong','zhao_yun','sun_quan','lu_meng','wei_yan','lu_xun','gongsun_yuan','yang_ang','lu_fan','sun_shao','meng_da','ma_su','wang_ping','gao_xiang','meng_yan','bi_yan','zhu_ran','zhuge_ke','wang_ling'] as const;
+const secondaryDuelIds=['guan_yu','zhang_liao','zhang_he','xiahou_dun','jiang_wei','xiahou_yuan','xu_huang','cao_ren','liu_bei','cao_rui','yuan_tan','yuan_shang','gan_ning','huang_gai','zhu_rong','meng_huo','lu_su','pang_tong','xun_yu','wooden_zhuge'] as const;
 const priorityBattle=[
   ['yang_ang','infantry',1120,224],['lu_fan','crossbow',1120,224],['sun_shao','crossbow',1120,224],['meng_da','infantry',1120,224],['ma_su','strategist',1120,224],['wang_ping','infantry',1120,224],
   ['gao_xiang','infantry',1120,224],['meng_yan','cavalry',1400,280],['bi_yan','cavalry',1400,280],['zhu_ran','infantry',1120,224],['zhuge_ke','strategist',1120,224],['wang_ling','infantry',1120,224],
@@ -78,6 +79,13 @@ describe('장수별 전투 SD와 대결 모델',()=>{
 
   it('우선순위 장수 19명은 각자 1024×256 전용 대결 시트를 쓴다',()=>{
     for(const id of priorityDuelIds){
+      expect(officerDuelModel({id,name:id})?.sheet,id).toBe(`officers/${id}-duel-v1.webp`);
+      expect(webpSize(new URL(`../public/officers/${id}-duel-v1.webp`,import.meta.url)),id).toEqual([1024,256]);
+    }
+  });
+
+  it('2차 장수 20명은 각자 1024×256 전용 대결 시트를 쓴다',()=>{
+    for(const id of secondaryDuelIds){
       expect(officerDuelModel({id,name:id})?.sheet,id).toBe(`officers/${id}-duel-v1.webp`);
       expect(webpSize(new URL(`../public/officers/${id}-duel-v1.webp`,import.meta.url)),id).toEqual([1024,256]);
     }
