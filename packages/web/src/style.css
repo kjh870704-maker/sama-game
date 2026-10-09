@@ -1681,3 +1681,6 @@ body.left-open .left-close{display:block;position:absolute;right:8px;top:8px;z-i
 /* 전수 점검: 장수 별호·전술 도움말이 말줄임으로 잘리지 않게 */
 .right-panel .uc-id>small,.uc .uc-id>small{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.3;word-break:keep-all}
 .right-panel #tactical-tip{display:block!important;-webkit-line-clamp:unset!important;overflow:visible!important}
+/* 디자인 재점검: 본영 메뉴 창의 돌아가기 줄은 늘 화면 아래에 보이게, 한국어는 낱말 단위로 줄바꿈 */
+@media(min-height:600px){dialog :is(.modal-actions,.run-actions):has(#troop-back,#rs-back,#cx-back){position:sticky;bottom:0;z-index:6;margin-bottom:0;padding:10px 0;background:#202628f2;border-top:1px solid #5a4d36}}
+dialog .briefing{word-break:keep-all;overflow-wrap:break-word;text-wrap:pretty}
