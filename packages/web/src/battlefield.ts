@@ -65,6 +65,8 @@ export class Battlefield {
   ground=new Container();
   ranges=new Graphics();
   pieces=new Container();
+  /** 이름표는 부대 위 별도 층: 부대 안에 두면 아래 칸 부대가 이름을 덮는다. */
+  labels=new Container();
   cursor=new Graphics();
   effects=new Container();
   /** 화면 좌표에 그리는 효과(화면 섬광). */
@@ -94,7 +96,7 @@ export class Battlefield {
   private convoys:Texture|undefined;
   private scenery:Texture|undefined;
   private terrainTextures:Texture[]=[];
-  private actors=new Map<string,{piece:Container,sprite:Sprite,unit:Unit,officer?:boolean}>();
+  private actors=new Map<string,{piece:Container,sprite:Sprite,unit:Unit,officer?:boolean,name?:Text|undefined}>();
   private minimap:HTMLCanvasElement|undefined;
   private animationEpoch=0;
   private statusSeen=new Map<string,Set<string>>();
@@ -137,7 +139,7 @@ export class Battlefield {
     this.minimap.addEventListener('pointerdown',e=>{e.stopPropagation();if(!this.state)return;const r=this.minimap!.getBoundingClientRect();this.focus({x:(e.clientX-r.left)/r.width*this.state.map.width,y:(e.clientY-r.top)/r.height*this.state.map.height});});
     this.app.canvas.setAttribute('aria-label','정방 격자 전술 지도. 방향키로 칸 이동, Enter로 선택. 확대는 +/− 버튼.');
     this.app.canvas.tabIndex=0;
-    this.app.stage.addChild(this.world);this.world.addChild(this.ground,this.rubble,this.ranges,this.warnings,this.pieces,this.cursor,this.effects);this.effects.sortableChildren=true;this.app.stage.addChild(this.overlayFx);this.fx=new BattleFx(this.app,this.effects,this.overlayFx,this.reduced);
+    this.app.stage.addChild(this.world);this.world.addChild(this.ground,this.rubble,this.ranges,this.warnings,this.pieces,this.labels,this.cursor,this.effects);this.effects.sortableChildren=true;this.app.stage.addChild(this.overlayFx);this.fx=new BattleFx(this.app,this.effects,this.overlayFx,this.reduced);
     const canvas=this.app.canvas;
     // Touch: one finger drags, two fingers pinch-zoom around their midpoint, and a
     // long press shows the tile under the finger the way hovering does with a mouse.
@@ -185,6 +187,8 @@ export class Battlefield {
       if(this.state){const c=this.world.toLocal({x:this.app.screen.width/2,y:this.app.screen.height/2});this.zoom=this.fixedZoom();this.fit();this.focus({x:c.x/W-.5,y:c.y/H-.5});}
     }));this.observer.observe(privateHost);
     this.app.ticker.maxFPS=60;
+    // 이름표가 부대를 따라간다(걷기·돌격·퇴각 연출 중에도). 부대가 흐려지면 이름도 같이 흐려진다.
+    this.app.ticker.add(()=>{for(const a of this.actors.values()){const n=a.name;if(!n||n.destroyed)continue;if(a.piece.destroyed){n.destroy();continue;}n.position.set(a.piece.x,a.piece.y+20);n.alpha=a.piece.alpha;n.visible=a.piece.visible;}});
     // Boats ride the swell while idle; tweens own the sprite during playback.
     this.app.ticker.add(()=>{if(this.reduced)return;const t=performance.now()/1000;
       // 장수의 기운은 전투 연출 중에도 맥동한다.
@@ -252,8 +256,10 @@ export class Battlefield {
     const w=this.app.screen.width,h=this.app.screen.height,m=this.state.map,scale=this.zoom;
     this.world.scale.set(scale);
     const left=(w-m.width*W*scale)/2,top=(h-m.height*H*scale)/2;
-    const x=m.width*W*scale>w?Math.max(w-m.width*W*scale-24,Math.min(24,left+this.pan.x)):left;
-    const y=m.height*H*scale>h?Math.max(h-m.height*H*scale-24,Math.min(24,top+this.pan.y)):top;
+    // 가장자리 여유: 위쪽은 승리·패배 조건 띠, 아래쪽은 장수 정보·명령 단추가 지도를 덮는다. 모서리 칸도 그 밑에서 꺼내 볼 수 있게 한다.
+    const ox=Math.min(64,w*.06),oy=Math.min(190,h*.3);
+    const x=m.width*W*scale>w?Math.max(w-m.width*W*scale-ox,Math.min(ox,left+this.pan.x)):left;
+    const y=m.height*H*scale>h?Math.max(h-m.height*H*scale-oy,Math.min(oy,top+this.pan.y)):top;
     // Whole device pixels keep ground dots the same size across the screen.
     const r=this.app.renderer.resolution,px=Math.round(x*r)/r,py=Math.round(y*r)/r;
     this.world.position.set(px,py);this.pan={x:px-left,y:py-top};
@@ -267,7 +273,7 @@ export class Battlefield {
     g.strokeStyle='#fff1c0';g.lineWidth=1.5;g.strokeRect(-this.world.x/this.zoom/W*sx,-this.world.y/this.zoom/H*sy,this.app.screen.width/this.zoom/W*sx,this.app.screen.height/this.zoom/H*sy);
   }
   load(state:BattleState){
-    this.animationEpoch++;this.busy=false;this.overview=false;this.state=state;this.previousPositions.clear();this.facing.clear();this.statusSeen.clear();this.actors.clear();clear(this.pieces);clear(this.ground);clear(this.effects);clear(this.rubble);this.cursor.clear();
+    this.animationEpoch++;this.busy=false;this.overview=false;this.state=state;this.previousPositions.clear();this.facing.clear();this.statusSeen.clear();this.actors.clear();clear(this.pieces);clear(this.labels);clear(this.ground);clear(this.effects);clear(this.rubble);this.cursor.clear();
     // Only the painted ground owns its canvas; scenery frames share the atlas.
     this.terrainTextures.forEach((texture,i)=>texture.destroy(i===0));this.terrainTextures=[];
     this.paintTerrain();
@@ -317,7 +323,7 @@ export class Battlefield {
     this.state=state;this.selected=selected;this.mode=mode;this.ranges.clear();
     this.wantSheets(state);
     // 새로 들어온 병종 원화로 바꿔 그린다(동작 중이 아닐 때 한 번에).
-    if(this.artDirty&&!this.busy){this.artDirty=false;for(const a of this.actors.values())a.piece.destroy({children:true});this.actors.clear();this.textures.clear();}
+    if(this.artDirty&&!this.busy){this.artDirty=false;for(const a of this.actors.values()){a.piece.destroy({children:true});a.name?.destroy();}this.actors.clear();this.textures.clear();}
     clear(this.warnings);
     for(const t of state.telegraphs??[]){
       const left=Math.max(1,t.at-state.turn),g=new Graphics();
@@ -369,7 +375,7 @@ export class Battlefield {
       }
     }
     if(!this.busy){
-      for(const [id,actor] of this.actors)if(!state.find(id)?.alive){actor.piece.destroy({children:true});this.actors.delete(id);}
+      for(const [id,actor] of this.actors)if(!state.find(id)?.alive){actor.piece.destroy({children:true});actor.name?.destroy();this.actors.delete(id);}
       for(const unit of state.living()){
         let actor=this.actors.get(unit.id);
         if(!actor){
@@ -392,7 +398,7 @@ export class Battlefield {
         this.statusSeen.set(unit.id,now);
         actor.unit=unit;actor.piece.position.set((unit.pos.x+.5)*W,(unit.pos.y+.5)*H);actor.piece.zIndex=unit.pos.y;
         actor.sprite.texture=this.unitTexture(unit,this.facing.get(unit.id)??0);actor.sprite.alpha=1;actor.sprite.tint=unitTint(unit);
-        for(const child of actor.piece.children.filter(c=>c.label==='hud'))child.destroy();
+        for(const child of actor.piece.children.filter(c=>c.label==='hud'))child.destroy();actor.name?.destroy();actor.name=undefined;
         const bar=new Graphics();if(unit.id===selected||unit.id==='rescue_target'||unit.id==='convoy_trial')bar.ellipse(0,7,22,10).stroke({color:0xffe9aa,width:2});
         const ratio=Math.max(0,unit.hp/unit.stats.maxHp);bar.rect(-18,12,36,7).fill(0x0d1310).rect(-17,13,34,5).fill(0x40312a).rect(-17,13,Math.round(34*ratio),5).fill(ratio<.3?0xf06a4f:sides[unit.side]).rect(-17,13,Math.round(34*ratio),1).fill({color:0xffffff,alpha:.35});
         // Evolved troops (tier 2/3) wear gold rank diamonds beside the health bar.
@@ -402,7 +408,7 @@ export class Battlefield {
         else if(unit.id===selected||unit.side==='player'||['rescue_target','convoy_trial'].includes(unit.id)||isCommander(state,unit)){
           // Named commanders (targets, protected officers) carry their name so they stand out from the rank and file.
           const foe=unit.side==='enemy'&&unit.id!==selected;
-          const name=new Text({text:unitName(unit),style:{fontFamily:'Malgun Gothic',fontSize:11,fontWeight:'700',fill:foe?0xffc2a8:unit.side==='allyAi'?0xffe39a:0xfff4da,stroke:{color:foe?0x2a0d08:0x0d1411,width:3}}});name.anchor.set(.5,0);name.y=20;name.label='hud';actor.piece.addChild(name);
+          const name=new Text({text:unitName(unit),style:{fontFamily:'Malgun Gothic',fontSize:11,fontWeight:'700',fill:foe?0xffc2a8:unit.side==='allyAi'?0xffe39a:0xfff4da,stroke:{color:foe?0x2a0d08:0x0d1411,width:3}}});name.anchor.set(.5,0);name.position.set(actor.piece.x,actor.piece.y+20);actor.name=name;this.labels.addChild(name);
         }
       }
       this.pieces.sortableChildren=true;
@@ -492,7 +498,7 @@ export class Battlefield {
       void this.fx.defeat(iso(actor.unit.pos));if(!kind)this.fx.screenFlash(0xffffff,.12,160);
       if(this.hasReaction(actor.unit))actor.sprite.texture=this.unitTexture(actor.unit,10);
       await this.tween(720,epoch,p=>{const m=retreatMotion(p,mechanical);actor.sprite.rotation=m.rotation;actor.sprite.y=8+m.drop;actor.piece.alpha=m.alpha;});
-      if(epoch===this.animationEpoch){actor.piece.destroy({children:true});this.actors.delete(e.unit);this.facing.delete(e.unit);}return;
+      if(epoch===this.animationEpoch){actor.piece.destroy({children:true});actor.name?.destroy();this.actors.delete(e.unit);this.facing.delete(e.unit);}return;
     }
     if(e.t==='guard'){
       const protector=this.actors.get(e.protector);if(!protector||!this.hasReaction(protector.unit))return;

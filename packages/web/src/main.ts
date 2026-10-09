@@ -46,7 +46,7 @@ void loadPortraitImages('');
 const scenarioYear=(id:string)=>scriptOf(id)?.year??'';
 import type {ScenarioDeployment} from './progression.ts';
 import {loadMeta,saveMeta,recordStory} from './meta.ts';
-import {RUN_FLOORS,RELICS} from './roguelike.ts';
+import {RUN_FLOORS,RELICS,newRun,startingOfficers,battleRef} from './roguelike.ts';
 import {romance,romanceOf,temperOf} from './romance.ts';
 import './style.css';
 import catalogue from './campaign.json';
@@ -310,7 +310,7 @@ function activate(){
   const m=session.state.map,terrain:TerrainKind[]=[];for(let y=0;y<m.height;y++)for(let x=0;x<m.width;x++)terrain.push(m.tileAt({x,y}).terrain);
   sound.scene='battle';sound.place=placeFor(session.state.stage.id,terrain);sound.focus=undefined;sound.combat=session.chapter!==0;void sound.start().then(()=>{updateSound();if(!session.journal.length)sound.event({kind:'battle-start'});});
   // A resumed battle should not replay every line whose moment has already passed.
-  lineSeen=new Set(session.journal.length?dueLines(session.state.stage.id,session.state,new Set()).map(l=>l.id):[]);lineQueue=[];
+  lineSeen=new Set(session.journal.length?dueLines(session.state.stage.id,session.state,new Set()).map(l=>l.id):[]);lineQueue=[];clearTimeout(lineTimer);lineTimer=undefined;lineToken++;$('#battle-line').hidden=true;$('#latest-log').textContent='';
   $<HTMLDialogElement>('#modal').close();render();pump();
 }
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(session.save()));saveAvailable=true;$('#save-status').textContent='✓ 자동 저장됨';}catch{$('#save-status').textContent='저장 공간 사용 불가';}}
@@ -331,7 +331,7 @@ function portraitFor(u:Unit,reaction=false):string{
   if(officer)return `<span class="battle-model officer-battle-model" role="img" aria-label="${unitName(u)} 전신"${officerDuelMounted(u)?' data-mounted':''} style="${officer}"></span>`;
   // 전용 대결 그림이 없는 장수(유비·손권·조예 등)는 병종 그림 대신 자기 전투 그림 첫 칸(대기)을 세운다. 칸이 가로로 길어 폭에 맞추고 발끝을 아래에 붙인다.
   const sd=officerBattleSheet(u)?.action;
-  if(sd&&sd.rows===1)return `<span class="battle-model" role="img" aria-label="${unitName(u)}"${MOUNTED_FAMILIES.has(familyOf(u.unitClass))||u.unitClass.startsWith('mounted')?' data-mounted':''} style="background-image:url(${sd.sheet});background-size:400% auto;background-repeat:no-repeat;background-position:${reaction?100:0}% 100%"></span>`;
+  if(sd&&sd.rows===1)return `<span class="battle-model sheet-model" role="img" aria-label="${unitName(u)}"${MOUNTED_FAMILIES.has(familyOf(u.unitClass))||u.unitClass.startsWith('mounted')?' data-mounted':''} style="background-image:url(${sd.sheet});background-size:400% auto;background-repeat:no-repeat;background-position:${reaction?100:0}% 100%"></span>`;
   const painted=paintedTroopArt[u.unitClass];
   // 말·전차를 탄 병종 그림은 일기토에서 말 탄 크기로 세운다(duelModel이 data-mounted를 본다).
   if(painted)return `<span class="battle-model" role="img" aria-label="${unitName(u)}"${MOUNTED_FAMILIES.has(familyOf(u.unitClass))||u.unitClass.startsWith('mounted')?' data-mounted':''} style="background-image:var(--${painted.sheet}-atlas);background-size:400% ${painted.rows*100}%;background-position:${reaction?100:0}% ${painted.rows>1?painted.row/(painted.rows-1)*100:0}%"></span>`;
@@ -402,10 +402,10 @@ function render(){
   $<HTMLButtonElement>('#undo').disabled=!session.checkpoints.length||field.busy;
   $('#tactical-tip').textContent=session.revision>=4&&session.chapter===4?'여포는 물리 공격이 강합니다. 무력보다 지력 차이를 활용해 설전 승리와 혼란을 노리세요. 각 대결이 끝나면 체력·MP가 회복됩니다.':session.revision>=4?'일기토는 인접한 적, 설전은 3칸 이내 적을 선택합니다. 충차는 성문·감시탑에 피해 3배. 풍수사는 MP 8로 3칸 이내 아군을 치유합니다.':'목표와 승리 조건을 확인하세요. 본대 다음 편입 아군을 직접 지휘합니다.';
   sound.scene=s.outcome!=='ongoing'?'result':session.chapter===4?'dream':s.living('player').some(u=>u.hp<u.stats.maxHp*.35)?'crisis':bossNear(s.living())?'boss':'battle';
-  renderCoach();queueLines();
+  renderCoach();queueLines();stackOverlays();
   if(fieldReady){consumeLog();field.render(s,selected,mode,threat,session.scouted);}checkModal();
 }
-let lineSeen=new Set<string>(),lineQueue:{speaker:string;text:string}[]=[],lineTimer:ReturnType<typeof setTimeout>|undefined;
+let lineSeen=new Set<string>(),lineQueue:{speaker:string;text:string}[]=[],lineTimer:ReturnType<typeof setTimeout>|undefined,lineToken=0;
 function queueLines(){
   if(session.deployment?.mission||session.state.outcome!=='ongoing')return;
   for(const l of dueLines(session.state.stage.id,session.state,lineSeen)){lineSeen.add(l.id);lineQueue.push(l);}
@@ -413,10 +413,28 @@ function queueLines(){
 }
 function showNextLine(){
   const el=$('#battle-line'),next=lineQueue.shift();
-  if(!next){el.hidden=true;lineTimer=undefined;return;}
-  el.innerHTML=dialogueCaption(next.speaker,next.text);el.hidden=false;$('#latest-log').textContent=`${next.speaker}: ${next.text}`;
-  lineTimer=setTimeout(showNextLine,Math.min(6500,2600+next.text.length*45));
+  if(!next){el.hidden=true;lineTimer=undefined;stackOverlays();return;}
+  // 초상을 받은 뒤에 띄운다: 처음 나오는 장수는 그림을 받는 동안 빈 칸으로 보였다(최대 1.5초 기다림).
+  const html=dialogueCaption(next.speaker,next.text),url=/url\('([^']+)'\)/.exec(html)?.[1],token=++lineToken;
+  const reveal=()=>{if(token!==lineToken)return;el.innerHTML=html;el.hidden=false;$('#latest-log').textContent=`${next.speaker}: ${next.text}`;stackOverlays();
+    lineTimer=setTimeout(showNextLine,Math.min(6500,2600+next.text.length*45));};
+  if(!url){reveal();return;}
+  const img=new Image();let shown=false;const go=()=>{if(shown)return;shown=true;clearTimeout(lineTimer);reveal();};
+  img.onload=go;img.onerror=go;lineTimer=setTimeout(go,1500);img.src=url;
 }
+/** 지도 위 띠를 겹치지 않게 위에서부터 쌓는다: 전투 대사 → 승리·패배 조건 → 첫 전투 안내. 글 길이에 따라 높이가 달라 고정 위치로는 겹친다. */
+let stackFrame=0;
+function stackOverlays(){cancelAnimationFrame(stackFrame);stackFrame=requestAnimationFrame(()=>{
+  const map=$('#map'),obj=$('#map-objective'),line=$('#battle-line'),coach=$('#coach');
+  obj.style.top='';coach.style.top='';const mr=map.getBoundingClientRect();if(!mr.height)return;
+  const shown=(el:HTMLElement)=>!el.hidden&&getComputedStyle(el).display!=='none',crosses=(a:DOMRect,b:DOMRect)=>a.left<b.right&&b.left<a.right&&a.top<b.bottom&&b.top<a.bottom;
+  const below=(r:DOMRect)=>Math.ceil(r.bottom-mr.top+6)+'px';
+  if(shown(line)&&shown(obj)){const lr=line.getBoundingClientRect();if(crosses(lr,obj.getBoundingClientRect()))obj.style.top=below(lr);}
+  if(shown(coach)){for(const el of [line,obj])if(shown(el)){const r=el.getBoundingClientRect();if(crosses(r,coach.getBoundingClientRect()))coach.style.top=below(r);}}
+  // 아래쪽: 회차 보물·천명의 시련 꼬리표가 안내 글(#tile-info)을 덮지 않게 글을 그만큼 오른쪽에서 시작한다.
+  const relics=$('#battle-relics'),tip=$('#tile-info');tip.style.paddingLeft='';if(shown(relics)&&relics.innerHTML.trim()){const rr=relics.getBoundingClientRect(),tr=tip.getBoundingClientRect();if(crosses(rr,tr))tip.style.paddingLeft=Math.ceil(rr.right-tr.left+10)+'px';}
+});}
+addEventListener('resize',stackOverlays);
 function coachDone(){try{return localStorage.getItem(COACH_KEY)==='1';}catch{return false;}}
 function finishCoach(){try{localStorage.setItem(COACH_KEY,'1');}catch{/* Storage may be blocked; the coach simply shows again. */}$('#coach').hidden=true;}
 function renderCoach(){
@@ -424,7 +442,7 @@ function renderCoach(){
   if(s.stage.id!=='S1-01'||session.deployment?.mission||coachDone()){el.hidden=true;return;}
   if(s.turn>1||s.outcome!=='ongoing'){finishCoach();return;}
   const text=coachStep(s.turn,s.currentSide==='player',s.living('player').map(u=>({id:u.id,hasMoved:u.hasMoved,hasActed:u.hasActed})),selected);
-  el.hidden=!text;if(text)el.querySelector('p')!.textContent=text;
+  el.hidden=!text;if(text)el.querySelector('p')!.textContent=text;stackOverlays();
 }
 /** 원정 전투: 다음 레벨까지의 경험치(이번 전투에서 번 만큼 포함). */
 function xpOf(u:Unit){return session.xpProgress(u.id);}
@@ -708,5 +726,5 @@ async function boot(){
   if(menuOpen&&document.getElementById('hub-quests'))showMenu();
 }
 // ?dev only: a handle for QA scripts to inspect or nudge the running battle.
-if(devMode)Object.assign(window,{__sama:{get session(){return session;},get field(){return field;},render,start(chapter:number){session=new Session(chapter,'normal',215,'survival',RULES,{...deployment(campaign,true),wide:1});activate();},story(chapter:number){storyScene(chapter);},brief(chapter:number){briefing(chapter);},get campaign(){return campaign;},act(cmd:Command){act(cmd);}}});
+if(devMode)Object.assign(window,{__sama:{get session(){return session;},get field(){return field;},render,start(chapter:number){session=new Session(chapter,'normal',215,'survival',RULES,{...deployment(campaign,true),wide:1});activate();},story(chapter:number){storyScene(chapter);},run(floor:number,kind:'battle'|'elite'|'boss'|'tale',seed=7,route?:Record<number,string>,tale?:string){const r=newRun(seed,startingOfficers());r.floor=floor;if(route)r.route=route as {1?:string;2?:string;3?:string};runHost.startBattle({levels:{sima_yi:2+floor,sima_lang:1,sima_fang:1,cao_zhen:1},equipped:{},run:battleRef(r,kind,tale),trial:1},seed);},brief(chapter:number){briefing(chapter);},get campaign(){return campaign;},act(cmd:Command){act(cmd);}}});
 void boot();

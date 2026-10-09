@@ -60,20 +60,36 @@ function paintBase(state:BattleState,biome:Biome){
   g.putImageData(img,0,0);mg.putImageData(mimg,0,0);dg.putImageData(dimg,0,0);wg.putImageData(wimg,0,0);return {base:c,grassMask:mc,dirtMask:dc,waterMask:wc};
 }
 /** 그린 풀밭 그림(AI 채색): 있으면 풀·언덕 위에 깐다. 이음매가 보이지 않게 뒤집어 이어 붙인 판을 만든다. */
-let meadow:HTMLCanvasElement|undefined;
+let meadow:HTMLCanvasElement|undefined,meadowSource:HTMLImageElement|undefined;
 export async function loadBattleTextures(){
   if(meadow||typeof document==='undefined')return;
   try{const img=new Image();img.src=new URL('textures/meadow.webp',document.baseURI).href;await img.decode();
     const w=img.naturalWidth,h=img.naturalHeight,c=document.createElement('canvas');c.width=w*2;c.height=h*2;const g=c.getContext('2d')!;
     for(const [fx,fy] of [[0,0],[1,0],[0,1],[1,1]] as const){g.save();g.translate(fx?w*2:0,fy?h*2:0);g.scale(fx?-1:1,fy?-1:1);g.drawImage(img,fx?0:0,0);g.restore();}
-    meadow=c;}catch{/* 없으면 칠해서 쓴다 */}
+    meadow=c;meadowSource=img;}catch{/* 없으면 칠해서 쓴다 */}
+}
+/**
+ * 풀밭 그림을 무늬 없이 깐다: 원본에서 아무 곳이나 오린 둥근 조각(가장자리는 흐리게)을 겹겹이 흩뿌린다.
+ * 뒤집어 이어 붙인 판만 깔면 넓은 평지에서 바위·꽃이 거울처럼 짝지어 보였다(원정 전장).
+ */
+function scatterMeadow(g:CanvasRenderingContext2D,w:number,h:number,sc:number,seed:number){
+  const src=meadowSource;if(!src)return;
+  const size=Math.round(Math.min(src.naturalWidth,src.naturalHeight)*.42*sc),step=size*.55,patch=document.createElement('canvas');patch.width=patch.height=size;const pg=patch.getContext('2d')!;
+  const feather=pg.createRadialGradient(size/2,size/2,size*.18,size/2,size/2,size/2);feather.addColorStop(0,'rgba(0,0,0,1)');feather.addColorStop(1,'rgba(0,0,0,0)');
+  const cut=size/sc;let i=0;
+  for(let y=-step;y<h+step;y+=step)for(let x=-step;x<w+step;x+=step,i++){
+    const sx=hash(i,1,seed)*(src.naturalWidth-cut),sy=hash(i,2,seed)*(src.naturalHeight-cut),dx=x+(hash(i,3,seed)-.5)*step*.6,dy=y+(hash(i,4,seed)-.5)*step*.6;
+    pg.globalCompositeOperation='source-over';pg.clearRect(0,0,size,size);pg.save();if(hash(i,5,seed)>.5){pg.translate(size,0);pg.scale(-1,1);}pg.drawImage(src,sx,sy,cut,cut,0,0,size,size);pg.restore();
+    pg.globalCompositeOperation='destination-in';pg.fillStyle=feather;pg.fillRect(0,0,size,size);
+    g.drawImage(patch,Math.round(dx-size/2),Math.round(dy-size/2));
+  }
 }
 /** 풀밭 그림을 무게(마스크)만큼 덮는다. 배율은 바위가 반 칸쯤 되게. */
 function overlayMeadow(ctx:CanvasRenderingContext2D,mask:HTMLCanvasElement,w:number,h:number,seed:number){
   if(!meadow)return;
   const t=document.createElement('canvas');t.width=w;t.height=h;const g=t.getContext('2d')!;
   const pat=g.createPattern(meadow,'repeat')!;const sc=.46,ox=(seed*97)%meadow.width;pat.setTransform(new DOMMatrix([sc,0,0,sc,-ox*sc,0]));
-  g.fillStyle=pat;g.fillRect(0,0,w,h);
+  g.fillStyle=pat;g.fillRect(0,0,w,h);scatterMeadow(g,w,h,sc,seed);
   g.globalCompositeOperation='destination-in';g.imageSmoothingQuality='high';g.drawImage(mask,0,0,w,h);
   ctx.drawImage(t,0,0);
 }
@@ -130,7 +146,8 @@ function paintShore(ctx:CanvasRenderingContext2D,mask:HTMLCanvasElement,w:number
   const layer=(fn:(g:CanvasRenderingContext2D)=>void)=>{const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d')!;fn(g);return c;};
   const big=(g:CanvasRenderingContext2D)=>g.drawImage(mask,0,0,w,h);
   const land=layer(g=>{g.fillStyle='#000';g.fillRect(0,0,w,h);g.globalCompositeOperation='destination-out';big(g);});
-  const band=(src:HTMLCanvasElement,blur:number,clip:'in'|'out',color:string)=>layer(g=>{g.filter=`blur(${blur}px)`;g.drawImage(src,0,0);g.filter='none';
+  // 물 무게 판(mask)은 칸 크기가 작은 판이라 지도 크기로 늘려 그린다. 그대로 그리면 젖은 모래 띠가 강의 절반 위치에 세로로 생겼다.
+  const band=(src:HTMLCanvasElement,blur:number,clip:'in'|'out',color:string)=>layer(g=>{g.filter=`blur(${blur}px)`;g.drawImage(src,0,0,w,h);g.filter='none';
     g.globalCompositeOperation=clip==='in'?'destination-in':'destination-out';big(g);g.globalCompositeOperation='source-in';g.fillStyle=color;g.fillRect(0,0,w,h);});
   ctx.drawImage(band(mask as HTMLCanvasElement,7,'out','rgba(70,58,34,.42)'),0,0);// 젖은 모래
   ctx.drawImage(band(land,14,'in','rgba(120,176,168,.5)'),0,0);// 얕은 물
