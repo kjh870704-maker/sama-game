@@ -13,6 +13,8 @@ function create(difficulty:'normal'|'extreme',seed=215){
 function play(s:Session){
   for(let i=0;i<1800&&s.state.outcome==='ongoing';i++){
     const st=s.state;
+    // 연의 맞수(조진-양앙)가 붙으면 자동 일기토가 열린다: 5합을 마저 치른다.
+    if(s.activeDuel){expect(s.act({kind:'item',unit:s.activeDuel.player.id,item:'duel-round:attack'}).ok).toBe(true);continue;}
     if(!CONTROLLABLE.has(st.currentSide)){s.tick();continue;}
     const u=st.living(st.currentSide).find(u=>!u.hasActed);if(!u){s.tick();continue;}
     if(u.unitClass==='fengshui'&&u.mp>=8){
@@ -26,13 +28,15 @@ function play(s:Session){
       const options=[...st.map.reachable(u,st.occupancy()).keys()].map(k=>{const [x,y]=k.split(',').map(Number);return {x:x!,y:y!};});
       const safe=options.filter(p=>st.living('enemy').every(e=>manhattan(p,e.pos)>e.range[1]+1)).sort((a,b)=>manhattan(a,u.pos)-manhattan(b,u.pos))[0];
       if(safe&&key(safe)!==key(u.pos))expect(s.act({kind:'move',unit:u.id,to:safe}).ok).toBe(true);
+      if(s.activeDuel)continue;
       expect(s.act({kind:'wait',unit:u.id}).ok).toBe(true);continue;
     }
     for(const cmd of decide(st,u)){
       if(cmd.kind==='move'&&key(cmd.to)===key(u.pos))continue;
       const result=s.act(cmd);expect(result.ok,result.error).toBe(true);
-      if(st.outcome!=='ongoing')break;
+      if(st.outcome!=='ongoing'||s.activeDuel)break;
     }
+    if(s.activeDuel)continue;
     if(!u.hasActed&&st.outcome==='ongoing')expect(s.act({kind:'wait',unit:u.id}).ok).toBe(true);
   }
 }

@@ -3,7 +3,7 @@ import {describe,it,expect,vi} from 'vitest';
 import {newDuel,duelRound,duelResponse,type DuelAction,duelDamage} from '../src/duel.ts';
 import {Session,chapters} from '../src/session.ts';
 import {freshCampaign,award,equipSlot,equippedItems,deployment,readCampaign,writeCampaign} from '../src/progression.ts';
-import {availableStrategies} from '../src/officers.ts';
+import {availableStrategies,contestKindOf,martialPower} from '../src/officers.ts';
 import {estimatePhysical,decide,CONTROLLABLE} from '../../core/src/index.ts';
 import {dyeOfSide} from '../src/dye.ts';
 const duel=(stat=60)=>newDuel('duel',{id:'a',name:'아군',stat},{id:'b',name:'적군',stat:60});
@@ -24,7 +24,7 @@ describe('five round duels and debates',()=>{
    }
    expect(started).toBe(true);expect(s.act({kind:'endPhase'}).ok).toBe(false);expect(s.act({kind:'item',unit:'sima_yi',item:'duel-round:rally'}).ok).toBe(true);const loaded=Session.load(s.save());expect(loaded.activeDuel).toEqual(s.activeDuel);expect(loaded.undo()).toBe(true);expect(loaded.activeDuel?.round).toBe(0);
  });
- it.each(['duel','debate'] as const)('resolves %s into battle HP and one action',kind=>{const s=new Session(7,'normal',215,'survival',4),u=s.state.get('sima_yi'),enemy=s.state.living('enemy')[0]!;enemy.pos={x:u.pos.x+1,y:u.pos.y};(enemy as {name:string}).name='여포';expect(s.act({kind:'item',unit:u.id,item:kind,target:enemy.id}).ok).toBe(true);expect(s.activeDuel?.player.stat).toBe(kind==='debate'?romance.sima_yi!.int+u.level:romance.sima_yi!.war+u.level);for(const action of ['rally','special','guard','attack','attack'])expect(s.act({kind:'item',unit:u.id,item:'duel-round:'+action}).ok).toBe(true);expect(s.activeDuel).toBeNull();expect(s.lastDuel?.round).toBe(5);expect(u.hasActed).toBe(true);expect(u.hp).toBeLessThan(u.stats.maxHp);expect(enemy.hp).toBeLessThan(enemy.stats.maxHp);});
+ it.each(['duel','debate'] as const)('resolves %s into battle HP and one action',kind=>{const s=new Session(7,'normal',215,'survival',4),u=kind==='debate'?s.state.get('sima_yi'):s.state.living('player').find(x=>contestKindOf(x)==='duel')!,enemy=s.state.living('enemy')[0]!;enemy.pos={x:u.pos.x+1,y:u.pos.y};if(s.state.unitAt(enemy.pos)!==enemy)enemy.pos={x:u.pos.x-1,y:u.pos.y};(enemy as {name:string}).name=kind==='duel'?'여포':'진궁';if(kind==='debate'){enemy.stats.attack=1;enemy.stats.intellect=90;} /* 이름만 바꾼 병사라 능력치로 성향을 맞춘다 */expect(s.act({kind:'item',unit:u.id,item:kind,target:enemy.id}).ok).toBe(true);expect(s.activeDuel?.player.stat).toBe(kind==='debate'?romance.sima_yi!.int+u.level:martialPower(u));for(const action of ['rally','special','guard','attack','attack'])expect(s.act({kind:'item',unit:u.id,item:'duel-round:'+action}).ok).toBe(true);expect(s.activeDuel).toBeNull();expect(s.lastDuel?.round).toBe(5);expect(u.hasActed).toBe(true);expect(u.hp).toBeLessThan(u.stats.maxHp);expect(enemy.hp).toBeLessThan(enemy.stats.maxHp);});
 });
 describe('equipment, traits, spells and castle siege',()=>{
  it('preserves the paid escape beside the new Luoyang gate',()=>{const s=new Session(0,'normal',215,'survival',4),st=s.state;st.get('sima_yi').pos={x:6,y:10};st.get('sima_lang').pos={x:7,y:10};expect(s.act({kind:'wait',unit:'sima_yi'}).ok).toBe(true);if(st.activeDialogue==='bribe')expect(s.act({kind:'choose',nodeId:'bribe',optionId:'pay'}).ok).toBe(true);expect(st.activeDialogue).toBe('gate_payment');expect(s.act({kind:'choose',nodeId:'gate_payment',optionId:'pay_gate'}).ok).toBe(true);expect(st.outcome).toBe('victory');expect(s.funds).toBe(1000);});
@@ -48,8 +48,9 @@ describe('equipment, traits, spells and castle siege',()=>{
  });
  it('spends the challenger\'s action on a refusal: the challenger is rallied and the coward loses morale',()=>{
   const s=new Session(7,'normal',215,'survival',4),u=s.state.get('sima_yi'),enemy=s.state.living('enemy')[0]!;enemy.pos={x:u.pos.x+1,y:u.pos.y};(enemy as {name:string}).name='조희'; // 연의의 맞수(조상 등)는 붙으면 저절로 설전이 열리므로 짝이 아닌 소심한 장수로 시험한다
+  enemy.stats.attack=1;enemy.stats.intellect=90; // 지력형으로: 지력형 사마의는 설전만 건다
   const morale=enemy.stats.morale;
-  expect(s.act({kind:'item',unit:u.id,item:'duel',target:enemy.id}).ok).toBe(true);
+  expect(s.act({kind:'item',unit:u.id,item:'debate',target:enemy.id}).ok).toBe(true);
   expect(s.activeDuel).toBeNull();expect(s.lastRefusal?.target).toBe(enemy.id);expect(u.hasActed).toBe(true);
   expect(s.state.hasStatus(u,'rally')).toBe(true);expect(enemy.stats.morale).toBe(morale-10);
 

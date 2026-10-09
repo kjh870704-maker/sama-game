@@ -27,6 +27,8 @@ export function applyOfficerFeatures(units:Unit[],growth?:Growth){for(const u of
 export function martialPower(u:Unit){return (romanceWar(u)??officerFeatures[u.id]?.strength??Math.min(95,40+u.stats.attack))+u.level;}
 /** 설전 지력: 연의 지력에 레벨을 더한다(연의에 없는 장수는 전투 지력으로 어림). */
 export function debatePower(u:Unit){return (romanceInt(u)??Math.min(95,40+u.stats.intellect))+u.level;}
+/** 장수 성향: 무력이 지력 이상이면 무력형(일기토), 아니면 지력형(설전). 연의에 실제로 있었던 맞수 대결은 성향과 상관없이 정해진 대로 한다. */
+export function contestKindOf(u:Unit):'duel'|'debate'{return martialPower(u)>=debatePower(u)?'duel':'debate';}
 export type SupportEffect='heal'|'cleanse'|'guard'|'haste'|'rally'|'mana'|'valor'|'again';
 export type LearnedStrategy=StrategyDef&{level:number;support?:SupportEffect};
 export const learnedStrategies:LearnedStrategy[]=[

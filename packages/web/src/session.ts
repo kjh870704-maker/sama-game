@@ -13,7 +13,8 @@ import {applyRomance,temperOf,romanceOf} from './romance.ts';
 import {applyCC} from './cc-apply.ts';
 import {expeditionBattle,expeditions,missionEnemyScale} from './expeditions.ts';
 import {newDuel,duelRound,duelResponse,historicPair,DUEL_LOSS_DEBUFF,type DuelState,type DuelAction} from './duel.ts';
-import {availableStrategies,allStrategies,applyOfficerFeatures,martialPower,debatePower} from './officers.ts';
+import {availableStrategies,allStrategies,applyOfficerFeatures,martialPower,debatePower,contestKindOf} from './officers.ts';
+import {은는} from './josa.ts';
 import approachStage from '../../data/stages/S1-07.json';
 import approachMap from '../../data/maps/hanzhong-approach.json';
 import tongguanStage from '../../data/stages/S1-06.json';
@@ -306,6 +307,14 @@ export class Session {
       }
     }
     if(this.chapter===6&&cmd.kind==='capture'&&s.find('ma_chao')?.alive)return {ok:false,error:'마초를 먼저 격퇴해야 돌파 구역을 확보할 수 있습니다.'};
+    if(this.revision>=4&&cmd.kind==='item'&&(cmd.item==='duel'||cmd.item==='debate')){
+      // 무력형 장수는 일기토, 지력형 장수는 설전만 한다(연의의 맞수 대결은 예외). 저장 기록 재생(replay)은 이 검사를 거치지 않는다.
+      const u=s.find(cmd.unit),e=s.find(cmd.target??''),kind=cmd.item;
+      if(u&&e&&!this.contestAllowed(u,e,kind)&&this.challengeAnswer(u,e,kind).reason!=='nameless'){
+        const mine=contestKindOf(u),name=(x:Unit)=>x.name.replace(/의?\s*환영$/,'');
+        return {ok:false,error:mine!==kind?`${은는(name(u))} ${mine==='duel'?'무력형이라 일기토':'지력형이라 설전'}만 겨룹니다.`:`${은는(name(e))} ${kind==='debate'?'무력형이라 설전에 응하지 않습니다. 일기토로 겨루세요.':'지력형이라 일기토에 응하지 않습니다. 설전으로 겨루세요.'}`};
+      }
+    }
     const result=this.execute(cmd);
     if(result.ok){this.checkpoints.push(this.journal.length);this.journal.push(structuredClone(cmd));}
     return result;
@@ -475,6 +484,21 @@ export class Session {
    * 일기토·설전 도전에 상대가 응하는가: 연의의 실제 대결은 반드시, 그 밖에는 성격·능력 차·부상에 따라.
    * 꿈속의 환영은 피하지 않는다(무모처럼 무엇이든 받는다). 화면 안내와 봇도 같은 판단을 쓴다.
    */
+  /** 이 짝이 이 대결을 할 수 있나: 연의의 맞수 대결이거나, 두 사람 모두 그 대결의 성향(무력형=일기토·지력형=설전)일 때. */
+  contestAllowed(u:Unit,enemy:Unit,kind:'duel'|'debate'){
+    const plain=(x:Unit)=>x.name.replace(/의?\s*환영$/,'');
+    if(historicPair(plain(u),plain(enemy))?.kind===kind)return true;
+    // S1-04 흉몽: 꿈속의 세 맞수(진궁·여포·주유)는 이야기로 정해진 대결이라 어느 쪽으로든 겨룬다(여포는 설전으로 꺾는 장).
+    if(this.state.stage.id==='S1-04'&&['chen_gong','lu_bu','zhou_yu'].includes(enemy.id))return true;
+    return contestKindOf(u)===kind&&contestKindOf(enemy)===kind;
+  }
+  /** 이 장수가 지금 걸 수 있는 대결 종류: 자기 성향 + 전장에 있는 연의 맞수와의 대결. */
+  contestKinds(u:Unit){
+    const kinds=new Set<'duel'|'debate'>();
+    for(const e of this.state.living('enemy'))for(const k of ['duel','debate'] as const)if(this.contestAllowed(u,e,k))kinds.add(k);
+    if(!kinds.size)kinds.add(contestKindOf(u));
+    return kinds;
+  }
   challengeAnswer(u:Unit,enemy:Unit,kind:'duel'|'debate'){
     const stat=(x:Unit)=>kind==='duel'?martialPower(x):debatePower(x),plain=(x:Unit)=>x.name.replace(/의?\s*환영$/,'');
     const temper=/환영$/.test(enemy.name)?'reckless' as const:temperOf(plain(enemy));

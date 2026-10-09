@@ -28,7 +28,7 @@ describe('전수 점검 수정',()=>{
   const me=st.get('sima_yi'),foe=st.get('meng_da');
   me.pos={x:foe.pos.x-1,y:foe.pos.y};if(st.unitAt(me.pos)!==me){me.pos={x:foe.pos.x+1,y:foe.pos.y};}
   me.hasMoved=false;me.hasActed=false;s.challengeAnswer=()=>({accept:true,line:'좋다.'});
-  expect(s.act({kind:'item',unit:'sima_yi',item:'duel',target:'meng_da'}).ok).toBe(true);
+  expect(s.act({kind:'item',unit:'sima_yi',item:'debate',target:'meng_da'}).ok).toBe(true); // 사마의-맹달은 연의의 설전 맞수
   for(let i=0;i<5;i++)expect(s.act({kind:'item',unit:'sima_yi',item:'duel-round:attack'}).ok).toBe(true);
   expect(s.activeDuel).toBeNull();
  });
@@ -64,5 +64,23 @@ describe('상편 앞 세 장은 소년 사마의 그림',()=>{
   expect(officerEntry({id:'sima_lang',name:'사마랑'})?.id).toBe('sima_lang');
   setStoryEra('S1-04');expect(who()).toBe('sima_yi');
   setStoryEra('S1-02');resetStoryEra();expect(who()).toBe('sima_yi');
+ });
+});
+
+describe('무력형은 일기토, 지력형은 설전 — 연의의 맞수는 예외',()=>{
+ it('성향이 맞지 않는 대결은 막고, 연의 맞수는 정해진 대결로 허용한다',async()=>{
+  const {Session,chapters}=await import('../src/session.ts');
+  const {historicPair}=await import('../src/duel.ts');
+  const ch=chapters.findIndex(c=>c.stage.id==='S2-05');
+  const s=new Session(ch,'normal',215,'survival',7,deployment(freshCampaign(),true)),st=s.state;
+  const me=st.get('sima_yi'),foe=st.get('meng_da');
+  expect(s.contestAllowed(me,foe,'debate')).toBe(true);   // 사마의-맹달: 연의의 설전 맞수(맹달은 무력형이지만 예외)
+  expect(s.contestAllowed(me,foe,'duel')).toBe(false);    // 지력형 사마의는 일기토를 걸지 못한다
+  const brute=st.living('enemy').find(e=>e.id!=='meng_da'&&!historicPair('사마의',e.name))!;
+  brute.stats.attack=90;brute.stats.intellect=1;
+  expect(s.contestAllowed(me,brute,'debate')).toBe(false); // 무력형은 설전에 응하지 않는다
+  expect(s.contestKinds(me).has('duel')).toBe(false);
+  expect(historicPair('장합','마초')?.kind).toBe('duel');
+  expect(historicPair('조진','제갈량')?.kind).toBe('debate');
  });
 });
