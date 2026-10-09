@@ -18,6 +18,7 @@ import {chapters,campaignOrder} from './session.ts';
 import {freshCampaign,award,deployment as campaignDeployment} from './progression.ts';
 import {tierOf,currentClass,type UnitClass,type BattleState} from '../../core/src/index.ts';
 import type {Deployment} from './progression.ts';
+import {을를} from './josa.ts';
 
 export interface RunHost {
   modal(html:string,closable?:boolean):void;
@@ -133,7 +134,7 @@ function showShop(host:RunHost,note=''){
   <p>원정이 끝날 때마다 천명을 얻는다: 오른 층 1 · 꺾은 우두머리 3 · 이긴 연의 전장 2 · 완주 10. 해금은 다음 원정부터 계속 적용된다.</p>${note?`<div class="run-news"><p>${esc(note)}</p></div>`:''}
   <div class="run-choices">${UNLOCKS.map(u=>{const own=meta.unlocks.includes(u.id);return `<button data-unlock="${u.id}" ${own||meta.mandate<u.cost?'disabled':''} class="${own?'owned':''}"><strong>${esc(u.name)} <small>${own?'해금됨':`천명 ${u.cost}`}</small></strong><small>${esc(u.effect)}</small></button>`;}).join('')}</div>
   <div class="run-actions"><button id="shop-back">← 반복 퀘스트</button></div></div>`,false);
-  document.querySelectorAll<HTMLButtonElement>('[data-unlock]').forEach(b=>b.onclick=()=>{const m=loadMeta();if(buyUnlock(m,b.dataset.unlock!)){saveMeta(m);showShop(host,`「${UNLOCKS.find(u=>u.id===b.dataset.unlock)!.name}」을(를) 해금했다.`);}});
+  document.querySelectorAll<HTMLButtonElement>('[data-unlock]').forEach(b=>b.onclick=()=>{const m=loadMeta();if(buyUnlock(m,b.dataset.unlock!)){saveMeta(m);showShop(host,`${을를(`「${UNLOCKS.find(u=>u.id===b.dataset.unlock)!.name}」`)} 해금했다.`);}});
   document.getElementById('shop-back')!.onclick=()=>showQuests(host);
 }
 

@@ -4,3 +4,4 @@ export const 을를=(word:string)=>word+(tail(word)?'을':'를');
 export const 이가=(word:string)=>word+(tail(word)?'이':'가');
 export const 은는=(word:string)=>word+(tail(word)?'은':'는');
 export const 으로=(word:string)=>{const t=tail(word);return word+(t&&t!==8?'으로':'로');};
+export const 과와=(word:string)=>word+(tail(word)?'과':'와');

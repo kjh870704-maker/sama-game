@@ -12,6 +12,7 @@ import {bustFace,displayName} from './faces.ts';
 import {pxStyle,type PxDir,type PxPose} from './story-pixel.ts';
 import {figSheet,figArtFor,loadFigures,type FigArt} from './story-figure.ts';
 import {inkChoice} from './ink-choice.ts';
+import {을를,이가} from './josa.ts';
 
 /** 겉모습 → 병사 그림(시트·줄). 시트는 main.ts가 CSS 변수(--이름-atlas)로 올려 둔다. */
 const SPRITES:Record<Look,{sheet:string;rows:number;row:number;walk?:string}>={
@@ -349,7 +350,7 @@ export class Stage {
         for(const e of picked.effects??[])if((e.kind==='duel'||e.kind==='debate')&&hooks.onContest){
           const r=await hooks.onContest(e),who=e.by??st.choice;
           if(this.actors.has(e.foe))this.react(e.foe,r==='win'?'shake':'jolt');
-          await this.narrate(`${e.kind==='duel'?'일기토':'설전'} — ${r==='win'?`${who}이(가) ${e.foe}을(를) 꺾었다. 군의 사기가 오른다.`:r==='lose'?`${e.foe}에게 밀렸다. 분한 마음을 삼킨다.`:'승부가 나지 않았다.'}`);}
+          await this.narrate(`${e.kind==='duel'?'일기토':'설전'} — ${r==='win'?`${이가(who)} ${을를(e.foe)} 꺾었다. 군의 사기가 오른다.`:r==='lose'?`${e.foe}에게 밀렸다. 분한 마음을 삼킨다.`:'승부가 나지 않았다.'}`);}
       }
     }
   }

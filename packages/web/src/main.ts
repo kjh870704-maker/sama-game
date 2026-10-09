@@ -57,7 +57,7 @@ import {placeFor,bossNear} from './music.ts';
 import { unitEffectNotes, CONTROLLABLE, ignoresRough, awardedSeals, estimatePhysical, estimateStrategy, previewAttack, doubleAttackChance, criticalChance, manhattan, inReach, reachLabel,unitReachLabel, tierOf, familyOf, classTactics, STRATEGY_TIER_NAMES } from '../../core/src/index.ts';
 import type { BattleState, Command, Coord, LogEntry, TerrainKind, Unit } from '../../core/src/index.ts';
 import {strategyIconUrl} from './strategy-icons.ts';
-import {을를} from './josa.ts';
+import {과와,을를} from './josa.ts';
 
 const $=<T extends HTMLElement=HTMLElement>(selector:string)=>document.querySelector<T>(selector)!;
 const esc=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
@@ -560,7 +560,7 @@ function encounterCheck(){
 }
 function showEncounter(u:Unit,e:Unit,d:number){
   const el=$('#encounter'),s=session.state;
-  el.innerHTML=`<div class="enc-faces"><span>${faceFor(u)}</span><b>VS</b><span>${faceFor(e)}</span></div><p><b>${unitName(e)}</b>와(과) 마주쳤다!<small>${unitName(u)} · 대결 무력 ${martialPower(u)} 설전 지력 ${debatePower(u)} ↔ ${unitName(e)} · 대결 무력 ${martialPower(e)} 설전 지력 ${debatePower(e)}</small></p>
+  el.innerHTML=`<div class="enc-faces"><span>${faceFor(u)}</span><b>VS</b><span>${faceFor(e)}</span></div><p><b>${unitName(e)}</b>${과와(unitName(e)).slice(-1)} 마주쳤다!<small>${unitName(u)} · 대결 무력 ${martialPower(u)} 설전 지력 ${debatePower(u)} ↔ ${unitName(e)} · 대결 무력 ${martialPower(e)} 설전 지력 ${debatePower(e)}</small></p>
     <div class="enc-acts"><button data-enc="duel" ${d>1?'disabled title="붙어 서야 일기토를 청할 수 있다"':''}>⚔ 일기토${d>1?' (붙어서)':''}</button><button data-enc="debate">✒ 설전</button><button data-enc="pass">지나간다</button></div>`;
   el.hidden=false;sound.event({kind:'duel',critical:false});
   el.querySelectorAll<HTMLButtonElement>('[data-enc]').forEach(b=>b.onclick=()=>{el.hidden=true;const k=b.dataset.enc!;if(k==='pass'){render();return;}

@@ -31,7 +31,7 @@ import {deploymentPerks} from './officer-perks.ts';
 import {showResearch} from './research-ui.ts';
 import {classTactics,evolvedClass,tierOf,familyOf,type BattleState,type UnitClass} from '../../core/src/index.ts';
 import type {ChapterScript,ChoiceEffect,Look,Scene,Camp} from './scenario-types.ts';
-import {을를,으로} from './josa.ts';
+import {과와,으로,은는,을를,이가} from './josa.ts';
 
 export interface ScenarioHost {
   modal(html:string,closable?:boolean):void;
@@ -297,7 +297,7 @@ export function showIfPrep(host:ScenarioHost,state:ScenarioState,step:ScenarioSt
   <span class="prep-diff"><label><input type="radio" name="if-diff" value="normal" ${difficulty==='normal'?'checked':''}> 일반</label><label><input type="radio" name="if-diff" value="extreme" ${difficulty==='extreme'?'checked':''}> 극한 · 적 +2레벨 · 출진 코스트 제한 · 경험치 ×1.3</label></span></div>
   ${state.run?.relics.length?`<div class="run-relic-strip"><b class="muted">회차 보물 · 전원 적용</b>${state.run.relics.map(id=>RELICS.find(r=>r.id===id)).filter(Boolean).map(r=>`<span class="run-relic-card"><b>${esc(r!.name)}</b><small>${esc(r!.effect)}</small></span>`).join('')}</div>`:''}
   ${romanceByName(foe.name)?(()=>{const c=contestOf(state,step),team=['사마의',...required,...sel],best=(k:'war'|'int')=>team.slice().sort((a,b)=>(romanceByName(b)?.[k]??0)-(romanceByName(a)?.[k]??0))[0]!;
-    return `<div class="prep-contest"><span class="prep-contest-face">${cardFace(foe.name)}</span><div><b>적장 ${esc(foe.name)}과(와) 마주했다</b><small>${c?`${c.kind==='duel'?'일기토':'설전'} ${c.result==='win'?'승리 — 이번 전투 사기 상승'+(c.kind==='duel'?' · 적 기세 꺾임(체력 80%)':' · 책략 MP +15'):c.result==='lose'?'패배':'무승부'}`:'싸우기 전에 겨뤄 볼 수 있다. 이기면 이번 전투가 유리해진다(한 장에 한 번).'}</small></div>${c?'':`<button data-contest="duel" data-by="${esc(best('war'))}">⚔ 일기토 · ${esc(best('war'))}</button><button data-contest="debate" data-by="${esc(best('int'))}">✒ 설전 · ${esc(best('int'))}</button>`}</div>`;})():''}
+    return `<div class="prep-contest"><span class="prep-contest-face">${cardFace(foe.name)}</span><div><b>적장 ${과와(esc(foe.name))} 마주했다</b><small>${c?`${c.kind==='duel'?'일기토':'설전'} ${c.result==='win'?'승리 — 이번 전투 사기 상승'+(c.kind==='duel'?' · 적 기세 꺾임(체력 80%)':' · 책략 MP +15'):c.result==='lose'?'패배':'무승부'}`:'싸우기 전에 겨뤄 볼 수 있다. 이기면 이번 전투가 유리해진다(한 장에 한 번).'}</small></div>${c?'':`<button data-contest="duel" data-by="${esc(best('war'))}">⚔ 일기토 · ${esc(best('war'))}</button><button data-contest="debate" data-by="${esc(best('int'))}">✒ 설전 · ${esc(best('int'))}</button>`}</div>`;})():''}
   ${modsText(mods).length?`<p class="prep-mods"><b>대사 선택의 효과</b> ${esc(modsText(mods).join(' · '))}</p>`:''}
   <div class="prep-body"><div class="prep-list">${card('사마의')}${required.map(card).join('')}${optional.map(card).join('')}</div>
   <div class="prep-detail"><div class="prep-portrait">${portraitImage(f)?`<span class="prep-sprite big prep-face">${cardFace(f)}</span>`:`<span class="prep-sprite big prep-troop">${classSprite(c)}</span>`}<div><h3>${esc(f)}</h3><p>${esc(classNames[c]??c)} · Lv.${u.level} · 경험치 ${u.xp}/${XP_PER_LEVEL}</p>${r?`<p class="muted">${esc(r.epithet)}</p>`:''}</div></div>
@@ -352,8 +352,8 @@ export async function finishIfBattle(host:ScenarioHost,state:BattleState,deploym
     const level=Math.max(1,Math.round(ref.party.reduce((a,u)=>a+u.level,0)/Math.max(1,ref.party.length))-1);
     const tryIt=await captiveChoice(host,foe.name,foe.unitClass);
     if(tryIt){const ok=await persuadeOfficer(host,foe.name,foe.unitClass,runSeed(sc,step.id+'#captive'));const st=loadScenario();
-      if(ok&&joinCaptive(st,foe.name,foe.unitClass,level)){saveScenario(st);news.push(`${foe.name}이(가) 설득에 응해 사마의의 부대에 들어왔다.`);}else news.push(`${foe.name}은(는) 끝내 고개를 숙이지 않았다. 사마의는 그를 놓아 보냈다.`);}
-    else news.push(`${foe.name}을(를) 놓아 보냈다.`);
+      if(ok&&joinCaptive(st,foe.name,foe.unitClass,level)){saveScenario(st);news.push(`${이가(foe.name)} 설득에 응해 사마의의 부대에 들어왔다.`);}else news.push(`${은는(foe.name)} 끝내 고개를 숙이지 않았다. 사마의는 그를 놓아 보냈다.`);}
+    else news.push(`${을를(foe.name)} 놓아 보냈다.`);
   }
   news.push(...await battleSpoils(host,step,state));
   await afterVictory(host,sc,step,news);
@@ -375,7 +375,7 @@ export async function finishStoryBattle(host:ScenarioHost,chapterId:string,victo
 /** 붙잡은 적장을 설득할지 묻는다. */
 function captiveChoice(host:ScenarioHost,name:string,unitClass:UnitClass){
   const r=romanceByName(name),t=temperOf(name);
-  return new Promise<boolean>(done=>{host.modal(`<div class="briefing run-screen"><div class="eyebrow">가상 시나리오 · 붙잡은 적장</div><h2>${esc(name)}이(가) 붙잡혔다</h2>
+  return new Promise<boolean>(done=>{host.modal(`<div class="briefing run-screen"><div class="eyebrow">가상 시나리오 · 붙잡은 적장</div><h2>${이가(esc(name))} 붙잡혔다</h2>
     <p>${r?esc(r.epithet)+' · ':''}${esc(classNames[unitClass]??unitClass)}${r?` · ${esc(romanceStats(name))}`:''}${t?` · 성격 ${temperNames[t]}`:''}</p>
     <p class="muted">설득하면 사마의의 부대에 들어온다. 마음이 움직이지 않으면 놓아 보낸다.</p>
     <div class="run-actions"><button class="primary" id="cap-talk">설득한다 ▶</button><button id="cap-free">놓아 보낸다</button></div></div>`,false);
@@ -435,8 +435,8 @@ function pickMarch(host:ScenarioHost,after:string,node:MarchNode){
   if(node.kind==='training'){const party=scenarioParty(state,hero.level,hero.xp),news=rewardOfficers(state,party,{},100);news.push(...host.addHeroXp(80));return done(news);}
   if(node.kind==='recruit'){const offer=recruitOffer(state,after);if(!offer.length)return done(['맞아들일 사람이 없었다.']);
     return choiceScreen(host,inWhatIf(state)?'모병소 · 누구를 설득할까 (가상 시나리오 — 설득해야 합류)':'모병소 · 누구를 맞아들일까',offer.map(o=>({title:`${o.name} (${classNames[o.unitClass]??o.unitClass})`,detail:`${romanceStats(o.name)??''}${temperOf(o.name)?` · 성격 ${temperNames[temperOf(o.name)!]}`:''}`})),i=>{const o=offer[i]!;
-      if(!inWhatIf(state)){recruitOfficer(state,o.name,hero.level+recruitBonus(meta),meta.unlocks.includes('elite_recruits'));return done([`${o.name}이(가) 사마의의 부대에 들어왔다.`]);}
-      void persuadeOfficer(host,o.name,o.unitClass,run.seed^hashSeed(after)).then(ok=>{if(ok){recruitOfficer(state,o.name,hero.level+recruitBonus(meta),meta.unlocks.includes('elite_recruits'));done([`${o.name}이(가) 설득에 응해 사마의의 부대에 들어왔다.`]);}else done([`${o.name}은(는) 이번엔 거절하고 떠났다. 다른 길목에서 다시 만날 수 있다.`]);});});}
+      if(!inWhatIf(state)){recruitOfficer(state,o.name,hero.level+recruitBonus(meta),meta.unlocks.includes('elite_recruits'));return done([`${이가(o.name)} 사마의의 부대에 들어왔다.`]);}
+      void persuadeOfficer(host,o.name,o.unitClass,run.seed^hashSeed(after)).then(ok=>{if(ok){recruitOfficer(state,o.name,hero.level+recruitBonus(meta),meta.unlocks.includes('elite_recruits'));done([`${이가(o.name)} 설득에 응해 사마의의 부대에 들어왔다.`]);}else done([`${은는(o.name)} 이번엔 거절하고 떠났다. 다른 길목에서 다시 만날 수 있다.`]);});});}
   if(node.kind==='treasure'){const offer=relicOffer(state,after);if(!offer.length)return done(['보물고는 비어 있었다.']);
     return choiceScreen(host,'보물고 · 무엇을 들고 갈까',offer.map(r=>({title:r.name,detail:r.effect})),i=>{run.relics.push(offer[i]!.id);done([`보물 ${을를(`「${offer[i]!.name}」`)} 얻었다.`]);});}
   run.march=node.kind;saveScenario(state);launchMarch(host,state,after,node.kind);
@@ -445,7 +445,7 @@ function pickMarch(host:ScenarioHost,after:string,node:MarchNode){
 function battleSpoils(host:ScenarioHost,step:ScenarioStep,battle:BattleState):Promise<string[]>{
   const sc=loadScenario(),out:string[]=[];if(!sc.run)return Promise.resolve(out);
   const om=omenOf(sc,step.id),got=omenReward(om,{turn:battle.turn,lost:battle.losses.player});
-  if(om?.goal){if(got){addRunBonus(sc,got);out.push(`전황 「${om.name}」 달성 — 천명 +${got}`);}else out.push(`전황 「${om.name}」을(를) 이루지 못했다.`);}
+  if(om?.goal){if(got){addRunBonus(sc,got);out.push(`전황 「${om.name}」 달성 — 천명 +${got}`);}else out.push(`전황 ${을를(`「${om.name}」`)} 이루지 못했다.`);}
   saveScenario(sc);
   const relic=relicOffer(sc,step.id+'#spoils',1)[0],wounded=Object.values(sc.run.hp).some(v=>v<1),h=host.hero();
   const items:Array<{title:string;detail:string;take:(st:ScenarioState)=>string}>=[
@@ -486,7 +486,7 @@ async function finishMarchBattle(host:ScenarioHost,battle:BattleState,deployment
   delete state.run!.march;saveScenario(state);
   const relics=relicOffer(state,after+'#win',kind==='elite'?3:1),recruits=kind==='elite'?[]:recruitOffer(state,after+'#win',1);
   const items=[...relics.map(r=>({title:`보물 · ${r.name}`,detail:r.effect,take:()=>{state.run!.relics.push(r.id);return `보물 ${을를(`「${r.name}」`)} 얻었다.`;}})),
-    ...recruits.map(o=>({title:`${inWhatIf(state)?'장수 설득':'장수 영입'} · ${o.name} (${classNames[o.unitClass]??o.unitClass})`,detail:`${romanceStats(o.name)??''}${inWhatIf(state)?' · 설득에 성공하면 합류':''}`,take:async()=>{const ok=!inWhatIf(state)||await persuadeOfficer(host,o.name,o.unitClass,state.run!.seed^hashSeed(after+'#win'));if(!ok)return `${o.name}은(는) 이번엔 거절하고 떠났다.`;recruitOfficer(state,o.name,host.hero().level+recruitBonus(loadMeta()),loadMeta().unlocks.includes('elite_recruits'));return `${o.name}이(가) 부대에 들어왔다.`;}})),
+    ...recruits.map(o=>({title:`${inWhatIf(state)?'장수 설득':'장수 영입'} · ${o.name} (${classNames[o.unitClass]??o.unitClass})`,detail:`${romanceStats(o.name)??''}${inWhatIf(state)?' · 설득에 성공하면 합류':''}`,take:async()=>{const ok=!inWhatIf(state)||await persuadeOfficer(host,o.name,o.unitClass,state.run!.seed^hashSeed(after+'#win'));if(!ok)return `${은는(o.name)} 이번엔 거절하고 떠났다.`;recruitOfficer(state,o.name,host.hero().level+recruitBonus(loadMeta()),loadMeta().unlocks.includes('elite_recruits'));return `${이가(o.name)} 부대에 들어왔다.`;}})),
     ...(kind==='elite'?[]:[{title:'휴식',detail:'사마의와 장수들의 체력 40% 회복',take:()=>{healAll(state,.4*restMult(loadMeta()));return '잠시 쉬며 숨을 골랐다.';}}])];
   if(!items.length){finishMarch(state,after);saveScenario(state);return marchResult(host,'행군 전투 승리',news);}
   choiceScreen(host,`행군 전투 승리 · 보상 하나`,items,i=>{void Promise.resolve(items[i]!.take()).then(line=>{news.push(line);finishMarch(state,after);saveScenario(state);marchResult(host,'행군 전투 승리',news);});});

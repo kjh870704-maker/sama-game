@@ -31,6 +31,7 @@ import {perkText,classTraitSummary} from './perks.ts';
 import {skillParam} from './romance.ts';
 import {perkSlots,gateText} from './research.ts';
 import {CHU,HAN,isChuHan,legacyOf,legacyState,legacyText,unlockLegacy,chooseHeir} from './chuhan.ts';
+import {은는,을를} from './josa.ts';
 
 export interface CodexHost {modal(html:string,closable?:boolean):void;toast(text:string):void;back():void;research?():void}
 const esc=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
@@ -51,7 +52,7 @@ export const codexFace=cardFace;
 export function biography(name:string){
   const b=bioOf(name);if(b)return b;
   const c=customList().find(o=>o.name===name);
-  if(c)return `${c.name}은(는) 『삼국지연의』에 이름이 없는, 이 이야기에서 새로 일어선 인물이다. 사람들은 그를 「${c.epithet||'이름 없는 장수'}」라 불렀다. ${temperNames[c.temper]}한 성품으로 ${classNames[c.unitClass]??c.unitClass}을(를) 이끌었고, 그 행적은 이제부터 쓰인다.`;
+  if(c)return `${은는(c.name)} 『삼국지연의』에 이름이 없는, 이 이야기에서 새로 일어선 인물이다. 사람들은 그를 「${c.epithet||'이름 없는 장수'}」라 불렀다. ${temperNames[c.temper]}한 성품으로 ${을를(classNames[c.unitClass]??c.unitClass)} 이끌었고, 그 행적은 이제부터 쓰인다.`;
   const r=romanceByName(name);return r?`${name} — ${r.epithet}. 자세한 행적은 전하지 않는다.`:'';
 }
 const STAT_ROWS:Array<[keyof NonNullable<ReturnType<typeof romanceByName>>,string]>=[['war','무력'],['int','지력'],['lead','통솔'],['pol','정치'],['cha','매력']];

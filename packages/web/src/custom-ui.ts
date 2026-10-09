@@ -13,6 +13,7 @@ import {spriteStyle} from './story-stage.ts';
 import type {Look} from './scenario-types.ts';
 import {setPortraitImage,portraitImage,removePortraitImage,isUploaded,PRESET_PORTRAITS,presetPortraitURL,type PresetPortrait} from './portrait-images.ts';
 import {PORTRAIT_PARTS,PORTRAIT_KEYS,portraitURL,suggestPortrait,type PortraitSpec} from './portrait.ts';
+import {을를} from './josa.ts';
 const PART_NAMES:Record<string,string>={face:'얼굴형',skin:'피부',eyes:'눈매',brows:'눈썹',mouth:'입',beard:'수염',hair:'머리색',hat:'머리·관모',robe:'옷 색',armor:'갑옷',item:'소품',bg:'배경',age:'나이',mark:'흉터'};
 
 export interface CustomHost {modal(html:string,closable?:boolean):void;toast(text:string):void}
@@ -62,7 +63,7 @@ export function showCustomEditor(host:CustomHost,back:()=>void,editing?:number,d
     // 다시 저장할 때 자기 이름이 장수록에 있는 것은 괜찮다: 잠시 내려 두고 검사한다.
     registerCustoms(list.filter((_,i)=>i!==editing));const bad=checkCustom(o,others);registerCustoms(list);
     if(bad){err.textContent=bad;return;}
-    const next=[...list];if(editing!==undefined)next[editing]=o;else next.push(o);saveCustoms(next);host.toast(`신장수 ${o.name}을(를) ${editing!==undefined?'고쳤다':'만들었다'}.`);showCustomEditor(host,back);});
+    const next=[...list];if(editing!==undefined)next[editing]=o;else next.push(o);saveCustoms(next);host.toast(`신장수 ${을를(o.name)} ${editing!==undefined?'고쳤다':'만들었다'}.`);showCustomEditor(host,back);});
   document.querySelectorAll<HTMLButtonElement>('[data-edit]').forEach(b=>b.onclick=()=>showCustomEditor(host,back,Number(b.dataset.edit)));
   document.getElementById('cu-new')!.onclick=()=>showCustomEditor(host,back);
   document.getElementById('cu-back')!.onclick=back;

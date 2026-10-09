@@ -1,7 +1,7 @@
 import {describe,it,expect} from 'vitest';
 import {Session,chapters} from '../src/session.ts';
 import {freshCampaign,deployment} from '../src/progression.ts';
-import {을를,으로} from '../src/josa.ts';
+import {을를,으로,이가,과와} from '../src/josa.ts';
 import {factionText} from '../src/fate.ts';
 import {romanceByName} from '../src/romance.ts';
 import {makeUnit} from '../../core/src/index.ts';
@@ -16,6 +16,7 @@ describe('전수 점검 수정',()=>{
   expect(으로('「길을 고르는 자」')).toBe('「길을 고르는 자」로');
   expect(으로('「피난의 연속」')).toBe('「피난의 연속」으로');
   expect(으로('「길」')).toBe('「길」로');
+  expect(이가('조운')+' '+이가('사마의')+' '+과와('맹달')+' '+과와('관우')).toBe('조운이 사마의가 맹달과 관우와');
   expect(factionText('{세력}을 세운다 · {세력}은 · {세력}이 · {세력}으로','위나라')).toBe('위나라를 세운다 · 위나라는 · 위나라가 · 위나라로');
   expect(factionText('{세력}을 · {세력}으로','진')).toBe('진을 · 진으로');
  });
