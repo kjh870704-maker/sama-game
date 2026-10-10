@@ -11,6 +11,7 @@ import { Application, CanvasSource, Container, Graphics, Rectangle, Sprite, Text
 import {terrainLayer,loadBattleTextures} from './terrain.ts';
 import {BattleFx,type Element} from './battle-fx.ts';
 import {stageRules} from './stage-rules.ts';
+import {goalMarks} from './battle-conditions.ts';
 import {factionOf,officerLook} from './officer-art.ts';
 import {romanceOf} from './romance.ts';
 import {crispZoom,groundScaleMode,unitTint} from './pixel-look.ts';
@@ -31,6 +32,8 @@ export {classNames} from './troops.ts';
 import {classNames} from './troops.ts';
 export function unitName(u:Unit){return classNames[u.name]??u.name;}
 function iso(c:Coord){return {x:c.x*W+W/2,y:c.y*H+H/2};}
+/** 목표 종류별 색: 탈출 청록, 도착 노랑, 점령 주황. */
+const goalColor=(k:string)=>k==='capture'?0xffb04a:k==='escape'?0x6ff5c8:0xffe27a;
 /** A named officer on the field: a victory/defeat target or someone with a known allegiance. */
 function isCommander(state:BattleState,u:Unit){return [...state.victory,...state.defeat].some(c=>c.type==='retreat'&&c.unit===u.id)||factionOf(u.name)!==undefined;}
 function diamond(g:Graphics,x:number,y:number,color:number,alpha=1){return g.rect(x-W/2,y-H/2,W,H).fill({color,alpha});}
@@ -289,12 +292,18 @@ export class Battlefield {
   flashGoals(goals:readonly {cells:readonly Coord[];kind:string;label:string}[],onShow?:()=>void,ms=6000){
     this.goalFx?.destroy({children:true});this.goalFx=undefined;this.goalCells=[];
     if(!this.state||!goals.length)return;this.goalCells=goals.flatMap(goal=>goal.cells);
-    const color=(k:string)=>k==='capture'?0xffb04a:k==='escape'?0x6ff5c8:0xffe27a;
+    const color=goalColor;
     const item=new Container();item.zIndex=900;const g=new Graphics();item.addChild(g);
     const tags=goals.map(goal=>{
       const top=Math.min(...goal.cells.map(c=>c.y)),row=goal.cells.filter(c=>c.y===top),cx=row.reduce((n,c)=>n+c.x,0)/row.length;
       const text=new Text({text:`${goal.label}\n▼`,style:{fontFamily:'Malgun Gothic',fontSize:16,fontWeight:'800',fill:color(goal.kind),align:'center',lineHeight:18,stroke:{color:0x10180f,width:5}}});
       text.anchor.set(.5,1);text.scale.set(Math.max(1,1/this.zoom));// 작은 화면에서도 글자가 16px 아래로 줄지 않게
+      // 지도 위쪽 끝(4줄 안)의 목표는 이름표가 잘리거나 작은 지도에 가리므로 칸 아래에 단다(화살표도 위를 가리킨다).
+      const above=top>=4||Math.max(...goal.cells.map(c=>c.y))>=this.state!.map.height-4;
+      if(!above){// 칸 옆, 지도 안쪽으로(아래는 대사 상자·장수 카드가 덮는다)
+        const xs=goal.cells.map(c=>c.x),ys=goal.cells.map(c=>c.y),midY=(Math.min(...ys)+Math.max(...ys)+1)/2*H,left=(Math.min(...xs)+Math.max(...xs))/2>this.state!.map.width/2;
+        text.text=goal.label.split('\n').map((l,i)=>i?l:left?`${l} ▶`:`◀ ${l}`).join('\n');text.style.align=left?'right':'left';text.anchor.set(left?1:0,.5);
+        const at={x:left?Math.min(...xs)*W-6:(Math.max(...xs)+1)*W+6,y:midY};text.position.set(at.x,at.y);item.addChild(text);return {text,at,side:true};}
       const at={x:(cx+.5)*W,y:top*H-20};text.position.set(at.x,at.y);item.addChild(text);return {text,at};
     });
     this.effects.addChild(item);this.goalFx=item;
@@ -302,7 +311,7 @@ export class Battlefield {
     const tick=()=>{if(item.destroyed){this.app.ticker.remove(tick);return;}
       born||=performance.now();const age=performance.now()-born,s=age/1000,on=this.reduced?1:.5+.5*Math.cos(s*Math.PI*2*1.4);
       g.clear();for(const goal of goals){const c=color(goal.kind);for(const at of goal.cells){const p=iso(at);diamond(g,p.x,p.y,c,.12+.38*on).stroke({color:c,width:3,alpha:.45+.55*on});}}
-      for(const {text,at} of tags)text.y=at.y-(this.reduced?0:Math.abs(Math.sin(s*Math.PI*1.4))*8);
+      for(const t of tags){const bob=this.reduced?0:Math.abs(Math.sin(s*Math.PI*1.4))*8;if('side' in t)t.text.x=t.at.x+(t.text.anchor.x?bob:-bob);else t.text.y=t.at.y-bob;}
       item.alpha=age<ms-fade?1:Math.max(0,(ms-age)/fade);
       if(age>=ms){this.app.ticker.remove(tick);item.destroy({children:true});if(this.goalFx===item){this.goalFx=undefined;onShow?.();}}};
     this.app.ticker.add(tick);
@@ -444,6 +453,8 @@ export class Battlefield {
     }
     if(!this.busy){
       for(const [id,actor] of this.actors)if(!state.find(id)?.alive){actor.piece.destroy({children:true});actor.name?.destroy();this.actors.delete(id);}
+      // 탈출·도착해야 하는 장수: 이름표에 '탈출'·'도착'을 붙이고 발밑에 같은 색 고리를 둔다(누가 가야 하는지 늘 보이게).
+      const carriers=new Map<string,string>();for(const m of goalMarks(state))for(const id of m.who)if(!carriers.has(id))carriers.set(id,m.kind);
       for(const unit of state.living()){
         let actor=this.actors.get(unit.id);
         if(!actor){
@@ -468,11 +479,18 @@ export class Battlefield {
         actor.sprite.texture=this.unitTexture(unit,this.facing.get(unit.id)??0);actor.sprite.alpha=1;actor.sprite.tint=unitTint(unit);
         for(const child of actor.piece.children.filter(c=>c.label==='hud'))child.destroy();actor.name?.destroy();actor.name=undefined;
         const bar=new Graphics();if(unit.id===selected||unit.id==='rescue_target'||unit.id==='convoy_trial')bar.ellipse(0,7,22,10).stroke({color:0xffe9aa,width:2});
+        const goalKind=carriers.get(unit.id);if(goalKind)bar.ellipse(0,7,26,12).stroke({color:goalColor(goalKind),width:2.5,alpha:.95});
+        if(goalKind){const tag=new Text({text:goalKind==='escape'?'탈출':'도착',style:{fontFamily:'Malgun Gothic',fontSize:11,fontWeight:'800',fill:0x10180f,padding:2}});tag.anchor.set(.5,1);
+          const chip=new Graphics().roundRect(-tag.width/2-5,-tag.height-2,tag.width+10,tag.height+3,6).fill({color:goalColor(goalKind),alpha:.95}).stroke({color:0x10180f,width:1.5});
+          const badge=new Container();badge.addChild(chip,tag);badge.y=-60;badge.label='hud';actor.piece.addChild(badge);}
         const ratio=Math.max(0,unit.hp/unit.stats.maxHp);bar.rect(-18,12,36,7).fill(0x0d1310).rect(-17,13,34,5).fill(0x40312a).rect(-17,13,Math.round(34*ratio),5).fill(ratio<.3?0xf06a4f:sides[unit.side]).rect(-17,13,Math.round(34*ratio),1).fill({color:0xffffff,alpha:.35});
         // Evolved troops (tier 2/3) wear gold rank diamonds beside the health bar.
         for(let t=1;t<tierOf(unit.unitClass);t++){const x=-25,y=15-(t-1)*8;bar.poly([x,y-4,x+3.5,y,x,y+4,x-3.5,y]).fill(0xe8c06a).stroke({color:0x2a1d0b,width:1.2});}
         bar.label='hud';actor.piece.addChild(bar);
         if(structureKind(unit.id)){const hp=new Text({text:unit.hp+'/'+unit.stats.maxHp,style:{fontFamily:'Malgun Gothic',fontSize:10,fontWeight:'700',fill:unit.hp<unit.stats.maxHp*.35?0xffa58a:0xfff1cf,stroke:{color:0x16130f,width:3}}});hp.anchor.set(.5,0);hp.y=20;hp.label='hud';actor.piece.addChild(hp);}
+        else if(goalKind){
+          const name=new Text({text:unitName(unit),style:{fontFamily:'Malgun Gothic',fontSize:11,fontWeight:'800',fill:goalColor(goalKind),stroke:{color:0x0d1411,width:3}}});name.anchor.set(.5,0);name.position.set(actor.piece.x,actor.piece.y+20);actor.name=name;this.labels.addChild(name);
+        }
         else if(unit.id===selected||unit.side==='player'||['rescue_target','convoy_trial'].includes(unit.id)||isCommander(state,unit)){
           // Named commanders (targets, protected officers) carry their name so they stand out from the rank and file.
           const foe=unit.side==='enemy'&&unit.id!==selected;

@@ -6,7 +6,7 @@ import {winText} from '../src/battle-conditions.ts';
 const at=(id:string)=>new Session(chapters.findIndex(c=>c.stage.id===id),'normal',215,'survival',5,deployment(freshCampaign(),true)).conditions;
 describe('승리·패배 조건을 실제 판정 조건에서 만든다',()=>{
  it('차례로 해야 하는 승리 조건과 모두 잃어야 지는 패배 조건',()=>{
-  const s102=at('S1-02');expect(s102.win[0]).toBe('사마의·사마랑이 모두 남문에 도달 → 남문 통행료 협상 대화(둘이 함께 남문에 서면 바로 나옴 · 1,000전) 마치기 (차례로)');
+  const s102=at('S1-02');expect(s102.win[0]).toBe('사마의·사마랑이 모두 남문까지 탈출 → 남문 통행료 협상 대화(둘이 함께 남문에 서면 바로 나옴 · 1,000전) 마치기 (차례로)');
   expect(s102.lose).toEqual(expect.arrayContaining(['사마의 퇴각','사마랑 퇴각']));
   const s105=at('S1-05');expect(s105.win).toEqual(['군량 수송대가 호송 목적지에 도달','부상병 수송대가 호송 목적지에 도달']);
   expect(s105.lose).toContain('군량 수송대·부상병 수송대 모두 퇴각');

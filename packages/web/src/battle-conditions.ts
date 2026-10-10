@@ -8,7 +8,8 @@
 import type {BattleState,Coord,StageDef,VictoryCondition} from '../../core/src/index.ts';
 import {evaluate} from '../../core/src/index.ts';
 import {stageRules,subject} from './stage-rules.ts';
-import {classNames} from './battlefield.ts';
+import {classNames} from './troops.ts';
+import {isEscapeRegion} from './stretch.ts';
 
 /** 목표 지역의 이름(규칙표 라벨이 없을 때). */
 const REGION_NAMES:Record<string,string>={
@@ -27,16 +28,20 @@ const DIALOGUE_NAMES:Record<string,string>={
 const LATE_NAMES:Record<string,string>={lu_bu:'여포의 환영',zhou_yu:'주유의 환영',chen_gong:'진궁의 환영'};
 const SIDE_NAMES:Record<string,string>={player:'아군',ally:'편입 아군',allyAi:'우군',enemy:'적',npc:'우군'};
 
+/** 전장마다 다른 출구 이름(지도에 쓰인 이름과 같게). */
+const STAGE_REGION_NAMES:Record<string,Record<string,string>>={
+  'S1-09':{exit:'야곡 출구'},'S1-10':{exit:'북쪽 고개'},'S2-13':{exit:'서쪽 출구'},'S3-05':{exit:'동남쪽 출구'},
+};
 function regionName(stage:StageDef,id:string|undefined){
   if(!id)return '목표 지점';
-  return stageRules[stage.id]?.labels?.find(l=>l.region===id)?.text??REGION_NAMES[id]??'목표 지점';
+  return STAGE_REGION_NAMES[stage.id]?.[id]??stageRules[stage.id]?.labels?.find(l=>l.region===id)?.text??REGION_NAMES[id]??'목표 지점';
 }
 function line(state:BattleState,c:VictoryCondition,lose:boolean){
   // 병종 id로 적힌 조건(예: navy)은 그 병종의 아무 부대나.
   const name=(id?:string)=>{if(!id)return '';const u=state.find(id);if(u)return classNames[u.name]?`${classNames[u.name]} 부대`:u.name;return LATE_NAMES[id]??(classNames[id]?`${classNames[id]} 아무 부대`:id);};
   switch(c.type){
     case 'annihilate':return lose?`${SIDE_NAMES[c.side??'player']} 전멸`:`${SIDE_NAMES[c.side??'enemy']} 전멸`;
-    case 'reach':return `${subject(name(c.unit))} ${regionName(state.stage,c.target)}에 도달`;
+    case 'reach':return isEscapeRegion(c.target??'')?`${subject(name(c.unit))} ${regionName(state.stage,c.target)}까지 탈출`:`${subject(name(c.unit))} ${regionName(state.stage,c.target)}에 도달`;
     case 'capture':return c.by&&c.by!=='player'?`${subject(SIDE_NAMES[c.by]??'적')} ${regionName(state.stage,c.target)} 점령`:`${regionName(state.stage,c.target)} 점령(아군을 그 칸에 세우고 '거점 확보' 명령)`;
     case 'retreat':return lose?`${name(c.unit)} 퇴각`:`${name(c.unit)} 격퇴`;
     case 'survive_turns':return `${c.n??0}턴 동안 버티기`;
@@ -47,7 +52,7 @@ function line(state:BattleState,c:VictoryCondition,lose:boolean){
     case 'escort_survive':return `${name(c.unit)} 생존`;
   }
 }
-export type GoalMark={target:string;cells:Coord[];kind:'escape'|'reach'|'capture';label:string};
+export type GoalMark={target:string;cells:Coord[];kind:'escape'|'reach'|'capture';label:string;/** 그곳에 가야 하는 장수(아직 닿지 않은) */who:string[]};
 /**
  * 지도에서 깜박여 알려 줄 목표 지점: 아직 이루지 못한 도달(탈출·도착)과 아군 점령 지역.
  * 차례 목표(order)는 지금 단계의 것만 보인다.
@@ -61,9 +66,13 @@ export function goalMarks(state:BattleState):GoalMark[]{
     if(c.order!==undefined&&c.order!==step)continue;
     if(evaluate(state,c))continue;
     const cells=state.map.regionCoords(c.target);if(!cells.length)continue;
-    const kind=c.type==='capture'?'capture':/exit|gate|pass/.test(c.target)?'escape':'reach';
+    const kind=c.type==='capture'?'capture':isEscapeRegion(c.target)?'escape':'reach';
     const word=kind==='capture'?'점령':kind==='escape'?'탈출':'도착',name=regionName(state.stage,c.target);
-    out.push({target:c.target,cells:[...cells],kind,label:name.includes(word)?name:`${word} · ${name}`});
+    // 누가 가야 하는지: 이 지점을 목표로 둔 도달 조건 중 아직 닿지 않은 장수 전부(뒤 단계 포함).
+    const who=kind==='capture'?[]:state.victory.filter(v=>v.type==='reach'&&v.target===c.target&&(v.order===undefined||step===undefined||v.order>=step)&&!evaluate(state,v)).map(v=>v.unit!).filter((id,i,a)=>id&&a.indexOf(id)===i);
+    const names=who.map(id=>{const u=state.find(id);return u?(classNames[u.name]??u.name):classNames[id]?`${classNames[id]} 아무 부대`:id;});
+    const place=name.includes(word)?name:`${word} · ${name}`;
+    out.push({target:c.target,cells:[...cells],kind,label:names.length?`${names.join('·')} ${word}\n${name}`:place,who:who.filter(id=>!!state.find(id))});
   }
   return out;
 }
@@ -95,8 +104,8 @@ function group(state:BattleState,conds:readonly VictoryCondition[],lose:boolean)
     const cs=conds.filter(c=>c.order===orders[i]);
     if(!lose&&cs.length===1&&reachAll(cs)){let j=i;const run=[cs[0]!];
       while(j+1<orders.length){const next=conds.filter(c=>c.order===orders[j+1]);if(next.length!==1||!reachAll([...run,next[0]!]))break;run.push(next[0]!);j++;}
-      if(run.length>1){const all=run.every((c,k)=>done(i+k)||evaluate(state,c));steps.push(`${subject(who(run))} 모두 ${regionName(state.stage,run[0]!.target)}에 도달${all?' ✓':''}`);i=j;continue;}}
-    if(!lose&&cs.length>1&&reachAll(cs)){steps.push(tick(`${who(cs)} 중 한 명이 ${regionName(state.stage,cs[0]!.target)}에 도달${cs.some(c=>evaluate(state,c))?' ✓':''}`,i));continue;}
+      if(run.length>1){const all=run.every((c,k)=>done(i+k)||evaluate(state,c));steps.push(`${subject(who(run))} 모두 ${regionName(state.stage,run[0]!.target)}${isEscapeRegion(run[0]!.target??'')?'까지 탈출':'에 도달'}${all?' ✓':''}`);i=j;continue;}}
+    if(!lose&&cs.length>1&&reachAll(cs)){steps.push(tick(`${who(cs)} 중 한 명이 ${regionName(state.stage,cs[0]!.target)}${isEscapeRegion(cs[0]!.target??'')?'까지 탈출':'에 도달'}${cs.some(c=>evaluate(state,c))?' ✓':''}`,i));continue;}
     steps.push(tick(cs.map(say).join(' 또는 '),i));
   }
   const seq=steps.length<2?steps:[lose?`${steps.join('·')} 모두`:`${steps.join(' → ')} (차례로)`];
