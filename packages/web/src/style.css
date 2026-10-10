@@ -953,7 +953,8 @@ dialog:has(.story-scene){max-height:calc(100vh - 16px);max-height:calc(100dvh - 
   .battle-panel .map{flex:1 1 auto!important;height:auto!important;min-height:0!important}
   .map .compass,.map-legend{display:none!important}
   #tile-info{font-size:calc(12.5px*var(--fs,1))!important;bottom:4px!important}
-  .left-toggle{display:block!important;position:absolute;z-index:6;left:6px;top:4px;min-height:26px!important;padding:2px 8px!important;font-size:calc(13px*var(--fs,1))!important;background:#142520e6;border-color:#6a7a5c;color:#efe2c0}
+  .left-toggle{display:block!important;position:absolute;z-index:6;left:auto!important;right:112px;top:4px;min-height:26px!important;padding:2px 8px!important;font-size:calc(13px*var(--fs,1))!important;background:#142520e6;border-color:#6a7a5c;color:#efe2c0}
+  body.left-open .left-toggle{left:auto!important;right:112px!important}
   .battle-toolbar{padding:3px 6px!important;gap:4px!important}
   .battle-toolbar button{min-height:30px!important;padding:3px 8px!important;font-size:calc(13px*var(--fs,1))!important}
   .battle-toolbar button.primary{min-width:0!important;gap:8px!important}
