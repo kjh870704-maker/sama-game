@@ -472,8 +472,8 @@ function stackOverlays(){cancelAnimationFrame(stackFrame);stackFrame=requestAnim
     const a=hits();if(a){obj.classList.toggle('side-right');const b=hits();if(b>=a)obj.classList.toggle('side-right');
       if(Math.min(a,b)){if(objectiveBox.open)setObjectiveOpen(false);else obj.classList.add('goal-hide');}}}
 });}
-/** 목표 지점이 화면에 나온 때(카메라가 그쪽으로 간 뒤)와 깜박임이 끝난 때: 상자가 목표를 덮지 않게 다시 놓는다. */
-function showGoal(){stackOverlays();}
+/** 목표 지점이 화면에 나온 때·카메라가 돌아온 때·깜박임이 끝난 때: 상자가 목표·아군을 덮지 않게 다시 놓는다. */
+function showGoal(phase:'shown'|'back'|'end'){stackOverlays();if(phase==='back')keepUnitsClear(false);}// 돌아온 카메라가 아군을 상자 밑에 두지 않게
 /** 지도 위 상자(목표·장수 카드·명령 단추·첫 전투 안내·조작 단추)가 아군을 덮으면 카메라를 조금 밀어 꺼낸다.
  * 전투 시작에는 아군 전원, 장수를 고른 뒤에는 그 장수만 본다. 카메라는 지도 끝을 넘지 않는다. */
 let clearFrame=0;

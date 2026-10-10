@@ -279,7 +279,7 @@ export class Battlefield {
   private glide(to:{x:number;y:number},ms=450,done?:()=>void){
     // 시계는 첫 그림부터 잰다: 전장 그림을 올리느라 멈춘 동안 이동이 건너뛰지 않게.
     const token=++this.glideToken,from={...this.pan};let born=0;
-    const tick=()=>{if(token!==this.glideToken||!this.state||this.drag){this.app.ticker.remove(tick);return;}
+    const st=this.state,tick=()=>{if(token!==this.glideToken||!this.state||this.state!==st||this.drag){this.app.ticker.remove(tick);return;}
       born||=performance.now();const t=this.reduced?1:Math.min(1,(performance.now()-born)/ms),e=t<.5?2*t*t:1-(-2*t+2)**2/2;
       this.pan={x:from.x+(to.x-from.x)*e,y:from.y+(to.y-from.y)*e};this.fit();if(t>=1){this.app.ticker.remove(tick);done?.();}};
     this.app.ticker.add(tick);
@@ -287,9 +287,9 @@ export class Battlefield {
   /**
    * 목표 지점(탈출·도착·점령)을 전투 시작 때 몇 초 깜박여 어디로 가야 하는지 알린다.
    * 화면 밖이면 카메라가 잠시 그쪽을 비췄다가 원래 자리로 돌아온다(그사이 플레이어가 화면을 끌면 그대로 둔다).
-   * onShow는 목표가 화면에 나온 때와 깜박임이 끝난 때 부른다(지도 위 상자를 다시 놓는 데 쓴다).
+   * onShow는 목표가 화면에 나온 때('shown'), 카메라가 돌아온 때('back'), 깜박임이 끝난 때('end') 부른다(지도 위 상자를 다시 놓는 데 쓴다).
    */
-  flashGoals(goals:readonly {cells:readonly Coord[];kind:string;label:string}[],onShow?:()=>void,ms=6000){
+  flashGoals(goals:readonly {cells:readonly Coord[];kind:string;label:string}[],onShow?:(phase:'shown'|'back'|'end')=>void,ms=6000){
     this.goalFx?.destroy({children:true});this.goalFx=undefined;this.goalCells=[];
     if(!this.state||!goals.length)return;this.goalCells=goals.flatMap(goal=>goal.cells);
     const color=goalColor;
@@ -313,15 +313,16 @@ export class Battlefield {
       g.clear();for(const goal of goals){const c=color(goal.kind);for(const at of goal.cells){const p=iso(at);diamond(g,p.x,p.y,c,.12+.38*on).stroke({color:c,width:3,alpha:.45+.55*on});}}
       for(const t of tags){const bob=this.reduced?0:Math.abs(Math.sin(s*Math.PI*1.4))*8;if('side' in t)t.text.x=t.at.x+(t.text.anchor.x?bob:-bob);else t.text.y=t.at.y-bob;}
       item.alpha=age<ms-fade?1:Math.max(0,(ms-age)/fade);
-      if(age>=ms){this.app.ticker.remove(tick);item.destroy({children:true});if(this.goalFx===item){this.goalFx=undefined;onShow?.();}}};
+      if(age>=ms){this.app.ticker.remove(tick);item.destroy({children:true});if(this.goalFx===item){this.goalFx=undefined;onShow?.('end');}}};
     this.app.ticker.add(tick);
     // 목표가 화면 밖이면 잠깐 비춘다.
-    if(this.overview||this.busy){onShow?.();return;}// 전투 연출 중에는 카메라를 뺏지 않는다
+    if(this.overview||this.busy){onShow?.('shown');return;}// 전투 연출 중에는 카메라를 뺏지 않는다
     const cells=goals.flatMap(goal=>goal.cells),c={x:cells.reduce((n,a)=>n+a.x,0)/cells.length,y:cells.reduce((n,a)=>n+a.y,0)/cells.length};
     const p=this.world.toGlobal({x:(c.x+.5)*W,y:(c.y+.5)*H}),w=this.app.screen.width,h=this.app.screen.height;
-    if(p.x>=w*.12&&p.x<=w*.88&&p.y>=h*.15&&p.y<=h*.85){onShow?.();return;}
+    if(p.x>=w*.12&&p.x<=w*.88&&p.y>=h*.15&&p.y<=h*.85){onShow?.('shown');return;}
     const back={...this.pan};this.focus(c);const there={...this.pan};this.pan=back;this.fit();
-    this.glide(there,600,()=>{onShow?.();const token=this.glideToken;setTimeout(()=>{if(token===this.glideToken&&this.state)this.glide(back,600);},2600);});
+    const st=this.state;// 다른 전투로 넘어갔으면 돌아오지 않는다(앞 전투의 카메라가 새 전투를 끌고 가지 않게)
+    this.glide(there,600,()=>{onShow?.('shown');const token=this.glideToken;setTimeout(()=>{if(token===this.glideToken&&this.state===st)this.glide(back,600,()=>onShow?.('back'));},2600);});
   }
   focus(at:Coord){
     if(!this.state)return;
