@@ -7,12 +7,12 @@ const priorityDuelIds=['huang_zhong','zhao_yun','sun_quan','lu_meng','wei_yan','
 const secondaryDuelIds=['guan_yu','zhang_liao','zhang_he','xiahou_dun','jiang_wei','xiahou_yuan','xu_huang','cao_ren','liu_bei','cao_rui','yuan_tan','yuan_shang','gan_ning','huang_gai','zhu_rong','meng_huo','lu_su','pang_tong','xun_yu','wooden_zhuge'] as const;
 const secondaryFullIds=['gao_shou','guo_huai','dai_ling','zhang_zhao','zhuge_jin','zhang_ba','cao_xiu','cao_shuang'] as const;
 const secondaryBattle=[
-  ['gao_shou','bandit',1400,280],['guo_huai','archer',1400,280],['dai_ling','infantry',1120,224],['zhang_zhao','strategist',1120,224],
-  ['zhuge_jin','strategist',1120,224],['zhang_ba','cavalry',1400,280],['cao_xiu','cavalry',1400,280],['cao_shuang','cavalry',1400,280],
+  ['gao_shou','bandit',1120,224],['guo_huai','archer',1120,224],['dai_ling','infantry',1120,224],['zhang_zhao','strategist',1120,224],
+  ['zhuge_jin','strategist',1120,224],['zhang_ba','cavalry',1120,224],['cao_xiu','cavalry',1120,224],['cao_shuang','cavalry',1120,224],
 ] as const;
 const priorityBattle=[
   ['yang_ang','infantry',1120,224],['lu_fan','crossbow',1120,224],['sun_shao','crossbow',1120,224],['meng_da','infantry',1120,224],['ma_su','strategist',1120,224],['wang_ping','infantry',1120,224],
-  ['gao_xiang','infantry',1120,224],['meng_yan','cavalry',1400,280],['bi_yan','cavalry',1400,280],['zhu_ran','infantry',1120,224],['zhuge_ke','strategist',1120,224],['wang_ling','infantry',1120,224],
+  ['gao_xiang','infantry',1120,224],['meng_yan','cavalry',1120,224],['bi_yan','cavalry',1120,224],['zhu_ran','infantry',1120,224],['zhuge_ke','strategist',1120,224],['wang_ling','infantry',1120,224],
 ] as const;
 function webpSize(file:URL){
   const b=readFileSync(file),vp8x=b.indexOf(Buffer.from('VP8X'));

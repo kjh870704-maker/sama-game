@@ -41,11 +41,11 @@ export const officerManifest:OfficerEntry[]=[
   E('gongsun_yuan','공손연',c('gongsun_yuan','lord',1,350,280),{duel:'officers/gongsun_yuan-duel-v1.webp'}),E('yuan_tan','원담',c('yuan_tan','lord',1,350,280),{duel:'officers/yuan_tan-duel-v1.webp'}),E('yuan_shang','원상',c('yuan_shang','lord',1,350,280),{duel:'officers/yuan_shang-duel-v1.webp'}),E('liu_bang','유방',c('liu_bang','lord',1,350,280)),
   E('yang_ang','양앙',c('yang_ang','infantry'),{duel:'officers/yang_ang-duel-v1.webp'}),E('lu_fan','여범',c('lu_fan','crossbow'),{duel:'officers/lu_fan-duel-v1.webp'}),E('sun_shao','손소',c('sun_shao','crossbow'),{duel:'officers/sun_shao-duel-v1.webp'}),
   E('meng_da','맹달',c('meng_da','infantry'),{duel:'officers/meng_da-duel-v1.webp'}),E('ma_su','마속',c('ma_su','strategist'),{duel:'officers/ma_su-duel-v1.webp'}),E('wang_ping','왕평',c('wang_ping','infantry'),{duel:'officers/wang_ping-duel-v1.webp'}),
-  E('gao_xiang','고상',c('gao_xiang','infantry'),{duel:'officers/gao_xiang-duel-v1.webp'}),E('meng_yan','맹염',c('meng_yan','cavalry',1,350,280),{duel:'officers/meng_yan-duel-v1.webp'}),E('bi_yan','비연',c('bi_yan','cavalry',1,350,280),{duel:'officers/bi_yan-duel-v1.webp'}),
+  E('gao_xiang','고상',c('gao_xiang','infantry'),{duel:'officers/gao_xiang-duel-v1.webp'}),E('meng_yan','맹염',c('meng_yan','cavalry'),{duel:'officers/meng_yan-duel-v1.webp'}),E('bi_yan','비연',c('bi_yan','cavalry'),{duel:'officers/bi_yan-duel-v1.webp'}),
   E('zhu_ran','주연',c('zhu_ran','infantry'),{duel:'officers/zhu_ran-duel-v1.webp'}),E('zhuge_ke','제갈각',c('zhuge_ke','strategist'),{duel:'officers/zhuge_ke-duel-v1.webp'}),E('wang_ling','왕릉',c('wang_ling','infantry'),{duel:'officers/wang_ling-duel-v1.webp'}),
-  E('gao_shou','고수',c('gao_shou','bandit',1,350,280),{duel:'officers/gao_shou-duel-v1.webp'}),E('guo_huai','곽회',c('guo_huai','archer',1,350,280),{duel:'officers/guo_huai-duel-v1.webp'}),
+  E('gao_shou','고수',c('gao_shou','bandit'),{duel:'officers/gao_shou-duel-v1.webp'}),E('guo_huai','곽회',c('guo_huai','archer'),{duel:'officers/guo_huai-duel-v1.webp'}),
   E('dai_ling','대릉',c('dai_ling','infantry'),{duel:'officers/dai_ling-duel-v1.webp'}),E('zhang_zhao','장소',c('zhang_zhao','strategist'),{duel:'officers/zhang_zhao-duel-v1.webp'}),E('zhuge_jin','제갈근',c('zhuge_jin','strategist'),{duel:'officers/zhuge_jin-duel-v1.webp'}),
-  E('zhang_ba','장패',c('zhang_ba','cavalry',1,350,280),{duel:'officers/zhang_ba-duel-v1.webp'}),E('cao_xiu','조휴',c('cao_xiu','cavalry',1,350,280),{duel:'officers/cao_xiu-duel-v1.webp'}),E('cao_shuang','조상',c('cao_shuang','cavalry',1,350,280),{duel:'officers/cao_shuang-duel-v1.webp'}),
+  E('zhang_ba','장패',c('zhang_ba','cavalry'),{duel:'officers/zhang_ba-duel-v1.webp'}),E('cao_xiu','조휴',c('cao_xiu','cavalry'),{duel:'officers/cao_xiu-duel-v1.webp'}),E('cao_shuang','조상',c('cao_shuang','cavalry'),{duel:'officers/cao_shuang-duel-v1.webp'}),
 ];
 
 const legacySheets=[
