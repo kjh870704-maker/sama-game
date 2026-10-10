@@ -55,8 +55,10 @@ const legacySheets=[
 ] as const;
 /** 전장에서 장수는 같은 병종 병사와 같은 키로 선다(병사 아틀라스 실측: 대부분 칸 높이의 0.6, 중기병 0.69).
  * 칸을 가로 1.5배로 넓혀, 창·칼을 길게 내지른 공격 자세 때문에 몸 전체가 줄어들지 않게 한다. */
-const officerFit=(cls:string)=>({height:cls==='heavyCav'?.69:cls==='cart'?.7:.6,aspect:1.5});
-const generatedSheets=officerManifest.flatMap(e=>Object.entries(e.battle).map(([cls,b])=>({id:b.sheet,url:b.sheet,rows:b.rows,strictGrid:true as const,alphaCutoff:8,fit:officerFit(cls)})));
+/** 창을 위로 세워 든 기병 장수는 창끝까지 키로 재므로 그대로 두면 말이 다른 기병 장수보다 작아진다. 키를 높여 말 몸통을 맞춘다. */
+const RAISED_SPEAR_RIDERS=new Set(['meng_yan','bi_yan','zhang_ba','cao_xiu','cao_shuang']);
+const officerFit=(cls:string,id='')=>({height:cls==='heavyCav'?.69:cls==='cart'?.7:cls==='cavalry'&&RAISED_SPEAR_RIDERS.has(id)?.72:.6,aspect:1.5});
+const generatedSheets=officerManifest.flatMap(e=>Object.entries(e.battle).map(([cls,b])=>({id:b.sheet,url:b.sheet,rows:b.rows,strictGrid:true as const,alphaCutoff:8,fit:officerFit(cls,e.id)})));
 export const officerModelSheets=[...legacySheets,...generatedSheets];
 
 const legacy=new Map<string,OfficerBattleModel>();
