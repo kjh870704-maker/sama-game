@@ -25,6 +25,8 @@ describe('장수 시트 몸집 맞춤',()=>{
   it('장수 전투 시트는 모두 병종에 맞는 fit을 가진다',()=>{
     const generated=officerModelSheets.filter(s=>s.id.startsWith('officers/')) as Array<{id:string;fit?:{height:number;aspect:number}}>;
     expect(generated.length).toBeGreaterThan(40);
-    for(const s of generated){expect(s.fit,s.id).toBeDefined();expect(s.fit!.height).toBe(s.id.includes('-heavyCav-')?.69:s.id.includes('-cart-')?.7:.6);}
+    // 창을 위로 세워 든 기병 장수는 창끝까지 키로 재므로 말 몸통을 맞추려고 더 크게 잡는다.
+    const raised=['meng_yan','bi_yan','zhang_ba','cao_xiu','cao_shuang'].map(id=>`officers/${id}-battle-cavalry-`);
+    for(const s of generated){expect(s.fit,s.id).toBeDefined();expect(s.fit!.height,s.id).toBe(s.id.includes('-heavyCav-')?.69:s.id.includes('-cart-')?.7:raised.some(p=>s.id.startsWith(p))?.72:.6);}
   });
 });
