@@ -28,7 +28,7 @@ import {storyBeats,storyLocations,storyBackdrop,storyAftermath,acts,stories,epil
 import {showHub,showQuests,finishRunBattle,finishRunStory,RUN_CHAPTER,type RunHost} from './run-ui.ts';
 import {showScenario,campOf,finishIfBattle,finishStoryBattle,noteDefeatReason,type ScenarioHost} from './scenario-ui.ts';
 import {scriptOf} from './scenario.ts';
-import {conditionsHtml} from './battle-conditions.ts';
+import {conditionsHtml,goalMarks,winText} from './battle-conditions.ts';
 import {optionalOfficers,pickExtras,storySortieLimit,storyCostSheet,unitCost,storyClassAt} from './sortie.ts';
 import {isoBackdrop,loadIsoArt,loadPaintedScenes} from './story-iso.ts';
 import {loadFigures} from './story-figure.ts';
@@ -81,6 +81,8 @@ $('#app').innerHTML=`<header class="topbar"><button id="brand" class="brand" ari
 
 /** 마지막으로 그린 승리 조건(바뀌면 알린다). */
 const objectiveSeen:{session?:unknown;key?:string}={};
+/** 마지막으로 깜박여 알린 목표 지점(전투 시작·목표가 바뀔 때만 다시 깜박인다). */
+const goalSeen:{session?:unknown;key?:string}={};
 /** 지도 위 승리 조건: 전투 시작·목표가 바뀔 때 펼쳐 보이고, 장수를 고르거나 몇 초 지나면 한 줄 꼬리표로 접는다.
  * 꼬리표를 누르거나 O 키로 다시 펼친다. 왼쪽 "전투 목표" 패널에는 늘 전문이 있다. */
 const objectiveBox={open:true,auto:false,timer:undefined as ReturnType<typeof setTimeout>|undefined};
@@ -325,7 +327,7 @@ function activate(){
   sound.scene='battle';sound.place=placeFor(session.state.stage.id,terrain);sound.focus=undefined;sound.combat=session.chapter!==0;void sound.start().then(()=>{updateSound();if(!session.journal.length)sound.event({kind:'battle-start'});});
   // A resumed battle should not replay every line whose moment has already passed.
   lineSeen=new Set(session.journal.length?dueLines(session.state.stage.id,session.state,new Set()).map(l=>l.id):[]);lineQueue=[];clearTimeout(lineTimer);lineTimer=undefined;lineToken++;$('#battle-line').hidden=true;$('#latest-log').textContent='';
-  objectiveBox.open=true;$<HTMLDialogElement>('#modal').close();render();setObjectiveOpen(true,8000);pump();
+  objectiveBox.open=true;goalSeen.session=undefined;$<HTMLDialogElement>('#modal').close();render();setObjectiveOpen(true,8000);pump();
 }
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(session.save()));saveAvailable=true;$('#save-status').textContent='✓ 자동 저장됨';}catch{$('#save-status').textContent='저장 공간 사용 불가';}}
 function describe(e:LogEntry){const name=(id:string)=>session.state.find(id)?.name??id;switch(e.t){case 'telegraph':return e.warning?`⚠ ${e.label??'적 증원'} 예고 · ${e.turns}턴 뒤 노란 칸으로 적이 들어옵니다. 미리 대비하세요.`:`⚠ ${e.label??'광역 공격'} 예고 · ${e.turns}턴 뒤 붉은 칸에 떨어집니다. 칸을 비우세요.`;case 'strike':return `${e.hits.length?e.hits.map(h=>name(h.unit)+' −'+h.damage).join(', '):'아무도 맞지 않았습니다'} · 예고된 공격이 떨어졌습니다.`;
@@ -404,12 +406,14 @@ function render(){
   $('.weather').textContent=session.weather;
   const objective=(session.deployment?.mission?.version??1)>=3?trialProgress(s):session.chapter===6?`${session.phase} · 조조 HP ${s.find('cao_cao')?.hp??0}/180 · 3턴 후방 복병`:session.chapter===5?`${session.phase} · 수송대 ${s.living('allyAi').length}/2 생존`:session.chapter===3?`${session.phase} · 추격 압박 ${session.pressure}/${session.pressureLimit}`:session.chapter===0?`${session.phase} · 지참금 ${session.funds}전`:session.chapter===1?`${session.phase} · ${raceLabel(s)}`:`${session.phase} · 남은 적 ${s.living('enemy').length}부대`;
   $('#compact-objective').textContent=objective;
-  const cond=session.conditions;$('#compact-objective').title=`승리: ${cond.win.join(' · ')}\n패배: ${cond.lose.join(' · ')}`;
+  const cond=session.conditions;$('#compact-objective').title=`승리: ${winText(cond)}\n패배: ${cond.lose.join(' · ')}`;
   // 지도 위 목표 띠: 지금 걸린 승리 조건(진행 ✓·수 포함)과 패배 조건을 늘 보인다. 전투 중 목표가 바뀌면 알린다.
   // 범례(이동 가능·적 시야·목표)도 이 상자 안에 둔다. 따로 지도 구석에 두면 그 자리의 유닛을 덮는다.
-  $('#map-objective').innerHTML=`<button class="mo-toggle" type="button" aria-expanded="${objectiveBox.open}" aria-controls="map-objective" title="승리·패배 조건 펼치기·접기 (O)"><b>◇ 목표</b><span class="mo-short">${esc(cond.win[0]??'')}</span><i class="mo-arrow"></i></button><div class="mo-body"><p class="mo-win"><b>승리</b> ${cond.win.map(esc).join(' · ')}</p><p class="mo-lose"><b>패배</b> ${cond.lose.map(esc).join(' · ')}</p><p class="mo-legend">${LEGEND_HTML}</p></div>`;
+  $('#map-objective').innerHTML=`<button class="mo-toggle" type="button" aria-expanded="${objectiveBox.open}" aria-controls="map-objective" title="승리·패배 조건 펼치기·접기 (O)"><b>◇ 목표</b><span class="mo-short">${esc(winText(cond))}</span><i class="mo-arrow"></i></button><div class="mo-body"><p class="mo-win"><b>승리</b> ${cond.win.map(esc).join(' <i>또는</i> ')}</p><p class="mo-lose"><b>패배</b> ${cond.lose.map(esc).join(' · ')}</p><p class="mo-legend">${LEGEND_HTML}</p></div>`;
   $('#map-objective').classList.toggle('collapsed',!objectiveBox.open);
-  {const key=JSON.stringify(s.victory);if(objectiveSeen.session===session&&objectiveSeen.key!==key&&s.outcome==='ongoing'){toast(`목표가 바뀌었습니다 — ${cond.win.join(' · ')}`);setObjectiveOpen(true,6000);}objectiveSeen.session=session;objectiveSeen.key=key;}
+  {const key=JSON.stringify(s.victory);if(objectiveSeen.session===session&&objectiveSeen.key!==key&&s.outcome==='ongoing'){toast(`목표가 바뀌었습니다 — ${winText(cond)}`);setObjectiveOpen(true,6000);}objectiveSeen.session=session;objectiveSeen.key=key;}
+  // 탈출·도착·점령 목표는 지도에서 그 칸을 몇 초 깜박여 어디로 가야 하는지 보인다.
+  {const marks=goalMarks(s),key=marks.map(m=>m.target).join();if((goalSeen.session!==session||goalSeen.key!==key)&&s.outcome==='ongoing'&&marks.length)field.flashGoals(marks,showGoal);goalSeen.session=session;goalSeen.key=key;}
   $('#objectives').innerHTML=`<p><b>◇</b> ${objective}</p>${conditionsHtml(cond)}<div class="resource-strip">구급약 ${session.medicine} · ${session.scouted?'정찰 완료':'살피기로 경로 확인'}</div>`;
   $('#turn').textContent=String(s.turn).padStart(2,'0');$('#turn-limit').textContent=`/ ${session.deadline??60}`;$('#phase').textContent=`${sideNames[s.currentSide]}의 차례`;
   document.querySelectorAll('.phase-track i').forEach((el,i)=>el.classList.toggle('active',i===s.phaseIndex));
@@ -460,7 +464,16 @@ function stackOverlays(){cancelAnimationFrame(stackFrame);stackFrame=requestAnim
     const hits=()=>{const r=el.getBoundingClientRect();return pts.filter(p=>p.x>r.left-8&&p.x<r.right+8&&p.y>r.top-8&&p.y<r.bottom+8).length;};
     const a=hits();if(a){el.classList.toggle(cls);const b=hits();if(b>=a)el.classList.toggle(cls);}};
   flipAway(line,'flip');flipAway(coach,'side-right');flipAway(obj,'side-right');
+  // 목표 지점을 비추는 동안에는 승리 조건 상자가 그 칸을 덮지 않게: 반대쪽으로 옮기고, 그래도 덮으면 접고,
+  // 접힌 꼬리표마저 덮으면 깜박임이 끝날 때까지 잠시 감춘다.
+  obj.classList.remove('goal-hide');
+  const goal=field.goalScreenPoints();if(goal.length&&shown(obj)){
+    const hits=()=>{const r=obj.getBoundingClientRect();return goal.filter(p=>p.x>r.left-8&&p.x<r.right+8&&p.y>r.top-8&&p.y<r.bottom+8).length;};
+    const a=hits();if(a){obj.classList.toggle('side-right');const b=hits();if(b>=a)obj.classList.toggle('side-right');
+      if(Math.min(a,b)){if(objectiveBox.open)setObjectiveOpen(false);else obj.classList.add('goal-hide');}}}
 });}
+/** 목표 지점이 화면에 나온 때(카메라가 그쪽으로 간 뒤)와 깜박임이 끝난 때: 상자가 목표를 덮지 않게 다시 놓는다. */
+function showGoal(){stackOverlays();}
 /** 지도 위 상자(목표·장수 카드·명령 단추·첫 전투 안내·조작 단추)가 아군을 덮으면 카메라를 조금 밀어 꺼낸다.
  * 전투 시작에는 아군 전원, 장수를 고른 뒤에는 그 장수만 본다. 카메라는 지도 끝을 넘지 않는다. */
 let clearFrame=0;

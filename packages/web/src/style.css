@@ -1714,3 +1714,7 @@ dialog .briefing{word-break:keep-all;overflow-wrap:break-word;text-wrap:pretty}
 /* 승리 조건 꼬리표가 지도 왼쪽 위 구석의 아군을 덮으면 오른쪽(작은 지도 아래)으로 옮긴다(main.ts stackOverlays). */
 .map-objective.side-right{left:auto!important;right:16px;top:132px!important}
 @media (max-height:520px){.map-objective.side-right{right:10px;top:96px!important}}
+/* 전투 시작에 목표 지점을 깜박여 보이는 동안, 승리 조건 꼬리표가 그 자리를 덮으면 잠시 감춘다. */
+.map-objective.goal-hide{opacity:0;pointer-events:none;transition:opacity .2s}
+/* 승리 조건 여러 줄은 아무거나 하나: 사이의 '또는'을 흐리게 구분한다. */
+.mo-win i,.cond-win i{font-style:normal;font-weight:700;color:var(--muted,#b9ab8c);margin:0 .2em}

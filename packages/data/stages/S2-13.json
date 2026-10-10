@@ -37,18 +37,12 @@
       "type": "reach",
       "unit": "sima_shi",
       "target": "rally",
-      "order": 1
-    },
-    {
-      "type": "reach",
-      "unit": "sima_zhao",
-      "target": "rally",
-      "order": 1
+      "order": 2
     },
     {
       "type": "dialogue_complete",
       "target": "hulu_rain",
-      "order": 2
+      "order": 3
     }
   ],
   "defeat": [

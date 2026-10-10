@@ -3,7 +3,7 @@ import {troopStrategies,supportOptions} from './troops.ts';
 import {refBattle,prepareRunBattle,applyBattleMods,applyRelics,addRecruits,taleById,xpFromLog,levelUpInBattle,RUN_FLOORS,PARTY_LIMIT,XP_PER_LEVEL,type XpGain} from './roguelike.ts';
 import {validRoute} from './fate.ts';
 import {applyPerkGrants,validGrants} from './perks.ts';
-import {stretchMap,stretchStage,canStretch,wideCoord} from './stretch.ts';
+import {stretchMap,stretchStage,canStretch,wideCoord,shapeGoals} from './stretch.ts';
 import {applyTreasureSpecial} from './treasure-specials.ts';
 import './scenario.ts';
 import {battleConditions,type BattleConditions} from './battle-conditions.ts';
@@ -198,7 +198,8 @@ export class Session {
     }
     // 넓은 전장: 연의 지도를 1.5배로(지형·영역·등장 위치), 이동력은 +2로 걸음을 맞춘다.
     const wide=!!this.deployment?.wide&&!this.deployment.run&&!this.deployment.mission&&canStretch(entry.map);
-    if(wide)entry={...entry,map:stretchMap(entry.map),stage:stretchStage(entry.stage)};
+    // 목표 지점(탈출·도달·점령)은 늘린 뒤 띄엄띄엄 흩어지지 않게 붙은 칸 묶음으로 다시 놓는다.
+    if(wide)entry={...entry,map:shapeGoals(stretchMap(entry.map),entry.stage,entry.map),stage:stretchStage(entry.stage)};
     this.wide=wide;
     const level=entry.stage.difficulty[this.difficulty].recommendedLevel;
     const state=assemble({stage:entry.stage,map:entry.map,difficulty:this.difficulty,seed:this.seed,roster:[

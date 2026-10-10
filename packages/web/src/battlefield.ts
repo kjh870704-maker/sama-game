@@ -149,7 +149,7 @@ export class Battlefield {
     canvas.addEventListener('pointerdown',e=>{
       fingers.set(e.pointerId,local(e));canvas.setPointerCapture(e.pointerId);clearTimeout(hold);held=false;
       if(fingers.size===2){pinch={dist:spread().dist,zoom:this.zoom};this.drag=undefined;this.dragged=true;return;}
-      this.drag={x:e.clientX,y:e.clientY,px:this.pan.x,py:this.pan.y};this.dragged=false;
+      this.drag={x:e.clientX,y:e.clientY,px:this.pan.x,py:this.pan.y};this.dragged=false;this.glideToken++;
       if(e.pointerType==='touch'){const at=local(e);hold=setTimeout(()=>{if(!this.dragged&&fingers.size===1){held=true;this.setHover(this.fromPoint(at.x,at.y));}},450);}
     });
     canvas.addEventListener('pointermove',e=>{
@@ -260,6 +260,59 @@ export class Battlefield {
   panBy(dx:number,dy:number){
     if(!this.state)return {dx:0,dy:0};const bx=this.world.x,by=this.world.y;
     this.pan={x:this.pan.x+dx,y:this.pan.y+dy};this.fit();return {dx:this.world.x-bx,dy:this.world.y-by};
+  }
+  private goalFx:Container|undefined;
+  private goalCells:Coord[]=[];
+  /** 깜박이는 목표 칸(과 그 위 이름표)의 화면 좌표. 지도 위 상자가 목표를 덮는지 볼 때 쓴다. */
+  goalScreenPoints(){
+    if(!this.goalFx||this.goalFx.destroyed||!this.app?.canvas)return [];
+    const r=this.app.canvas.getBoundingClientRect(),out=this.goalCells.map(c=>{const g=this.world.toGlobal({x:(c.x+.5)*W,y:(c.y+.5)*H});return {x:r.left+g.x,y:r.top+g.y};});
+    // 이름표는 네 귀퉁이와 가운데를 본다.
+    for(const t of this.goalFx.children)if(t instanceof Text){const b=t.getBounds();for(const [fx,fy] of [[0,0],[1,0],[0,1],[1,1],[.5,.5]] as const)out.push({x:r.left+b.x+b.width*fx,y:r.top+b.y+b.height*fy});}
+    return out;
+  }
+  private glideToken=0;
+  /** 카메라를 pan 값까지 부드럽게 민다(끝은 fit이 지도 안으로 막는다). */
+  private glide(to:{x:number;y:number},ms=450,done?:()=>void){
+    // 시계는 첫 그림부터 잰다: 전장 그림을 올리느라 멈춘 동안 이동이 건너뛰지 않게.
+    const token=++this.glideToken,from={...this.pan};let born=0;
+    const tick=()=>{if(token!==this.glideToken||!this.state||this.drag){this.app.ticker.remove(tick);return;}
+      born||=performance.now();const t=this.reduced?1:Math.min(1,(performance.now()-born)/ms),e=t<.5?2*t*t:1-(-2*t+2)**2/2;
+      this.pan={x:from.x+(to.x-from.x)*e,y:from.y+(to.y-from.y)*e};this.fit();if(t>=1){this.app.ticker.remove(tick);done?.();}};
+    this.app.ticker.add(tick);
+  }
+  /**
+   * 목표 지점(탈출·도착·점령)을 전투 시작 때 몇 초 깜박여 어디로 가야 하는지 알린다.
+   * 화면 밖이면 카메라가 잠시 그쪽을 비췄다가 원래 자리로 돌아온다(그사이 플레이어가 화면을 끌면 그대로 둔다).
+   * onShow는 목표가 화면에 나온 때와 깜박임이 끝난 때 부른다(지도 위 상자를 다시 놓는 데 쓴다).
+   */
+  flashGoals(goals:readonly {cells:readonly Coord[];kind:string;label:string}[],onShow?:()=>void,ms=6000){
+    this.goalFx?.destroy({children:true});this.goalFx=undefined;this.goalCells=[];
+    if(!this.state||!goals.length)return;this.goalCells=goals.flatMap(goal=>goal.cells);
+    const color=(k:string)=>k==='capture'?0xffb04a:k==='escape'?0x6ff5c8:0xffe27a;
+    const item=new Container();item.zIndex=900;const g=new Graphics();item.addChild(g);
+    const tags=goals.map(goal=>{
+      const top=Math.min(...goal.cells.map(c=>c.y)),row=goal.cells.filter(c=>c.y===top),cx=row.reduce((n,c)=>n+c.x,0)/row.length;
+      const text=new Text({text:`${goal.label}\n▼`,style:{fontFamily:'Malgun Gothic',fontSize:16,fontWeight:'800',fill:color(goal.kind),align:'center',lineHeight:18,stroke:{color:0x10180f,width:5}}});
+      text.anchor.set(.5,1);text.scale.set(Math.max(1,1/this.zoom));// 작은 화면에서도 글자가 16px 아래로 줄지 않게
+      const at={x:(cx+.5)*W,y:top*H-20};text.position.set(at.x,at.y);item.addChild(text);return {text,at};
+    });
+    this.effects.addChild(item);this.goalFx=item;
+    let born=0;const fade=700;
+    const tick=()=>{if(item.destroyed){this.app.ticker.remove(tick);return;}
+      born||=performance.now();const age=performance.now()-born,s=age/1000,on=this.reduced?1:.5+.5*Math.cos(s*Math.PI*2*1.4);
+      g.clear();for(const goal of goals){const c=color(goal.kind);for(const at of goal.cells){const p=iso(at);diamond(g,p.x,p.y,c,.12+.38*on).stroke({color:c,width:3,alpha:.45+.55*on});}}
+      for(const {text,at} of tags)text.y=at.y-(this.reduced?0:Math.abs(Math.sin(s*Math.PI*1.4))*8);
+      item.alpha=age<ms-fade?1:Math.max(0,(ms-age)/fade);
+      if(age>=ms){this.app.ticker.remove(tick);item.destroy({children:true});if(this.goalFx===item){this.goalFx=undefined;onShow?.();}}};
+    this.app.ticker.add(tick);
+    // 목표가 화면 밖이면 잠깐 비춘다.
+    if(this.overview||this.busy){onShow?.();return;}// 전투 연출 중에는 카메라를 뺏지 않는다
+    const cells=goals.flatMap(goal=>goal.cells),c={x:cells.reduce((n,a)=>n+a.x,0)/cells.length,y:cells.reduce((n,a)=>n+a.y,0)/cells.length};
+    const p=this.world.toGlobal({x:(c.x+.5)*W,y:(c.y+.5)*H}),w=this.app.screen.width,h=this.app.screen.height;
+    if(p.x>=w*.12&&p.x<=w*.88&&p.y>=h*.15&&p.y<=h*.85){onShow?.();return;}
+    const back={...this.pan};this.focus(c);const there={...this.pan};this.pan=back;this.fit();
+    this.glide(there,600,()=>{onShow?.();const token=this.glideToken;setTimeout(()=>{if(token===this.glideToken&&this.state)this.glide(back,600);},2600);});
   }
   focus(at:Coord){
     if(!this.state)return;
