@@ -17,7 +17,7 @@ import {cardFace,displayName} from './faces.ts';
 import {isUploaded,setPortraitImage,removePortraitImage,importPortraitFiles} from './portrait-images.ts';
 import {bioOf} from './officer-bios.ts';
 import {classNames,troopRoles,troopArt,basicReactionArt,artClass,recruitPool,evolutionLines,troopSheets,classSheets} from './troops.ts';
-import {spriteAtlas} from './sprite-atlas.ts';
+import {spriteAtlas,type AtlasBody} from './sprite-atlas.ts';
 import {navalAtlas} from './naval-art.ts';
 import {paintedTroopArt} from './painted-troops.ts';
 import {armorFrame,MOUNTED_FAMILIES,ROBE_FAMILIES,MACHINE_FAMILIES,type ArmorTier} from './armor.ts';
@@ -128,8 +128,9 @@ function sheetFor(c:UnitClass):{load:()=>Promise<HTMLCanvasElement>;rows:number;
   const base=artClass(c),fam=familyOf(base),art=troopArt[base]??troopArt[fam],react=basicReactionArt[base]??basicReactionArt[fam];
   if(fam==='ram')return {load:()=>spriteAtlas('ram-v1.webp',2,2),rows:2,cols:2,row:0};
   if(fam==='navy')return {load:navalAtlas,rows:4,cols:4,row:tierOf(c)===3?3:1};
-  const sh=art??react;if(!sh)return undefined;const url=troopSheets.find(s=>s.id===sh.sheet)?.url;if(!url)return undefined;
-  return {load:()=>spriteAtlas(url,sh.rows,4),rows:sh.rows,cols:4,row:sh.row};
+  const sh=art??react;if(!sh)return undefined;const def=troopSheets.find(s=>s.id===sh.sheet) as {url:string;union?:boolean;alphaCutoff?:number;strictGrid?:boolean;body?:AtlasBody}|undefined;if(!def)return undefined;
+  // 전장과 같은 자르기·몸집 규칙으로 잘라 진화표의 키가 전장과 같게 보인다.
+  return {load:()=>spriteAtlas(def.url,sh.rows,4,!!def.union,def.alphaCutoff??8,!!def.strictGrid,undefined,def.body),rows:sh.rows,cols:4,row:sh.row};
 }
 export async function paintArmor(){
   for(const el of [...document.querySelectorAll<HTMLCanvasElement>('canvas[data-armor]')]){

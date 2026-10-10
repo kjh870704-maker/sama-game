@@ -4,13 +4,13 @@
  * 캔버스 메모리 한도를 넘겨 그림이 깨지거나 전장 준비가 실패했다. 이제 화면에 `var(--<시트>-atlas)`가 나타날 때
  * 그 시트 하나만 잘라 CSS 변수로 건다.
  */
-import {spriteAtlas,type AtlasFit} from './sprite-atlas.ts';
+import {spriteAtlas,type AtlasFit,type AtlasBody} from './sprite-atlas.ts';
 import {troopSheets,classSheets,loadClassSheets} from './troops.ts';
 import type {UnitClass} from '../../core/src/index.ts';
 
 const started=new Set<string>();
 const atlasUrl=(canvas:HTMLCanvasElement)=>new Promise<string>(resolve=>canvas.toBlob(blob=>resolve(blob?URL.createObjectURL(blob):canvas.toDataURL())));
-type SheetDef={id:string;url:string;rows:number;union?:boolean;alphaCutoff?:number;strictGrid?:boolean;fit?:AtlasFit};
+type SheetDef={id:string;url:string;rows:number;union?:boolean;alphaCutoff?:number;strictGrid?:boolean;fit?:AtlasFit;body?:AtlasBody};
 
 /** `--<id>-atlas`를 아직 걸지 않았으면 그 시트를 잘라 건다(병종 시트·전용 채색 시트만). */
 export function needCssAtlas(id:string){
@@ -18,7 +18,7 @@ export function needCssAtlas(id:string){
   const def=(troopSheets as readonly SheetDef[]).find(s=>s.id===id);
   if(!def&&!id.startsWith('own-'))return;
   started.add(id);
-  const cut=def?spriteAtlas(def.url,def.rows,4,!!def.union,def.alphaCutoff??8,!!def.strictGrid,def.fit)
+  const cut=def?spriteAtlas(def.url,def.rows,4,!!def.union,def.alphaCutoff??8,!!def.strictGrid,def.fit,def.body)
     :loadClassSheets().then(()=>{const url=classSheets.get(id.slice(4) as UnitClass);if(!url)throw new Error('no sheet');return spriteAtlas(url,3);});
   void cut.then(async c=>document.documentElement.style.setProperty('--'+id+'-atlas','url('+await atlasUrl(c)+')')).catch(()=>{started.delete(id);});
 }

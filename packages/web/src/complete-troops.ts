@@ -106,6 +106,11 @@ const SHEET_FILES:Readonly<Record<string,string>>={
   'four-stage-mounted-strategist':'troops-four-stage-mounted-strategist-v3.webp',
   'four-stage-pirate':'troops-four-stage-pirate-v3.webp',
 };
+/** 큰 몸집(MOUNT_HEIGHT)으로 맞출 계통. 나머지(보병·궁병·책사·기병 등)는 모두 FOOT_HEIGHT로 맞춰 계통 안 키가 같다. */
+const LARGE_BODY_SHEETS=new Set([
+  'four-stage-heavy-cavalry','four-stage-elephant','four-stage-chariot','four-stage-catapult',
+  'single-stage-ram','single-stage-siege-tower','single-stage-gaema-warrior',
+]);
 const sheet = (id:string,rows=4)=>({
   id,
   url:id.startsWith('single-stage-')?`troops-${id}-v1.webp`:SHEET_FILES[id]??`troops-${id}-${V2_SHEETS.has(id)?'v2.webp':'v1.webp'}`,
@@ -113,6 +118,7 @@ const sheet = (id:string,rows=4)=>({
   // 투명 배경의 미세한 가장자리는 살리되 이웃 칸의 실루엣은 합치지 않는다.
   alphaCutoff:240,
   strictGrid:true,
+  body:LARGE_BODY_SHEETS.has(id)?'large' as const:'foot' as const,
 });
 
 /** 진화 계보와 진화하지 않는 민간인 전용 시트. */

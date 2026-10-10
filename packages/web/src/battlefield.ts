@@ -1,7 +1,7 @@
 import {playbackEvents} from './battle-playback.ts';
 import {troopFacing,troopReaction,troopReactionPose,retreatMotion,battlePath,stepPose} from './troop-motion.ts';
 import {troopRoles,visualClass,troopArt,troopSheets,basicReactionArt,artClass,classSheets,loadClassSheets,hasPaintedMotion} from './troops.ts';
-import {spriteAtlas,outlinedCanvas,type AtlasFit} from './sprite-atlas.ts';
+import {spriteAtlas,outlinedCanvas,type AtlasFit,type AtlasBody} from './sprite-atlas.ts';
 import {paintedTroopArt,paintedTroopFrame,paintedFrames} from './painted-troops.ts';
 import {cryFor,reactions,isCrisis,type Emote} from './emotes.ts';
 import type {SoundEvent} from './sound-events.ts';
@@ -316,8 +316,8 @@ export class Battlefield {
     if(!this.smooth)return;const smooth=this.smooth;
     for(const u of state.living())for(const id of this.sheetsFor(u)){
       if(this.sheetWanted.has(id))continue;this.sheetWanted.add(id);
-      const own=id.startsWith('own:')?classSheets.get(id.slice(4) as Unit['unitClass']):undefined,def=troopSheets.find(x=>x.id===id) as {url:string;rows:number;union?:boolean;alphaCutoff?:number;strictGrid?:boolean}|undefined;
-      const cut=own?spriteAtlas(own,3):def?spriteAtlas(def.url,def.rows,4,!!def.union,def.alphaCutoff??8,!!def.strictGrid,(def as {fit?:AtlasFit}).fit):undefined;if(!cut)continue;
+      const own=id.startsWith('own:')?classSheets.get(id.slice(4) as Unit['unitClass']):undefined,def=troopSheets.find(x=>x.id===id) as {url:string;rows:number;union?:boolean;alphaCutoff?:number;strictGrid?:boolean;fit?:AtlasFit;body?:AtlasBody}|undefined;
+      const cut=own?spriteAtlas(own,3):def?spriteAtlas(def.url,def.rows,4,!!def.union,def.alphaCutoff??8,!!def.strictGrid,def.fit,def.body):undefined;if(!cut)continue;
       void cut.then(c=>{this.troopTextures.set(id,smooth(c));this.artDirty=true;this.onArtReady();}).catch(error=>console.warn(id+' 병종 시트를 읽지 못해 기본 그림을 씁니다.',error));
     }
   }
