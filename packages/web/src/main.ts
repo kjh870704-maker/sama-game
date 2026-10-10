@@ -75,12 +75,21 @@ const sideNames={player:'아군',ally:'편입 아군',enemy:'적군',allyAi:'우
 
 $('#app').innerHTML=`<header class="topbar"><button id="brand" class="brand" aria-label="본영"><span class="seal-logo">사</span><span>사마의전<small>사마의 연대기</small></span></button><div class="chapter-breadcrumb" id="arc-crumb">상편 <span>/</span> 살아남는 자</div><nav><button id="sound-toggle" title="전체 소리 켜기/끄기">♪ <span>소리 켜짐</span></button><button id="help">도움말 <kbd>?</kbd></button><button id="settings" aria-label="설정">⚙</button><button id="topbar-save" title="저장 · 불러오기">💾 저장</button><button id="menu">본영</button></nav></header>
 <main class="layout"><aside class="left-panel" id="left-panel"><button id="left-close" class="left-close" aria-label="전황 닫기">닫기 ✕</button><div class="eyebrow" id="arc-eyebrow">제1편 <span>상편</span></div><h1 id="stage-title"></h1><p id="stage-subtitle" class="muted"></p><div class="rule"></div><section class="mission"><div class="section-label">전투 목표 <span>목표</span></div><div id="objectives"></div></section><section class="turn-card"><div class="turn-number"><span>차례</span><strong id="turn">01</strong><span id="turn-limit">/ 60</span></div><div id="phase" class="phase"></div><div class="phase-track"><i></i><i></i><i></i><i></i></div></section><section><div class="section-label">현재 차례 부대 <span id="unit-count"></span></div><div id="roster" class="roster"></div></section><p class="roster-note">파랑 · 아군(편입 아군 포함)<br>초록 · NPC 우군 &nbsp; 빨강 · 적군</p><div class="left-bottom"><span class="small-seal">인</span><p>칼을 거두고,<br>때를 기다린다.</p></div></aside>
-<section class="battle-panel"><div class="battle-heading"><div><span class="eyebrow" id="year"></span><h2 id="map-name"></h2></div><span class="weather">☀ &nbsp; 맑음 <span>·</span> 바람 약함</span></div><p id="compact-objective"></p><div class="battle-objective-rail"><div id="map-objective" class="map-objective" aria-live="polite"></div></div><div id="map" class="map"><div class="map-vignette"></div><button id="left-toggle" class="left-toggle" aria-expanded="false" aria-controls="left-panel">☰ 전황</button><div class="compass"><span>북</span><b>✧</b></div><div class="map-controls"><button id="zoom-out" aria-label="축소">−</button><button id="zoom-reset" aria-label="고른 장수에게로">⌖</button><button id="zoom-in" aria-label="확대">＋</button></div><div class="map-legend"><i class="dot teal"></i> 이동 가능 <i class="dot red"></i> 적 시야 / 사거리 <i class="dot gold"></i> 목표</div><div id="action-dock" class="action-dock" hidden></div><div id="phase-banner" aria-live="polite"></div><div id="battle-line" class="battle-line" aria-live="polite" hidden></div><div id="battle-relics" class="battle-relics" hidden></div><div id="encounter" class="encounter" role="dialog" hidden></div><div id="coach" class="coach" role="status" hidden><p></p><button id="coach-close" aria-label="안내 닫기">닫기</button></div></div><div class="battle-status-rail"><div id="unit-hud" class="unit-hud"></div><div id="tile-info">장수를 선택해 첫 수를 두세요.</div></div><div class="battle-toolbar"><button id="undo">↶ <span>무르기</span> <kbd>Z</kbd></button><button id="threat" aria-pressed="false">◎ <span>위험 범위</span></button><button id="speed">▷ <span>1× 속도</span></button><span id="save-status" role="status">자동 저장 준비</span><button id="end-phase" class="primary">아군 턴 종료 <span>→</span></button></div><div class="dispatch"><span>군보</span><p id="latest-log" aria-live="polite">전장을 살피고 명령을 내려 주십시오.</p><button id="log-button">전투 기록 ↗</button></div></section>
+<section class="battle-panel"><div class="battle-heading"><div><span class="eyebrow" id="year"></span><h2 id="map-name"></h2></div><span class="weather">☀ &nbsp; 맑음 <span>·</span> 바람 약함</span></div><p id="compact-objective"></p><div id="map" class="map"><div class="map-vignette"></div><div id="map-objective" class="map-objective" aria-live="polite"></div><button id="left-toggle" class="left-toggle" aria-expanded="false" aria-controls="left-panel">☰ 전황</button><div class="compass"><span>북</span><b>✧</b></div><div class="map-controls"><button id="zoom-out" aria-label="축소">−</button><button id="zoom-reset" aria-label="고른 장수에게로">⌖</button><button id="zoom-in" aria-label="확대">＋</button></div><div class="map-legend"><i class="dot teal"></i> 이동 가능 <i class="dot red"></i> 적 시야 / 사거리 <i class="dot gold"></i> 목표</div><div id="unit-hud" class="unit-hud"></div><div id="action-dock" class="action-dock" hidden></div><div id="tile-info">장수를 선택해 첫 수를 두세요.</div><div id="phase-banner" aria-live="polite"></div><div id="battle-line" class="battle-line" aria-live="polite" hidden></div><div id="battle-relics" class="battle-relics" hidden></div><div id="encounter" class="encounter" role="dialog" hidden></div><div id="coach" class="coach" role="status" hidden><p></p><button id="coach-close" aria-label="안내 닫기">닫기</button></div></div><div class="battle-toolbar"><button id="undo">↶ <span>무르기</span> <kbd>Z</kbd></button><button id="threat" aria-pressed="false">◎ <span>위험 범위</span></button><button id="speed">▷ <span>1× 속도</span></button><span id="save-status" role="status">자동 저장 준비</span><button id="end-phase" class="primary">아군 턴 종료 <span>→</span></button></div><div class="dispatch"><span>군보</span><p id="latest-log" aria-live="polite">전장을 살피고 명령을 내려 주십시오.</p><button id="log-button">전투 기록 ↗</button></div></section>
 <aside class="right-panel"><div class="section-label">장수 정보 <span>장수</span></div><div id="unit-detail"></div><div class="section-label command-label">전술 명령 <span>명령</span></div><div id="commands" class="commands"></div><p id="command-hint" class="command-hint"></p><div class="tactic-note"><span>책</span><div><strong>전장을 읽는 법</strong><p id="tactical-tip"></p></div></div></aside></main><footer><span>삼국지 · 사마의전</span><span>상편·중편·하편 · 플레이 가능 전장 ${chapters.length}개</span><span>선택 → 이동 → 행동 → 턴 종료</span></footer>
 <dialog id="modal"><div id="modal-content"></div></dialog><div id="toast" role="status"></div>`;
 
 /** 마지막으로 그린 승리 조건(바뀌면 알린다). */
 const objectiveSeen:{session?:unknown;key?:string}={};
+/** 지도 위 승리 조건: 전투 시작·목표가 바뀔 때 펼쳐 보이고, 장수를 고르거나 몇 초 지나면 한 줄 꼬리표로 접는다.
+ * 꼬리표를 누르거나 O 키로 다시 펼친다. 왼쪽 "전투 목표" 패널에는 늘 전문이 있다. */
+const objectiveBox={open:true,auto:false,timer:undefined as ReturnType<typeof setTimeout>|undefined};
+function setObjectiveOpen(open:boolean,autoCloseMs?:number){
+  clearTimeout(objectiveBox.timer);objectiveBox.open=open;objectiveBox.auto=!!(open&&autoCloseMs);
+  const el=$('#map-objective');el.classList.toggle('collapsed',!open);el.querySelector('.mo-toggle')?.setAttribute('aria-expanded',String(open));
+  if(open&&autoCloseMs)objectiveBox.timer=setTimeout(()=>setObjectiveOpen(false),autoCloseMs);
+  stackOverlays();keepUnitsClear(false);
+}
 function toast(text:string){$('#toast').textContent=text;$('#toast').classList.add('visible');setTimeout(()=>$('#toast').classList.remove('visible'),2800);}
 function modal(html:string,closable=true){
   const d=$<HTMLDialogElement>('#modal');$('#modal-content').innerHTML=(closable?'<button class="modal-close" data-close aria-label="닫기">×</button>':'')+html;
@@ -316,7 +325,7 @@ function activate(){
   sound.scene='battle';sound.place=placeFor(session.state.stage.id,terrain);sound.focus=undefined;sound.combat=session.chapter!==0;void sound.start().then(()=>{updateSound();if(!session.journal.length)sound.event({kind:'battle-start'});});
   // A resumed battle should not replay every line whose moment has already passed.
   lineSeen=new Set(session.journal.length?dueLines(session.state.stage.id,session.state,new Set()).map(l=>l.id):[]);lineQueue=[];clearTimeout(lineTimer);lineTimer=undefined;lineToken++;$('#battle-line').hidden=true;$('#latest-log').textContent='';
-  $<HTMLDialogElement>('#modal').close();render();pump();
+  objectiveBox.open=true;$<HTMLDialogElement>('#modal').close();render();setObjectiveOpen(true,8000);pump();
 }
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(session.save()));saveAvailable=true;$('#save-status').textContent='✓ 자동 저장됨';}catch{$('#save-status').textContent='저장 공간 사용 불가';}}
 function describe(e:LogEntry){const name=(id:string)=>session.state.find(id)?.name??id;switch(e.t){case 'telegraph':return e.warning?`⚠ ${e.label??'적 증원'} 예고 · ${e.turns}턴 뒤 노란 칸으로 적이 들어옵니다. 미리 대비하세요.`:`⚠ ${e.label??'광역 공격'} 예고 · ${e.turns}턴 뒤 붉은 칸에 떨어집니다. 칸을 비우세요.`;case 'strike':return `${e.hits.length?e.hits.map(h=>name(h.unit)+' −'+h.damage).join(', '):'아무도 맞지 않았습니다'} · 예고된 공격이 떨어졌습니다.`;
@@ -397,8 +406,10 @@ function render(){
   $('#compact-objective').textContent=objective;
   const cond=session.conditions;$('#compact-objective').title=`승리: ${cond.win.join(' · ')}\n패배: ${cond.lose.join(' · ')}`;
   // 지도 위 목표 띠: 지금 걸린 승리 조건(진행 ✓·수 포함)과 패배 조건을 늘 보인다. 전투 중 목표가 바뀌면 알린다.
-  $('#map-objective').innerHTML=`<p class="mo-win"><b>승리</b> ${cond.win.map(esc).join(' · ')}</p><p class="mo-lose"><b>패배</b> ${cond.lose.map(esc).join(' · ')}</p>`;
-  {const key=JSON.stringify(s.victory);if(objectiveSeen.session===session&&objectiveSeen.key!==key&&s.outcome==='ongoing')toast(`목표가 바뀌었습니다 — ${cond.win.join(' · ')}`);objectiveSeen.session=session;objectiveSeen.key=key;}
+  // 범례(이동 가능·적 시야·목표)도 이 상자 안에 둔다. 따로 지도 구석에 두면 그 자리의 유닛을 덮는다.
+  $('#map-objective').innerHTML=`<button class="mo-toggle" type="button" aria-expanded="${objectiveBox.open}" aria-controls="map-objective" title="승리·패배 조건 펼치기·접기 (O)"><b>◇ 목표</b><span class="mo-short">${esc(cond.win[0]??'')}</span><i class="mo-arrow"></i></button><div class="mo-body"><p class="mo-win"><b>승리</b> ${cond.win.map(esc).join(' · ')}</p><p class="mo-lose"><b>패배</b> ${cond.lose.map(esc).join(' · ')}</p><p class="mo-legend">${LEGEND_HTML}</p></div>`;
+  $('#map-objective').classList.toggle('collapsed',!objectiveBox.open);
+  {const key=JSON.stringify(s.victory);if(objectiveSeen.session===session&&objectiveSeen.key!==key&&s.outcome==='ongoing'){toast(`목표가 바뀌었습니다 — ${cond.win.join(' · ')}`);setObjectiveOpen(true,6000);}objectiveSeen.session=session;objectiveSeen.key=key;}
   $('#objectives').innerHTML=`<p><b>◇</b> ${objective}</p>${conditionsHtml(cond)}<div class="resource-strip">구급약 ${session.medicine} · ${session.scouted?'정찰 완료':'살피기로 경로 확인'}</div>`;
   $('#turn').textContent=String(s.turn).padStart(2,'0');$('#turn-limit').textContent=`/ ${session.deadline??60}`;$('#phase').textContent=`${sideNames[s.currentSide]}의 차례`;
   document.querySelectorAll('.phase-track i').forEach((el,i)=>el.classList.toggle('active',i===s.phaseIndex));
@@ -411,6 +422,8 @@ function render(){
   $('#tactical-tip').textContent=session.revision>=4&&session.chapter===4?'여포는 물리 공격이 강합니다. 무력보다 지력 차이를 활용해 설전 승리와 혼란을 노리세요. 각 대결이 끝나면 체력·MP가 회복됩니다.':session.revision>=4?'일기토는 인접한 적, 설전은 3칸 이내 적을 선택합니다. 충차는 성문·감시탑에 피해 3배. 풍수사는 MP 8로 3칸 이내 아군을 치유합니다.':'목표와 승리 조건을 확인하세요. 본대 다음 편입 아군을 직접 지휘합니다.';
   sound.scene=s.outcome!=='ongoing'?'result':session.chapter===4?'dream':s.living('player').some(u=>u.hp<u.stats.maxHp*.35)?'crisis':bossNear(s.living())?'boss':'battle';
   renderCoach();queueLines();stackOverlays();
+  // 첫 차례(아직 아무도 움직이지 않음)에는 아군 전원을, 그 뒤에는 고른 장수를 상자 밖에 둔다. 대화 선택으로 합류한 장수도 포함된다.
+  {const st=session.state,fresh=st.turn===1&&st.currentSide==='player'&&!st.living('player').some(u=>u.hasMoved||u.hasActed);keepUnitsClear(!fresh);}
   if(fieldReady){consumeLog();field.render(s,selected,mode,threat,session.scouted);}checkModal();
 }
 let lineSeen=new Set<string>(),lineQueue:{speaker:string;text:string}[]=[],lineTimer:ReturnType<typeof setTimeout>|undefined,lineToken=0;
@@ -432,6 +445,7 @@ function showNextLine(){
 }
 /** 지도 위 띠를 겹치지 않게 위에서부터 쌓는다: 전투 대사 → 승리·패배 조건 → 첫 전투 안내. 글 길이에 따라 높이가 달라 고정 위치로는 겹친다. */
 let stackFrame=0;
+const LEGEND_HTML=`<i class="dot teal"></i> 이동 가능 <i class="dot red"></i> 적 시야 / 사거리 <i class="dot gold"></i> 목표`;
 function stackOverlays(){cancelAnimationFrame(stackFrame);stackFrame=requestAnimationFrame(()=>{
   const map=$('#map'),obj=$('#map-objective'),line=$('#battle-line'),coach=$('#coach');
   obj.style.top='';coach.style.top='';const mr=map.getBoundingClientRect();if(!mr.height)return;
@@ -441,6 +455,32 @@ function stackOverlays(){cancelAnimationFrame(stackFrame);stackFrame=requestAnim
   if(shown(coach)){for(const el of [line,obj])if(shown(el)){const r=el.getBoundingClientRect();if(crosses(r,coach.getBoundingClientRect()))coach.style.top=below(r);}}
   // 아래쪽: 회차 보물·천명의 시련 꼬리표가 안내 글(#tile-info)을 덮지 않게 글을 그만큼 오른쪽에서 시작한다.
   const relics=$('#battle-relics'),tip=$('#tile-info');tip.style.paddingLeft='';if(shown(relics)&&relics.innerHTML.trim()){const rr=relics.getBoundingClientRect(),tr=tip.getBoundingClientRect();if(crosses(rr,tr))tip.style.paddingLeft=Math.ceil(rr.right-tr.left+10)+'px';}
+  // 전투 대사 띠가 아군을 덮으면 반대쪽 가장자리(위↔아래)로, 첫 전투 안내는 왼쪽↔오른쪽으로 옮긴다. 양쪽 다 덮으면 덜 덮는 쪽.
+  const pts=field.unitScreenPoints(['player','ally']),flipAway=(el:HTMLElement,cls:string)=>{if(!shown(el))return;
+    const hits=()=>{const r=el.getBoundingClientRect();return pts.filter(p=>p.x>r.left-8&&p.x<r.right+8&&p.y>r.top-8&&p.y<r.bottom+8).length;};
+    const a=hits();if(a){el.classList.toggle(cls);const b=hits();if(b>=a)el.classList.toggle(cls);}};
+  flipAway(line,'flip');flipAway(coach,'side-right');
+});}
+/** 지도 위 상자(목표·장수 카드·명령 단추·첫 전투 안내·조작 단추)가 아군을 덮으면 카메라를 조금 밀어 꺼낸다.
+ * 전투 시작에는 아군 전원, 장수를 고른 뒤에는 그 장수만 본다. 카메라는 지도 끝을 넘지 않는다. */
+let clearFrame=0;
+function keepUnitsClear(onlySelected:boolean){cancelAnimationFrame(clearFrame);clearFrame=requestAnimationFrame(()=>{
+  const map=$('#map'),mr=map.getBoundingClientRect();if(!mr.height||menuOpen)return;
+  const shown=(el:HTMLElement)=>!el.hidden&&getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden'&&+getComputedStyle(el).opacity>.05;
+  const boxes=['#map-objective','#unit-hud.show>*','#action-dock','#coach','#left-toggle','.map-controls','#battle-relics','.tactical-minimap','#tile-info']
+    .flatMap(s=>[...map.querySelectorAll<HTMLElement>(s)]).filter(shown).map(e=>e.getBoundingClientRect()).filter(r=>r.width>4&&r.height>4);
+  let pts=field.unitScreenPoints(['player','ally']);if(onlySelected)pts=pts.filter(p=>p.id===selected);
+  const edge=10,pad=12,inView=(x:number,y:number)=>x>mr.left+edge&&x<mr.right-edge&&y>mr.top+edge&&y<mr.bottom-edge;
+  pts=pts.filter(p=>inView(p.x,p.y));if(!pts.length||!boxes.length)return;
+  const under=(x:number,y:number)=>boxes.find(r=>x>r.left-pad&&x<r.right+pad&&y>r.top-pad&&y<r.bottom+pad);
+  const bad=(dx:number,dy:number)=>pts.reduce((n,p)=>n+(!inView(p.x+dx,p.y+dy)||under(p.x+dx,p.y+dy)?1:0),0);
+  const base=bad(0,0);if(!base)return;
+  const tries:[number,number][]=[];
+  for(const p of pts){const r=under(p.x,p.y);if(!r)continue;
+    tries.push([r.right+pad+6-p.x,0],[r.left-pad-6-p.x,0],[0,r.bottom+pad+6-p.y],[0,r.top-pad-6-p.y]);}
+  const lim=Math.min(mr.width,mr.height)*.45;let best:[number,number]|undefined,bestBad=base,bestLen=Infinity;
+  for(const [dx,dy] of tries){if(Math.abs(dx)>lim||Math.abs(dy)>lim)continue;const n=bad(dx,dy),len=Math.hypot(dx,dy);if(n<bestBad||(n===bestBad&&best&&len<bestLen)){best=[dx,dy];bestBad=n;bestLen=len;}}
+  if(best){field.panBy(best[0],best[1]);stackOverlays();}// 카메라가 움직였으니 대사 띠·안내 상자 자리도 다시 정한다
 });}
 addEventListener('resize',stackOverlays);
 function coachDone(){try{return localStorage.getItem(COACH_KEY)==='1';}catch{return false;}}
@@ -513,7 +553,7 @@ function renderDock(buttons:DockBtn[],can:boolean,run:(id:string)=>void){
     if(g.one)run(g.one.id);else{dockOpen=dockOpen===g.key?'':g.key;render();}});
   dock.querySelectorAll<HTMLButtonElement>('[data-dock-cmd]').forEach(b=>b.onclick=e=>{e.stopPropagation();run(b.dataset.dockCmd!);});
 }
-function select(id:string){selected=id;const u=session.state.find(id);if(u)field.focusUnit(u.pos);mode=u?.hasMoved?'attack':'move';sound.select(u?.unitClass);render();}
+function select(id:string){selected=id;const u=session.state.find(id);if(u)field.focusUnit(u.pos);mode=u?.hasMoved?'attack':'move';sound.select(u?.unitClass);if(objectiveBox.auto)setObjectiveOpen(false);render();keepUnitsClear(true);}
 /** S1-02 지참금 줄: 노잣돈을 내면 남는 돈과, 남문 통행료(1,000전)가 모자라게 되는지 미리 알려 준다. */
 function fundsNote(node:string){
   const bribe=node==='bribe'||node==='lie_failed',cost=session.bribes===0?1000:1500,left=session.funds-cost;
@@ -663,6 +703,7 @@ $('#sound-toggle').onclick=()=>{sound.enabled=!sound.enabled;storeSettings();voi
 $('#menu').onclick=showMenu;$('#brand').onclick=showMenu;$('#undo').onclick=undo;
 $('#end-phase').onclick=()=>act({kind:'endPhase'});
 $('#coach-close').onclick=finishCoach;
+$('#map-objective').addEventListener('click',e=>{if((e.target as HTMLElement).closest('.mo-toggle'))setObjectiveOpen(!objectiveBox.open);});
 $('#zoom-in').onclick=()=>field.zoomBy(.2);$('#zoom-out').onclick=()=>field.zoomBy(-.2);$('#zoom-reset').onclick=()=>field.reset();
 // 가로 모드 전용: 세로로 들면 회전 안내를 덮는다. 전체 화면을 지원하는 기기는 버튼 한 번으로 가로 고정.
 {const gate=document.createElement('div');gate.id='rotate-gate';gate.setAttribute('role','dialog');gate.setAttribute('aria-label','가로 화면 안내');
@@ -690,6 +731,7 @@ document.addEventListener('pointerdown',e=>{if((e.target as HTMLElement|null)?.c
 document.addEventListener('keydown',e=>{if($<HTMLDialogElement>('#modal').open||menuOpen||['INPUT','SELECT','TEXTAREA'].includes((e.target as HTMLElement).tagName))return;const key=e.key.toLowerCase();
   if(key==='z')undo();else if(e.key==='?')$('#help').click();
   else if(key==='e'){const end=$<HTMLButtonElement>('#end-phase');if(!end.disabled)end.click();}
+  else if(key==='o')setObjectiveOpen(!objectiveBox.open);
   else if(e.key==='Escape'){if(mode!=='move'){mode='move';render();}}
   else if(key==='n'){
     // Cycle through units that can still act this phase.

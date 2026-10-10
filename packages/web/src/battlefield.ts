@@ -249,6 +249,18 @@ export class Battlefield {
   }
   /** 전장 전체가 한눈에 들어오는 배율(너무 작아지면 쓰지 않는다). */
   private overviewZoom(){if(!this.state)return 1;return Math.min((this.app.screen.width-40)/(this.state.map.width*W),(this.app.screen.height-70)/(this.state.map.height*H));}
+  /** 아군 등 유닛의 화면(클라이언트) 좌표. 지도 위 상자가 유닛을 덮는지 볼 때 쓴다(발밑보다 조금 위, 몸통 가운데). */
+  unitScreenPoints(sides:readonly string[]){
+    const out:{id:string;x:number;y:number}[]=[];if(!this.state||!this.app?.canvas)return out;// 전장 그림 준비 전
+    const r=this.app.canvas.getBoundingClientRect();
+    for(const [id,a] of this.actors){if(a.piece.destroyed||!a.piece.visible||!sides.includes(a.unit.side))continue;const g=a.piece.getGlobalPosition();out.push({id,x:r.left+g.x,y:r.top+g.y-20});}
+    return out;
+  }
+  /** 카메라를 화면 픽셀만큼 민다. 지도 끝을 넘지 않게 fit이 막으므로 실제로 움직인 양을 돌려준다. */
+  panBy(dx:number,dy:number){
+    if(!this.state)return {dx:0,dy:0};const bx=this.world.x,by=this.world.y;
+    this.pan={x:this.pan.x+dx,y:this.pan.y+dy};this.fit();return {dx:this.world.x-bx,dy:this.world.y-by};
+  }
   focus(at:Coord){
     if(!this.state)return;
     this.pan={x:(this.state.map.width*W/2-(at.x+.5)*W)*this.zoom,y:(this.state.map.height*H/2-(at.y+.5)*H)*this.zoom};this.fit();
@@ -259,7 +271,8 @@ export class Battlefield {
     this.world.scale.set(scale);
     const left=(w-m.width*W*scale)/2,top=(h-m.height*H*scale)/2;
     // 가장자리 여유: 위쪽은 승리·패배 조건 띠, 아래쪽은 장수 정보·명령 단추가 지도를 덮는다. 모서리 칸도 그 밑에서 꺼내 볼 수 있게 한다.
-    const ox=Math.min(64,w*.06),oy=Math.min(190,h*.3);
+    // 작은 화면(휴대폰 가로)은 상자가 화면에 비해 커서 비율만으로는 모서리 유닛을 상자 밖으로 꺼내지 못한다: 가로 120px·세로 130px은 늘 남긴다.
+    const ox=Math.min(160,Math.max(w*.06,120)),oy=Math.min(190,Math.max(h*.3,130));
     const x=m.width*W*scale>w?Math.max(w-m.width*W*scale-ox,Math.min(ox,left+this.pan.x)):left;
     const y=m.height*H*scale>h?Math.max(h-m.height*H*scale-oy,Math.min(oy,top+this.pan.y)):top;
     // Whole device pixels keep ground dots the same size across the screen.
