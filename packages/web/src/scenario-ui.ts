@@ -16,7 +16,7 @@ import {setPlayerFlag} from './story-iso.ts';
 import {chapters} from './session.ts';
 import {encounterLevels} from './campaign-rules.ts';
 import {treasures,type Deployment,type ScenarioDeployment} from './progression.ts';
-import {romanceByName,romanceStats,temperOf} from './romance.ts';
+import {romanceByName,romanceStats,temperOf,signatureSkill} from './romance.ts';
 import {temperNames,type DuelKind} from './duel.ts';
 import {playContest} from './duel-ui.ts';
 import {cardFace} from './faces.ts';
@@ -304,7 +304,7 @@ export function showIfPrep(host:ScenarioHost,state:ScenarioState,step:ScenarioSt
   <div class="prep-body"><div class="prep-list">${card('사마의')}${required.map(card).join('')}${optional.map(card).join('')}</div>
   <div class="prep-detail"><div class="prep-portrait">${portraitImage(f)?`<span class="prep-sprite big prep-face">${cardFace(f)}</span>`:`<span class="prep-sprite big prep-troop">${classSprite(c)}</span>`}<div><h3>${esc(f)}</h3><p>${esc(classNames[c]??c)} · Lv.${u.level} · 경험치 ${u.xp}/${XP_PER_LEVEL}</p>${r?`<p class="muted">${esc(r.epithet)}</p>`:''}</div></div>
     ${r?`<div class="romance-stats prep-stats">${([['무력',r.war],['지력',r.int],['통솔',r.lead],['정치',r.pol],['매력',r.cha]] as const).map(([k,v])=>`<span><small>${k}</small><b>${v}</b><i style="width:${v}%"></i></span>`).join('')}</div>`:''}
-    ${temper?`<p>성격 <b>${temperNames[temper]}</b> — 일기토·설전에 응하는 방식</p>`:''}${r?.skill?`<p><b>${esc(r.skill.name)}</b> ${esc(r.skill.description)}</p>`:''}
+    ${temper?`<p>성격 <b>${temperNames[temper]}</b> — 일기토·설전에 응하는 방식</p>`:''}${(()=>{const g=r?signatureSkill(r.name):undefined;return g?`<p><b>${esc(g.name)}</b> ${esc(g.description)}</p>`:'';})()}
     ${t.map(x=>`<p><b class="tactic-name">전법 「${esc(x.name)}」</b> ${esc(x.description)}</p>`).join('')}<p class="muted">${esc(nextEvolutionText(c))}</p></div></div>
   <div class="run-actions"><button class="primary" id="prep-go">출진 ▶</button>${host.showSlots?'<button id="prep-save">💾 저장</button>':''}<button id="prep-camp">← 진영으로</button><button id="prep-back">장 목록</button></div></div>`,false);
   const get=()=>[...document.querySelectorAll<HTMLInputElement>('[data-sortie]')].filter(x=>x.checked).map(x=>x.dataset.sortie!);

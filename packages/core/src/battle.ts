@@ -344,8 +344,9 @@ export class Battle {
       u.movedSteps = 0;
       u.hasActed = false;
       this.tickStatuses(u);
-      if(u.alive)for(const id of u.traits)getTrait(id).hooks.onTurnStart?.(u,traitParam(u,id));
     }
+    // 차례 시작 특성은 모든 부대의 상태 시간이 줄어든 뒤에 건다(장수가 곁의 아군에게 건 효과가 곧바로 닳지 않게).
+    for (const u of this.state.living(side)) for(const id of u.traits)getTrait(id).hooks.onTurnStart?.(u,traitParam(u,id));
     this.state.push({ t: "turnStart", turn: this.state.turn, side });
     runEvents(this.state, { kind: "turn_start", side });
     this.checkOutcome();

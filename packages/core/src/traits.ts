@@ -5,7 +5,7 @@
  * 전투 로직 안에 `if (hasTrait("..."))` 분기를 넣지 않는다 —
  * 특성이 100개를 넘어가면 그 방식은 유지 불가능해진다. (PRD R7)
  */
-import type { Unit, DamageBreakdown } from "./types.ts";
+import type { Unit, DamageBreakdown, Coord, Status } from "./types.ts";
 
 export type AttackKind = "physical" | "strategy" | "special";
 
@@ -40,6 +40,8 @@ export interface DamageContext {
   instantKillChance: number;
   /** 물리 공격에 더하는 고정 추가 피해(부대효과·장수 특성의 정신력 비례 피해) */
   bonusDamage?: number;
+  /** 책략 공격의 속성(fire·wind…). 장수 고유특성이 읽는다. */
+  element?: string;
 }
 
 export interface TraitHooks {
@@ -55,6 +57,28 @@ export interface TraitHooks {
   ignoresRoughTerrain?: boolean;
   /** 인접 아군이 받는 피해를 대신 받는다 (M-20 GUARD_LINK) */
   redirectsAdjacentDamage?: boolean;
+  /** 이 특성 보유자와 같은 편의 다른 부대가 공격할 때(거리 판단은 훅이 한다) */
+  onAllyAttack?(ctx: DamageContext, holder: Unit, param: number): void;
+  /** 이 특성 보유자와 같은 편의 다른 부대가 피격당할 때 */
+  onAllyDefend?(ctx: DamageContext, holder: Unit, param: number): void;
+}
+
+/**
+ * 특성이 들여다보는 전장: 주변 부대·지형·턴. 유닛이 전장에 들어올 때(BattleState.add) 묶인다.
+ * 피해 훅(onAttack·onDefend·onAlly*)은 예측에도 쓰이므로 읽기만 하고, 바꾸는 일은 onTurnStart에서만 한다.
+ */
+export interface TraitField {
+  readonly units: ReadonlyMap<string, Unit>;
+  readonly map: { inBounds(c: Coord): boolean; tileAt(c: Coord): { terrain: string } };
+  readonly turn: number;
+  applyStatus(unit: Unit, status: Status): void;
+}
+const FIELD = new WeakMap<Unit, TraitField>();
+export function bindField(unit: Unit, field: TraitField): void {
+  FIELD.set(unit, field);
+}
+export function fieldOf(unit: Unit): TraitField | undefined {
+  return FIELD.get(unit);
 }
 
 export interface TraitDef {
@@ -97,6 +121,18 @@ export function applyTraitHooks(ctx: DamageContext): void {
   }
   for (const id of ctx.defender.traits) {
     getTrait(id).hooks.onDefend?.(ctx, ctx.defender, traitParam(ctx.defender, id));
+  }
+  // 주변 장수의 기운(고유특성): 공격자 편·방어자 편의 다른 부대가 가진 onAlly 훅
+  const field = fieldOf(ctx.attacker) ?? fieldOf(ctx.defender);
+  if (!field) return;
+  for (const u of field.units.values()) {
+    if (!u.alive || u === ctx.attacker || u === ctx.defender) continue;
+    for (const id of u.traits) {
+      const h = REGISTRY.get(id)?.hooks;
+      if (!h || (!h.onAllyAttack && !h.onAllyDefend)) continue;
+      if (h.onAllyAttack && (u.side === "enemy") === (ctx.attacker.side === "enemy")) h.onAllyAttack(ctx, u, traitParam(u, id));
+      if (h.onAllyDefend && (u.side === "enemy") === (ctx.defender.side === "enemy")) h.onAllyDefend(ctx, u, traitParam(u, id));
+    }
   }
 }
 

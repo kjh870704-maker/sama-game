@@ -5,10 +5,10 @@
  * 정치(정신), 매력(사기). 50이 병종 기본치이고, 높을수록 같은 병종·레벨의 졸병보다 강하다.
  * 기준점: 무력 100은 여포 한 사람, 지력 100은 제갈량 한 사람. 다른 장수는 연의 속 위상에 따라
  * 그 아래에 놓는다(마초·허저·조운 96, 황충 93 / 사마의·주유 96, 육손 95, 조조 91).
- * 연의에 이름난 일화가 있는 장수는 그 일화에서 딴 고유능력(특성)을 하나 가진다.
+ * 이름있는 장수(core signatures.ts)는 장수마다 이름도 효과도 다른 고유특성을 하나 가진다(규칙판 8). 아래 skill은 규칙판 7까지의 옛 고유능력이다.
  */
 import type {Unit} from '../../core/src/index.ts';
-import {tierOf} from '../../core/src/index.ts';
+import {tierOf,signatureOf} from '../../core/src/index.ts';
 import type {Temper} from './duel.ts';
 
 export interface RomanceSkill {name:string;description:string;trait:string;param?:number}
@@ -184,6 +184,8 @@ export function romanceOf(u:{id:string;name:string}):RomanceOfficer|undefined{
 export function romanceStats(name:string){const r=byName[name];return r?`무력 ${r.war} · 지력 ${r.int} · 통솔 ${r.lead}`:'';}
 /** 이름으로 찾는 연의 능력(장수 카드용). */
 export const romanceByName=(name:string)=>byName[name];
+/** 이름있는 장수의 고유특성(규칙판 8). 목록 밖 인물은 병종이라 없다. 소년 시절 이름도 같은 사람으로 본다. */
+export function signatureSkill(name:string,tier=1):{name:string;description:string}|undefined{const g=signatureOf(name.replace(/^소년 /,''));return g?{name:g.name,description:g.text(tier)}:undefined;}
 /** 연의 장수록에 오른 모든 이름(신장수 포함). */
 export const allRomanceNames=()=>Object.keys(byName);
 

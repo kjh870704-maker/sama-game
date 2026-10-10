@@ -23,3 +23,4 @@ export * from "./tactics.ts";
 export * from "./cc-rules.ts";
 export * from "./strategy-tiers.ts";
 export * from "./reach.ts";
+export * from "./signatures.ts";

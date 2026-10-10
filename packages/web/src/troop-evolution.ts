@@ -5,7 +5,7 @@
  */
 import type {UnitClass} from '../../core/src/index.ts';
 import {VARIANTS,tierOf,familyOf,profileOf,classTactics,reachOffsets,reachLabel,troopEffectOf,troopEffectText,OFFICER_EFFECTS,FAMED_OFFICERS,topAbility,finalClassOf,unitReachLabel} from '../../core/src/index.ts';
-import {romanceByName} from './romance.ts';
+import {romanceByName,signatureSkill} from './romance.ts';
 import {classNames,evolutionLines,troopSheets} from './troops.ts';
 import {classSprite,paintArmor} from './codex-ui.ts';
 import {classTraitSummary} from './perks.ts';
@@ -60,16 +60,17 @@ const personCard=(art:string,small:string,name:string,c:UnitClass,extra='',famed
 /** 장수의 병종: 군주 9명과 서초패왕 항우는 군주, 나머지는 전용 전투 그림의 첫 병종(제갈량 수레 제외). */
 const officerClass=(e:OfficerEntry):UnitClass=>(LORD_NAMES.includes(e.name)?'lord':Object.keys(e.battle).find(k=>k!=='cart')) as UnitClass;
 const officerSheet=(e:OfficerEntry,c:string)=>e.battle[c]??e.battle.lord??Object.entries(e.battle).find(([k])=>k!=='cart')?.[1];
-/** 장수 특성(가장 높은 연의 능력)·이름난 장수 표시. 수치는 병종 단계를 따라 오른다. */
-function officerNote(name:string,c:UnitClass){
-  const r=romanceByName(name)??romanceByName(name.replace(/^소년 /,''));if(!r)return '';
-  const e=OFFICER_EFFECTS[topAbility(r,profileOf(c).canUseStrategy?'int':'war')];
-  return `<p class="evo-skill evo-troop" title="${esc(troopEffectText(e))}"><b>장수 특성 「${esc(e.name)}」</b><span>${esc(troopEffectText(e))} (병종 1~4단계)</span></p>${FAMED_OFFICERS.includes(name)?'<p class="evo-skill evo-troop"><b>이름난 장수</b><span>공격 범위가 이 병종 계통의 마지막 진화와 같다(근접은 팔방). 그보다 넓어지지 않는다.</span></p>':''}`;
+/** 이름있는 장수의 고유특성(장수마다 이름도 효과도 다르다). 목록 밖 인물은 병종이라 장수 탭에 나오지 않는다. */
+function officerNote(name:string){
+  const g=signatureSkill(name);if(!g)return '';
+  return `<p class="evo-skill evo-troop" title="${esc(g.description)}"><b>고유특성 「${esc(g.name)}」</b><span>${esc(g.description)} (병종이 진화할수록 강해진다)</span></p>`;
 }
+/** 장수 탭: 고유특성이 있는 이름있는 장수만(목록 밖 인물은 병종으로 처리). */
+const namedManifest=()=>officerManifest.filter(e=>!!signatureSkill(e.name));
 function officerCards(){
   return OFFICER_FACTIONS.map(f=>{
-    const list=officerManifest.filter(e=>(OFFICER_FACTION[e.id]??'군웅')===f);if(!list.length)return '';
-    return `<section class="evo-line"><h3>${f} <small>${list.length}명</small></h3><div class="evo-grid">${list.map(e=>{const c=officerClass(e),b=officerSheet(e,c);return personCard(b?officerArt(e.name,b):classArt(c),'장수',e.name,c,officerNote(e.name,c),FAMED_OFFICERS.includes(e.name));}).join('')}</div></section>`;
+    const list=namedManifest().filter(e=>(OFFICER_FACTION[e.id]??'군웅')===f);if(!list.length)return '';
+    return `<section class="evo-line"><h3>${f} <small>${list.length}명</small></h3><div class="evo-grid">${list.map(e=>{const c=officerClass(e),b=officerSheet(e,c);return personCard(b?officerArt(e.name,b):classArt(c),'장수',e.name,c,officerNote(e.name),FAMED_OFFICERS.includes(e.name));}).join('')}</div></section>`;
   }).join('');
 }
 /** 본편 전장의 NPC(아군 AI). 한 사람은 카드 한 장·병종 하나다.
@@ -88,7 +89,7 @@ function singleLines(){
 }
 export function evolutionChart(group:EvoGroup='all'){
   const tabs=(note:string)=>`<div class="evo-tabs">${EVO_GROUPS.map(([id,name])=>`<button data-evo-group="${id}" class="${id===group?'active':''}">${name}</button>`).join('')}<span class="muted">${note}</span></div>`;
-  if(group==='officer')return `${tabs('장수 '+officerManifest.length)}<div class="evo-lines">${officerCards()}</div>`;
+  if(group==='officer')return `${tabs('이름있는 장수 '+namedManifest().length)}<div class="evo-lines">${officerCards()}</div>`;
   if(group==='npc')return `${tabs('NPC '+npcList().length)}<div class="evo-lines">${npcCards()}</div>`;
   const fams=EVO_GROUPS.find(g=>g[0]===group)![2];
   const lines=group==='single'?[]:evolutionLines().filter(l=>!fams.length||fams.includes(familyOf(l[0]![0])));

@@ -5,6 +5,7 @@
  * 장수 특성도 병종 단계를 따라 수치가 오른다. 규칙판 7부터 전투에 건다(web Session).
  */
 import { defineTrait, combine, type DamageContext } from "./traits.ts";
+import { signatureOf } from "./signatures.ts";
 import type { Unit, UnitClass } from "./types.ts";
 import { FOUR_STAGE_LINES, familyOf, finalClassOf } from "./classes.ts";
 import { profileOf } from "./units.ts";
@@ -252,12 +253,13 @@ export function applyFamedReach(unit: Unit, name: string): boolean {
 }
 
 /** 화면에 보일 규칙판 7 효과(부대효과·장수 특성·이름난 장수): 이름과 지금 단계의 설명. */
-export function unitEffectNotes(unit: Unit): Array<{ kind: "troop" | "officer" | "famed"; name: string; text: string; tier: number }> {
-  const out: Array<{ kind: "troop" | "officer" | "famed"; name: string; text: string; tier: number }> = [];
+export function unitEffectNotes(unit: Unit): Array<{ kind: "troop" | "officer" | "famed" | "signature"; name: string; text: string; tier: number }> {
+  const out: Array<{ kind: "troop" | "officer" | "famed" | "signature"; name: string; text: string; tier: number }> = [];
   for (const t of unit.traits) {
     const tier = unit.traitParams[t] ?? 1;
     if (t.startsWith("troop:")) { const e = TROOP_EFFECTS[t.slice(6) as UnitClass]; if (e) out.push({ kind: "troop", name: e.name, text: troopEffectText(e, tier), tier }); }
     else if (t.startsWith("officer:")) { const e = OFFICER_EFFECTS[t.slice(8) as OfficerAbility]; if (e) out.push({ kind: "officer", name: e.name, text: troopEffectText(e, tier) + (duplicatesTroop(unit, e) ? " (부대효과와 같은 효과라 겹치지 않는다)" : ""), tier }); }
+    else if (t.startsWith("sig:")) { const g = signatureOf(t.slice(4)); if (g) out.push({ kind: "signature", name: g.name, text: g.text(tier), tier }); }
     else if (t === "famed") out.push({ kind: "famed", name: "이름난 장수", text: "공격 범위가 이 병종 계통의 마지막 진화와 같다(근접은 팔방). 그보다 넓어지지 않는다.", tier: 1 });
   }
   return out;

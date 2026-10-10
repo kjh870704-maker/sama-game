@@ -400,6 +400,16 @@ export const foeEdges7:Record<string,{normal?:number;extreme?:number}>={
   'S1-02':{normal:-6,extreme:-6},'S1-03':{extreme:-6},'S2-08':{normal:-16},'S2-14':{extreme:-6},
 };
 
+/** 규칙판 8(이름있는 장수의 고유특성, 목록 밖 인물은 병종)에서 foeEdges7에 더하는 적 보정. 사마랑이 병종이 되어 성장 특성을 잃은 초반 장 등. */
+export const foeEdges8:Record<string,{normal?:number;extreme?:number}>={
+  'S1-02':{extreme:-20},'S1-03':{normal:-10},'S1-06':{normal:-15,extreme:-10},'S2-06':{normal:-10},
+};
+
+/** 규칙판 8: 목록 밖 인물이 병종이 되어 성장 특성(가문의 방패 등)을 잃은 필수 생존 장수를 그만큼 단단하게. */
+export const tough8:Record<string,Array<{unit:string;hpScale:number;defense?:number}>>={
+  'S1-02':[{unit:'sima_lang',hpScale:1.35,defense:6}],'S1-03':[{unit:'sima_lang',hpScale:1.35,defense:6}],
+};
+
 /** Korean subject particle: 이 after a final consonant, 가 otherwise. */
 export function subject(name:string){const c=name.charCodeAt(name.length-1);return name+(c>=0xac00&&c<=0xd7a3&&(c-0xac00)%28!==0?'이':'가');}
 export function protectedFailure(s:BattleState,ids:string[]){

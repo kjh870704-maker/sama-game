@@ -47,7 +47,7 @@ const scenarioYear=(id:string)=>scriptOf(id)?.year??'';
 import type {ScenarioDeployment} from './progression.ts';
 import {loadMeta,saveMeta,recordStory} from './meta.ts';
 import {RUN_FLOORS,RELICS,newRun,startingOfficers,battleRef} from './roguelike.ts';
-import {romance,romanceOf,temperOf} from './romance.ts';
+import {romance,romanceOf,temperOf,signatureSkill} from './romance.ts';
 import './style.css';
 import catalogue from './campaign.json';
 import { Session, chapters, campaignOrder, type Preparation } from './session.ts';
@@ -67,7 +67,7 @@ const sound=new Soundscape(), field=new Battlefield();
 /** Developer shortcuts (straight into a late battle) only appear with ?dev in the address. */
 const devMode=new URLSearchParams(location.search).has('dev');
 /** 새 전투가 쓰는 규칙판: 5 = 조조전 병과 체계(등급 성장·지형 효율·명중/2회 공격/회심 비율). 예전 저장은 저장된 규칙판 그대로. */
-const RULES=7 as const;
+const RULES=8 as const;
 let session=new Session(),selected='sima_yi',mode='move',threat=false,speed=1,menuOpen=true,aiTimer:ReturnType<typeof setTimeout>|undefined,lastLog=0,resultShown=false;
 let saveAvailable=false,hasStarted=false;
 try{saveAvailable=!!localStorage.getItem(SAVE_KEY);}catch{/* Private browsing may disable storage. */}
@@ -306,7 +306,7 @@ function romanceCard(u:Unit){
   const r=romanceOf(u);if(!r||u.name.endsWith('환영'))return '';
   const bars=([['무력',r.war],['지력',r.int],['통솔',r.lead],['정치',r.pol],['매력',r.cha]] as const).map(([k,v])=>`<span><small>${k}</small><b>${v}</b><i style="width:${v}%"></i></span>`).join('');
   const temper=temperOf(r.name);
-  return `<div class="romance-card"><div class="romance-epithet">${r.epithet}${temper?` <span class="temper-tag" title="일기토·설전에 응하는 방식">성격 · ${temperNames[temper]}</span>`:''}</div><div class="romance-stats">${bars}</div>${(()=>{const sk=r.skill??officerFeatures[u.id];return sk?`<p><b>${sk.name}</b> ${sk.description}</p>`:'';})()}</div>`;
+  return `<div class="romance-card"><div class="romance-epithet">${r.epithet}${temper?` <span class="temper-tag" title="일기토·설전에 응하는 방식">성격 · ${temperNames[temper]}</span>`:''}</div><div class="romance-stats">${bars}</div>${(()=>{const sk=session.revision>=8?signatureSkill(r.name,u.traitParams['sig:'+r.name]??1):r.skill??officerFeatures[u.id];return sk?`<p><b>${sk.name}</b> ${sk.description}</p>`:'';})()}</div>`;
 }
 function milestoneMarkup(items:ReturnType<typeof growthMilestones>){return items.map(x=>`<div class="growth-summary"><b>${officerNames[x.id]}${x.to>x.from?' · Lv.'+x.from+' → '+x.to:''}</b>${x.evolution?`<p class="evo-news">병종 진화: ${x.evolution.from} → <b>${x.evolution.to}</b>${x.evolution.bloom?` · 개화 「${x.evolution.bloom.name}」 ${x.evolution.bloom.description}`:''}</p>`:''}${x.strategies.length?'<p>새 책략: '+x.strategies.join(' · ')+'</p>':''}${x.talents.length?'<p>고유특성 해금: '+x.talents.join(' · ')+'</p>':''}</div>`).join('');}
 function showExpeditionResult(){if(resultShown)return;resultShown=true;const run=session.deployment!.mission!,m=expeditions.find(x=>x.id===run.id)!,win=session.state.outcome==='victory';const before=structuredClone(campaign);
@@ -512,12 +512,12 @@ function renderUnit(u:Unit|undefined){
   if(!u)return;const s=session.state,can=u.alive&&!u.hasActed&&u.side===s.currentSide&&CONTROLLABLE.has(u.side)&&s.outcome==='ongoing';
   const feature=session.revision>=4?officerFeatures[u.id]:undefined;const talents=session.deployment?.growth?talentTree(u.id,u.level,session.deployment.growth):[];
   // 한 화면 장수 카드: 초상·이름·체력/책략/경험 막대·능력치 8칸·성격·특성(이름만)·책략(눌러서 선택)·상태
-  const r=romanceOf(u),temper=r?temperOf(r.name):undefined,sk=r?.skill??feature;
+  const r=romanceOf(u),temper=r?temperOf(r.name):undefined,sk=session.revision>=8?undefined:r?.skill??feature;
   const ab=u.ccRules?u.ability:undefined;
   // 조조전 규칙 전투: 장수 능력 다섯(무력·지력·통솔·민첩·운)과 부대 공격·방어·이동. 순발력·사기는 칸에 마우스를 올리면 보인다.
   const statCells=ab?[['무력',ab.war],['지력',ab.int],['통솔',ab.lead],['민첩',ab.agi],['운',ab.luck],['공격',u.stats.attack],['방어',u.stats.defense],['이동',u.stats.movement]] as Array<[string,number]>:[...(r&&!u.name.endsWith('환영')?[['무력',r.war],['지력',r.int],['통솔',r.lead],['정치',r.pol],['매력',r.cha]]:[['무력',martialPower(u)],['지력',u.stats.intellect]]),['공격',u.stats.attack],['방어',u.stats.defense],['이동',u.stats.movement]] as Array<[string,number]>;
   const strategyChips=u.strategies.map(id=>{const d=s.strategyFor(u,id)!,tier=d.tier??1;const off=!can||u.mp<d.mpCost||s.hasStatus(u,'seal');return `<button class="uc-strat t${tier}${mode===id?' active':''}" data-uc-strat="${id}" ${off?'disabled':''} title="${d.name} · ${STRATEGY_TIER_NAMES[tier]} · 위력 ${d.power} · ${strategyHint(id)}"><img src="${strategyIconUrl(id,tier)}" alt=""><b>${d.name}</b><small>${d.mpCost}</small></button>`;}).join('');
-  const traits=[...unitEffectNotes(u).map(e=>({n:(e.kind==='troop'?'부대 · ':e.kind==='officer'?'장수 · ':'')+e.name+(e.kind==='famed'?'':' '+'Ⅰ Ⅱ Ⅲ Ⅳ'.split(' ')[Math.max(0,Math.min(3,e.tier-1))]),d:e.text,on:true})),...(sk?[{n:sk.name,d:sk.description,on:true}]:[]),...talents.map(t=>({n:t.name,d:t.ready?t.description:t.requirement,on:t.ready}))].filter((t,i,a)=>a.findIndex(x=>x.n===t.n)===i);
+  const traits=[...unitEffectNotes(u).map(e=>({n:(e.kind==='troop'?'부대 · ':e.kind==='officer'?'장수 · ':e.kind==='signature'?'고유 · ':'')+e.name+(e.kind==='famed'?'':' '+'Ⅰ Ⅱ Ⅲ Ⅳ'.split(' ')[Math.max(0,Math.min(3,e.tier-1))]),d:e.text,on:true})),...(sk?[{n:sk.name,d:sk.description,on:true}]:[]),...talents.map(t=>({n:t.name,d:t.ready?t.description:t.requirement,on:t.ready}))].filter((t,i,a)=>a.findIndex(x=>x.n===t.n)===i);
   $('#unit-detail').innerHTML=`<div class="uc"><div class="uc-head"><div class="portrait uc-face"><div>${faceFor(u)}</div><span class="portrait-tag">${sideNames[u.side]}</span></div><div class="uc-id"><h2>${unitName(u)}</h2><small>${classNames[u.unitClass]} · Lv.${u.level}${r?.epithet?` · ${r.epithet}`:''}</small>${[['hp','체력',u.hp,u.stats.maxHp],['mp','책략',u.mp,u.stats.maxMp],...xpBar(u).map(([k,,v,m])=>[k,'경험',v,m] as [string,string,number,number])].map(([kind,name,value,max])=>`<div class="uc-bar ${kind}"><span>${name}</span><i><i style="width:${Number(value)/Math.max(1,Number(max))*100}%"></i></i><b>${value}<small>/${max}</small></b></div>`).join('')}</div></div>
     <div class="uc-stats"${ab?` title="순발력 ${u.stats.agility} · 사기 ${u.stats.morale} · 정신력 ${u.stats.spirit}"`:''}>${statCells.map(([k,v])=>`<div><small>${k}</small><b>${v}</b></div>`).join('')}</div>
     ${temper||traits.length?`<div class="uc-traits">${temper?`<span class="uc-chip temper" title="일기토·설전에 응하는 방식">성격 · ${temperNames[temper]}</span>`:''}${traits.map(t=>`<span class="uc-chip${t.on?'':' locked'}" title="${t.d.replace(/"/g,'&quot;')}">${t.on?'◆':'◇'} ${t.n}</span>`).join('')}</div>`:''}

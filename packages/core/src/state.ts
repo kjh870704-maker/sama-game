@@ -2,6 +2,7 @@ import type { Unit, Side, Coord, BattleOutcome, Status, StatusKind, StrategyDef,
 import { BattleMap, key, isHostile } from "./grid.ts";
 import { Rng, type RngSnapshot } from "./rng.ts";
 import { evolveStrategy } from "./strategy-tiers.ts";
+import { bindField } from "./traits.ts";
 import type { StageDef, VictoryCondition, Difficulty } from "./stage.ts";
 
 export type LogEntry =
@@ -110,6 +111,7 @@ export class BattleState {
   add(unit: Unit): void {
     if (this.units.has(unit.id)) throw new Error(`중복 유닛 ID: ${unit.id}`);
     this.units.set(unit.id, unit);
+    bindField(unit, this);
   }
 
   get(id: string): Unit {

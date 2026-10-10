@@ -22,7 +22,8 @@ export function talentTree(id:string,level:number,growth:Growth):Talent[]{const 
  {name:{sima_yi:'정중동',cao_zhen:'철벽 선봉',sima_lang:'후방의 버팀목',sima_fang:'노장의 침착'}[id]??'전장의 단련',description:'물리 피해 10% 감소',trait:'commandDefense',level:6,requirement:'첫 특성 해금 · Lv.6 · 수련 3승',ready:level>=6&&growth.storyWins>=1&&growth.trainingWins>=3},
  {name:{sima_yi:'심모원려',cao_zhen:'상승장군',sima_lang:'가문의 기둥',sima_fang:'병법의 전수'}[id]??'대가의 경지',description:id==='sima_yi'?'책략 공격 피해 12% 증가':'물리 공격 피해 10% 증가',trait:id==='sima_yi'?'zhouStrategy':'westernValor',level:10,requirement:'둘째 특성 해금 · Lv.10 · 보물 외전 3개 완료',ready:level>=10&&growth.storyWins>=1&&growth.trainingWins>=3&&growth.questWins>=3},
  ];}
-export function applyOfficerFeatures(units:Unit[],growth?:Growth){for(const u of units){const feature=officerFeatures[u.id];if(!feature)continue;const ids=growth&&['sima_yi','cao_zhen','sima_lang','sima_fang'].includes(u.id)?talentTree(u.id,u.level,growth).filter(t=>t.ready).map(t=>t.trait):growth&&u.level<4?[]:[feature.trait];for(const trait of ids)if(!u.traits.includes(trait))u.traits.push(trait);}}
+/** signatures=true(규칙판 8): 고유특성이 따로 붙으므로 성장 특성 나무(사마의·조진)만 쓴다. 목록 밖 인물(사마랑·사마방 등)은 병종 능력만. */
+export function applyOfficerFeatures(units:Unit[],growth?:Growth,signatures=false){for(const u of units){const feature=officerFeatures[u.id];if(!feature)continue;if(signatures&&u.id!=='sima_yi'&&u.id!=='cao_zhen')continue;const ids=growth&&['sima_yi','cao_zhen','sima_lang','sima_fang'].includes(u.id)?talentTree(u.id,u.level,growth).filter(t=>t.ready).map(t=>t.trait):growth&&u.level<4?[]:[feature.trait];for(const trait of ids)if(!u.traits.includes(trait))u.traits.push(trait);}}
 /** 일기토 무력: 연의 장수록의 무력, 없으면 고유 특성의 무력, 그것도 없으면 공격력으로 어림. */
 export function martialPower(u:Unit){return (romanceWar(u)??officerFeatures[u.id]?.strength??Math.min(95,40+u.stats.attack))+u.level;}
 /** 설전 지력: 연의 지력에 레벨을 더한다(연의에 없는 장수는 전투 지력으로 어림). */

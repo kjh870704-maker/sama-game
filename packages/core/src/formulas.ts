@@ -247,7 +247,7 @@ export function computeStrategy(
  * 다만 기본 공격 사거리 밖의 칸을 쳐도 감쇠하지 않는다(스킬 사거리로 이미 정해져 있다).
  */
 function strategyContext(caster: Unit, target: Unit, strategy: StrategyDef): DamageContext {
-  if (!strategy.physical) return createDamageContext(caster, target, "strategy");
+  if (!strategy.physical) return { ...createDamageContext(caster, target, "strategy"), element: strategy.element };
   const ctx = createDamageContext(caster, target, "physical");
   const reach = reachMul(caster, target.pos);
   if (reach > 0) ctx.attackMul /= reach;

@@ -9,7 +9,7 @@
 import type {UnitClass,StrategyTier,TerrainKind} from '../../core/src/index.ts';
 import {VARIANTS,tierOf,familyOf,profileOf,classTactics,strategyArea,tieredStrategy,strategyTierLevel,STRATEGY_TIER_NAMES,gradeProfileOf,terrainEfficiency,efficiencyMark,reachLabel,reachOffsets} from '../../core/src/index.ts';
 import {strategyIconUrl} from './strategy-icons.ts';
-import {allRomanceNames,romanceByName,temperOf} from './romance.ts';
+import {allRomanceNames,romanceByName,temperOf,signatureSkill} from './romance.ts';
 import {temperNames} from './duel.ts';
 import {customNames,customList} from './custom.ts';
 import {officerLook,officerPortrait} from './officer-art.ts';
@@ -59,7 +59,7 @@ const STAT_ROWS:Array<[keyof NonNullable<ReturnType<typeof romanceByName>>,strin
 
 function peopleTab(pick:string,side:Side|'all'){
   const meta=loadMeta(),names=codexNames().filter(n=>side==='all'||sideOf(n)===side),name=names.includes(pick)?pick:names[0]??'';
-  const r=romanceByName(name),cls=officerClass(name),temper=temperOf(name),skill=r?.skill??officerFeatures[name];
+  const r=romanceByName(name),cls=officerClass(name),temper=temperOf(name),skill=signatureSkill(name);
   const st=perkState(meta,name),best=bestLevel(meta,name),tier=officerTier(meta,name),slots=perkSlots(meta),perks=perksFor(name);
   const list=`<div class="cx-filter"><label class="cx-upload" title="파일 이름을 장수 이름으로 봅니다(조조.png → 조조)">🖼 여러 장 넣기<input type="file" accept="image/*" multiple data-cx-bulk hidden></label>${(['all','wei','shu','wu','other','chu','han','custom'] as const).map(s=>`<button data-cx-side="${s}" class="${side===s?'active':''}">${s==='all'?'전체':SIDE_NAMES[s]}</button>`).join('')}</div>
     <div class="cx-people">${names.map(n=>`<button data-cx-person="${esc(n)}" class="cx-person side-${sideOf(n)} ${n===name?'chosen':''}" aria-label="${esc(n)}"><span class="cx-face">${codexFace(n)}</span><b>${esc(n)}</b></button>`).join('')||'<p class="muted">이 세력에는 아직 장수가 없다.</p>'}</div>`;
@@ -68,8 +68,8 @@ function peopleTab(pick:string,side:Side|'all'){
       <p class="cx-tags"><span>${esc(classNames[cls]??cls)}</span>${temper?`<span>성격 ${temperNames[temper]}</span>`:''}${best?`<span>최고 Lv.${best}</span>`:''}</p>
       <p class="cx-img-tools"><label class="cx-upload">🖼 초상 이미지 넣기<input type="file" accept="image/*" data-cx-upload hidden></label>${isUploaded(name)?'<button data-cx-unimg>넣은 그림 지우기</button>':''}</p></div></div>
     ${r?`<div class="cx-stats">${STAT_ROWS.map(([k,label])=>{const v=r[k] as number;return `<div class="cx-stat"><span>${label}</span><i><i style="width:${v}%" class="${v>=90?'hi':v<40?'lo':''}"></i></i><b>${v}</b></div>`;}).join('')}</div>`:''}
-    ${skill?`<p class="cx-unique"><b>고유능력 「${esc(skill.name)}」</b> ${esc(skill.description)}${'param' in skill&&skill.param!==undefined?`<br><span class="cx-tiers">${[1,2,3,4].map(t=>`<i class="${t===tier?'now':''}">${PERK_TIERS[t-1]!.mark} ${esc(perkText(skill.trait,skillParam(skill.param!,t)))}</i>`).join('')}</span>`:''}</p>`:''}
-    <p class="cx-evo">진화 단계 <b>${'◆'.repeat(tier)}${'◇'.repeat(4-tier)}</b> <small>병종이 진화할수록 장수 효과와 고유능력이 Ⅰ→Ⅱ→Ⅲ→Ⅳ(전설)로 강해진다${best?` · 최고 Lv.${best} 기준`:''}</small></p>
+    ${skill?`<p class="cx-unique"><b>고유특성 「${esc(skill.name)}」</b> ${esc(signatureSkill(name,tier)?.description??skill.description)}<br><span class="cx-tiers"><i>병종이 진화할수록 수치가 커진다(1단계 ×1 · 2단계 ×1.15 · 3단계 ×1.3 · 4단계 ×1.5)</i></span></p>`:'<p class="cx-unique muted">고유특성 없음 — 병종 능력으로 싸운다.</p>'}
+    <p class="cx-evo">진화 단계 <b>${'◆'.repeat(tier)}${'◇'.repeat(4-tier)}</b> <small>병종이 진화할수록 장수 효과와 고유특성이 Ⅰ→Ⅱ→Ⅲ→Ⅳ(전설)로 강해진다${best?` · 최고 Lv.${best} 기준`:''}</small></p>
     <div class="cx-bio"><h4>열전</h4><p>${esc(biography(name))}</p></div>
     ${isChuHan(name)?legacyBlock(meta,name):`    <div class="cx-perks"><h4>장수 효과 <small>장착 ${st.equipped.length}/${slots} · 천명 ${meta.mandate}</small></h4>
       ${perks.map(p=>{const learned=st.learned.includes(p.id),on=st.equipped.includes(p.id),reach=best>=p.level;
