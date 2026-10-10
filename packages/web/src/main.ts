@@ -455,11 +455,11 @@ function stackOverlays(){cancelAnimationFrame(stackFrame);stackFrame=requestAnim
   if(shown(coach)){for(const el of [line,obj])if(shown(el)){const r=el.getBoundingClientRect();if(crosses(r,coach.getBoundingClientRect()))coach.style.top=below(r);}}
   // 아래쪽: 회차 보물·천명의 시련 꼬리표가 안내 글(#tile-info)을 덮지 않게 글을 그만큼 오른쪽에서 시작한다.
   const relics=$('#battle-relics'),tip=$('#tile-info');tip.style.paddingLeft='';if(shown(relics)&&relics.innerHTML.trim()){const rr=relics.getBoundingClientRect(),tr=tip.getBoundingClientRect();if(crosses(rr,tr))tip.style.paddingLeft=Math.ceil(rr.right-tr.left+10)+'px';}
-  // 전투 대사 띠가 아군을 덮으면 반대쪽 가장자리(위↔아래)로, 첫 전투 안내는 왼쪽↔오른쪽으로 옮긴다. 양쪽 다 덮으면 덜 덮는 쪽.
+  // 전투 대사 띠가 아군을 덮으면 반대쪽 가장자리(위↔아래)로, 첫 전투 안내·승리 조건은 왼쪽↔오른쪽으로 옮긴다. 양쪽 다 덮으면 덜 덮는 쪽.
   const pts=field.unitScreenPoints(['player','ally']),flipAway=(el:HTMLElement,cls:string)=>{if(!shown(el))return;
     const hits=()=>{const r=el.getBoundingClientRect();return pts.filter(p=>p.x>r.left-8&&p.x<r.right+8&&p.y>r.top-8&&p.y<r.bottom+8).length;};
     const a=hits();if(a){el.classList.toggle(cls);const b=hits();if(b>=a)el.classList.toggle(cls);}};
-  flipAway(line,'flip');flipAway(coach,'side-right');
+  flipAway(line,'flip');flipAway(coach,'side-right');flipAway(obj,'side-right');
 });}
 /** 지도 위 상자(목표·장수 카드·명령 단추·첫 전투 안내·조작 단추)가 아군을 덮으면 카메라를 조금 밀어 꺼낸다.
  * 전투 시작에는 아군 전원, 장수를 고른 뒤에는 그 장수만 본다. 카메라는 지도 끝을 넘지 않는다. */

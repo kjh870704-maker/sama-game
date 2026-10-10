@@ -1711,3 +1711,6 @@ dialog .briefing{word-break:keep-all;overflow-wrap:break-word;text-wrap:pretty}
 @media (max-height:520px){.coach.side-right{top:96px!important}}
 /* 휴대폰 가로: 안내 상자가 지도 폭의 절반을 넘으면 어느 쪽에 두어도 가운데 유닛을 덮는다. 폭을 줄인다. */
 @media (max-height:520px){.coach{max-width:min(260px,42%);font-size:calc(12.5px*var(--fs,1));line-height:1.5}}
+/* 승리 조건 꼬리표가 지도 왼쪽 위 구석의 아군을 덮으면 오른쪽(작은 지도 아래)으로 옮긴다(main.ts stackOverlays). */
+.map-objective.side-right{left:auto!important;right:16px;top:132px!important}
+@media (max-height:520px){.map-objective.side-right{right:10px;top:96px!important}}
