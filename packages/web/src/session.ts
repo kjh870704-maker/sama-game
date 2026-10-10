@@ -4,6 +4,7 @@ import {refBattle,prepareRunBattle,applyBattleMods,applyRelics,addRecruits,taleB
 import {validRoute} from './fate.ts';
 import {applyPerkGrants,validGrants} from './perks.ts';
 import {stretchMap,stretchStage,canStretch,wideCoord,shapeGoals} from './stretch.ts';
+import {LARGE_BATTLES,enlargeStage,enlargedRegions} from './large-battle.ts';
 import {applyTreasureSpecial} from './treasure-specials.ts';
 import './scenario.ts';
 import {battleConditions,type BattleConditions} from './battle-conditions.ts';
@@ -157,6 +158,8 @@ export class Session {
   activeDuel:DuelState|null=null;
   /** 넓은 전장(지도 1.5배 · 이동 +2)으로 만든 전투인가 */
   wide=false;
+  /** 아군·적군을 늘린 큰 전투인가. */
+  large=false;
   /** 방금 도전을 거절당했다면 그 사연(화면이 한 번 보여 준다) */
   lastRefusal:{kind:'duel'|'debate';challenger:string;target:string;line:string;reason:string}|null=null;
   /** 방금 응한 대결의 첫 대답 */
@@ -199,7 +202,11 @@ export class Session {
     // 넓은 전장: 연의 지도를 1.5배로(지형·영역·등장 위치), 이동력은 +2로 걸음을 맞춘다.
     const wide=!!this.deployment?.wide&&!this.deployment.run&&!this.deployment.mission&&canStretch(entry.map);
     // 목표 지점(탈출·도달·점령)은 늘린 뒤 띄엄띄엄 흩어지지 않게 붙은 칸 묶음으로 다시 놓는다.
-    if(wide)entry={...entry,map:shapeGoals(stretchMap(entry.map),entry.stage,entry.map),stage:stretchStage(entry.stage)};
+    // 큰 전투: 새로 시작한 넓은 전장(wide 2)의 복잡한 장은 아군·적군을 늘리고 출진·등장 지역을 넓힌다.
+    const large=wide&&this.deployment?.wide===2&&LARGE_BATTLES.has(entry.stage.id);
+    if(large)entry={...entry,stage:enlargeStage(entry.stage)};
+    if(wide)entry={...entry,map:shapeGoals(stretchMap(entry.map),entry.stage,entry.map,large?enlargedRegions(entry.stage):undefined),stage:stretchStage(entry.stage)};
+    this.large=large;
     this.wide=wide;
     const level=entry.stage.difficulty[this.difficulty].recommendedLevel;
     const state=assemble({stage:entry.stage,map:entry.map,difficulty:this.difficulty,seed:this.seed,roster:[

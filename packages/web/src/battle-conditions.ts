@@ -6,7 +6,7 @@
  * order가 있는 조건은 낮은 단계부터 차례로 모두 충족해야 한다(→).
  */
 import type {BattleState,Coord,StageDef,VictoryCondition} from '../../core/src/index.ts';
-import {evaluate} from '../../core/src/index.ts';
+import {evaluate,currentGoalStep} from '../../core/src/index.ts';
 import {stageRules,subject} from './stage-rules.ts';
 import {classNames} from './troops.ts';
 import {isEscapeRegion} from './stretch.ts';
@@ -58,7 +58,7 @@ export type GoalMark={target:string;cells:Coord[];kind:'escape'|'reach'|'capture
  * 차례 목표(order)는 지금 단계의 것만 보인다.
  */
 export function goalMarks(state:BattleState):GoalMark[]{
-  const steps=[...new Set(state.victory.filter(c=>c.order!==undefined).map(c=>c.order!))].sort((a,b)=>a-b),step=steps[state.goalProgress];
+  const step=currentGoalStep(state);
   const out:GoalMark[]=[];
   for(const c of state.victory){
     if(c.type!=='reach'&&c.type!=='capture'||!c.target||out.some(o=>o.target===c.target))continue;

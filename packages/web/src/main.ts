@@ -228,7 +228,7 @@ function briefing(chapter:number,expeditionId?:string,scenario?:ScenarioDeployme
   let supports=[...supportOptions.slice(0,2)];
   const recommendation=expedition?recommendExpeditionSupport(expedition.id):undefined;
   let extras:string[]=[];
-  const dispatch=(preview=false)=>{const d=deployment(campaign,true);if(!expedition)d.wide=1;if(scenario)d.trial=1;if(scenario)d.scenario=structuredClone(scenario);
+  const dispatch=(preview=false)=>{const d=deployment(campaign,true);if(!expedition)d.wide=2;if(scenario)d.trial=1;if(scenario)d.scenario=structuredClone(scenario);
     // 연구(로그라이크의 영구 강화)는 연의·회상·수련 어디서든 함께 간다.
     if(!preview){const m=loadMeta(),p=deploymentPerks(m,['사마의',...Object.keys(m.officerPerks??{})]);if(p)d.perks=p;}if(!expedition&&extras.length)d.extraOfficers=pickExtras(c.stage,c.map,extras,difficulty,d.levels);if(expedition)d.mission={id:expedition.id,runId:preview?'preview':crypto.randomUUID(),version:4,balance:1,supportClasses:[...supports]};return d;};
   const mission=chapter===7?'사마의와 조진을 생존시키고 양앙을 포함한 전초 수비대 7부대를 모두 격퇴하십시오. 수비대장만 쓰러뜨려서는 끝나지 않습니다.':chapter===6?'조조를 보호하며 마초를 격퇴한 뒤, 사마의 또는 조진으로 관문 안 금빛 구역을 점령하십시오. 조조·사마의·조진 퇴각 시 패배합니다.':chapter===5?'수송대 두 부대 중 최소 한 부대를 선택한 동쪽 출구로 호위하십시오. 두 수송대가 모두 소실되거나 사마의·조진이 퇴각하면 실패합니다.':chapter===4?'진궁·여포·주유를 차례로 격파한 다음, 전차의 방해를 뚫고 황제 옆 금빛 칸에 도달하십시오.':chapter===3?'길잡이와 대화해 탈출로를 정하고, 추격 압박이 한계에 닿기 전에 형제 모두 선택한 출구에 도착하십시오.':intro?'사마의로 창고에 도달한 뒤 민중에게 인접해 무장시키고 습격대를 격퇴하십시오.':escape?'두 형제 모두 남문에 도착하고 통행료 1,000전을 지불하십시오.':'수비대장을 격퇴한 뒤 본대로 중앙 성채를 점령하십시오. 경쟁 우군 선점 시 패배합니다.';
@@ -409,7 +409,7 @@ function render(){
   const cond=session.conditions;$('#compact-objective').title=`승리: ${winText(cond)}\n패배: ${cond.lose.join(' · ')}`;
   // 지도 위 목표 띠: 지금 걸린 승리 조건(진행 ✓·수 포함)과 패배 조건을 늘 보인다. 전투 중 목표가 바뀌면 알린다.
   // 범례(이동 가능·적 시야·목표)도 이 상자 안에 둔다. 따로 지도 구석에 두면 그 자리의 유닛을 덮는다.
-  $('#map-objective').innerHTML=`<button class="mo-toggle" type="button" aria-expanded="${objectiveBox.open}" aria-controls="map-objective" title="승리·패배 조건 펼치기·접기 (O)"><b>◇ 목표</b><span class="mo-short">${esc(winText(cond))}</span><i class="mo-arrow"></i></button><div class="mo-body"><p class="mo-win"><b>승리</b> ${cond.win.map(esc).join(' <i>또는</i> ')}</p><p class="mo-lose"><b>패배</b> ${cond.lose.map(esc).join(' · ')}</p><p class="mo-legend">${LEGEND_HTML}</p></div>`;
+  $('#map-objective').innerHTML=`<button class="mo-toggle" type="button" aria-expanded="${objectiveBox.open}" aria-controls="map-objective" title="승리·패배 조건 펼치기·접기 (O)"><b>◇ 목표</b><span class="mo-short" title="${esc(winText(cond))}">${esc(winText(cond))}</span><i class="mo-arrow"></i></button><div class="mo-body"><p class="mo-win"><b>승리</b> ${cond.win.map(esc).join(' <i>또는</i> ')}</p><p class="mo-lose"><b>패배</b> ${cond.lose.map(esc).join(' · ')}</p><p class="mo-legend">${LEGEND_HTML}</p></div>`;
   $('#map-objective').classList.toggle('collapsed',!objectiveBox.open);
   {const key=JSON.stringify(s.victory);if(objectiveSeen.session===session&&objectiveSeen.key!==key&&s.outcome==='ongoing'){toast(`목표가 바뀌었습니다 — ${winText(cond)}`);setObjectiveOpen(true,6000);}objectiveSeen.session=session;objectiveSeen.key=key;}
   // 탈출·도착·점령 목표는 지도에서 그 칸을 몇 초 깜박여 어디로 가야 하는지 보인다.
@@ -689,7 +689,7 @@ function checkModal(){
     if(after){let k=0;$('#aftermath-next')?.addEventListener('click',e=>{k=(k+1)%after.beats.length;const b=after.beats[k]!;$('#aftermath-line').innerHTML=dialogueCaption(b.speaker,b.line);(e.currentTarget as HTMLButtonElement).textContent=k===after.beats.length-1?'↺ 처음 장면':'다음 장면 →';});}
     $('#result-undo').onclick=undo;$('#result-menu').onclick=showChronicle;
     $('#phase-restore')?.addEventListener('click',()=>{if(session.restorePhase()){activate();persist();}});
-    $('#retry').onclick=()=>{session=new Session(session.chapter,session.difficulty,215,session.preparation,session.revision,session.deployment?{...deployment(campaign,true),...(session.wide?{wide:1 as const}:{})}:undefined);activate();persist();};
+    $('#retry').onclick=()=>{session=new Session(session.chapter,session.difficulty,215,session.preparation,session.revision,session.deployment?{...deployment(campaign,true),...(session.wide?{wide:(session.deployment?.wide??1)}:{})}:undefined);activate();persist();};
     $('#epilogue')?.addEventListener('click',showEpilogue);
     $('#next-chapter')?.addEventListener('click',()=>storyScene(campaignOrder[campaignOrder.indexOf(session.chapter)+1]!));return;
   }
@@ -803,5 +803,5 @@ async function boot(){
   if(menuOpen&&document.getElementById('hub-quests'))showMenu();
 }
 // ?dev only: a handle for QA scripts to inspect or nudge the running battle.
-if(devMode)Object.assign(window,{__sama:{get session(){return session;},get field(){return field;},render,start(chapter:number){session=new Session(chapter,'normal',215,'survival',RULES,{...deployment(campaign,true),wide:1});activate();},story(chapter:number){storyScene(chapter);},run(floor:number,kind:'battle'|'elite'|'boss'|'tale',seed=7,route?:Record<number,string>,tale?:string){const r=newRun(seed,startingOfficers());r.floor=floor;if(route)r.route=route as {1?:string;2?:string;3?:string};runHost.startBattle({levels:{sima_yi:2+floor,sima_lang:1,sima_fang:1,cao_zhen:1},equipped:{},run:battleRef(r,kind,tale),trial:1},seed);},brief(chapter:number){briefing(chapter);},get campaign(){return campaign;},act(cmd:Command){act(cmd);}}});
+if(devMode)Object.assign(window,{__sama:{get session(){return session;},get field(){return field;},render,start(chapter:number){session=new Session(chapter,'normal',215,'survival',RULES,{...deployment(campaign,true),wide:2});activate();},story(chapter:number){storyScene(chapter);},run(floor:number,kind:'battle'|'elite'|'boss'|'tale',seed=7,route?:Record<number,string>,tale?:string){const r=newRun(seed,startingOfficers());r.floor=floor;if(route)r.route=route as {1?:string;2?:string;3?:string};runHost.startBattle({levels:{sima_yi:2+floor,sima_lang:1,sima_fang:1,cao_zhen:1},equipped:{},run:battleRef(r,kind,tale),trial:1},seed);},brief(chapter:number){briefing(chapter);},get campaign(){return campaign;},act(cmd:Command){act(cmd);}}});
 void boot();

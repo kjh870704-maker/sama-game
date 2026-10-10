@@ -6,6 +6,7 @@
  * 호출자가 시간 분할(time-slicing) 하도록 만든다. AI 자신은 루프를 돌지 않는다.
  */
 import type { BattleState } from "./state.ts";
+import type { VictoryCondition } from "./stage.ts";
 import type { Unit, Coord } from "./types.ts";
 import type { Command } from "./commands.ts";
 import { manhattan, key, sameCoord, isHostile } from "./grid.ts";
@@ -183,8 +184,14 @@ interface Objective {
  * reach는 해당 유닛 본인에게만 목표가 된다.
  */
 function objectiveRegion(state: BattleState, unit: Unit): Objective | null {
+  // 앞 단계에 "특정 적 격퇴"가 남았으면 다음 단계의 도달 지점으로 먼저 달려가지 않는다 — 혼자 적진에 들어가
+  // 쓰러진다(S1-04 넓은 전장: 주유의 환영을 두고 황제의 길목으로). 점령·다른 부대의 도달 단계는 막지 않는다.
+  const waitsForKill = (cond: VictoryCondition) =>
+    cond.type === "reach" && cond.order !== undefined &&
+    state.victory.some((p) => p.type === "retreat" && p.order !== undefined && p.order < cond.order! && !evaluate(state, p));
   for (const cond of [...state.victory, ...state.defeat]) {
     if (!cond.target) continue;
+    if (waitsForKill(cond)) continue;
     // 이미 충족된 목표는 건너뛴다. 건너뛰지 않으면 점령을 끝낸 유닛이 같은
     // 영역에 선 채로 매 턴 점령 명령만 되풀이해 순차 목표가 영구히 멈춘다.
     if (evaluate(state, cond)) continue;

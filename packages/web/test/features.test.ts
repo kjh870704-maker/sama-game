@@ -19,6 +19,8 @@ describe('five round duels and debates',()=>{
      if(!u||!['player','ally'].includes(st.currentSide)){s.tick();continue;}
      const challenge=()=>{const enemy=st.living('enemy').find(e=>Math.abs(e.pos.x-u.pos.x)+Math.abs(e.pos.y-u.pos.y)<=3);if(enemy&&!u.hasActed&&u.id==='sima_yi')started=s.act({kind:'item',unit:u.id,item:'debate',target:enemy.id}).ok;};
      challenge();if(started)break;
+     // 사마의는 진궁 3칸 안까지 걸어간다(AI는 멀리서 책략을 쏘므로 설전 거리로 직접 붙인다).
+     if(u.id==='sima_yi'&&!u.hasMoved){const foe=st.find('chen_gong');if(foe?.alive){const cells=[...st.map.reachable(u,st.occupancy()).keys()].map(k=>{const [x,y]=k.split(',').map(Number);return {x:x!,y:y!};});const near=cells.filter(c=>Math.abs(c.x-foe.pos.x)+Math.abs(c.y-foe.pos.y)<=3).sort((a,b)=>(Math.abs(a.x-foe.pos.x)+Math.abs(a.y-foe.pos.y))-(Math.abs(b.x-foe.pos.x)+Math.abs(b.y-foe.pos.y)))[0]??cells.sort((a,b)=>(Math.abs(a.x-foe.pos.x)+Math.abs(a.y-foe.pos.y))-(Math.abs(b.x-foe.pos.x)+Math.abs(b.y-foe.pos.y)))[0];if(near&&(near.x!==u.pos.x||near.y!==u.pos.y)){s.act({kind:'move',unit:u.id,to:near});challenge();if(started)break;}}}
      for(const cmd of decide(st,u)){if(cmd.kind==='move'&&cmd.to.x===u.pos.x&&cmd.to.y===u.pos.y)continue;s.act(cmd);challenge();if(started)break;}
      if(!started&&!u.hasActed)s.act({kind:'wait',unit:u.id});
    }

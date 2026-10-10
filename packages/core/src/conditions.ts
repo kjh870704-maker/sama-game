@@ -85,6 +85,17 @@ export function advanceVictory(state: BattleState): boolean {
   return state.goalProgress >= steps.length;
 }
 
+/**
+ * 지금 해야 하는 차례 목표 단계(order 값). 차례 목표가 없거나 모두 이뤘으면 undefined.
+ * 붙잡아 두는 규칙(stickyGoals)이면 이룬 단계 수로, 아니면 아직 아무 조건도 채우지 못한 첫 단계로 본다.
+ */
+export function currentGoalStep(state: BattleState): number | undefined {
+  const ordered = state.victory.filter((c) => c.order !== undefined);
+  const steps = [...new Set(ordered.map((c) => c.order!))].sort((a, b) => a - b);
+  if (state.stickyGoals) return steps[state.goalProgress];
+  return steps.find((o) => !ordered.some((c) => c.order === o && evaluate(state, c)));
+}
+
 export function evaluateGroup(state: BattleState, conds: VictoryCondition[]): boolean {
   if (conds.length === 0) return false;
   const ordered = conds.filter((c) => c.order !== undefined);

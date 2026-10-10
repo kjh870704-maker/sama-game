@@ -73,7 +73,7 @@ export function changedRegions(stage:StageDef):Set<string>{
  * 칸은 덮는 칸과 가장 많이 겹치고, 가운데에 가까우며, 탈출 지점은 지도 가장자리에 가까운 쪽을 고른다.
  * 지형이 바뀌는 지역(부교·다리 등)은 덮는 칸 전부로 채운다.
  */
-export function shapeGoals(map:MapFile,stage:StageDef,source:MapFile=map):MapFile{
+export function shapeGoals(map:MapFile,stage:StageDef,source:MapFile=map,expand:ReadonlySet<string>=new Set()):MapFile{
   const regions={...(map.regions??{})},wide=map!==source,H=map.rows.length,W=map.rows[0]!.length;
   const terrain=(x:number,y:number)=>map.legend[map.rows[y]![x]!]??'plain';
   /** 원래 칸들이 늘어난 지도에서 차지하는 자리 전부(빈틈 없음). */
@@ -81,6 +81,10 @@ export function shapeGoals(map:MapFile,stage:StageDef,source:MapFile=map):MapFil
     return wide?[...Array(H).keys()].flatMap(y=>[...Array(W).keys()].filter(x=>own.has(`${src(x)},${src(y)}`)).map(x=>({x,y}))):r.map(c=>({x:c.x,y:c.y}));};
   // 지형이 바뀌는 지역(부교·다리·수문 길·홍수)은 빈틈없이 채운다: 띄엄띄엄 바뀌면 다리 가운데가 물로 남는다.
   for(const name of changedRegions(stage)){const r=source.regions?.[name];if(Array.isArray(r)&&r.length)regions[name]=coverOf(r);}
+  // 큰 전투: 출진 칸과 늘어난 적 무리가 나오는 지역도 빈틈없이 넓혀 모두 설 자리를 준다.
+  // 원래 자리(늘린 지도에서 옮긴 칸)를 앞에 두고 새로 생긴 칸을 뒤에 붙인다 — 원래 부대는 제자리에 서고, 늘린 부대만 새 칸에 선다.
+  for(const name of expand){const r=source.regions?.[name],own=regions[name];if(!Array.isArray(r)||!r.length||!Array.isArray(own))continue;
+    const seen=new Set(own.map(c=>`${c.x},${c.y}`));regions[name]=[...own,...coverOf(r).filter(c=>!seen.has(`${c.x},${c.y}`))];}
   for(const [name,type] of goalRegions(stage)){
     const r=source.regions?.[name];if(!r||!Array.isArray(r)||!r.length)continue;// 사각형으로 적은 지역은 늘려도 붙어 있다
     const cover=coverOf(r);

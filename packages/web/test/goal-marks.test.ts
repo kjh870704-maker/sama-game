@@ -17,7 +17,7 @@ describe('전투 시작에 깜박여 알릴 목표 지점',()=>{
  });
  it('차례 목표는 지금 단계만: S1-01은 창고 점령이 둘째 단계라 시작에는 없다',()=>{
   const s=state('S1-01');expect(goalMarks(s)).toEqual([]);
-  s.goalProgress=1;expect(goalMarks(s).map(m=>m.kind)).toEqual(['capture']);
+  s.stickyGoals=true;s.goalProgress=1;expect(goalMarks(s).map(m=>m.kind)).toEqual(['capture']);
  });
  it('위치 목표가 없는 전투는 깜박이지 않는다',()=>{
   expect(goalMarks(state('S2-05'))).toEqual([]);
